@@ -1,0 +1,131 @@
+/**
+ * Calendar 组件
+ *
+ * 基于 WSX 框架构建的事件日历组件
+ * 根据 RFC-0001 定义
+ */
+
+/** @jsxImportSource @wsxjs/wsx-core */
+import { ReactiveWebComponent, autoRegister } from "@wsxjs/wsx-core";
+import {
+    Event,
+    User,
+    ValidationContext,
+    RenderContext,
+} from "@calenderjs/core";
+import {
+    EventTypeAST,
+    parseEventDSL,
+    EventDSLRuntime,
+} from "@calenderjs/event-dsl";
+
+/**
+ * Calendar 组件属性
+ */
+export interface CalendarProps {
+    /** Event DSL 配置（文本或已解析的 AST） */
+    eventDSL?: string | EventTypeAST | EventTypeAST[];
+
+    /** 事件数据 */
+    events?: Event[];
+
+    /** 用户上下文（用于权限验证） */
+    user?: User;
+
+    /** 默认视图 */
+    defaultView?: "month" | "week" | "day";
+
+    /** 当前日期 */
+    currentDate?: Date;
+}
+
+/**
+ * Calendar Web Component
+ */
+@autoRegister({ tagName: "wsx-calendar" })
+export default class Calendar extends ReactiveWebComponent {
+    eventDSL?: string | EventTypeAST | EventTypeAST[];
+    events: Event[] = [];
+    user?: User;
+    defaultView: "month" | "week" | "day" = "month";
+    currentDate?: Date;
+
+    private state = this.reactive({
+        currentView: "month" as "month" | "week" | "day",
+        viewDate: new Date(),
+        dslRuntime: undefined as EventDSLRuntime | undefined,
+    });
+
+    constructor() {
+        super({
+            styleName: "wsx-calendar",
+        });
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        this.initializeDSL();
+    }
+
+    /**
+     * 初始化 DSL
+     */
+    private initializeDSL() {
+        if (!this.eventDSL) return;
+
+        try {
+            let ast: EventTypeAST | EventTypeAST[];
+
+            if (typeof this.eventDSL === "string") {
+                // 解析 DSL 文本
+                ast = parseEventDSL(this.eventDSL);
+            } else {
+                ast = this.eventDSL;
+            }
+
+            // 创建运行时（如果是数组，取第一个）
+            const eventTypeAST = Array.isArray(ast) ? ast[0] : ast;
+            this.state.dslRuntime = new EventDSLRuntime(eventTypeAST);
+        } catch (error) {
+            console.error("Failed to initialize DSL:", error);
+        }
+    }
+
+    /**
+     * 渲染组件
+     */
+    render(): HTMLElement {
+        return (
+            <div class="calendar">
+                <div class="calendar-toolbar">
+                    <button onClick={() => this.handleViewChange("month")}>
+                        月
+                    </button>
+                    <button onClick={() => this.handleViewChange("week")}>
+                        周
+                    </button>
+                    <button onClick={() => this.handleViewChange("day")}>
+                        日
+                    </button>
+                </div>
+                <div class="calendar-view">
+                    <p>Calendar View: {this.state.currentView}</p>
+                    <p>Events: {this.events.length}</p>
+                </div>
+            </div>
+        );
+    }
+
+    /**
+     * 处理视图切换
+     */
+    private handleViewChange(view: "month" | "week" | "day") {
+        this.state.currentView = view;
+        this.dispatchEvent(
+            new CustomEvent("view-change", {
+                detail: { view },
+                bubbles: true,
+            })
+        );
+    }
+}

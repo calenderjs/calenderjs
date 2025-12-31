@@ -1,0 +1,35 @@
+{
+  "name": "@calenderjs/dsl",
+  "sourceRoot": "packages/dsl/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/dsl",
+        "main": "packages/dsl/src/index.ts",
+        "tsConfig": "packages/dsl/tsconfig.json"
+      }
+    },
+    "dev": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "watch": true
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["packages/dsl/**/*.ts"]
+      }
+    }
+  },
+  "tags": ["scope:dsl", "type:library"]
+}
