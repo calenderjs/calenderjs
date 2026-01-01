@@ -1,0 +1,362 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
+import { Event } from "@calenderjs/core";
+import type { User } from "@calenderjs/core";
+import {
+    getMonthDates,
+    isSameDay,
+    isSameMonth,
+    formatDateKey,
+} from "../utils/date-utils";
+import { groupEventsByDate, sortEventsByTime } from "../utils/event-utils";
+import styles from "./MonthView.css?inline";
+
+/**
+ * 月视图组件
+ */
+@autoRegister({ tagName: "wsx-month-view" })
+export default class MonthView extends WebComponent {
+    // ========== 观察的属性 ==========
+    static get observedAttributes() {
+        return ["view-date", "events", "selected-date", "user"];
+    }
+
+    // ========== 内部状态 ==========
+    @state private _viewDate: Date = new Date();
+    @state private _events: Event[] = [];
+    // selectedDate 使用一个无效日期作为"未选择"的标记
+    @state private _selectedDate: Date = new Date(0);
+    @state private _user: User = {
+        id: "1",
+        email: "john.doe@example.com",
+        role: "user",
+    };
+
+    // ========== Property 访问器（WSX 组件之间使用） ==========
+    get viewDate(): Date {
+        return this._viewDate;
+    }
+    set viewDate(value: Date | string) {
+        if (value instanceof Date) {
+            this._viewDate = value;
+        } else if (typeof value === "string") {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                this._viewDate = date;
+            }
+        }
+    }
+
+    get events(): Event[] {
+        return this._events;
+    }
+    set events(value: Event[] | string) {
+        if (Array.isArray(value)) {
+            this._events = value;
+        } else if (typeof value === "string") {
+            try {
+                this._events = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid events JSON:", value);
+                this._events = [];
+            }
+        } else {
+            this._events = [];
+        }
+    }
+
+    get selectedDate(): Date {
+        return this._selectedDate;
+    }
+    set selectedDate(value: Date | string | undefined) {
+        if (value instanceof Date) {
+            this._selectedDate = value;
+        } else if (typeof value === "string") {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                this._selectedDate = date;
+            } else {
+                this._selectedDate = new Date(0);
+            }
+        } else if (value === undefined || value === null) {
+            this._selectedDate = new Date(0);
+        }
+    }
+
+    get user(): User {
+        return this._user;
+    }
+    set user(value: User | string) {
+        if (typeof value === "object" && value !== null) {
+            this._user = value as User;
+        } else if (typeof value === "string") {
+            try {
+                this._user = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid user JSON:", value);
+            }
+        }
+    }
+
+    // ========== 私有属性 ==========
+    private onDateClick?: (date: Date) => void;
+    private onDateDoubleClick?: (date: Date) => void;
+    private onEventClick?: (event: Event) => void;
+    private onEventDelete?: (event: Event) => void;
+
+    constructor() {
+        super({
+            styles,
+            styleName: "wsx-month-view",
+        });
+    }
+
+    // ========== 生命周期 ==========
+    onConnected() {
+        super.onConnected?.();
+        this.initializeFromAttributes();
+    }
+
+    onAttributeChanged(
+        name: string,
+        oldValue: string | null,
+        newValue: string | null
+    ) {
+        super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
+
+        switch (name) {
+            case "view-date":
+                if (newValue) {
+                    this.viewDate = newValue;
+                }
+                break;
+            case "events":
+                if (newValue) {
+                    this.events = newValue;
+                } else {
+                    this.events = [];
+                }
+                break;
+            case "selected-date":
+                if (newValue) {
+                    this.selectedDate = newValue;
+                } else {
+                    this.selectedDate = undefined;
+                }
+                break;
+            case "user":
+                if (newValue) {
+                    this.user = newValue;
+                }
+                break;
+        }
+    }
+
+    // ========== 初始化 ==========
+    private initializeFromAttributes() {
+        const viewDateAttr = this.getAttribute("view-date");
+        if (viewDateAttr) {
+            this.viewDate = viewDateAttr;
+        }
+
+        const eventsAttr = this.getAttribute("events");
+        if (eventsAttr) {
+            this.events = eventsAttr;
+        }
+
+        const selectedDateAttr = this.getAttribute("selected-date");
+        if (selectedDateAttr) {
+            this.selectedDate = selectedDateAttr;
+        } else {
+            this.selectedDate = undefined;
+        }
+
+        const userAttr = this.getAttribute("user");
+        if (userAttr) {
+            this.user = userAttr;
+        }
+    }
+
+    // ========== Getters ==========
+    private get monthDates() {
+        // 确保 viewDate 始终是有效的 Date 对象
+        if (
+            !this._viewDate ||
+            !(this._viewDate instanceof Date) ||
+            isNaN(this._viewDate.getTime())
+        ) {
+            this._viewDate = new Date();
+        }
+        try {
+            return getMonthDates(this._viewDate);
+        } catch (e) {
+            console.error("Error getting month dates:", e);
+            return [];
+        }
+    }
+
+    private get eventsByDate() {
+        return groupEventsByDate(this._events);
+    }
+
+    private get weekDays() {
+        return ["日", "一", "二", "三", "四", "五", "六"];
+    }
+
+    // ========== 事件处理 ==========
+    private handleDateClick = (date: Date) => {
+        if (this.onDateClick) {
+            this.onDateClick(date);
+        }
+        this.dispatchEvent(
+            new CustomEvent("date-click", {
+                detail: { date },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleDateDoubleClick = (date: Date) => {
+        if (this.onDateDoubleClick) {
+            this.onDateDoubleClick(date);
+        }
+        this.dispatchEvent(
+            new CustomEvent("date-double-click", {
+                detail: { date },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleEventClick = (event: Event, evt?: MouseEvent) => {
+        if (evt) {
+            evt.stopPropagation();
+        }
+        if (this.onEventClick) {
+            this.onEventClick(event);
+        }
+        this.dispatchEvent(
+            new CustomEvent("event-click", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleEventDelete = (event: Event, evt?: MouseEvent) => {
+        if (evt) {
+            evt.stopPropagation();
+        }
+        if (this.onEventDelete) {
+            this.onEventDelete(event);
+        }
+        this.dispatchEvent(
+            new CustomEvent("event-delete", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+    };
+
+    // ========== 渲染 ==========
+    render() {
+        return (
+            <div class="month-view">
+                <div class="month-view-header">
+                    {this.weekDays.map((day) => {
+                        return (
+                            <div class="month-view-day-header" key={day}>
+                                {day}
+                            </div>
+                        );
+                    })}
+                </div>
+                <div class="month-view-grid">
+                    {this.monthDates.map((date) => {
+                        if (
+                            !date ||
+                            !(date instanceof Date) ||
+                            isNaN(date.getTime())
+                        ) {
+                            return null;
+                        }
+                        const dateKey = formatDateKey(date);
+                        const dayEvents = sortEventsByTime(
+                            this.eventsByDate.get(dateKey) || []
+                        );
+                        const isCurrentMonth =
+                            this._viewDate &&
+                            this._viewDate instanceof Date &&
+                            !isNaN(this._viewDate.getTime())
+                                ? isSameMonth(date, this._viewDate)
+                                : false;
+                        // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
+                        const isSelected =
+                            this._selectedDate.getTime() !== 0 &&
+                            isSameDay(date, this._selectedDate);
+                        const isToday = isSameDay(date, new Date());
+
+                        return (
+                            <div
+                                class={`month-view-cell ${
+                                    !isCurrentMonth ? "other-month" : ""
+                                } ${isSelected ? "selected" : ""} ${
+                                    isToday ? "today" : ""
+                                }`}
+                                onClick={() => this.handleDateClick(date)}
+                                onDblClick={() =>
+                                    this.handleDateDoubleClick(date)
+                                }
+                            >
+                                <div class="month-view-cell-date">
+                                    {date.getDate()}
+                                </div>
+                                <div class="month-view-cell-events">
+                                    {dayEvents.slice(0, 3).map((event) => {
+                                        const eventColor =
+                                            event.data?.color || "#4285f4";
+                                        return (
+                                            <div
+                                                class="month-view-event"
+                                                key={event.id}
+                                                style={`background-color: ${eventColor}`}
+                                                onClick={(evt) =>
+                                                    this.handleEventClick(
+                                                        event,
+                                                        evt
+                                                    )
+                                                }
+                                            >
+                                                <span class="month-view-event-title">
+                                                    {event.title}
+                                                </span>
+                                                {this.onEventDelete && (
+                                                    <button
+                                                        class="month-view-event-delete"
+                                                        onClick={(evt) =>
+                                                            this.handleEventDelete(
+                                                                event,
+                                                                evt
+                                                            )
+                                                        }
+                                                    >
+                                                        ×
+                                                    </button>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                    {dayEvents.length > 3 && (
+                                        <div class="month-view-more">
+                                            +{dayEvents.length - 3} 更多
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    }
+}

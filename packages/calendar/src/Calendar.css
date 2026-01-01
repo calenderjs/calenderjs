@@ -1,0 +1,136 @@
+/* Calendar Component Styles - Google Calendar Inspired */
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    font-size: 14px;
+    color: #202124;
+    background: #fff;
+}
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+}
+
+/* Toolbar Styles */
+.calendar-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid #dadce0;
+    background: #fff;
+    min-height: 48px;
+}
+
+.calendar-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #5f6368;
+    transition: background-color 0.2s;
+}
+
+.calendar-nav-button:hover {
+    background-color: #f1f3f4;
+}
+
+.calendar-nav-button:active {
+    background-color: #e8eaed;
+}
+
+.calendar-nav-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.calendar-today-button {
+    padding: 8px 16px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background: #fff;
+    color: #202124;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.calendar-today-button:hover {
+    background-color: #f8f9fa;
+    border-color: #c4c7c5;
+}
+
+.calendar-today-button:active {
+    background-color: #f1f3f4;
+}
+
+.calendar-toolbar-date {
+    font-size: 22px;
+    font-weight: 400;
+    color: #202124;
+    margin-left: 8px;
+    min-width: 200px;
+}
+
+.calendar-view-buttons {
+    display: flex;
+    gap: 0;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.calendar-view-button {
+    padding: 8px 16px;
+    border: none;
+    background: #fff;
+    color: #5f6368;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border-right: 1px solid #dadce0;
+}
+
+.calendar-view-button:last-child {
+    border-right: none;
+}
+
+.calendar-view-button:hover {
+    background-color: #f8f9fa;
+}
+
+.calendar-view-button.active {
+    background-color: #1a73e8;
+    color: #fff;
+}
+
+.calendar-view-button.active:hover {
+    background-color: #1765cc;
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WeekView Layout Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .week-view-body {
+            display: flex;
+            height: 600px;
+            overflow: auto;
+            border: 2px solid red; /* 用红色边框标记body */
+        }
+
+        .week-view-time-gutter {
+            width: 60px;
+            min-width: 60px;
+            border-right: 1px solid #dadce0;
+            background: #f0f0f0; /* 用灰色背景标记时间轴 */
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .week-view-time-label {
+            height: 48px;
+            padding-top: 4px;
+            padding-right: 8px;
+            text-align: right;
+            font-size: 12px;
+            color: #70757a;
+            border-bottom: 1px solid #e8eaed;
+            box-sizing: border-box;
+        }
+
+        .week-view-columns {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            flex: 1;
+            background: #e0f0ff; /* 用蓝色背景标记columns */
+        }
+
+        .week-view-day-column {
+            border-right: 1px solid #dadce0;
+            position: relative;
+            min-width: 0;
+            background: #fff;
+        }
+
+        .week-view-hour-cell {
+            height: 48px;
+            border-bottom: 1px solid #e8eaed;
+        }
+    </style>
+</head>
+<body>
+    <h1>WeekView Layout Test</h1>
+    <p>Red border = week-view-body</p>
+    <p>Gray background = time-gutter (should be on LEFT)</p>
+    <p>Blue background = columns container</p>
+
+    <div class="week-view-body">
+        <div class="week-view-time-gutter">
+            <div class="week-view-time-label">00:00</div>
+            <div class="week-view-time-label">01:00</div>
+            <div class="week-view-time-label">02:00</div>
+            <div class="week-view-time-label">03:00</div>
+            <div class="week-view-time-label">04:00</div>
+        </div>
+        <div class="week-view-columns">
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+            <div class="week-view-day-column">
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+                <div class="week-view-hour-cell"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

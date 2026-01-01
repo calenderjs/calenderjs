@@ -12,15 +12,14 @@ import {
   Appointment,
   BehaviorConfig,
 } from './types';
-import { CompiledDSL as CompiledDSLType } from './compiler';
 
 /**
  * DSL 运行时
  */
 export class AppointmentDSLRuntime {
-  private compiledDSL: CompiledDSLType;
+  private compiledDSL: CompiledDSL;
 
-  constructor(compiledDSL: CompiledDSLType) {
+  constructor(compiledDSL: CompiledDSL) {
     this.compiledDSL = compiledDSL;
   }
 

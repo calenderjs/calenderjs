@@ -1,0 +1,361 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
+import { Event } from "@calenderjs/core";
+import type { User } from "@calenderjs/core";
+import { getWeekDates, isSameDay, getTimeString } from "../utils/date-utils";
+import {
+    getEventsForDate,
+    sortEventsByTime,
+    calculateEventPosition,
+} from "../utils/event-utils";
+import styles from "./WeekView.css?inline";
+
+/**
+ * 周视图组件
+ */
+@autoRegister({ tagName: "wsx-week-view" })
+export default class WeekView extends WebComponent {
+    // ========== 观察的属性 ==========
+    static get observedAttributes() {
+        return ["view-date", "events", "selected-date", "user"];
+    }
+
+    // ========== 内部状态 ==========
+    @state private _viewDate: Date = new Date();
+    @state private _events: Event[] = [];
+    // selectedDate 使用一个无效日期作为"未选择"的标记
+    @state private _selectedDate: Date = new Date(0);
+    @state private _user: User = {
+        id: "1",
+        email: "john.doe@example.com",
+        role: "user",
+    };
+
+    // ========== Property 访问器（WSX 组件之间使用） ==========
+    get viewDate(): Date {
+        return this._viewDate;
+    }
+    set viewDate(value: Date | string) {
+        if (value instanceof Date) {
+            this._viewDate = value;
+        } else if (typeof value === "string") {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                this._viewDate = date;
+            }
+        }
+    }
+
+    get events(): Event[] {
+        return this._events;
+    }
+    set events(value: Event[] | string) {
+        if (Array.isArray(value)) {
+            this._events = value;
+        } else if (typeof value === "string") {
+            try {
+                this._events = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid events JSON:", value);
+                this._events = [];
+            }
+        } else {
+            this._events = [];
+        }
+    }
+
+    get selectedDate(): Date {
+        return this._selectedDate;
+    }
+    set selectedDate(value: Date | string | undefined) {
+        if (value instanceof Date) {
+            this._selectedDate = value;
+        } else if (typeof value === "string") {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                this._selectedDate = date;
+            } else {
+                this._selectedDate = new Date(0);
+            }
+        } else if (value === undefined || value === null) {
+            this._selectedDate = new Date(0);
+        }
+    }
+
+    get user(): User {
+        return this._user;
+    }
+    set user(value: User | string) {
+        if (typeof value === "object" && value !== null) {
+            this._user = value as User;
+        } else if (typeof value === "string") {
+            try {
+                this._user = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid user JSON:", value);
+            }
+        }
+    }
+
+    // ========== 私有属性 ==========
+    private onDateClick?: (date: Date) => void;
+    private onDateDoubleClick?: (date: Date) => void;
+    private onEventClick?: (event: Event) => void;
+    private onEventDelete?: (event: Event) => void;
+
+    constructor() {
+        super({
+            styles,
+            styleName: "wsx-week-view",
+        });
+    }
+
+    // ========== 生命周期 ==========
+    onConnected() {
+        super.onConnected?.();
+        this.initializeFromAttributes();
+    }
+
+    onAttributeChanged(
+        name: string,
+        oldValue: string | null,
+        newValue: string | null
+    ) {
+        super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
+
+        switch (name) {
+            case "view-date":
+                if (newValue) {
+                    this.viewDate = newValue;
+                }
+                break;
+            case "events":
+                if (newValue) {
+                    this.events = newValue;
+                } else {
+                    this.events = [];
+                }
+                break;
+            case "selected-date":
+                if (newValue) {
+                    this.selectedDate = newValue;
+                } else {
+                    this.selectedDate = undefined;
+                }
+                break;
+            case "user":
+                if (newValue) {
+                    this.user = newValue;
+                }
+                break;
+        }
+    }
+
+    // ========== 初始化 ==========
+    private initializeFromAttributes() {
+        const viewDateAttr = this.getAttribute("view-date");
+        if (viewDateAttr) {
+            this.viewDate = viewDateAttr;
+        }
+
+        const eventsAttr = this.getAttribute("events");
+        if (eventsAttr) {
+            this.events = eventsAttr;
+        }
+
+        const selectedDateAttr = this.getAttribute("selected-date");
+        if (selectedDateAttr) {
+            this.selectedDate = selectedDateAttr;
+        } else {
+            this.selectedDate = undefined;
+        }
+
+        const userAttr = this.getAttribute("user");
+        if (userAttr) {
+            this.user = userAttr;
+        }
+    }
+
+    // ========== Getters ==========
+    private get weekDates() {
+        return getWeekDates(this.viewDate);
+    }
+
+    private get hours() {
+        return Array.from({ length: 24 }, (_, i) => i);
+    }
+
+    // ========== 事件处理 ==========
+    private handleDateClick = (date: Date) => {
+        if (this.onDateClick) {
+            this.onDateClick(date);
+        }
+        this.dispatchEvent(
+            new CustomEvent("date-click", {
+                detail: { date },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleDateDoubleClick = (date: Date) => {
+        if (this.onDateDoubleClick) {
+            this.onDateDoubleClick(date);
+        }
+        this.dispatchEvent(
+            new CustomEvent("date-double-click", {
+                detail: { date },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleEventClick = (event: Event) => {
+        if (this.onEventClick) {
+            this.onEventClick(event);
+        }
+        this.dispatchEvent(
+            new CustomEvent("event-click", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+    };
+
+    // ========== 渲染 ==========
+    render() {
+        return (
+            <div class="week-view">
+                <div class="week-view-header">
+                    <div class="week-view-time-gutter"></div>
+                    {this.weekDates.map((date) => {
+                        // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
+                        const isSelected =
+                            this.selectedDate.getTime() !== 0 &&
+                            isSameDay(date, this.selectedDate);
+                        const isToday = isSameDay(date, new Date());
+                        const dayEvents = sortEventsByTime(
+                            getEventsForDate(this.events, date)
+                        );
+
+                        return (
+                            <div
+                                class={`week-view-day-header ${
+                                    isSelected ? "selected" : ""
+                                } ${isToday ? "today" : ""}`}
+                                onClick={() => this.handleDateClick(date)}
+                            >
+                                <div class="week-view-day-name">
+                                    {
+                                        [
+                                            "日",
+                                            "一",
+                                            "二",
+                                            "三",
+                                            "四",
+                                            "五",
+                                            "六",
+                                        ][date.getDay()]
+                                    }
+                                </div>
+                                <div class="week-view-day-date">
+                                    {date.getDate()}
+                                </div>
+                                <div class="week-view-day-events-count">
+                                    {dayEvents.length} 个事件
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div class="week-view-body">
+                    <div class="week-view-time-gutter">
+                        {this.hours.map((hour) => {
+                            const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
+                            const timeStr = `${hourStr}:00`;
+                            return (
+                                <div
+                                    class="week-view-time-label"
+                                    key={"time-gutter-label-" + hour}
+                                >
+                                    {timeStr}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div class="week-view-columns">
+                        {this.weekDates.map((date) => {
+                            const dayEvents = sortEventsByTime(
+                                getEventsForDate(this.events, date)
+                            );
+                            const dayStart = new Date(date);
+                            dayStart.setHours(0, 0, 0, 0);
+                            const dayEnd = new Date(date);
+                            dayEnd.setHours(23, 59, 59, 999);
+
+                            return (
+                                <div
+                                    class="week-view-day-column"
+                                    key={"day-column-" + date.getTime()}
+                                >
+                                    {this.hours.map((hour) => {
+                                        return (
+                                            <div
+                                                class="week-view-hour-cell"
+                                                key={"time-slot-cell-" + hour}
+                                            ></div>
+                                        );
+                                    })}
+                                    {dayEvents.map((event) => {
+                                        const position = calculateEventPosition(
+                                            event,
+                                            dayStart,
+                                            dayEnd
+                                        );
+
+                                        const eventColor =
+                                            event.data?.color || "#4285f4";
+                                        const eventDescription =
+                                            event.data?.description;
+
+                                        return (
+                                            <div
+                                                class="week-view-event"
+                                                key={
+                                                    "time-slot-event-" +
+                                                    event.id
+                                                }
+                                                style={`top: ${position.top}%; height: ${position.height}%; background-color: ${eventColor}`}
+                                                onClick={() =>
+                                                    this.handleEventClick(event)
+                                                }
+                                            >
+                                                <div class="week-view-event-time">
+                                                    {getTimeString(
+                                                        event.startTime
+                                                    )}{" "}
+                                                    -{" "}
+                                                    {getTimeString(
+                                                        event.endTime
+                                                    )}
+                                                </div>
+                                                <div class="week-view-event-title">
+                                                    {event.title}
+                                                </div>
+                                                {eventDescription && (
+                                                    <div class="week-view-event-description">
+                                                        {eventDescription}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}

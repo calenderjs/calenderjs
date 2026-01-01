@@ -1,0 +1,25 @@
+{
+    "name": "demos-react",
+    "version": "0.1.0",
+    "private": true,
+    "description": "CalenderJS React 组件演示网站",
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@calenderjs/core": "workspace:*",
+        "@calenderjs/react": "workspace:*",
+        "next": "^14.2.35",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.19.27",
+        "@types/react": "^18.3.27",
+        "@types/react-dom": "^18.3.7",
+        "typescript": "^5.9.3"
+    }
+}

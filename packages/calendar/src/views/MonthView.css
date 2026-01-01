@@ -1,0 +1,163 @@
+/* Month View Styles - Google Calendar Inspired */
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.month-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+}
+
+.month-view-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid #dadce0;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.month-view-day-header {
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #70757a;
+    text-transform: uppercase;
+    border-right: 1px solid #dadce0;
+}
+
+.month-view-day-header:last-child {
+    border-right: none;
+}
+
+.month-view-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    flex: 1;
+    overflow: auto;
+}
+
+.month-view-cell {
+    min-height: 100px;
+    border-right: 1px solid #dadce0;
+    border-bottom: 1px solid #dadce0;
+    padding: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    position: relative;
+}
+
+.month-view-cell:last-child {
+    border-right: none;
+}
+
+.month-view-cell:hover {
+    background-color: #f8f9fa;
+}
+
+.month-view-cell.other-month {
+    background-color: #f8f9fa;
+    color: #70757a;
+}
+
+.month-view-cell.today {
+    background-color: #e8f0fe;
+}
+
+.month-view-cell.today .month-view-cell-date {
+    color: #1a73e8;
+    font-weight: 500;
+}
+
+.month-view-cell.selected {
+    background-color: #e8f0fe;
+}
+
+.month-view-cell.selected .month-view-cell-date {
+    color: #1a73e8;
+    font-weight: 500;
+}
+
+.month-view-cell-date {
+    font-size: 13px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    color: #202124;
+}
+
+.month-view-cell-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 0;
+}
+
+.month-view-event {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-height: 18px;
+    transition: opacity 0.2s;
+}
+
+.month-view-event:hover {
+    opacity: 0.9;
+}
+
+.month-view-event-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.month-view-event-delete {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.month-view-event:hover .month-view-event-delete {
+    display: block;
+}
+
+.month-view-event-delete:hover {
+    opacity: 1;
+}
+
+.month-view-more {
+    font-size: 11px;
+    color: #5f6368;
+    padding: 2px 6px;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.month-view-more:hover {
+    color: #202124;
+    background-color: #f1f3f4;
+    border-radius: 3px;
+}

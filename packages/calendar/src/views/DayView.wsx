@@ -1,0 +1,247 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
+import { Event } from "@calenderjs/core";
+import type { User } from "@calenderjs/core";
+import { isSameDay, getTimeString, getDayHours } from "../utils/date-utils";
+import {
+    getEventsForDate,
+    sortEventsByTime,
+    calculateEventPosition,
+} from "../utils/event-utils";
+import styles from "./DayView.css?inline";
+
+/**
+ * 日视图组件
+ */
+@autoRegister({ tagName: "wsx-day-view" })
+export default class DayView extends WebComponent {
+    // ========== 观察的属性 ==========
+    static get observedAttributes() {
+        return ["view-date", "events", "user"];
+    }
+
+    // ========== 内部状态 ==========
+    @state private _viewDate: Date = new Date();
+    @state private _events: Event[] = [];
+    @state private _user: User = {
+        id: "1",
+        email: "john.doe@example.com",
+        role: "user",
+    };
+
+    // ========== Property 访问器（WSX 组件之间使用） ==========
+    get viewDate(): Date {
+        return this._viewDate;
+    }
+    set viewDate(value: Date | string) {
+        if (value instanceof Date) {
+            this._viewDate = value;
+        } else if (typeof value === "string") {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                this._viewDate = date;
+            }
+        }
+    }
+
+    get events(): Event[] {
+        return this._events;
+    }
+    set events(value: Event[] | string) {
+        if (Array.isArray(value)) {
+            this._events = value;
+        } else if (typeof value === "string") {
+            try {
+                this._events = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid events JSON:", value);
+                this._events = [];
+            }
+        } else {
+            this._events = [];
+        }
+    }
+
+    get user(): User {
+        return this._user;
+    }
+    set user(value: User | string) {
+        if (typeof value === "object" && value !== null) {
+            this._user = value as User;
+        } else if (typeof value === "string") {
+            try {
+                this._user = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid user JSON:", value);
+            }
+        }
+    }
+
+    // ========== 私有属性 ==========
+    private onEventClick?: (event: Event) => void;
+
+    constructor() {
+        super({
+            styles,
+            styleName: "wsx-day-view",
+        });
+    }
+
+    // ========== 生命周期 ==========
+    onConnected() {
+        super.onConnected?.();
+        this.initializeFromAttributes();
+    }
+
+    onAttributeChanged(
+        name: string,
+        oldValue: string | null,
+        newValue: string | null
+    ) {
+        super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
+
+        switch (name) {
+            case "view-date":
+                if (newValue) {
+                    this.viewDate = newValue;
+                }
+                break;
+            case "events":
+                if (newValue) {
+                    this.events = newValue;
+                } else {
+                    this.events = [];
+                }
+                break;
+            case "user":
+                if (newValue) {
+                    this.user = newValue;
+                }
+                break;
+        }
+    }
+
+    // ========== 初始化 ==========
+    private initializeFromAttributes() {
+        const viewDateAttr = this.getAttribute("view-date");
+        if (viewDateAttr) {
+            this.viewDate = viewDateAttr;
+        }
+
+        const eventsAttr = this.getAttribute("events");
+        if (eventsAttr) {
+            this.events = eventsAttr;
+        }
+
+        const userAttr = this.getAttribute("user");
+        if (userAttr) {
+            this.user = userAttr;
+        }
+    }
+
+    // ========== Getters ==========
+    private get dayEvents() {
+        return sortEventsByTime(getEventsForDate(this.events, this.viewDate));
+    }
+
+    private get hours() {
+        return getDayHours();
+    }
+
+    private get dayStart() {
+        const dayStart = new Date(this.viewDate);
+        dayStart.setHours(0, 0, 0, 0);
+        return dayStart;
+    }
+
+    private get dayEnd() {
+        const dayEnd = new Date(this.viewDate);
+        dayEnd.setHours(23, 59, 59, 999);
+        return dayEnd;
+    }
+
+    // ========== 事件处理 ==========
+    private handleEventClick = (event: Event) => {
+        if (this.onEventClick) {
+            this.onEventClick(event);
+        }
+        // 触发自定义事件
+        this.dispatchEvent(
+            new CustomEvent("event-click", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+    };
+
+    // ========== 渲染 ==========
+    render() {
+        return (
+            <div class="day-view">
+                <div class="day-view-header">
+                    <div class="day-view-date">
+                        {this.viewDate.getFullYear()}年
+                        {this.viewDate.getMonth() + 1}月
+                        {this.viewDate.getDate()}日
+                    </div>
+                    <div class="day-view-events-count">
+                        {this.dayEvents.length} 个事件
+                    </div>
+                </div>
+                <div class="day-view-body">
+                    <div class="day-view-time-column">
+                        {this.hours.map((hour) => {
+                            const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
+                            const timeStr = `${hourStr}:00`;
+                            return (
+                                <div class="day-view-hour" key={hour} textContent={timeStr}></div>
+                            );
+                        })}
+                    </div>
+                    <div class="day-view-events-column">
+                        {this.hours.map((hour) => {
+                            return (
+                                <div
+                                    class="day-view-hour-cell"
+                                    key={hour}
+                                ></div>
+                            );
+                        })}
+                        {this.dayEvents.map((event) => {
+                            const position = calculateEventPosition(
+                                event,
+                                this.dayStart,
+                                this.dayEnd
+                            );
+                            const eventColor = event.data?.color || "#4285f4";
+                            const eventDescription = event.data?.description;
+
+                            return (
+                                <div
+                                    class="day-view-event"
+                                    key={event.id}
+                                    style={`top: ${position.top}%; height: ${position.height}%; background-color: ${eventColor}`}
+                                    onClick={() => this.handleEventClick(event)}
+                                    title={event.title}
+                                >
+                                    <div class="day-view-event-time">
+                                        {getTimeString(event.startTime)} -{" "}
+                                        {getTimeString(event.endTime)}
+                                    </div>
+                                    <div class="day-view-event-title">
+                                        {event.title}
+                                    </div>
+                                    {eventDescription && (
+                                        <div class="day-view-event-description">
+                                            {eventDescription}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}

@@ -1,126 +1,438 @@
 /**
- * Calendar 组件
+ * Calendar Web Component
  *
- * 基于 WSX 框架构建的事件日历组件
- * 根据 RFC-0001 定义
+ * 基于 WSX 框架构建的日历组件
+ * 参考 Google Calendar UI 设计
+ * 专注于基础视图渲染（月/周/日），不涉及事件处理
  */
 
 /** @jsxImportSource @wsxjs/wsx-core */
-import { ReactiveWebComponent, autoRegister } from "@wsxjs/wsx-core";
-import {
-    Event,
-    User,
-    ValidationContext,
-    RenderContext,
-} from "@calenderjs/core";
-import {
-    EventTypeAST,
-    parseEventDSL,
-    EventDSLRuntime,
-} from "@calenderjs/event-dsl";
-
-/**
- * Calendar 组件属性
- */
-export interface CalendarProps {
-    /** Event DSL 配置（文本或已解析的 AST） */
-    eventDSL?: string | EventTypeAST | EventTypeAST[];
-
-    /** 事件数据 */
-    events?: Event[];
-
-    /** 用户上下文（用于权限验证） */
-    user?: User;
-
-    /** 默认视图 */
-    defaultView?: "month" | "week" | "day";
-
-    /** 当前日期 */
-    currentDate?: Date;
-}
+import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
+import type { Event as CalendarEvent } from "@calenderjs/core";
+import type { User } from "@calenderjs/core";
+import { getWeekDates } from "./utils/date-utils";
+import styles from "./Calendar.css?inline";
+// 导入视图组件以确保它们被注册
+import "./views/DayView.wsx";
+import "./views/MonthView.wsx";
+import "./views/WeekView.wsx";
 
 /**
  * Calendar Web Component
+ *
+ * 使用方式：
+ * ```html
+ * <wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
+ * ```
  */
 @autoRegister({ tagName: "wsx-calendar" })
-export default class Calendar extends ReactiveWebComponent {
-    eventDSL?: string | EventTypeAST | EventTypeAST[];
-    events: Event[] = [];
-    user?: User;
-    defaultView: "month" | "week" | "day" = "month";
-    currentDate?: Date;
+export default class Calendar extends WebComponent {
+    // ========== 观察的属性（Web Components 标准 - 对外使用） ==========
+    static get observedAttributes() {
+        return ["view", "date", "events", "user"];
+    }
 
-    private state = this.reactive({
-        currentView: "month" as "month" | "week" | "day",
-        viewDate: new Date(),
-        dslRuntime: undefined as EventDSLRuntime | undefined,
-    });
+    // ========== 内部状态（@state 装饰器） ==========
+    @state currentView: "month" | "week" | "day" = "month";
+    @state currentDate: Date = new Date();
+    @state private _events: CalendarEvent[] = [];
+    @state user: User = {
+        id: "1",
+        email: "john.doe@example.com",
+        role: "user",
+    };
+
+    // ========== 属性访问器（支持 property 设置） ==========
+    get events(): CalendarEvent[] {
+        return this._events;
+    }
+    set events(value: CalendarEvent[] | string) {
+        if (Array.isArray(value)) {
+            this._events = value;
+        } else if (typeof value === "string") {
+            try {
+                this._events = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid events JSON:", value);
+                this._events = [];
+            }
+        } else {
+            this._events = [];
+        }
+    }
+
+    // ========== 私有属性 ==========
+    private _initialized = false;
 
     constructor() {
         super({
+            styles,
             styleName: "wsx-calendar",
         });
     }
 
-    connectedCallback() {
-        super.connectedCallback?.();
-        this.initializeDSL();
+    // ========== Web Components 生命周期 ==========
+    onConnected() {
+        super.onConnected?.();
+        this.initializeComponent();
+        this.setupEventListeners();
     }
 
-    /**
-     * 初始化 DSL
-     */
-    private initializeDSL() {
-        if (!this.eventDSL) return;
+    onDisconnected() {
+        super.onDisconnected?.();
+        this.removeEventListeners();
+    }
 
-        try {
-            let ast: EventTypeAST | EventTypeAST[];
+    // ========== 事件监听器 ==========
+    private setupEventListeners() {
+        // 监听子组件的事件（事件会冒泡）
+        this.addEventListener("date-click", this.handleChildDateClick);
+        this.addEventListener(
+            "date-double-click",
+            this.handleChildDateDoubleClick
+        );
+        this.addEventListener("event-click", this.handleChildEventClick);
+    }
 
-            if (typeof this.eventDSL === "string") {
-                // 解析 DSL 文本
-                ast = parseEventDSL(this.eventDSL);
-            } else {
-                ast = this.eventDSL;
-            }
+    private removeEventListeners() {
+        this.removeEventListener("date-click", this.handleChildDateClick);
+        this.removeEventListener(
+            "date-double-click",
+            this.handleChildDateDoubleClick
+        );
+        this.removeEventListener("event-click", this.handleChildEventClick);
+    }
 
-            // 创建运行时（如果是数组，取第一个）
-            const eventTypeAST = Array.isArray(ast) ? ast[0] : ast;
-            this.state.dslRuntime = new EventDSLRuntime(eventTypeAST);
-        } catch (error) {
-            console.error("Failed to initialize DSL:", error);
+    private handleChildDateClick = (e: globalThis.Event) => {
+        const customEvent = e as CustomEvent<{ date: Date }>;
+        const date = new Date(customEvent.detail.date);
+        this.handleDateClick(date);
+    };
+
+    private handleChildDateDoubleClick = (e: globalThis.Event) => {
+        const customEvent = e as CustomEvent<{ date: Date }>;
+        this.dispatchEvent(
+            new CustomEvent("date-double-click", {
+                detail: { date: customEvent.detail.date },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleChildEventClick = (e: globalThis.Event) => {
+        const customEvent = e as CustomEvent<{ event: CalendarEvent }>;
+        this.dispatchEvent(
+            new CustomEvent("event-click", {
+                detail: { event: customEvent.detail.event },
+                bubbles: true,
+            })
+        );
+    };
+
+    // ========== 属性变化处理（对外使用 attribute） ==========
+    onAttributeChanged(
+        name: string,
+        oldValue: string | null,
+        newValue: string | null
+    ) {
+        super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
+
+        switch (name) {
+            case "view":
+                if (newValue && ["month", "week", "day"].includes(newValue)) {
+                    this.currentView = newValue as "month" | "week" | "day";
+                } else if (!newValue) {
+                    // 如果 view 属性被移除，保持当前值或使用默认值
+                    if (
+                        !this.currentView ||
+                        !["month", "week", "day"].includes(this.currentView)
+                    ) {
+                        this.currentView = "month";
+                    }
+                }
+                break;
+            case "date":
+                if (newValue) {
+                    try {
+                        const date = new Date(newValue);
+                        if (!isNaN(date.getTime())) {
+                            this.currentDate = date;
+                        }
+                    } catch (e) {
+                        console.error("Invalid date format:", newValue);
+                    }
+                }
+                break;
+            case "events":
+                if (newValue) {
+                    try {
+                        this.events = JSON.parse(newValue);
+                    } catch (e) {
+                        console.error("Invalid events JSON:", newValue);
+                        this.events = [];
+                    }
+                } else {
+                    this.events = [];
+                }
+                break;
+            case "user":
+                if (newValue) {
+                    try {
+                        this.user = JSON.parse(newValue);
+                    } catch (e) {
+                        console.error("Invalid user JSON:", newValue);
+                    }
+                }
+                break;
         }
     }
 
-    /**
-     * 渲染组件
-     */
-    render(): HTMLElement {
+    // ========== 初始化 ==========
+    private initializeComponent() {
+        // 从 attributes 初始化（对外使用）
+        const viewAttr = this.getAttribute("view");
+        if (viewAttr && ["month", "week", "day"].includes(viewAttr)) {
+            this.currentView = viewAttr as "month" | "week" | "day";
+        }
+
+        const dateAttr = this.getAttribute("date");
+        if (dateAttr) {
+            try {
+                const date = new Date(dateAttr);
+                if (!isNaN(date.getTime())) {
+                    this.currentDate = date;
+                }
+            } catch (e) {
+                console.error("Invalid date format:", dateAttr);
+            }
+        }
+
+        const eventsAttr = this.getAttribute("events");
+        if (eventsAttr) {
+            try {
+                this.events = JSON.parse(eventsAttr);
+            } catch (e) {
+                console.error("Invalid events JSON:", eventsAttr);
+            }
+        }
+
+        const userAttr = this.getAttribute("user");
+        if (userAttr) {
+            try {
+                this.user = JSON.parse(userAttr);
+            } catch (e) {
+                console.error("Invalid user JSON:", userAttr);
+            }
+        }
+
+        this._initialized = true;
+    }
+
+    // ========== 渲染 ==========
+    render() {
         return (
             <div class="calendar">
-                <div class="calendar-toolbar">
-                    <button onClick={() => this.handleViewChange("month")}>
-                        月
+                {this.renderToolbar()}
+                {this.renderView()}
+            </div>
+        );
+    }
+
+    private renderToolbar() {
+        return (
+            <div class="calendar-toolbar">
+                <div class="calendar-toolbar-left">
+                    <button
+                        class="calendar-nav-button"
+                        onClick={() => this.handleNavigate(-1)}
+                        aria-label="上一页"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        </svg>
                     </button>
-                    <button onClick={() => this.handleViewChange("week")}>
-                        周
+                    <button
+                        class="calendar-nav-button"
+                        onClick={() => this.handleNavigate(1)}
+                        aria-label="下一页"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        </svg>
                     </button>
-                    <button onClick={() => this.handleViewChange("day")}>
-                        日
+                    <button
+                        class="calendar-today-button"
+                        onClick={() => this.handleToday()}
+                    >
+                        今天
                     </button>
+                    <div class="calendar-toolbar-date">
+                        {this.formatViewDate()}
+                    </div>
                 </div>
-                <div class="calendar-view">
-                    <p>Calendar View: {this.state.currentView}</p>
-                    <p>Events: {this.events.length}</p>
+                <div class="calendar-toolbar-right">
+                    <div class="calendar-view-buttons">
+                        <button
+                            class={`calendar-view-button ${
+                                this.currentView === "month" ? "active" : ""
+                            }`}
+                            onClick={() => this.handleViewChange("month")}
+                        >
+                            月
+                        </button>
+                        <button
+                            class={`calendar-view-button ${
+                                this.currentView === "week" ? "active" : ""
+                            }`}
+                            onClick={() => this.handleViewChange("week")}
+                        >
+                            周
+                        </button>
+                        <button
+                            class={`calendar-view-button ${
+                                this.currentView === "day" ? "active" : ""
+                            }`}
+                            onClick={() => this.handleViewChange("day")}
+                        >
+                            日
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     }
 
-    /**
-     * 处理视图切换
-     */
+    private renderView() {
+        // 确保 currentView 始终是有效值
+        const view = this.currentView || "month";
+        switch (view) {
+            case "month":
+                return this.renderMonthView();
+            case "week":
+                return this.renderWeekView();
+            case "day":
+                return this.renderDayView();
+            default:
+                // 如果 view 无效，默认使用 month 视图
+                console.warn(`Invalid view: ${view}, falling back to "month"`);
+                this.currentView = "month";
+                return this.renderMonthView();
+        }
+    }
+
+    // ========== 月视图 ==========
+    private renderMonthView() {
+        return (
+            <wsx-month-view
+                view-date={this.currentDate.toISOString()}
+                events={JSON.stringify(this.events)}
+                selected-date={this.currentDate.toISOString()}
+                user={this.user ? JSON.stringify(this.user) : undefined}
+            ></wsx-month-view>
+        );
+    }
+
+    // ========== 周视图 ==========
+    private renderWeekView() {
+        return (
+            <wsx-week-view
+                view-date={this.currentDate.toISOString()}
+                events={JSON.stringify(this.events)}
+                selected-date={this.currentDate.toISOString()}
+                user={this.user ? JSON.stringify(this.user) : undefined}
+            ></wsx-week-view>
+        );
+    }
+
+    // ========== 日视图 ==========
+    private renderDayView() {
+        return (
+            <wsx-day-view
+                view-date={this.currentDate.toISOString()}
+                events={JSON.stringify(this.events)}
+                user={this.user ? JSON.stringify(this.user) : undefined}
+            ></wsx-day-view>
+        );
+    }
+
+    // ========== 工具方法 ==========
+    private formatViewDate() {
+        const date = this.currentDate;
+        switch (this.currentView) {
+            case "month":
+                return `${date.getFullYear()}年${date.getMonth() + 1}月`;
+            case "week":
+                const weekStart = getWeekDates(date)[0];
+                const weekEnd = getWeekDates(date)[6];
+                return `${weekStart.getMonth() + 1}/${weekStart.getDate()} - ${
+                    weekEnd.getMonth() + 1
+                }/${weekEnd.getDate()}`;
+            case "day":
+                return `${date.getFullYear()}年${
+                    date.getMonth() + 1
+                }月${date.getDate()}日`;
+            default:
+                return "";
+        }
+    }
+
+    // ========== 事件处理 ==========
+    private handleNavigate(direction: number) {
+        const newDate = new Date(this.currentDate);
+        switch (this.currentView) {
+            case "month":
+                newDate.setMonth(newDate.getMonth() + direction);
+                break;
+            case "week":
+                newDate.setDate(newDate.getDate() + direction * 7);
+                break;
+            case "day":
+                newDate.setDate(newDate.getDate() + direction);
+                break;
+        }
+        this.currentDate = newDate;
+        this.dispatchEvent(
+            new CustomEvent("date-change", {
+                detail: { date: newDate },
+                bubbles: true,
+            })
+        );
+    }
+
+    private handleToday() {
+        this.currentDate = new Date();
+        this.dispatchEvent(
+            new CustomEvent("date-change", {
+                detail: { date: this.currentDate },
+                bubbles: true,
+            })
+        );
+    }
+
+    private handleDateClick(date: Date) {
+        this.currentDate = date;
+        this.dispatchEvent(
+            new CustomEvent("date-change", {
+                detail: { date },
+                bubbles: true,
+            })
+        );
+    }
+
+    private handleTimeSlotClick(date: Date, hour: number) {
+        const clickedDate = new Date(date);
+        clickedDate.setHours(hour, 0, 0, 0);
+        this.currentDate = clickedDate;
+        this.dispatchEvent(
+            new CustomEvent("date-change", {
+                detail: { date: clickedDate },
+                bubbles: true,
+            })
+        );
+    }
+
     private handleViewChange(view: "month" | "week" | "day") {
-        this.state.currentView = view;
+        this.currentView = view;
         this.dispatchEvent(
             new CustomEvent("view-change", {
                 detail: { view },

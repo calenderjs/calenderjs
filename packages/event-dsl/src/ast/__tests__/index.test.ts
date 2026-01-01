@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { EventTypeAST } from './index';
+import type { EventTypeAST } from '../types';
 
 describe('ast/index', () => {
   it('should export EventTypeAST type', () => {

@@ -191,7 +191,7 @@ export interface ValidationResult {
   /** 是否有效 */
   valid: boolean;
   /** 错误消息列表 */
-  errors: string[];
+  errors?: string[];
 }
 
 // ============================================
@@ -262,4 +262,46 @@ export interface RecurringRule {
   count?: number;
   /** 星期几（0=周日） */
   daysOfWeek?: number[];
+}
+
+// ============================================
+// 编译后的类型
+// ============================================
+
+/**
+ * 验证器函数类型
+ */
+export type ValidatorFunction = (appointment: any) => ValidationResult;
+
+/**
+ * 渲染器函数类型
+ */
+export type RendererFunction = (appointment: any) => RenderedAppointment;
+
+/**
+ * 编译后的验证器
+ */
+export interface CompiledValidator {
+  name: string;
+  validate: ValidatorFunction;
+}
+
+/**
+ * 编译后的预约类型
+ */
+export interface CompiledType {
+  id: string;
+  name: string;
+  schema: any; // JSON Schema
+  validator: ValidatorFunction;
+  renderer: RendererFunction;
+  behavior: BehaviorConfig;
+}
+
+/**
+ * 编译后的 DSL
+ */
+export interface CompiledDSL {
+  types: CompiledType[];
+  validators: CompiledValidator[];
 }

@@ -15,7 +15,7 @@ import type {
   TemplateValue,
   BehaviorRule,
   ConstraintRule,
-} from './types';
+} from '../types';
 
 describe('AST Types', () => {
   describe('EventTypeAST', () => {

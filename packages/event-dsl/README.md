@@ -1,11 +1,11 @@
-# @calenderjs/dsl
+# @calenderjs/event-dsl
 
 Appointment DSL - 领域特定语言，用于定义预约类型和业务规则。
 
 ## 安装
 
 ```bash
-pnpm add @calenderjs/dsl
+pnpm add @calenderjs/event-dsl
 ```
 
 ## 快速开始
@@ -13,7 +13,7 @@ pnpm add @calenderjs/dsl
 ### 1. 定义预约类型
 
 ```typescript
-import { AppointmentType } from '@calenderjs/dsl';
+import { AppointmentType } from '@calenderjs/event-dsl';
 
 const meetingType: AppointmentType = {
   id: 'meeting',
@@ -55,7 +55,7 @@ const meetingType: AppointmentType = {
 ### 2. 编译 DSL
 
 ```typescript
-import { AppointmentDSLCompiler } from '@calenderjs/dsl';
+import { AppointmentDSLCompiler } from '@calenderjs/event-dsl';
 
 const dsl = {
   types: [meetingType]
@@ -68,7 +68,7 @@ const compiled = compiler.compile(dsl);
 ### 3. 创建运行时
 
 ```typescript
-import { AppointmentDSLRuntime } from '@calenderjs/dsl';
+import { AppointmentDSLRuntime } from '@calenderjs/event-dsl';
 
 const runtime = new AppointmentDSLRuntime(compiled);
 ```

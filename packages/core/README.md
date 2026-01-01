@@ -5,7 +5,7 @@ CalenderJS 核心日历组件库，支持基于 Appointment DSL 的渲染。
 ## 安装
 
 ```bash
-pnpm add @calenderjs/core @calenderjs/dsl
+pnpm add @calenderjs/core @calenderjs/event-dsl
 ```
 
 ## 使用示例
@@ -45,7 +45,7 @@ pnpm add @calenderjs/core @calenderjs/dsl
 
 ```typescript
 import { Calendar } from '@calenderjs/core';
-import { AppointmentDSLCompiler, AppointmentDSLRuntime } from '@calenderjs/dsl';
+import { AppointmentDSLCompiler, AppointmentDSLRuntime } from '@calenderjs/event-dsl';
 import { meetingAppointmentType } from './appointment-types';
 
 // 定义 DSL

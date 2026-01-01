@@ -444,7 +444,7 @@ export class SlackIntegration {
 'use client';
 
 import { Calendar } from '@calenderjs/core';
-import { AppointmentDSLRuntime } from '@calenderjs/dsl';
+import { AppointmentDSLRuntime } from '@calenderjs/event-dsl';
 import { useEffect, useState } from 'react';
 
 export default function CalendarPage({ params }: { params: { tenantId: string } }) {
@@ -545,7 +545,7 @@ export default function CalendarPage({ params }: { params: { tenantId: string } 
 
 2. **日历页面**（1 天）
    - 集成 @calenderjs/core 组件
-   - 集成 @calenderjs/dsl 运行时
+   - 集成 @calenderjs/event-dsl 运行时
 
 3. **设置页面**（1 天）
    - 实现租户设置
@@ -571,7 +571,7 @@ export default function CalendarPage({ params }: { params: { tenantId: string } 
 
 ### 前端
 - **@calenderjs/core**: 基于 RFC-0001 的组件库
-- **@calenderjs/dsl**: 基于 RFC-0002 的 DSL 系统
+- **@calenderjs/event-dsl**: 基于 RFC-0002 的 DSL 系统
 - **Next.js 14**: App Router, Server Components
 - **TypeScript**: 类型安全
 - **React**: UI 框架

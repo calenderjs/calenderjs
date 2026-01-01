@@ -807,7 +807,7 @@ calendar.addEventListener('appointment-click', (e: AppointmentClickEvent) => {
 /** @jsxImportSource @wsxjs/wsx-core */
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
 import styles from "./Calendar.css?inline";
-import { AppointmentDSLRuntime } from "@calenderjs/dsl";
+import { AppointmentDSLRuntime } from "@calenderjs/event-dsl";
 
 @autoRegister({ tagName: "wsx-calendar" })
 export default class Calendar extends WebComponent {

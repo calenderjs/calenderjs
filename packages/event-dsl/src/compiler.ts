@@ -7,56 +7,17 @@
 import {
   AppointmentDSL,
   AppointmentType,
-  CompiledDSL,
-  CompiledType,
   ValidationResult,
   RenderedAppointment,
   FieldDefinition,
   FieldValidationRule,
+  BehaviorConfig,
+  CompiledDSL,
+  CompiledType,
+  CompiledValidator,
+  ValidatorFunction,
+  RendererFunction,
 } from './types';
-
-/**
- * 编译后的 DSL
- */
-export interface CompiledDSL {
-  types: CompiledType[];
-  validators: CompiledValidator[];
-}
-
-/**
- * 编译后的预约类型
- */
-export interface CompiledType {
-  id: string;
-  name: string;
-  schema: any; // JSON Schema
-  validator: ValidatorFunction;
-  renderer: RendererFunction;
-  behavior: BehaviorConfig;
-}
-
-/**
- * 编译后的验证器
- */
-export interface CompiledValidator {
-  name: string;
-  validate: ValidatorFunction;
-}
-
-/**
- * 验证器函数类型
- */
-export type ValidatorFunction = (appointment: any) => ValidationResult;
-
-/**
- * 渲染器函数类型
- */
-export type RendererFunction = (appointment: any) => RenderedAppointment;
-
-/**
- * 行为配置（从类型中提取）
- */
-import { BehaviorConfig } from './types';
 
 /**
  * DSL 编译器

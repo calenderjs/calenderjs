@@ -70,7 +70,7 @@ nx dev @calenderjs/core
 nx build calendar-service
 
 # 并行运行多个任务
-nx run-many --target=build --projects=@calenderjs/core,@calenderjs/dsl --parallel
+nx run-many --target=build --projects=@calenderjs/core,@calenderjs/event-dsl --parallel
 ```
 
 ### 构建
@@ -130,7 +130,7 @@ nx graph
     "lint": "eslint src"
   },
   "dependencies": {
-    "@calenderjs/dsl": "workspace:*"
+    "@calenderjs/event-dsl": "workspace:*"
   },
   "peerDependencies": {
     "@wsxjs/wsx-core": "^0.0.1"
@@ -153,7 +153,7 @@ nx graph
   },
   "dependencies": {
     "@calenderjs/core": "workspace:*",
-    "@calenderjs/dsl": "workspace:*",
+    "@calenderjs/event-dsl": "workspace:*",
     "next": "^14.0.0",
     "react": "^18.0.0"
   }
@@ -208,7 +208,7 @@ nx graph
 {
   "dependencies": {
     "@calenderjs/core": "workspace:*",
-    "@calenderjs/dsl": "workspace:*"
+    "@calenderjs/event-dsl": "workspace:*"
   }
 }
 ```

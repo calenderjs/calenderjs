@@ -530,7 +530,7 @@ export class AppointmentDSLRuntime {
 
 ```typescript
 // packages/core/src/Calendar.wsx
-import { AppointmentDSLRuntime } from '@calenderjs/dsl';
+import { AppointmentDSLRuntime } from '@calenderjs/event-dsl';
 
 export default class Calendar extends WebComponent {
   @state private dslRuntime?: AppointmentDSLRuntime;
@@ -653,7 +653,7 @@ packages/calenderjs-dsl/
 ## 使用示例
 
 ```typescript
-import { AppointmentDSLCompiler, AppointmentDSLRuntime } from '@calenderjs/dsl';
+import { AppointmentDSLCompiler, AppointmentDSLRuntime } from '@calenderjs/event-dsl';
 import { meetingAppointmentType, vacationAppointmentType } from './appointment-types';
 
 // 定义 DSL
