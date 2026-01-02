@@ -8,7 +8,7 @@
 
 /** @jsxImportSource @wsxjs/wsx-core */
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
-import type { Event as CalendarEvent } from "@calenderjs/core";
+import type { Event as CalendarEvent } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
 import { getWeekDates } from "./utils/date-utils";
 import styles from "./Calendar.css?inline";

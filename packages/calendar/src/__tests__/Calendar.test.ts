@@ -9,7 +9,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { Event, User } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
+import { User } from "@calenderjs/core";
 import { EventDSLRuntime } from "@calenderjs/event-dsl";
 import Calendar from "../Calendar.wsx";
 

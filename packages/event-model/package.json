@@ -1,7 +1,7 @@
 {
-    "name": "@calenderjs/core",
+    "name": "@calenderjs/event-model",
     "version": "0.1.0",
-    "description": "CalenderJS 核心日历组件库 - 基于 Web Components",
+    "description": "Event Data Model - Single Source of Truth (SSOT) for Event data structures",
     "type": "module",
     "main": "./dist/index.cjs",
     "module": "./dist/index.mjs",
@@ -28,7 +28,8 @@
         "lint": "eslint src"
     },
     "dependencies": {
-        "@calenderjs/event-model": "workspace:*"
+        "ajv": "^8.17.1",
+        "ajv-formats": "^3.0.1"
     },
     "devDependencies": {
         "@types/node": "^20.19.27",

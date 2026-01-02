@@ -288,11 +288,14 @@ export interface CompiledValidator {
 
 /**
  * 编译后的预约类型
+ * 
+ * 注意：DSL 是生成工具，用于生成符合 Event Data Model 的数据
+ * Event Data Model 是 SSOT，定义了 Event 接口结构
+ * 因此不需要在这里存储 JSON Schema
  */
 export interface CompiledType {
   id: string;
   name: string;
-  schema: any; // JSON Schema
   validator: ValidatorFunction;
   renderer: RendererFunction;
   behavior: BehaviorConfig;

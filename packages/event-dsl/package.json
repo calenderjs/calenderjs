@@ -25,12 +25,13 @@
         "dev": "vite build --watch",
         "build": "pnpm build:parser && vite build",
         "build:parser": "peggy src/event-dsl.pegjs -o src/generated/parser.js --format es",
-        "test": "vitest",
+        "test": "vitest run",
         "lint": "eslint src",
         "postinstall": "pnpm build:parser"
     },
     "dependencies": {
-        "@calenderjs/core": "workspace:*"
+        "@calenderjs/core": "workspace:*",
+        "@calenderjs/event-model": "workspace:*"
     },
     "devDependencies": {
         "@types/node": "^20.19.27",

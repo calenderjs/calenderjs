@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ValidationContext } from "../ValidationContext";
-import { Event } from "../../models/Event";
+import type { Event } from "@calenderjs/event-model";
 import { User } from "../../models/User";
 
 describe("ValidationContext", () => {

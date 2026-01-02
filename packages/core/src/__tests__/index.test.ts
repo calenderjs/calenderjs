@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
+import type { Event, EventMetadata } from "@calenderjs/event-model";
 import type {
-    Event,
-    EventMetadata,
     User,
     UserRole,
     EventTypeDefinition,

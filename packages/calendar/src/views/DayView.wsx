@@ -1,6 +1,6 @@
 /** @jsxImportSource @wsxjs/wsx-core */
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
 import { isSameDay, getTimeString, getDayHours } from "../utils/date-utils";
 import {

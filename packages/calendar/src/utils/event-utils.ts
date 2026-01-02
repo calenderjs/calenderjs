@@ -2,7 +2,7 @@
  * 事件工具函数
  */
 
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 import { isSameDay, formatDateKey, isTimeInRange } from "./date-utils";
 
 /**

@@ -1,6 +1,6 @@
 /** @jsxImportSource @wsxjs/wsx-core */
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
 import {
     getMonthDates,
@@ -314,7 +314,7 @@ export default class MonthView extends WebComponent {
                                 <div class="month-view-cell-events">
                                     {dayEvents.slice(0, 3).map((event) => {
                                         const eventColor =
-                                            event.data?.color || "#4285f4";
+                                            event.color || "#4285f4";
                                         return (
                                             <div
                                                 class="month-view-event"

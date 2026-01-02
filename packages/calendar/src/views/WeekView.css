@@ -89,7 +89,8 @@
     display: inline-block;
 }
 
-.week-view-day-header.selected .week-view-day-date {
+/* 选中状态的日期（非今日） */
+.week-view-day-header.selected:not(.today) .week-view-day-date {
     color: #1a73e8;
     font-weight: 500;
 }

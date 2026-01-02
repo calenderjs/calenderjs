@@ -4,7 +4,7 @@
  * 根据 RFC-0001 定义的事件类型定义接口
  */
 
-import { Event } from './Event';
+import type { Event } from '@calenderjs/event-model';
 import { User } from './User';
 import { ValidationContext } from '../contexts/ValidationContext';
 import { RenderContext } from '../contexts/RenderContext';

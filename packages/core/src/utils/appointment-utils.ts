@@ -4,7 +4,7 @@
  * 注意：这些函数使用 Event 类型（来自 core），而不是 Appointment（来自 dsl）
  */
 
-import type { Event } from "../models/Event";
+import type { Event } from "@calenderjs/event-model";
 import { formatDateKey } from "./date-utils";
 
 /**

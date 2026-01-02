@@ -4,7 +4,7 @@
  * 根据 RFC-0001 定义的验证上下文
  */
 
-import { Event } from '../models/Event';
+import type { Event } from '@calenderjs/event-model';
 import { User } from '../models/User';
 
 /**

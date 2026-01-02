@@ -1,65 +1,65 @@
-# RFC-0010: Week View Layout Fix - Google Calendar Style
+# RFC-0010: 周视图布局修复 - Google Calendar 风格
 
-**Status**: Implemented
-**Created**: 2026-01-01
-**Author**: Linus Torvalds (AI Agent)
+**状态**: 已实现
+**创建日期**: 2026-01-01
+**作者**: Linus Torvalds (AI Agent)
 
-## Summary
+## 概述
 
-Fixed WeekView component layout to match Google Calendar design, resolving critical DOM structure issues where time labels appeared in wrong locations and template rendering was broken.
+修复了 WeekView 组件布局以匹配 Google Calendar 设计，解决了时间标签出现在错误位置以及模板渲染损坏的关键 DOM 结构问题。
 
-## Problem Statement
+## 问题描述
 
-### Initial Issues
+### 初始问题
 
-1. **Time column misplacement**: Time labels (00:00, 01:00, etc.) were appearing on the RIGHT side instead of LEFT
-2. **Missing today marker**: Blue circular marker for today's date was not displaying
-3. **DOM structure mismatch**: Actual rendered DOM didn't match the source code template:
-   - `week-view-time-gutter` was rendering EMPTY (should have 24 time-label divs)
-   - Only the LAST `week-view-day-column` contained hour-cells
-   - First 6 day-columns were EMPTY
-   - Hour-cells incorrectly contained time text instead of being empty
+1. **时间列位置错误**: 时间标签（00:00, 01:00 等）出现在右侧而不是左侧
+2. **今日标记缺失**: 今日日期的蓝色圆形标记没有显示
+3. **DOM 结构不匹配**: 实际渲染的 DOM 与源代码模板不匹配：
+   - `week-view-time-gutter` 渲染为空（应该包含 24 个 time-label div）
+   - 只有最后一个 `week-view-day-column` 包含小时单元格
+   - 前 6 个日期列为空
+   - 小时单元格错误地包含了时间文本，而不是空白
 
-### Root Cause
+### 根本原因
 
-The issue was **KEY DUPLICATION** across different containers (RFC-0037):
+问题是**跨不同容器的 KEY 重复**（RFC-0037）：
 
-**Problem**: The same key pattern was used in BOTH the time-gutter AND day-columns:
+**问题**：在 time-gutter 和 day-columns 中使用了相同的 key 模式：
 
 ```tsx
-// ❌ WRONG: Duplicate keys in different containers
+// ❌ 错误：不同容器中的重复 key
 <div class="week-view-time-gutter">
     {this.hours.map((hour) => (
-        <div key={"gutter-" + hour}>00:00</div>  // ← key="gutter-0", "gutter-1", etc.
+        <div key={"gutter-" + hour}>00:00</div>  // ← key="gutter-0", "gutter-1", 等等
     ))}
 </div>
 
 <div class="week-view-day-column">
     {this.hours.map((hour) => (
-        <div key={"cell-" + hour}></div>  // ← DIFFERENT prefix, but framework sees collision!
+        <div key={"cell-" + hour}></div>  // ← 不同的前缀，但框架看到了冲突！
     ))}
 </div>
 ```
 
-**Why it failed**:
-- WSX framework caches DOM elements by key within the component scope
-- Even though keys had different prefixes (`gutter-` vs `cell-`), the framework was confusing elements across containers
-- This caused ALL hour cells to render in the LAST day-column only
-- Time-gutter remained empty because the framework moved those elements to the day-column
+**为什么会失败**：
+- WSX 框架在组件作用域内通过 key 缓存 DOM 元素
+- 尽管 key 有不同的前缀（`gutter-` vs `cell-`），框架仍然在跨容器混淆元素
+- 这导致所有小时单元格只在最后一个日期列中渲染
+- 时间轴保持为空，因为框架将这些元素移动到了日期列
 
-**Contributing factors**:
-1. **Key duplication**: Primary cause - duplicate key patterns across containers
-2. **`textContent` attribute**: Made debugging harder by hiding content in attributes
-3. **Element naming inconsistency**: Changed from `week-view-time-column` to `week-view-time-gutter` for semantic clarity
+**促成因素**：
+1. **Key 重复**: 主要原因 - 跨容器的重复 key 模式
+2. **`textContent` 属性**: 通过在属性中隐藏内容使调试更困难
+3. **元素命名不一致**: 从 `week-view-time-column` 改为 `week-view-time-gutter` 以提高语义清晰度
 
-## Solution
+## 解决方案
 
-### 1. Template Structure - Fix Key Duplication (WeekView.wsx)
+### 1. 模板结构 - 修复 Key 重复（WeekView.wsx）
 
-**Critical Fix**: Use **unique key prefixes** for elements in different containers (RFC-0037)
+**关键修复**：为不同容器中的元素使用**唯一的 key 前缀**（RFC-0037）
 
 ```tsx
-// ❌ WRONG: Keys that can collide across containers
+// ❌ 错误：可能在容器间冲突的 key
 <div class="week-view-time-gutter">
     {this.hours.map((hour) => (
         <div key={"gutter-" + hour} textContent={timeStr}></div>
@@ -71,17 +71,17 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
     {this.hours.map((hour) => (
         <div key={"cell-" + hour}></div>
         // Keys: cell-0, cell-1, ..., cell-23
-        // ❌ Framework sees this as key collision with gutter!
+        // ❌ 框架将此视为与 gutter 的 key 冲突！
     ))}
 </div>
 ```
 
 ```tsx
-// ✅ CORRECT: Unique semantic key prefixes
+// ✅ 正确：唯一的语义化 key 前缀
 <div class="week-view-time-gutter">
     {this.hours.map((hour) => (
         <div key={"time-gutter-label-" + hour}>
-            {timeStr}  // Also fixed: Direct JSX content instead of textContent
+            {timeStr}  // 同时修复：直接 JSX 内容而不是 textContent
         </div>
         // Keys: time-gutter-label-0, time-gutter-label-1, ..., time-gutter-label-23
     ))}
@@ -91,22 +91,22 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
     {this.hours.map((hour) => (
         <div key={"time-slot-cell-" + hour}></div>
         // Keys: time-slot-cell-0, time-slot-cell-1, ..., time-slot-cell-23
-        // ✅ Completely different prefix prevents collision
+        // ✅ 完全不同的前缀防止冲突
     ))}
 </div>
 ```
 
-**Why this fixes the issue**:
-1. **Unique prefixes**: `time-gutter-label-` vs `time-slot-cell-` are completely different
-2. **Semantic naming**: Keys describe their purpose (label vs cell)
-3. **Framework compatibility**: WSX DOM cache can distinguish elements correctly
-4. **No element movement**: Elements stay in their correct containers
+**为什么这样修复有效**：
+1. **唯一前缀**: `time-gutter-label-` vs `time-slot-cell-` 完全不同
+2. **语义化命名**: Key 描述了它们的目的（label vs cell）
+3. **框架兼容性**: WSX DOM 缓存可以正确区分元素
+4. **无元素移动**: 元素保持在正确的容器中
 
-**Complete Template Structure**:
+**完整的模板结构**：
 
 ```tsx
 <div class="week-view-body">
-    {/* Left: Time gutter with 24 hour labels */}
+    {/* 左侧：包含 24 小时标签的时间轴 */}
     <div class="week-view-time-gutter">
         {this.hours.map((hour) => {
             const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
@@ -119,19 +119,19 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
         })}
     </div>
 
-    {/* Right: 7 day columns with hour cells */}
+    {/* 右侧：包含小时单元格的 7 个日期列 */}
     <div class="week-view-columns">
         {this.weekDates.map((date) => (
             <div class="week-view-day-column" key={"day-column-" + date.getTime()}>
-                {/* 24 empty hour cells for time slots */}
+                {/* 24 个空的小时单元格用于时间槽 */}
                 {this.hours.map((hour) => (
                     <div class="week-view-hour-cell" key={"time-slot-cell-" + hour}></div>
                 ))}
 
-                {/* Absolutely positioned events */}
+                {/* 绝对定位的事件 */}
                 {dayEvents.map((event) => (
                     <div class="week-view-event" key={"time-slot-event-" + event.id}>
-                        {/* Event content */}
+                        {/* 事件内容 */}
                     </div>
                 ))}
             </div>
@@ -140,21 +140,21 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
 </div>
 ```
 
-### 2. CSS Layout (WeekView.css)
+### 2. CSS 布局（WeekView.css）
 
-**Flexbox + Grid Hybrid Approach**:
+**Flexbox + Grid 混合方法**：
 
 ```css
-/* Main container: Flexbox for horizontal layout */
+/* 主容器：Flexbox 用于水平布局 */
 .week-view-body {
     display: flex;
-    flex-direction: row; /* Explicit left-to-right */
+    flex-direction: row; /* 明确的从左到右 */
     flex: 1;
     overflow: auto;
     position: relative;
 }
 
-/* Left: Time gutter (sticky, fixed width) */
+/* 左侧：时间轴（粘性定位，固定宽度） */
 .week-view-time-gutter {
     width: 60px;
     min-width: 60px;
@@ -163,8 +163,8 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
     position: sticky;
     left: 0;
     z-index: 5;
-    order: 0; /* Explicitly first */
-    flex-shrink: 0; /* Prevent compression */
+    order: 0; /* 明确指定为第一个 */
+    flex-shrink: 0; /* 防止压缩 */
 }
 
 .week-view-time-label {
@@ -178,22 +178,22 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
     box-sizing: border-box;
 }
 
-/* Right: Day columns container (Grid for 7 equal columns) */
+/* 右侧：日期列容器（Grid 用于 7 个等宽列） */
 .week-view-columns {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     flex: 1;
-    order: 1; /* Explicitly second */
+    order: 1; /* 明确指定为第二个 */
 }
 
-/* Individual day column (relative positioning for events) */
+/* 单个日期列（相对定位用于事件） */
 .week-view-day-column {
     border-right: 1px solid #dadce0;
     position: relative;
     min-width: 0;
 }
 
-/* Hour cells (background grid) */
+/* 小时单元格（背景网格） */
 .week-view-hour-cell {
     height: 48px;
     border-bottom: 1px solid #e8eaed;
@@ -204,9 +204,9 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
 }
 ```
 
-### 3. Today Marker Fix
+### 3. 今日标记修复
 
-**CSS for Blue Circle**:
+**蓝色圆圈的 CSS**：
 
 ```css
 .week-view-day-header.today .week-view-day-date {
@@ -215,171 +215,157 @@ The issue was **KEY DUPLICATION** across different containers (RFC-0037):
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    display: flex; /* Changed from inline-block to flex */
+    display: flex; /* 从 inline-block 改为 flex */
     align-items: center;
     justify-content: center;
 }
 
-/* Base style needs display: inline-block for circular marker to work */
+/* 基础样式需要 display: inline-block 才能使圆形标记工作 */
 .week-view-day-date {
     font-size: 26px;
     font-weight: 400;
     color: #3c4043;
     line-height: 1;
-    display: inline-block; /* Required for .today override */
+    display: inline-block; /* .today 覆盖所需 */
 }
 ```
 
-## Technical Details
+## 技术细节
 
-### Layout Architecture
+### 布局架构
 
-**Container-Light, Leaf-Shadow Pattern** (RFC-0006):
-- `wsx-week-view`: Shadow DOM component (leaf component)
-- Encapsulated styles prevent global CSS pollution
-- Uses `styles from "./WeekView.css?inline"` for Shadow DOM injection
+**容器-Light，叶子-Shadow 模式**（RFC-0006）：
+- `wsx-week-view`: Shadow DOM 组件（叶子组件）
+- 封装样式防止全局 CSS 污染
+- 使用 `styles from "./WeekView.css?inline"` 进行 Shadow DOM 注入
 
-### Key Rendering Principles
+### 关键渲染原则
 
-1. **Semantic Key Naming**:
-   - `time-gutter-label-{hour}`: Time labels in left gutter
-   - `day-column-{timestamp}`: Day columns for unique date keys
-   - `time-slot-cell-{hour}`: Empty hour cells for time slots
-   - `time-slot-event-{eventId}`: Positioned event overlays
+1. **语义化 Key 命名**：
+   - `time-gutter-label-{hour}`: 左侧时间轴中的时间标签
+   - `day-column-{timestamp}`: 日期列的唯一日期 key
+   - `time-slot-cell-{hour}`: 时间槽的空小时单元格
+   - `time-slot-event-{eventId}`: 定位的事件覆盖层
 
-2. **Flexbox + Grid Hybrid**:
-   - **Flexbox** for main horizontal layout (time-gutter + columns)
-   - **Grid** for 7 equal-width day columns
-   - **Explicit `order` properties** to prevent layout shifts
-   - **Sticky positioning** for time-gutter to stay visible on scroll
+2. **Flexbox + Grid 混合**：
+   - **Flexbox** 用于主水平布局（time-gutter + columns）
+   - **Grid** 用于 7 个等宽日期列
+   - **明确的 `order` 属性**防止布局偏移
+   - **粘性定位**使时间轴在滚动时保持可见
 
-3. **Content Rendering**:
-   - **Direct JSX text content** instead of `textContent` attribute
-   - Improves reliability and WSX framework compatibility
-   - Better debugging with visible content in DevTools
+3. **内容渲染**：
+   - **直接 JSX 文本内容**而不是 `textContent` 属性
+   - 提高可靠性和 WSX 框架兼容性
+   - 在 DevTools 中可见内容，更好调试
 
-### Browser Caching Issue
+## 实现检查清单
 
-**Critical Discovery**: The main issue was **browser caching old JavaScript** after rebuild.
+- [x] 模板结构：使用直接 JSX 文本内容而不是 `textContent`
+- [x] 模板结构：所有元素的语义化 key 命名
+- [x] CSS：Flexbox + Grid 混合布局
+- [x] CSS：flex 项的明确 `order` 属性
+- [x] CSS：粘性时间轴带 `flex-shrink: 0`
+- [x] CSS：今日标记蓝色圆圈带 flex 居中
+- [x] 构建验证：编译输出与源代码匹配
+- [x] DOM 结构：时间轴渲染 24 个时间标签
+- [x] DOM 结构：每个日期列渲染 24 个空小时单元格
+- [x] 视觉效果：时间列出现在左侧
+- [x] 视觉效果：今日日期显示蓝色圆形标记
 
-**Solution**:
-- Hard-reload: `Ctrl+Shift+R` (Windows/Linux) or `Cmd+Shift+R` (Mac)
-- Clear browser cache
-- Use incognito/private browsing for testing
-- Verify build output matches source code
+## 经验教训
 
-**Verification**:
-```bash
-# Check compiled output matches source
-grep -A 50 "week-view-body" dist/index.mjs | head -80
-```
+### 1. "好品味"的实践（Linus 哲学）
 
-## Implementation Checklist
-
-- [x] Template structure: Use direct JSX text content instead of `textContent`
-- [x] Template structure: Semantic key naming for all elements
-- [x] CSS: Flexbox + Grid hybrid layout
-- [x] CSS: Explicit `order` properties for flex items
-- [x] CSS: Sticky time-gutter with `flex-shrink: 0`
-- [x] CSS: Today marker blue circle with flex centering
-- [x] Build verification: Compiled output matches source
-- [x] Browser cache: Hard-reload to see changes
-- [x] DOM structure: Time-gutter renders 24 time labels
-- [x] DOM structure: Each day-column renders 24 empty hour cells
-- [x] Visual: Time column appears on LEFT side
-- [x] Visual: Today's date shows blue circular marker
-
-## Lessons Learned
-
-### 1. "Good Taste" in Action (Linus Philosophy)
-
-**The Real Problem**: Key duplication across containers (RFC-0037)
+**真正的问题**：跨容器的 Key 重复（RFC-0037）
 
 ```tsx
-// ❌ WRONG: Short, non-unique prefixes
-<div key={"gutter-" + hour}></div>  // In time-gutter
-<div key={"cell-" + hour}></div>    // In day-column
-// Framework confuses these as same elements!
+// ❌ 错误：短的、非唯一的前缀
+<div key={"gutter-" + hour}></div>  // 在 time-gutter 中
+<div key={"cell-" + hour}></div>    // 在 day-column 中
+// 框架将这些混淆为相同的元素！
 ```
 
 ```tsx
-// ✅ CORRECT: Unique semantic prefixes eliminate the "special case"
-<div key={"time-gutter-label-" + hour}>{timeStr}</div>  // In time-gutter
-<div key={"time-slot-cell-" + hour}></div>              // In day-column
-// No confusion, no collision, no element movement
+// ✅ 正确：唯一的语义化前缀消除了"特殊情况"
+<div key={"time-gutter-label-" + hour}>{timeStr}</div>  // 在 time-gutter 中
+<div key={"time-slot-cell-" + hour}></div>              // 在 day-column 中
+// 没有混淆，没有冲突，没有元素移动
 ```
 
-**Why this is "good taste"**:
-- **Eliminates the special case**: No need for complex cache key generation logic
-- **Self-documenting**: Keys describe what the element IS and WHERE it belongs
-- **No conditionals needed**: Framework doesn't need to guess which container owns which element
-- **More predictable**: Elements stay where you put them
+**为什么这是"好品味"**：
+- **消除特殊情况**: 不需要复杂的缓存 key 生成逻辑
+- **自文档化**: Key 描述了元素是什么以及它属于哪里
+- **不需要条件判断**: 框架不需要猜测哪个容器拥有哪个元素
+- **更可预测**: 元素保持在你放置它们的地方
 
-**Linus would approve** because:
+**Linus 会赞同**因为：
 > "有时你可以从不同角度看问题，重写它让特殊情况消失，变成正常情况。"
 
-Using unique semantic prefixes makes the "special case" (key collision) disappear entirely. The framework just works.
+使用唯一的语义化前缀使"特殊情况"（key 冲突）完全消失。框架自然而然就能工作。
 
-### 2. Key Duplication is Silent and Deadly
+### 2. Key 重复是沉默而致命的
 
-**The problem was NOT browser caching** - it was **key collision** (RFC-0037).
+**问题不是浏览器缓存** - 而是 **key 冲突**（RFC-0037）。
 
-**Symptoms of key duplication**:
-- Elements render in wrong containers
-- Empty containers when they should have content
-- Content appears only in the LAST iteration of a loop
-- Framework moves elements between containers unexpectedly
+**Key 重复的症状**：
+- 元素在错误的容器中渲染
+- 应该有内容的容器为空
+- 内容只出现在循环的最后一次迭代中
+- 框架意外地在容器之间移动元素
 
-**How to debug**:
-1. Check ALL `key=` attributes in your component
-2. Look for duplicate key patterns across different containers
-3. Use unique semantic prefixes for each container:
-   - `time-gutter-label-{id}` for time labels
-   - `day-column-{id}` for day columns
-   - `time-slot-cell-{id}` for hour cells
-   - `time-slot-event-{id}` for events
+**如何调试**：
+1. 检查组件中所有的 `key=` 属性
+2. 查找不同容器中的重复 key 模式
+3. 为每个容器使用唯一的语义化前缀：
+   - `time-gutter-label-{id}` 用于时间标签
+   - `day-column-{id}` 用于日期列
+   - `time-slot-cell-{id}` 用于小时单元格
+   - `time-slot-event-{id}` 用于事件
 
-**RFC-0037 rule**:
-> **Critical Rule**: The same `key` cannot be used for different parent containers!
+**RFC-0037 规则**：
+> **关键规则**：相同的 `key` 不能在不同的父容器中使用！
 
-Even with DIFFERENT prefixes, if the framework's cache key generation produces collisions, elements will move to wrong containers.
+即使使用不同的前缀，如果框架的缓存 key 生成产生冲突，元素也会移动到错误的容器。
 
-### 3. Flexbox + Grid is the Right Pattern
+### 3. Flexbox + Grid 是正确的模式
 
-**Why this hybrid works**:
-- **Flexbox**: Perfect for horizontal layout with sticky sidebar
-- **Grid**: Perfect for equal-width columns
-- **Explicit `order`**: Prevents layout shifts
-- **Sticky positioning**: Keeps time labels visible on scroll
+**为什么这种混合方式有效**：
+- **Flexbox**: 非常适合带粘性侧边栏的水平布局
+- **Grid**: 非常适合等宽列
+- **明确的 `order`**: 防止布局偏移
+- **粘性定位**: 在滚动时保持时间标签可见
 
-**Alternative approaches that DIDN'T work**:
-- ❌ Pure CSS Grid with `grid-column` - Complex and fragile
-- ❌ `:nth-child()` selectors - Breaks with dynamic content
-- ❌ JavaScript-based positioning - Overkill for static layout
+**不起作用的替代方法**：
+- ❌ 纯 CSS Grid 配合 `grid-column` - 复杂且脆弱
+- ❌ `:nth-child()` 选择器 - 在动态内容时会破坏
+- ❌ 基于 JavaScript 的定位 - 对静态布局来说过度设计
 
-## Future Considerations
+## 未来考虑
 
-1. **Responsive Design**: Add mobile breakpoints for week view
-2. **Accessibility**: Add ARIA labels for time slots
-3. **Performance**: Virtualize day columns for year view
-4. **Customization**: Allow configurable hour height and gutter width
+1. **响应式设计**: 为周视图添加移动端断点
+2. **可访问性**: 为时间槽添加 ARIA 标签
+3. **性能**: 为年视图虚拟化日期列
+4. **自定义**: 允许可配置的小时高度和时间轴宽度
 
-## References
+## 参考
 
-- RFC-0006: Container-Light, Leaf-Shadow Pattern
-- RFC-0009: Calendar Component Architecture
-- Google Calendar UI: Reference design
-- WSX Framework: Shadow DOM and JSX rendering
+- RFC-0006: Container-Light, Leaf-Shadow 模式
+- RFC-0009: Calendar 组件架构
+- RFC-0037: 缓存 Key 最佳实践
+- Google Calendar UI: 参考设计
+- WSX 框架: Shadow DOM 和 JSX 渲染
 
-## Conclusion
+## 结论
 
-The week view layout is now **fully functional** and matches Google Calendar design:
+周视图布局现在**完全正常**并匹配 Google Calendar 设计：
 
-✅ Time column on LEFT side
-✅ Today's date shows blue circular marker
-✅ DOM structure matches template
-✅ Proper Flexbox + Grid hybrid layout
-✅ Semantic key naming for cache management
-✅ Direct JSX text content for reliability
+✅ 时间列在左侧
+✅ 今日日期显示蓝色圆形标记
+✅ DOM 结构与模板匹配
+✅ 正确的 Flexbox + Grid 混合布局
+✅ **唯一的语义化 key 前缀防止缓存冲突**（RFC-0037）
+✅ 直接 JSX 文本内容提高可靠性
 
-**Key takeaway**: Always verify browser cache when DOM doesn't match source code. The issue was NOT the template logic, but stale JavaScript in the browser.
+**关键要点**：根本原因是**跨不同容器的 KEY 重复**（RFC-0037），而不是浏览器缓存或 CSS 问题。使用唯一的语义化前缀（`time-gutter-label-` vs `time-slot-cell-`）消除了将元素移动到错误容器的框架缓存冲突。
+
+**重要教训**：在 WSX 框架中，始终为不同父容器中的元素使用**完全唯一的 key 前缀**，即使你认为框架应该处理它。像 `gutter-` 和 `cell-` 这样的短前缀仍然可能在框架的缓存 key 生成逻辑中发生冲突。

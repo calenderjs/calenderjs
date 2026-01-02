@@ -5,7 +5,8 @@
  */
 
 import { EventTypeAST } from '../ast/types';
-import { Event, ValidationContext, RenderContext, User } from '@calenderjs/core';
+import type { Event } from '@calenderjs/event-model';
+import { ValidationContext, RenderContext, User } from '@calenderjs/core';
 import type { ValidationResult, RenderedAppointment } from '../types';
 
 /**

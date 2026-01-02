@@ -30,6 +30,7 @@
     "dependencies": {
         "@calenderjs/core": "workspace:*",
         "@calenderjs/event-dsl": "workspace:*",
+        "@calenderjs/event-model": "workspace:*",
         "@wsxjs/wsx-core": "^0.0.23"
     },
     "peerDependencies": {

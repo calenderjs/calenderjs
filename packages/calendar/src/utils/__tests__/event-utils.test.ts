@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 import {
     groupEventsByDate,
     getEventsForDate,

@@ -35,88 +35,18 @@ export class AppointmentDSLCompiler {
 
   /**
    * 编译预约类型列表
+   * 
+   * 注意：DSL 是生成工具，用于生成符合 Event Data Model 的数据
+   * Event Data Model 是 SSOT，定义了 Event 接口结构
    */
   private compileTypes(types: AppointmentType[]): CompiledType[] {
     return types.map(type => ({
       id: type.id,
       name: type.name,
-      schema: this.generateJSONSchema(type),
       validator: this.generateValidator(type),
       renderer: this.generateRenderer(type),
       behavior: type.behavior,
     }));
-  }
-
-  /**
-   * 生成 JSON Schema
-   */
-  private generateJSONSchema(type: AppointmentType): any {
-    const schema: any = {
-      type: 'object',
-      properties: {},
-      required: [],
-    };
-
-    type.fields.forEach(field => {
-      schema.properties[field.name] = this.fieldToJSONSchema(field);
-      if (field.required) {
-        schema.required.push(field.name);
-      }
-    });
-
-    return schema;
-  }
-
-  /**
-   * 将字段定义转换为 JSON Schema
-   */
-  private fieldToJSONSchema(field: FieldDefinition): any {
-    const schema: any = {};
-
-    switch (field.type) {
-      case 'string':
-        schema.type = 'string';
-        break;
-      case 'number':
-        schema.type = 'number';
-        break;
-      case 'boolean':
-        schema.type = 'boolean';
-        break;
-      case 'date':
-        schema.type = 'string';
-        schema.format = 'date-time';
-        break;
-      case 'time':
-        schema.type = 'string';
-        schema.format = 'time';
-        break;
-      case 'enum':
-        schema.type = 'string';
-        schema.enum = field.enum;
-        break;
-      case 'array':
-        schema.type = 'array';
-        if (field.items) {
-          schema.items = this.fieldToJSONSchema(field.items);
-        }
-        break;
-      case 'object':
-        schema.type = 'object';
-        if (field.properties) {
-          schema.properties = {};
-          Object.entries(field.properties).forEach(([key, prop]) => {
-            schema.properties[key] = this.fieldToJSONSchema(prop);
-          });
-        }
-        break;
-    }
-
-    if (field.default !== undefined) {
-      schema.default = field.default;
-    }
-
-    return schema;
   }
 
   /**

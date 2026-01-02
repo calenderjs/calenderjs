@@ -3,7 +3,8 @@
  */
 
 import { ReactiveWebComponent } from "@wsxjs/wsx-core";
-import { Event, User } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
+import { User } from "@calenderjs/core";
 import { EventTypeAST } from "@calenderjs/event-dsl";
 
 declare class Calendar extends ReactiveWebComponent {

@@ -21,7 +21,7 @@ import React, {
     forwardRef,
     useState,
 } from "react";
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 
 // 延迟加载 Web Component，只在客户端注册
 // 避免在服务器端执行（HTMLElement 不存在）

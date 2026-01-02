@@ -81,7 +81,7 @@ function App() {
 
 ```tsx
 import { Calendar } from '@calenderjs/react';
-import { Event } from '@calenderjs/core';
+import type { Event } from '@calenderjs/event-model';
 
 function App() {
   const events: Event[] = [

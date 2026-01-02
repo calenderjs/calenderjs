@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Event, EventMetadata } from './Event';
+import type { Event, EventMetadata } from '@calenderjs/event-model';
 
 describe('Event', () => {
   describe('Event interface', () => {

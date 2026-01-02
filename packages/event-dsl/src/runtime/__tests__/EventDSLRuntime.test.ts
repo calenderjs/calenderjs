@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { EventDSLRuntime } from '../EventDSLRuntime';
 import { EventTypeAST } from '../../ast/types';
-import { Event, User, ValidationContext, RenderContext } from '@calenderjs/core';
+import type { Event } from '@calenderjs/event-model';
+import { User, ValidationContext, RenderContext } from '@calenderjs/core';
 
 describe('EventDSLRuntime', () => {
   let ast: EventTypeAST;
