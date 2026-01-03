@@ -26,9 +26,8 @@ fields:
 
 validate:
   attendees.count between 1 and 50
-  startTime.hour between 9 and 18
-  duration >= 15 minutes
-  duration <= 8 hours
+  startTime.hour >= 9
+  startTime.hour <= 18
 
 display:
   color: "#4285f4"
