@@ -16,6 +16,7 @@ export interface EventTypeAST {
   display: DisplayRule[];
   behavior: BehaviorRule[];
   constraints?: ConstraintRule[];
+  recurring?: RecurringDefinition;
 }
 
 /**
@@ -73,6 +74,26 @@ export interface ComparisonRule {
 }
 
 /**
+ * ModComparison 规则（用于 startTime.minute mod 15 is 0 等）
+ */
+export interface ModComparisonRule {
+  type: 'ModComparison';
+  left: FieldAccess;
+  modValue: any;
+  operator: string;
+  right: any;
+}
+
+/**
+ * In 规则（用于 dayOfWeek in [1,2,3,4,5] 等）
+ */
+export interface InRule {
+  type: 'In';
+  field: FieldAccess;
+  values: any[];
+}
+
+/**
  * Conflict 规则
  */
 export interface ConflictRule {
@@ -110,7 +131,7 @@ export interface FieldAccess {
 /**
  * 表达式类型
  */
-export type Expression = FieldAccess | ComparisonRule | LogicalRule | any;
+export type Expression = FieldAccess | ComparisonRule | LogicalRule | InRule | ModComparisonRule | any;
 
 /**
  * 显示规则
@@ -152,4 +173,18 @@ export interface BehaviorRule {
 export interface ConstraintRule {
   name: string;
   value: any;
+}
+
+/**
+ * 重复事件定义
+ */
+export interface RecurringDefinition {
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  interval: number;
+  endDate?: string;  // 日期字符串 YYYY-MM-DD
+  count?: number;
+  daysOfWeek?: number[];
+  dayOfMonth?: number;
+  excludeDates?: string[];  // 日期字符串数组
+  timeZone?: string;
 }

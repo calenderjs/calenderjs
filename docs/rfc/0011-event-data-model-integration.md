@@ -18,10 +18,12 @@
    - **JSON Schema 位置**：`packages/event-model/src/validator.ts` 中的 `EVENT_BASE_SCHEMA`
    - **验证器位置**：`packages/event-model/src/validator.ts` 中的 `EventValidator`
 
-2. **DSL 是生成工具（不是定义工具）**
+2. **Event DSL 是生成工具（不是定义工具）**
    - **作用**：从 DSL 定义生成符合 Event Data Model 的 Event 数据
    - **不生成 JSON Schema**：Event Data Model 的 JSON Schema 已经在 `@calenderjs/event-model` 中定义
    - **生成 Event 对象**：使用 `EventDataGenerator` 从 DSL 生成 Event 数据
+   - **DSL 类型**：`EventDSL`、`EventTypeDefinition`、`EventDSLCompiler`、`EventDSLRuntime`
+   - **命名一致性**：所有 DSL 相关类型和类都使用 "Event" 前缀，而不是 "Appointment"
 
 3. **Appointment 和 Holiday 都是 Event 的扩展**
    - 它们都是 Event，只是 `type` 不同
@@ -33,13 +35,58 @@
    - 插件系统应该根据 `Event.type` 选择对应的渲染器
 
 5. **数据流向**
-   ```
-   DSL 定义 → EventDataGenerator → Event 对象（符合 Event Data Model）
-   Event 对象 → EventValidator（使用 EVENT_BASE_SCHEMA）→ 验证结果
-   Event 对象 → Calendar 组件 → 插件系统 → 详情卡片渲染
-   ```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0'}}}%%
+graph LR
+    A[DSL 定义] --> B[EventDataGenerator]
+    B --> C[Event 对象<br/>符合 Event Data Model]
+    C --> D[EventValidator<br/>使用 EVENT_BASE_SCHEMA]
+    D --> E{验证通过?}
+    E -->|是| F[Calendar 组件]
+    E -->|否| G[验证错误]
+    F --> H[插件系统]
+    H --> I[详情卡片渲染]
+```
 
 本 RFC 确保架构关系清晰，DSL 能够正确生成符合 Event Data Model 的数据，并支持插件/扩展机制。
+
+### 架构关系图
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph TB
+    subgraph "Event Data Model (SSOT)"
+        A[Event 接口<br/>Event.ts]
+        B[EVENT_BASE_SCHEMA<br/>validator.ts]
+        C[EventValidator<br/>validator.ts]
+    end
+    
+    subgraph "Event DSL (Generator)"
+        D[DSL 定义]
+        E[EventDataGenerator]
+    end
+    
+    subgraph "Calendar Component"
+        F[Calendar 组件]
+        G[插件系统]
+    end
+    
+    D --> E
+    E --> A
+    A --> B
+    B --> C
+    A --> F
+    F --> G
+    G --> H[详情卡片渲染]
+    
+    style A fill:#1e88e5,stroke:#1565c0,color:#fff
+    style B fill:#1e88e5,stroke:#1565c0,color:#fff
+    style C fill:#1e88e5,stroke:#1565c0,color:#fff
+    style E fill:#ff9800,stroke:#f57c00,color:#fff
+    style F fill:#4caf50,stroke:#388e3c,color:#fff
+    style G fill:#4caf50,stroke:#388e3c,color:#fff
+```
 
 ## 动机
 
@@ -136,6 +183,43 @@ interface Event {
 - Event 接口：`packages/event-model/src/Event.ts`
 - JSON Schema：`packages/event-model/src/validator.ts` 中的 `EVENT_BASE_SCHEMA`
 - 验证器：`packages/event-model/src/validator.ts` 中的 `EventValidator`
+
+### 数据契约关系图
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph TB
+    subgraph "数据契约 (Data Contract)"
+        A[Event 接口<br/>TypeScript Interface]
+        B[EVENT_BASE_SCHEMA<br/>JSON Schema]
+        C[EventValidator<br/>Runtime Validator]
+    end
+    
+    subgraph "数据生成"
+        D[Event DSL]
+        E[EventDataGenerator]
+    end
+    
+    subgraph "数据消费"
+        F[Calendar 组件]
+        G[插件系统]
+    end
+    
+    A -.定义.-> B
+    B -.验证.-> C
+    D --> E
+    E -->|生成符合| A
+    C -->|验证| A
+    A -->|消费| F
+    F -->|使用| G
+    
+    style A fill:#1e88e5,stroke:#1565c0,color:#fff
+    style B fill:#1e88e5,stroke:#1565c0,color:#fff
+    style C fill:#1e88e5,stroke:#1565c0,color:#fff
+    style E fill:#ff9800,stroke:#f57c00,color:#fff
+    style F fill:#4caf50,stroke:#388e3c,color:#fff
+    style G fill:#4caf50,stroke:#388e3c,color:#fff
+```
 
 ### Calendar 插件机制（设计说明）
 
@@ -420,9 +504,9 @@ const taskEvent: Event = {
 
 #### 1.3 Event 类型与 DSL 类型关联
 
-- `Event.type` 字段对应 DSL 的 `AppointmentType.id`
-- `Event.extra` 字段的值由 DSL 的 `AppointmentType.fields` 生成
-- `Event.color` 和 `Event.icon` 由 DSL 的 `AppointmentType.display` 生成
+- `Event.type` 字段对应 DSL 的 `EventTypeDefinition.id`
+- `Event.extra` 字段的值由 DSL 的 `EventTypeDefinition.fields` 生成
+- `Event.color` 和 `Event.icon` 由 DSL 的 `EventTypeDefinition.display` 生成
 - **重要**：
   - Event Data Model 定义了结构（在 `@calenderjs/event-model` 中）
   - Event Data Model 的 JSON Schema 在 `packages/event-model/src/validator.ts` 中定义（`EVENT_BASE_SCHEMA`）
@@ -430,12 +514,72 @@ const taskEvent: Event = {
   - Event 数据验证使用 Event Data Model 的 JSON Schema（`EVENT_BASE_SCHEMA`）
   - Calendar 组件通过插件系统根据 `Event.type` 渲染不同的详情卡片
 
+**Event 类型映射关系图**：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph LR
+    subgraph "DSL 定义"
+        A[EventTypeDefinition.id]
+        B[EventTypeDefinition.fields]
+        C[EventTypeDefinition.display]
+    end
+    
+    subgraph "Event 对象"
+        D[Event.type]
+        E[Event.extra]
+        F[Event.color<br/>Event.icon]
+    end
+    
+    subgraph "Calendar 显示"
+        G[Calendar 组件]
+        H[插件系统]
+        I[详情卡片]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    D --> G
+    E --> H
+    F --> G
+    H --> I
+    
+    style A fill:#ff9800,stroke:#f57c00,color:#fff
+    style B fill:#ff9800,stroke:#f57c00,color:#fff
+    style C fill:#ff9800,stroke:#f57c00,color:#fff
+    style D fill:#1e88e5,stroke:#1565c0,color:#fff
+    style E fill:#1e88e5,stroke:#1565c0,color:#fff
+    style F fill:#1e88e5,stroke:#1565c0,color:#fff
+    style G fill:#4caf50,stroke:#388e3c,color:#fff
+    style H fill:#4caf50,stroke:#388e3c,color:#fff
+    style I fill:#4caf50,stroke:#388e3c,color:#fff
+```
+
 ### 2. Event 数据生成工具
 
 **架构说明**：
 - Event Data Model 是 SSOT，定义了 Event 接口结构
 - DSL 是生成工具，用于生成符合 Event Data Model 的数据
 - `EventDataGenerator` 从 DSL 定义生成 Event 对象
+
+**命名规范（已统一）**
+
+Event DSL 中的所有类型和类已统一使用 "Event" 前缀，与架构设计一致：
+
+- ✅ `EventDSL` - Event DSL 根类型
+- ✅ `EventTypeDefinition` - 事件类型定义
+- ✅ `EventDSLCompiler` - Event DSL 编译器
+- ✅ `EventDSLRuntime` - Event DSL 运行时
+- ✅ `RenderedEvent` - 渲染后的事件信息
+- ✅ `EventValidator` - 全局验证器（注意：与 event-model 中的 EventValidator 不同）
+- ✅ `EventRule` - 全局规则
+- ✅ `Event` 接口 - 在 @calenderjs/event-model 中定义（SSOT）
+
+**架构原则**：
+- DSL 生成 Event 对象，而不是 Appointment 对象
+- Appointment 只是 Event 的一个扩展类型（`type: "appointment"`）
+- 所有 DSL 相关类型和类都使用 "Event" 前缀，保持命名一致性
 
 #### 2.1 Event 数据生成
 
@@ -446,7 +590,7 @@ export class EventDataGenerator {
    * 从 DSL 定义生成符合 Event Data Model 的 Event 对象
    */
   generateEvent(
-    dslType: AppointmentType,
+    dslType: EventTypeDefinition,
     overrides?: Partial<Event>
   ): Event {
     // 根据字段定义生成 data 字段的默认值
@@ -510,9 +654,9 @@ export class EventDataGenerator {
 
 ```typescript
 import { EventDataGenerator } from '@calenderjs/event-dsl';
-import type { AppointmentType } from '@calenderjs/event-dsl';
+import type { EventTypeDefinition } from '@calenderjs/event-dsl';
 
-const meetingType: AppointmentType = {
+const meetingType: EventTypeDefinition = {
   id: 'meeting',
   name: '会议',
   fields: [
@@ -792,3 +936,14 @@ return { valid: true, errors: [] };
   - Event Data Model 应该支持插件注册系统
   - Calendar 组件应该允许注册自定义的详情卡片渲染器
   - 插件系统应该根据 `Event.type` 选择对应的渲染器
+- 2026-01-01: **命名规范统一**
+  - 完成 Event DSL 中所有 "Appointment" 术语的重命名
+  - **重命名完成**：
+    - ✅ `AppointmentDSL` → `EventDSL`
+    - ✅ `AppointmentType` → `EventTypeDefinition`
+    - ✅ `AppointmentDSLCompiler` → `EventDSLCompiler`
+    - ✅ `RenderedAppointment` → `RenderedEvent`
+    - ✅ `AppointmentValidator` → `EventValidator`
+    - ✅ `AppointmentRule` → `EventRule`
+    - ✅ `Appointment` 接口 → 移除，改用 `Event`（已在 event-model 中定义）
+  - **架构一致性**：所有 DSL 相关类型和类都使用 "Event" 前缀，与 Event Data Model 保持一致

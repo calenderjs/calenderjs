@@ -10,15 +10,13 @@ export default defineConfig({
       exclude: [
         'src/**/*.test.ts',
         'src/**/__tests__/**',
-        'src/generated/**',
-        'src/parser/generated/**',
       ],
     }),
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'CalenderJSEventDSL',
+      name: 'CalenderJSEventRuntime',
       formats: ['es', 'cjs'],
       fileName: (format) => {
         if (format === 'es') return 'index.mjs';
@@ -27,7 +25,7 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: ['@calenderjs/core'],
+      external: ['@calenderjs/core', '@calenderjs/event-model'],
       output: {
         exports: 'named',
       },

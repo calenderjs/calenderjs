@@ -129,8 +129,80 @@ export interface Event {
    */
   extra?: Record<string, any>;
   
+  /** 
+   * 时区（可选）
+   * 
+   * IANA 时区标识符，如 "Asia/Shanghai", "America/New_York"
+   * 用于处理跨时区事件
+   */
+  timeZone?: string;
+  
+  /** 
+   * 全天事件（可选）
+   * 
+   * 如果为 true，表示这是一个全天事件
+   * 全天事件的开始和结束时间通常设置为当天的 00:00:00 和 23:59:59
+   */
+  allDay?: boolean;
+  
+  /** 
+   * 重复规则（可选）
+   * 
+   * 定义事件的重复模式（daily, weekly, monthly, yearly）
+   * 用于生成重复事件实例
+   */
+  recurring?: RecurringRule;
+  
+  /** 
+   * 父事件ID（可选）
+   * 
+   * 用于重复事件：如果此事件是重复事件的一个实例，此字段指向原始事件（父事件）的ID
+   */
+  parentEventId?: string;
+  
+  /** 
+   * 重复实例ID（可选）
+   * 
+   * 用于重复事件：标识此事件是重复事件序列中的哪个实例
+   * 通常与 parentEventId 一起使用
+   */
+  recurrenceId?: string;
+  
   /** 事件元数据（可选） */
   metadata?: EventMetadata;
+}
+
+/**
+ * 重复规则
+ * 
+ * 定义事件的重复模式，用于生成重复事件实例
+ * 
+ * 根据 RFC-0001 定义
+ */
+export interface RecurringRule {
+  /** 频率：daily（每天）、weekly（每周）、monthly（每月）、yearly（每年） */
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  
+  /** 间隔（如每 2 周，interval = 2） */
+  interval: number;
+  
+  /** 结束日期（可选，与 count 二选一） */
+  endDate?: Date;
+  
+  /** 重复次数（可选，与 endDate 二选一） */
+  count?: number;
+  
+  /** 星期几（可选，用于 weekly 频率，0=周日，1=周一...） */
+  daysOfWeek?: number[];
+  
+  /** 每月第几天（可选，用于 monthly 频率，1-31） */
+  dayOfMonth?: number;
+  
+  /** 排除的日期列表（可选，用于跳过某些日期） */
+  excludeDates?: Date[];
+  
+  /** 时区（可选，重复事件应保持在同一时区） */
+  timeZone?: string;
 }
 
 /**

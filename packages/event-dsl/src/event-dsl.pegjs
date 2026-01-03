@@ -32,6 +32,7 @@ Section
   / DisplaySection
   / BehaviorSection
   / ConstraintsSection
+  / RecurringSection
 
 // ============================================
 // 基本信息部分
@@ -113,10 +114,25 @@ WhenExpression
     }
 
 ComparisonExpression
-  = BetweenExpression
+  = InExpression
+  / BetweenExpression
   / RangeExpression
   / ConflictExpression
   / LogicalExpression
+
+InExpression
+  = field:FieldAccess _ "in" _ "[" _ values:LiteralList _ "]" {
+      return {
+        type: 'In',
+        field: field,
+        values: values
+      };
+    }
+
+LiteralList
+  = head:Literal tail:(_ "," _ item:Literal { return item; })* {
+      return [head, ...tail];
+    }
 
 BetweenExpression
   = field:FieldAccess _ "between" _ min:Literal _ "and" _ max:Literal {
@@ -160,7 +176,8 @@ LogicalTerm
   / ComparisonTerm
 
 ComparisonTerm
-  = left:FieldAccess _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal {
+  = ModExpression
+  / left:FieldAccess _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal {
       return {
         type: 'Comparison',
         operator: operator,
@@ -169,6 +186,17 @@ ComparisonTerm
       };
     }
   / FieldAccess
+
+ModExpression
+  = left:FieldAccess _ "mod" _ modValue:Literal _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal {
+      return {
+        type: 'ModComparison',
+        left: left,
+        modValue: modValue,
+        operator: operator,
+        right: right
+      };
+    }
 
 // ============================================
 // 显示规则部分
@@ -227,8 +255,94 @@ ConstraintsSection
     }
 
 ConstraintRule
-  = _ name:Identifier ":" _ value:Literal _ {
+  = _ name:ConstraintName ":" _ value:ConstraintValue _ {
       return { name: name, value: value };
+    }
+
+ConstraintName
+  = "timeZone" { return "timeZone"; }
+  / "allowedTimeZones" { return "allowedTimeZones"; }
+  / "timePrecision" { return "timePrecision"; }
+  / "minAdvanceTime" { return "minAdvanceTime"; }
+  / "maxAdvanceTime" { return "maxAdvanceTime"; }
+  / "allowCrossDay" { return "allowCrossDay"; }
+  / "maxCrossDayDuration" { return "maxCrossDayDuration"; }
+  / "minDuration" { return "minDuration"; }
+  / "maxDuration" { return "maxDuration"; }
+  / "allowedHours" { return "allowedHours"; }
+  / "allowedDays" { return "allowedDays"; }
+  / Identifier
+
+ConstraintValue
+  = ArrayLiteral  // 支持数组（如 allowedTimeZones: ["Asia/Shanghai", "America/New_York"]）
+  / RangeValue    // 支持范围（如 allowedHours: 9 to 18）
+  / Duration      // 支持 Duration（如 timePrecision: 15 minutes）
+  / String        // 支持字符串（如 timeZone: "Asia/Shanghai"）
+  / Number        // 支持数字
+  / Boolean       // 支持布尔值（如 allowCrossDay: true）
+  / Identifier
+
+RangeValue
+  = min:Number _ "to" _ max:Number {
+      return {
+        type: 'Range',
+        min: min,
+        max: max
+      };
+    }
+
+// ============================================
+// 重复事件部分
+// ============================================
+
+RecurringSection
+  = "recurring:" _ rules:RecurringRule+ {
+      return { name: 'recurring', value: Object.assign({}, ...rules) };
+    }
+
+RecurringRule
+  = _ "frequency:" _ value:RecurringFrequency _ {
+      return { frequency: value };
+    }
+  / _ "interval:" _ value:Number _ {
+      return { interval: value };
+    }
+  / _ "endDate:" _ value:DateString _ {
+      return { endDate: value };
+    }
+  / _ "count:" _ value:Number _ {
+      return { count: value };
+    }
+  / _ "daysOfWeek:" _ value:NumberList _ {
+      return { daysOfWeek: value };
+    }
+  / _ "dayOfMonth:" _ value:Number _ {
+      return { dayOfMonth: value };
+    }
+  / _ "excludeDates:" _ value:DateStringList _ {
+      return { excludeDates: value };
+    }
+  / _ "timeZone:" _ value:String _ {
+      return { timeZone: value };
+    }
+
+RecurringFrequency
+  = "daily" { return "daily"; }
+  / "weekly" { return "weekly"; }
+  / "monthly" { return "monthly"; }
+  / "yearly" { return "yearly"; }
+
+NumberList
+  = "[" _ head:Number tail:(_ "," _ item:Number { return item; })* _ "]" {
+      return [head, ...tail];
+    }
+
+DateString
+  = String  // 使用 String 规则解析日期字符串（格式：YYYY-MM-DD）
+
+DateStringList
+  = "[" _ head:DateString tail:(_ "," _ item:DateString { return item; })* _ "]" {
+      return [head, ...tail];
     }
 
 // ============================================
@@ -248,18 +362,29 @@ FieldAccess
 // ============================================
 
 Literal
-  = Duration
+  = ArrayLiteral
+  / Duration
   / Number
   / String
   / Boolean
   / Identifier
 
+ArrayLiteral
+  = "[" _ values:LiteralList _ "]" {
+      return values;
+    }
+
 Duration
-  = value:Number _ unit:("minutes" / "hours" / "days" / "weeks") {
+  = value:Number _ unit:("minutes" / "minute" / "hours" / "hour" / "days" / "day" / "weeks" / "week") {
+      // 标准化单位名称（使用复数形式）
+      const normalizedUnit = unit === "minute" ? "minutes" :
+                             unit === "hour" ? "hours" :
+                             unit === "day" ? "days" :
+                             unit === "week" ? "weeks" : unit;
       return {
         type: 'Duration',
         value: value,
-        unit: unit
+        unit: normalizedUnit
       };
     }
 
@@ -290,12 +415,12 @@ Boolean
   / "false" { return false; }
 
 Identifier
-  = chars:[a-zA-Z_][a-zA-Z0-9_]* {
-      return chars.flat().join('');
+  = first:[a-zA-Z_] rest:[a-zA-Z0-9_]* {
+      return first + rest.join('');
     }
 
 ComparisonOperator
-  = ">=" / "<=" / ">" / "<" / "is" / "equals" / "is not" / "not equals"
+  = ">=" / "<=" / ">" / "<" / "is" / "equals" / "is not" / "not equals" / "mod"
 
 // ============================================
 // 空白和注释

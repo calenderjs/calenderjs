@@ -22,7 +22,7 @@ describe('EventValidator', () => {
         title: '测试',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {},
+        extra: {},
       };
       const result1 = validator.validate(event1 as Event, schema);
       expect(result1.valid).toBe(false);
@@ -34,7 +34,7 @@ describe('EventValidator', () => {
         title: '测试',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {},
+        extra: {},
       };
       const result2 = validator.validate(event2 as Event, schema);
       expect(result2.valid).toBe(false);
@@ -45,7 +45,7 @@ describe('EventValidator', () => {
         type: 'meeting',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {},
+        extra: {},
       };
       const result3 = validator.validate(event3 as Event, schema);
       expect(result3.valid).toBe(false);
@@ -65,14 +65,14 @@ describe('EventValidator', () => {
         title: '测试',
         startTime: new Date('2025-01-15T11:00:00'),
         endTime: new Date('2025-01-15T10:00:00'),
-        data: {},
+        extra: {},
       };
       const result = validator.validate(event, schema);
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('开始时间必须早于结束时间');
     });
 
-    it('应该使用 JSON Schema 验证 Event.data', () => {
+    it('应该使用 JSON Schema 验证 Event.extra', () => {
       const validator = new EventValidator();
       const schema: JSONSchema = {
         type: 'object',
@@ -94,7 +94,7 @@ describe('EventValidator', () => {
         title: '团队会议',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {
+        extra: {
           attendees: ['user1@example.com', 'user2@example.com'],
           location: '会议室 A',
         },
@@ -110,7 +110,7 @@ describe('EventValidator', () => {
         title: '团队会议',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {
+        extra: {
           location: '会议室 A',
         },
       };
@@ -125,7 +125,7 @@ describe('EventValidator', () => {
         title: '团队会议',
         startTime: new Date('2025-01-15T10:00:00'),
         endTime: new Date('2025-01-15T11:00:00'),
-        data: {
+        extra: {
           attendees: ['invalid-email'],
           location: '会议室 A',
         },

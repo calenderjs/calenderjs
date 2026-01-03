@@ -104,7 +104,7 @@ export class Calendar {
 ```typescript
 import type { Event } from '@calenderjs/event-model';
 
-export class EventDSLRuntime {
+export class EventRuntime {
   validate(event: Event): ValidationResult {
     // 验证逻辑
   }

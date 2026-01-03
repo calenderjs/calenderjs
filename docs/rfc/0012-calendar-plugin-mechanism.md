@@ -16,6 +16,56 @@
 - 插件可以访问 `Event.extra` 字段来渲染详情卡片
 - 插件系统应该易于扩展，不修改核心代码
 
+### 插件系统架构图
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph TB
+    subgraph "Calendar 组件"
+        A[Calendar]
+        B[CalendarPluginRegistry]
+    end
+    
+    subgraph "插件系统"
+        C[Appointment Plugin]
+        D[Holiday Plugin]
+        E[Meeting Plugin]
+        F[Default Plugin]
+    end
+    
+    subgraph "Event 数据"
+        G[Event.type: appointment]
+        H[Event.type: holiday]
+        I[Event.type: meeting]
+        J[Event.extra]
+    end
+    
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    G --> C
+    H --> D
+    I --> E
+    J --> C
+    J --> D
+    J --> E
+    
+    C --> K[详情卡片渲染]
+    D --> K
+    E --> K
+    F --> K
+    
+    style A fill:#4caf50,stroke:#388e3c,color:#fff
+    style B fill:#4caf50,stroke:#388e3c,color:#fff
+    style C fill:#ff9800,stroke:#f57c00,color:#fff
+    style D fill:#ff9800,stroke:#f57c00,color:#fff
+    style E fill:#ff9800,stroke:#f57c00,color:#fff
+    style F fill:#ff9800,stroke:#f57c00,color:#fff
+    style K fill:#1e88e5,stroke:#1565c0,color:#fff
+```
+
 ## 动机
 
 当前状态：
@@ -116,6 +166,46 @@ interface Event {
 - 定义 Calendar 组件消费 Event 数据的标准接口
 - 确保所有 Event 数据都符合统一的结构
 - 支持插件系统根据 `Event.type` 渲染不同的详情卡片
+
+**数据契约与插件系统关系图**：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph TB
+    subgraph "数据契约 (Data Contract)"
+        A[Event 接口]
+        B[Event.type]
+        C[Event.extra]
+    end
+    
+    subgraph "插件系统"
+        D[CalendarPluginRegistry]
+        E[插件选择逻辑]
+    end
+    
+    subgraph "插件"
+        F[Appointment Plugin]
+        G[Holiday Plugin]
+        H[Default Plugin]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    C --> G
+    E --> F
+    E --> G
+    E --> H
+    
+    style A fill:#1e88e5,stroke:#1565c0,color:#fff
+    style B fill:#1e88e5,stroke:#1565c0,color:#fff
+    style C fill:#1e88e5,stroke:#1565c0,color:#fff
+    style D fill:#4caf50,stroke:#388e3c,color:#fff
+    style E fill:#4caf50,stroke:#388e3c,color:#fff
+    style F fill:#ff9800,stroke:#f57c00,color:#fff
+    style G fill:#ff9800,stroke:#f57c00,color:#fff
+    style H fill:#ff9800,stroke:#f57c00,color:#fff
+```
 
 ### 2. 插件接口设计
 
@@ -389,6 +479,33 @@ class Calendar {
 }
 ```
 
+**插件选择流程图**：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'noteBkgColor':'#2d2d2d', 'noteTextColor':'#e0e0e0'}}}%%
+flowchart TD
+    A[用户点击 Event] --> B[Calendar.renderEventDetailCard]
+    B --> C[获取 Event.type]
+    C --> D[pluginRegistry.getPlugins<br/>event.type]
+    D --> E{找到插件?}
+    E -->|是| F[按优先级排序]
+    E -->|否| G[获取默认插件<br/>type: '*']
+    F --> H[选择优先级最高的插件]
+    G --> I{找到默认插件?}
+    I -->|是| J[使用默认插件渲染]
+    I -->|否| K[返回空字符串]
+    H --> L[调用 plugin.render<br/>event, context]
+    J --> L
+    L --> M[返回详情卡片]
+    
+    style A fill:#1e88e5,stroke:#1565c0,color:#fff
+    style B fill:#4caf50,stroke:#388e3c,color:#fff
+    style E fill:#ff9800,stroke:#f57c00,color:#fff
+    style H fill:#ff9800,stroke:#f57c00,color:#fff
+    style L fill:#ff9800,stroke:#f57c00,color:#fff
+    style M fill:#1e88e5,stroke:#1565c0,color:#fff
+```
+
 ### 6. 插件生命周期
 
 ```typescript
@@ -430,6 +547,34 @@ class Calendar {
     this.plugins = this.plugins.filter(p => p.name !== pluginName);
   }
 }
+```
+
+**插件生命周期图**：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'noteBkgColor':'#2d2d2d', 'noteTextColor':'#e0e0e0'}}}%%
+stateDiagram-v2
+    [*] --> 未注册: 插件定义
+    未注册 --> 注册中: registerPlugin()
+    注册中 --> 初始化: 检查是否已注册
+    初始化 --> 已注册: plugin.initialize()
+    已注册 --> 运行中: 插件可用
+    运行中 --> 渲染: plugin.render()
+    渲染 --> 运行中: 渲染完成
+    运行中 --> 注销中: unregisterPlugin()
+    注销中 --> 销毁: plugin.destroy()
+    销毁 --> [*]: 插件移除
+    
+    note right of 已注册
+        插件已注册到
+        CalendarPluginRegistry
+        可以处理 Event
+    end note
+    
+    note right of 运行中
+        插件可以响应
+        Event 渲染请求
+    end note
 ```
 
 ## 实施计划

@@ -44,7 +44,7 @@ export interface ValidationResult {
  *   title: '团队会议',
  *   startTime: new Date('2025-01-15T10:00:00'),
  *   endTime: new Date('2025-01-15T11:00:00'),
- *   data: {
+ *   extra: {
  *     attendees: ['user1@example.com'],
  *     location: '会议室 A'
  *   }
@@ -83,9 +83,9 @@ export class EventValidator {
 
   /**
    * 验证 Event 数据是否符合 JSON Schema
-   * 
+   *
    * @param event 要验证的 Event 对象
-   * @param schema 用于验证 Event.data 的 JSON Schema
+   * @param schema 用于验证 Event.extra 的 JSON Schema
    * @returns 验证结果
    */
   validate(event: Event, schema: JSONSchema): ValidationResult {
@@ -105,12 +105,14 @@ export class EventValidator {
       };
     }
 
-    // 3. 使用 JSON Schema 验证 Event.data
-    return this.validateData(event.data, schema);
+    // 3. 使用 JSON Schema 验证 Event.extra
+    return this.validateData(event.extra || {}, schema);
   }
 
   /**
-   * 验证 Event.data 是否符合 JSON Schema
+   * 验证数据对象是否符合 JSON Schema
+   * 
+   * 用于验证 Event.extra 或其他数据对象
    * 
    * @param data 要验证的数据对象
    * @param schema JSON Schema 定义

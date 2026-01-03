@@ -70,6 +70,73 @@ export const EVENT_BASE_SCHEMA = {
       description: "扩展属性（可选，用于详情卡片显示）",
       additionalProperties: true,
     },
+    timeZone: {
+      type: "string",
+      description: "时区（可选，IANA 时区标识符，如 Asia/Shanghai）",
+    },
+    allDay: {
+      type: "boolean",
+      description: "全天事件（可选，如果为 true 表示全天事件）",
+    },
+    recurring: {
+      type: "object",
+      description: "重复规则（可选，定义事件的重复模式）",
+      properties: {
+        frequency: {
+          type: "string",
+          enum: ["daily", "weekly", "monthly", "yearly"],
+          description: "频率：daily（每天）、weekly（每周）、monthly（每月）、yearly（每年）",
+        },
+        interval: {
+          type: "number",
+          description: "间隔（如每 2 周，interval = 2）",
+        },
+        endDate: {
+          type: "string",
+          format: "date-time",
+          description: "结束日期（可选，与 count 二选一）",
+        },
+        count: {
+          type: "number",
+          description: "重复次数（可选，与 endDate 二选一）",
+        },
+        daysOfWeek: {
+          type: "array",
+          items: {
+            type: "number",
+          },
+          description: "星期几（可选，用于 weekly 频率，0=周日，1=周一...）",
+        },
+        dayOfMonth: {
+          type: "number",
+          minimum: 1,
+          maximum: 31,
+          description: "每月第几天（可选，用于 monthly 频率，1-31）",
+        },
+        excludeDates: {
+          type: "array",
+          items: {
+            type: "string",
+            format: "date-time",
+          },
+          description: "排除的日期列表（可选，用于跳过某些日期）",
+        },
+        timeZone: {
+          type: "string",
+          description: "时区（可选，重复事件应保持在同一时区）",
+        },
+      },
+      required: ["frequency", "interval"],
+      additionalProperties: false,
+    },
+    parentEventId: {
+      type: "string",
+      description: "父事件ID（可选，用于重复事件，指向原始事件的ID）",
+    },
+    recurrenceId: {
+      type: "string",
+      description: "重复实例ID（可选，用于重复事件，标识重复序列中的实例）",
+    },
     metadata: {
       type: "object",
       description: "事件元数据（可选）",
@@ -243,6 +310,52 @@ export class EventValidator {
 
     if (event.extra) {
       json.extra = event.extra;
+    }
+
+    if (event.timeZone) {
+      json.timeZone = event.timeZone;
+    }
+
+    if (event.allDay !== undefined) {
+      json.allDay = event.allDay;
+    }
+
+    if (event.recurring) {
+      json.recurring = {
+        frequency: event.recurring.frequency,
+        interval: event.recurring.interval,
+        ...(event.recurring.endDate && {
+          endDate:
+            event.recurring.endDate instanceof Date
+              ? event.recurring.endDate.toISOString()
+              : event.recurring.endDate,
+        }),
+        ...(event.recurring.count !== undefined && {
+          count: event.recurring.count,
+        }),
+        ...(event.recurring.daysOfWeek && {
+          daysOfWeek: event.recurring.daysOfWeek,
+        }),
+        ...(event.recurring.dayOfMonth !== undefined && {
+          dayOfMonth: event.recurring.dayOfMonth,
+        }),
+        ...(event.recurring.excludeDates && {
+          excludeDates: event.recurring.excludeDates.map((date) =>
+            date instanceof Date ? date.toISOString() : date
+          ),
+        }),
+        ...(event.recurring.timeZone && {
+          timeZone: event.recurring.timeZone,
+        }),
+      };
+    }
+
+    if (event.parentEventId) {
+      json.parentEventId = event.parentEventId;
+    }
+
+    if (event.recurrenceId) {
+      json.recurrenceId = event.recurrenceId;
     }
 
     if (event.metadata) {

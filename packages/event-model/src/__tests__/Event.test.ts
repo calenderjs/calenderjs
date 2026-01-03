@@ -9,7 +9,7 @@ describe('Event', () => {
       title: '团队会议',
       startTime: new Date('2025-01-15T10:00:00'),
       endTime: new Date('2025-01-15T11:00:00'),
-      data: {
+      extra: {
         attendees: ['user1@example.com'],
         location: '会议室 A',
       },
@@ -18,7 +18,7 @@ describe('Event', () => {
     expect(event.id).toBe('event-1');
     expect(event.type).toBe('meeting');
     expect(event.title).toBe('团队会议');
-    expect(event.data.attendees).toEqual(['user1@example.com']);
+    expect(event.extra?.attendees).toEqual(['user1@example.com']);
   });
 
   it('should support EventMetadata', () => {
@@ -35,7 +35,7 @@ describe('Event', () => {
       title: '团队会议',
       startTime: new Date('2025-01-15T10:00:00'),
       endTime: new Date('2025-01-15T11:00:00'),
-      data: {},
+      extra: {},
       metadata,
     };
 
@@ -50,28 +50,28 @@ describe('Event', () => {
       title: '团队会议',
       startTime: new Date('2025-01-15T10:00:00'),
       endTime: new Date('2025-01-15T11:00:00'),
-      data: {},
+      extra: {},
     };
 
     expect(event.metadata).toBeUndefined();
   });
 
-  it('should support Event.data with DSL-defined fields', () => {
+  it('should support Event.extra with DSL-defined fields', () => {
     const event: Event = {
       id: 'event-1',
       type: 'meeting',
       title: '团队会议',
       startTime: new Date('2025-01-15T10:00:00'),
       endTime: new Date('2025-01-15T11:00:00'),
-      data: {
+      extra: {
         attendees: ['user1@example.com', 'user2@example.com'],
         location: '会议室 A',
         priority: 'high',
       },
     };
 
-    expect(event.data.attendees).toHaveLength(2);
-    expect(event.data.location).toBe('会议室 A');
-    expect(event.data.priority).toBe('high');
+    expect(event.extra?.attendees).toHaveLength(2);
+    expect(event.extra?.location).toBe('会议室 A');
+    expect(event.extra?.priority).toBe('high');
   });
 });

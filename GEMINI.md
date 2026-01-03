@@ -1836,4 +1836,81 @@ expect(() => functionToTest(null)).toThrow();
 - YYYY-MM-DD: <变更描述>
 ```
 
+### RFC Mermaid 图表规范
+
+所有 RFC 中的 Mermaid 图表必须支持暗色模式，以确保在不同主题下都有良好的可读性。
+
+#### 暗色模式支持
+
+**必须使用的基础配置**：
+
+每个 Mermaid 图表必须以以下配置开头：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6', 'noteBkgColor':'#2d2d2d', 'noteTextColor':'#e0e0e0'}}}%%
+```
+
+**颜色方案说明**：
+- `primaryColor`: #1e88e5 (蓝色) - 用于主要元素（Event Data Model）
+- `secondaryColor`: #ff9800 (橙色) - 用于次要元素（Event DSL）
+- `tertiaryColor`: #4caf50 (绿色) - 用于第三类元素（Calendar 组件）
+- `background`: #121212 (深灰) - 背景色
+- `mainBkgColor`: #1e1e1e (深灰) - 主背景色
+- `textColor`: #e0e0e0 (浅灰) - 文字颜色
+
+**节点样式规范**：
+
+使用 `style` 指令为节点设置颜色时，必须同时设置 `fill`、`stroke` 和 `color`：
+
+```mermaid
+style NodeName fill:#1e88e5,stroke:#1565c0,color:#fff
+```
+
+**示例**：
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
+graph LR
+    A[节点A] --> B[节点B]
+    style A fill:#1e88e5,stroke:#1565c0,color:#fff
+    style B fill:#4caf50,stroke:#388e3c,color:#fff
+```
+
+#### Mermaid 语法验证
+
+**必须验证的语法**：
+1. 所有图表必须使用正确的 Mermaid 语法
+2. 节点 ID 必须唯一
+3. 箭头语法必须正确（`-->`, `-.->`, `==>` 等）
+4. 子图（subgraph）语法必须正确
+5. 样式语法必须正确
+
+**验证工具**：
+- 使用 Mermaid Live Editor (https://mermaid.live/) 验证语法
+- 在提交前检查图表是否能在暗色模式下正确显示
+
+#### 图表类型规范
+
+**支持的图表类型**：
+- `graph` / `graph LR` / `graph TB` - 流程图
+- `flowchart` - 流程图（新语法）
+- `stateDiagram-v2` - 状态图
+- `sequenceDiagram` - 序列图
+- `classDiagram` - 类图
+
+**不推荐使用的图表类型**：
+- `gantt` - 甘特图（除非必要）
+- `pie` - 饼图（除非必要）
+
+#### 图表最佳实践
+
+1. **保持简洁**：图表应该清晰表达架构关系，避免过度复杂
+2. **使用子图**：相关元素应该组织在子图中
+3. **统一命名**：节点命名应该与代码中的实际名称一致
+4. **颜色语义化**：
+   - 蓝色：Event Data Model（SSOT）
+   - 橙色：Event DSL（生成工具）
+   - 绿色：Calendar 组件（UI）
+5. **添加注释**：复杂图表应该添加必要的注释说明
+
 ---

@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { Event } from "@calenderjs/event-model";
 import { User } from "@calenderjs/core";
-import { EventDSLRuntime } from "@calenderjs/event-dsl";
+import { EventRuntime } from "@calenderjs/event-runtime";
 import Calendar from "../Calendar.wsx";
 
 // 等待 DOM 更新

@@ -213,8 +213,8 @@ export default class DayView extends WebComponent {
                                 this.dayStart,
                                 this.dayEnd
                             );
-                            const eventColor = event.data?.color || "#4285f4";
-                            const eventDescription = event.data?.description;
+                            const eventColor = event.color || "#4285f4";
+                            const eventDescription = event.extra?.description as string | undefined;
 
                             return (
                                 <div

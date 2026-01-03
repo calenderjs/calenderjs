@@ -5,7 +5,8 @@
       "Bash(pnpm vitest:*)",
       "Bash(npx eslint:*)",
       "Bash(pnpm build:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(pnpm test:event-model:*)"
     ],
     "deny": [],
     "ask": []

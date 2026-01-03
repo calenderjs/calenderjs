@@ -212,6 +212,37 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@20.19.27)(happy-dom@20.0.11)(jsdom@27.4.0)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)
 
+  packages/event-runtime:
+    dependencies:
+      '@calenderjs/core':
+        specifier: workspace:*
+        version: link:../core
+      '@calenderjs/event-dsl':
+        specifier: workspace:*
+        version: link:../event-dsl
+      '@calenderjs/event-model':
+        specifier: workspace:*
+        version: link:../event-model
+    devDependencies:
+      '@types/node':
+        specifier: ^20.19.27
+        version: 20.19.27
+      '@vitest/coverage-v8':
+        specifier: ^2.1.9
+        version: 2.1.9(vitest@2.1.9(@types/node@20.19.27)(happy-dom@20.0.11)(jsdom@27.4.0)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.3.0
+        version: 7.3.0(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(yaml@2.8.2)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@20.19.27)(rollup@4.54.0)(typescript@5.9.3)(vite@7.3.0(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(yaml@2.8.2))
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@20.19.27)(happy-dom@20.0.11)(jsdom@27.4.0)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)
+
   packages/react:
     dependencies:
       '@calenderjs/calendar':

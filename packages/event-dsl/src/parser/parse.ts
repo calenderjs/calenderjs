@@ -40,5 +40,6 @@ function normalizeAST(result: any): EventTypeAST {
         display: result.display || [],
         behavior: result.behavior || [],
         constraints: result.constraints || [],
+        recurring: result.recurring,
     };
 }

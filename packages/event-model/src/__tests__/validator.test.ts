@@ -22,7 +22,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {
+        extra: {
           attendees: ["user1@example.com"],
           location: "会议室 A",
         },
@@ -36,7 +36,7 @@ describe("EventValidator", () => {
     it("应该拒绝缺少必需字段的 Event 对象", () => {
       const event = {
         id: "event-1",
-        // 缺少 type, title, startTime, endTime, data
+        // 缺少 type, title, startTime, endTime
       } as any;
 
       const result = validator.validateBase(event);
@@ -52,7 +52,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: "invalid-date" as any,
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {},
+        extra: {},
       };
 
       const result = validator.validateBase(event);
@@ -67,7 +67,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {},
+        extra: {},
         metadata: {
           createdAt: new Date("2026-01-01T00:00:00Z"),
           updatedAt: new Date("2026-01-01T00:00:00Z"),
@@ -82,22 +82,22 @@ describe("EventValidator", () => {
     });
   });
 
-  describe("validateData", () => {
-    it("应该验证 Event.data 符合指定的 JSON Schema", () => {
+  describe("validateExtra", () => {
+    it("应该验证 Event.extra 符合指定的 JSON Schema", () => {
       const event: Event = {
         id: "event-1",
         type: "meeting",
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {
+        extra: {
           attendees: ["user1@example.com", "user2@example.com"],
           location: "会议室 A",
           priority: "normal",
         },
       };
 
-      const dataSchema = {
+      const extraSchema = {
         type: "object",
         required: ["attendees", "location"],
         properties: {
@@ -120,25 +120,25 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateData(event, dataSchema);
+      const result = validator.validateExtra(event, extraSchema);
       expect(result.valid).toBe(true);
       expect(result.errors).toEqual([]);
     });
 
-    it("应该拒绝不符合 data Schema 的 Event", () => {
+    it("应该拒绝不符合 extra Schema 的 Event", () => {
       const event: Event = {
         id: "event-1",
         type: "meeting",
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {
+        extra: {
           // 缺少必需的 location 字段
           attendees: ["user1@example.com"],
         },
       };
 
-      const dataSchema = {
+      const extraSchema = {
         type: "object",
         required: ["attendees", "location"],
         properties: {
@@ -155,7 +155,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateData(event, dataSchema);
+      const result = validator.validateExtra(event, extraSchema);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
       expect(result.errors?.length).toBeGreaterThan(0);
@@ -168,12 +168,12 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {
+        extra: {
           attendees: ["invalid-email"],
         },
       };
 
-      const dataSchema = {
+      const extraSchema = {
         type: "object",
         properties: {
           attendees: {
@@ -187,7 +187,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateData(event, dataSchema);
+      const result = validator.validateExtra(event, extraSchema);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
     });
@@ -201,7 +201,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {},
+        extra: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -216,7 +216,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T11:00:00Z"),
         endTime: new Date("2026-01-15T10:00:00Z"),
-        data: {},
+        extra: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -231,7 +231,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: "2026-01-15T10:00:00Z" as any,
         endTime: "2026-01-15T11:00:00Z" as any,
-        data: {},
+        extra: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -241,19 +241,19 @@ describe("EventValidator", () => {
   });
 
   describe("validate", () => {
-    it("应该使用 dataSchema 验证完整 Event", () => {
+    it("应该使用 extraSchema 验证完整 Event", () => {
       const event: Event = {
         id: "event-1",
         type: "meeting",
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {
+        extra: {
           location: "会议室 A",
         },
       };
 
-      const dataSchema = {
+      const extraSchema = {
         type: "object",
         required: ["location"],
         properties: {
@@ -264,7 +264,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validate(event, dataSchema);
+      const result = validator.validate(event, extraSchema);
       expect(result.valid).toBe(true);
     });
 
@@ -275,7 +275,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {},
+        extra: {},
       };
 
       const result = validator.validate(event);
@@ -295,7 +295,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        data: {},
+        extra: {},
       };
 
       const result = defaultEventValidator.validateBase(event);
@@ -312,7 +312,162 @@ describe("EventValidator", () => {
       expect(EVENT_BASE_SCHEMA.required).toContain("title");
       expect(EVENT_BASE_SCHEMA.required).toContain("startTime");
       expect(EVENT_BASE_SCHEMA.required).toContain("endTime");
-      expect(EVENT_BASE_SCHEMA.required).toContain("data");
+    });
+
+    it("应该包含时间敏感字段的 Schema 定义", () => {
+      expect(EVENT_BASE_SCHEMA.properties).toBeDefined();
+      expect(EVENT_BASE_SCHEMA.properties?.timeZone).toBeDefined();
+      expect(EVENT_BASE_SCHEMA.properties?.allDay).toBeDefined();
+      expect(EVENT_BASE_SCHEMA.properties?.recurring).toBeDefined();
+      expect(EVENT_BASE_SCHEMA.properties?.parentEventId).toBeDefined();
+      expect(EVENT_BASE_SCHEMA.properties?.recurrenceId).toBeDefined();
+    });
+  });
+
+  describe("时间敏感字段验证", () => {
+    it("应该验证包含 timeZone 的 Event", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "团队会议",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        timeZone: "Asia/Shanghai",
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该验证包含 allDay 的 Event", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "holiday",
+        title: "春节",
+        startTime: new Date("2026-01-29T00:00:00Z"),
+        endTime: new Date("2026-02-04T23:59:59Z"),
+        allDay: true,
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该验证包含 recurring 的 Event", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "每周例会",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        recurring: {
+          frequency: "weekly",
+          interval: 1,
+          daysOfWeek: [1, 3, 5], // 周一、周三、周五
+          endDate: new Date("2026-12-31T23:59:59Z"),
+        },
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该验证包含 parentEventId 和 recurrenceId 的 Event", () => {
+      const event: Event = {
+        id: "event-2",
+        type: "meeting",
+        title: "每周例会",
+        startTime: new Date("2026-01-22T10:00:00Z"),
+        endTime: new Date("2026-01-22T11:00:00Z"),
+        parentEventId: "event-1",
+        recurrenceId: "2026-01-22",
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该验证完整的重复事件配置", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "每月例会",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        timeZone: "Asia/Shanghai",
+        recurring: {
+          frequency: "monthly",
+          interval: 1,
+          dayOfMonth: 15,
+          count: 12,
+          excludeDates: [new Date("2026-07-15T10:00:00Z")],
+          timeZone: "Asia/Shanghai",
+        },
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该拒绝无效的 recurring frequency", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "测试",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        recurring: {
+          frequency: "invalid" as any,
+          interval: 1,
+        },
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(false);
+    });
+
+    it("应该拒绝缺少 required 字段的 recurring", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "测试",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        recurring: {
+          frequency: "weekly",
+          // 缺少 interval
+        } as any,
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(false);
+    });
+
+    it("应该验证 eventToJson 正确转换时间敏感字段", () => {
+      const event: Event = {
+        id: "event-1",
+        type: "meeting",
+        title: "测试",
+        startTime: new Date("2026-01-15T10:00:00Z"),
+        endTime: new Date("2026-01-15T11:00:00Z"),
+        timeZone: "Asia/Shanghai",
+        allDay: true,
+        recurring: {
+          frequency: "weekly",
+          interval: 1,
+          endDate: new Date("2026-12-31T23:59:59Z"),
+          excludeDates: [new Date("2026-07-15T10:00:00Z")],
+        },
+        parentEventId: "parent-1",
+        recurrenceId: "2026-01-15",
+      };
+
+      const result = validator.validateBase(event);
+      expect(result.valid).toBe(true);
+      
+      // 验证 JSON 转换（通过 validateBase 内部调用 eventToJson）
+      // 如果验证通过，说明转换正确
+      expect(result.errors).toEqual([]);
     });
   });
 });
