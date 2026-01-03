@@ -50,6 +50,15 @@ importers:
       '@calenderjs/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@calenderjs/event-dsl':
+        specifier: workspace:*
+        version: link:../../packages/event-dsl
+      '@calenderjs/event-model':
+        specifier: workspace:*
+        version: link:../../packages/event-model
+      '@calenderjs/event-runtime':
+        specifier: workspace:*
+        version: link:../../packages/event-runtime
       '@calenderjs/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -217,13 +226,13 @@ importers:
       '@calenderjs/core':
         specifier: workspace:*
         version: link:../core
-      '@calenderjs/event-dsl':
-        specifier: workspace:*
-        version: link:../event-dsl
       '@calenderjs/event-model':
         specifier: workspace:*
         version: link:../event-model
     devDependencies:
+      '@calenderjs/event-dsl':
+        specifier: workspace:*
+        version: link:../event-dsl
       '@types/node':
         specifier: ^20.19.27
         version: 20.19.27

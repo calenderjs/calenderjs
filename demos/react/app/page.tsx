@@ -1,8 +1,9 @@
 "use client";
 
 import { Calendar } from "@calenderjs/react";
-import { Event } from "@calenderjs/core";
+import type { Event } from "@calenderjs/event-model";
 import { useState } from "react";
+import Link from "next/link";
 
 // 创建示例事件数据
 const createSampleEvents = (): Event[] => {
@@ -119,7 +120,23 @@ export default function Home() {
 
     return (
         <div style={{ padding: "20px", maxWidth: "1400px", margin: "0 auto" }}>
-            <h1>CalenderJS Demo</h1>
+            <div style={{ marginBottom: "20px" }}>
+                <h1>CalenderJS Demo</h1>
+                <Link
+                    href="/dsl-demo"
+                    style={{
+                        display: "inline-block",
+                        marginTop: "10px",
+                        padding: "10px 20px",
+                        backgroundColor: "#4285f4",
+                        color: "white",
+                        textDecoration: "none",
+                        borderRadius: "4px",
+                    }}
+                >
+                    → 查看 DSL → Calendar 完整流程演示
+                </Link>
+            </div>
             <p>当前日期: {currentDate.toLocaleDateString("zh-CN")}</p>
             <p>当前视图: {currentView}</p>
             <p>事件数量: {events.length}</p>

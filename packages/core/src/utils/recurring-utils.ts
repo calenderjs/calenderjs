@@ -45,7 +45,7 @@ export function generateRecurringInstances(
     // 确定结束条件
     const hasEndDate = !!recurringRule.endDate;
     const hasCount = recurringRule.count !== undefined && recurringRule.count > 0;
-    const endDate = hasEndDate
+    const endDate = hasEndDate && recurringRule.endDate
         ? recurringRule.endDate instanceof Date
             ? recurringRule.endDate
             : new Date(recurringRule.endDate)
