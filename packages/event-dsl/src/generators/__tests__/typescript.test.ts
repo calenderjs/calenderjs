@@ -246,4 +246,38 @@ describe('generateTypeScript', () => {
         expect(result).toContain('interface MeetingExtra {');
         expect(result).toContain('}');
     });
+
+    it('should return string for unknown field type', () => {
+        const ast: EventTypeAST = {
+            type: 'test',
+            name: '测试',
+            fields: [
+                { name: 'unknown', type: 'unknown' as any },
+            ],
+            validate: [],
+            display: [],
+            behavior: [],
+        };
+
+        const result = generateTypeScript(ast);
+
+        expect(result).toContain('unknown?: string');
+    });
+
+    it('should return unknown for unknown object field type', () => {
+        const ast: EventTypeAST = {
+            type: 'test',
+            name: '测试',
+            fields: [
+                { name: 'unknown', type: { type: 'unknown' } as any },
+            ],
+            validate: [],
+            display: [],
+            behavior: [],
+        };
+
+        const result = generateTypeScript(ast);
+
+        expect(result).toContain('unknown?: unknown');
+    });
 });

@@ -16,6 +16,11 @@ export default defineConfig({
                 "**/*.config.*",
                 "**/__tests__/**",
                 "**/generated/**", // 生成的解析器文件
+                "src/index.ts", // 导出文件，不需要测试
+                "src/types.ts", // 类型定义文件，不需要测试
+                "src/ast/index.ts", // 导出文件，不需要测试
+                "src/parser/index.ts", // 导出文件，不需要测试
+                "src/generators/index.ts", // 导出文件，不需要测试
             ],
             lines: 100,
             functions: 100,

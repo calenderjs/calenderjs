@@ -6,7 +6,8 @@
       "Bash(npx eslint:*)",
       "Bash(pnpm build:*)",
       "Bash(cat:*)",
-      "Bash(pnpm test:event-model:*)"
+      "Bash(pnpm test:event-model:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

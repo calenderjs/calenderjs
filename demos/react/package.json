@@ -1,5 +1,5 @@
 {
-    "name": "demos-react",
+    "name": "@calenderjs/demos-react",
     "version": "0.1.0",
     "private": true,
     "description": "CalenderJS React 组件演示网站",

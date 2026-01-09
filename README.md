@@ -123,7 +123,7 @@ const meetingType: AppointmentType = {
 ### 前置要求
 
 - Node.js >= 18.0.0
-- pnpm >= 8.0.0
+- pnpm >= 10.0.0
 
 ### 安装依赖
 

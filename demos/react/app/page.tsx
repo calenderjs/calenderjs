@@ -22,7 +22,6 @@ description: "标准团队会议类型"
 fields:
   - attendees: list of email, required
   - location: string
-  - priority: enum(low, normal, high), default: normal
 
 validate:
   attendees.count between 1 and 50
@@ -49,7 +48,6 @@ const DEFAULT_EVENTS: Event[] = [
         extra: {
             attendees: ["user1@example.com", "user2@example.com"],
             location: "会议室 A",
-            priority: "normal",
         },
     },
     {
@@ -61,7 +59,6 @@ const DEFAULT_EVENTS: Event[] = [
         extra: {
             attendees: ["client@example.com"],
             location: "线上会议",
-            priority: "high",
         },
     },
 ];
@@ -70,8 +67,12 @@ export default function Home() {
     const [dslText, setDslText] = useState(DEFAULT_DSL);
     const [events, setEvents] = useState<Event[]>(DEFAULT_EVENTS);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
-    const [currentView, setCurrentView] = useState<"month" | "week" | "day">("month");
-    const [compilationError, setCompilationError] = useState<string | null>(null);
+    const [currentView, setCurrentView] = useState<"month" | "week" | "day">(
+        "month"
+    );
+    const [compilationError, setCompilationError] = useState<string | null>(
+        null
+    );
     const [validationResults, setValidationResults] = useState<
         Array<{ eventId: string; valid: boolean; errors?: string[] }>
     >([]);
@@ -103,8 +104,11 @@ export default function Home() {
 
         const eventValidator = new EventValidator();
         const runtime = new EventRuntime(compiledDataModel);
-        const results: Array<{ eventId: string; valid: boolean; errors?: string[] }> =
-            [];
+        const results: Array<{
+            eventId: string;
+            valid: boolean;
+            errors?: string[];
+        }> = [];
         const rendered: any[] = [];
 
         events.forEach((event) => {
@@ -182,7 +186,13 @@ export default function Home() {
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100vh",
+            }}
+        >
             {/* Header */}
             <header
                 style={{
@@ -193,7 +203,13 @@ export default function Home() {
                 }}
             >
                 <h1 style={{ margin: 0, fontSize: "24px" }}>CalenderJS Demo</h1>
-                <p style={{ margin: "8px 0 0 0", color: "#aaa", fontSize: "14px" }}>
+                <p
+                    style={{
+                        margin: "8px 0 0 0",
+                        color: "#aaa",
+                        fontSize: "14px",
+                    }}
+                >
                     DSL → Data Model → Event 验证 → Calendar 显示
                 </p>
             </header>
@@ -217,8 +233,16 @@ export default function Home() {
                             borderBottom: "1px solid #ddd",
                         }}
                     >
-                        <h2 style={{ margin: 0, fontSize: "18px" }}>DSL 编辑器</h2>
-                        <p style={{ margin: "5px 0 0 0", fontSize: "12px", color: "#666" }}>
+                        <h2 style={{ margin: 0, fontSize: "18px" }}>
+                            DSL 编辑器
+                        </h2>
+                        <p
+                            style={{
+                                margin: "5px 0 0 0",
+                                fontSize: "12px",
+                                color: "#666",
+                            }}
+                        >
                             编辑 Event DSL 定义，实时查看编译结果
                         </p>
                     </div>
@@ -261,8 +285,8 @@ export default function Home() {
                                 borderTop: "1px solid #ddd",
                             }}
                         >
-                            <strong>✓ 编译成功:</strong> {compiledDataModel.name} (
-                            {compiledDataModel.id})
+                            <strong>✓ 编译成功:</strong>{" "}
+                            {compiledDataModel.name} ({compiledDataModel.id})
                         </div>
                     )}
                 </div>
@@ -284,24 +308,37 @@ export default function Home() {
                             borderBottom: "1px solid #ddd",
                         }}
                     >
-                        <h2 style={{ margin: 0, fontSize: "18px" }}>验证状态</h2>
+                        <h2 style={{ margin: 0, fontSize: "18px" }}>
+                            验证状态
+                        </h2>
                         <div style={{ marginTop: "10px", fontSize: "12px" }}>
                             {validationResults.map((result) => {
-                                const event = events.find((e) => e.id === result.eventId);
+                                const event = events.find(
+                                    (e) => e.id === result.eventId
+                                );
                                 return (
                                     <div
                                         key={result.eventId}
                                         style={{
                                             marginBottom: "5px",
-                                            color: result.valid ? "#3c3" : "#c33",
+                                            color: result.valid
+                                                ? "#3c3"
+                                                : "#c33",
                                         }}
                                     >
-                                        {result.valid ? "✓" : "✗"} {event?.title || result.eventId}
-                                        {result.errors && result.errors.length > 0 && (
-                                            <span style={{ marginLeft: "10px", color: "#666" }}>
-                                                {result.errors.join(", ")}
-                                            </span>
-                                        )}
+                                        {result.valid ? "✓" : "✗"}{" "}
+                                        {event?.title || result.eventId}
+                                        {result.errors &&
+                                            result.errors.length > 0 && (
+                                                <span
+                                                    style={{
+                                                        marginLeft: "10px",
+                                                        color: "#666",
+                                                    }}
+                                                >
+                                                    {result.errors.join(", ")}
+                                                </span>
+                                            )}
                                     </div>
                                 );
                             })}

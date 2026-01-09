@@ -102,7 +102,7 @@ ValidateSection
 
 ValidationRule
   = _ WhenExpression
-  / _ ComparisonExpression _
+  / _ ComparisonExpression
 
 WhenExpression
   = "when" _ condition:LogicalExpression ":" _ rules:ValidationRule+ {
@@ -121,7 +121,7 @@ ComparisonExpression
   / LogicalExpression
 
 InExpression
-  = field:FieldAccess _ "in" _ "[" _ values:LiteralList _ "]" {
+  = field:FieldAccess _ "in" _ "[" _ values:LiteralList _ "]" _ {
       return {
         type: 'In',
         field: field,
@@ -135,7 +135,7 @@ LiteralList
     }
 
 BetweenExpression
-  = field:FieldAccess _ "between" _ min:Literal _ "and" _ max:Literal {
+  = field:FieldAccess _ "between" _ min:Literal _ "and" _ max:Literal _ {
       return {
         type: 'Between',
         field: field,
@@ -145,7 +145,7 @@ BetweenExpression
     }
 
 RangeExpression
-  = field:FieldAccess _ operator:ComparisonOperator _ value:Literal {
+  = field:FieldAccess _ operator:ComparisonOperator _ value:Literal _ {
       return {
         type: 'Comparison',
         operator: operator,
@@ -155,10 +155,10 @@ RangeExpression
     }
 
 ConflictExpression
-  = "no" _ "conflict" _ "with" _ "other" _ "events" {
+  = "no" _ "conflict" _ "with" _ "other" _ "events" _ {
       return { type: 'NoConflict' };
     }
-  / "conflict" _ "with" _ "other" _ "events" {
+  / "conflict" _ "with" _ "other" _ "events" _ {
       return { type: 'Conflict' };
     }
 
@@ -177,7 +177,7 @@ LogicalTerm
 
 ComparisonTerm
   = ModExpression
-  / left:FieldAccess _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal {
+  / left:FieldAccess _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal _ {
       return {
         type: 'Comparison',
         operator: operator,
@@ -188,7 +188,7 @@ ComparisonTerm
   / FieldAccess
 
 ModExpression
-  = left:FieldAccess _ "mod" _ modValue:Literal _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal {
+  = left:FieldAccess _ "mod" _ modValue:Literal _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal _ {
       return {
         type: 'ModComparison',
         left: left,

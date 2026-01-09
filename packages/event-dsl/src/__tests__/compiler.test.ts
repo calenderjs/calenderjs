@@ -866,6 +866,31 @@ fields:
             expect(result.types[0].displayRules).toEqual([]);
         });
 
+        it("should handle AST with undefined display array in renderer", () => {
+            const compiler = new EventDSLCompiler();
+            const ast: EventTypeAST = {
+                type: "meeting",
+                name: "会议",
+                fields: [],
+                validate: [],
+                display: undefined as any, // undefined 应该使用默认空数组
+                behavior: [],
+            };
+
+            const result = compiler.compileFromAST([ast]);
+            const event: Event = {
+                id: "1",
+                type: "meeting",
+                title: "测试",
+                startTime: new Date(),
+                endTime: new Date(),
+            };
+
+            const rendered = result.types[0].renderer(event, {});
+            expect(rendered).toBeDefined();
+            expect(rendered.color).toBe("#4285f4"); // 默认颜色（因为 display 是 undefined）
+        });
+
         it("should handle AST with undefined behavior array", () => {
             const compiler = new EventDSLCompiler();
             const ast: EventTypeAST = {
@@ -879,6 +904,111 @@ fields:
 
             const result = compiler.compileFromAST([ast]);
             expect(result.types[0].behaviorRules).toEqual([]);
+        });
+
+        it("should handle AST with empty display array in renderer", () => {
+            const compiler = new EventDSLCompiler();
+            const ast: EventTypeAST = {
+                type: "meeting",
+                name: "会议",
+                fields: [],
+                validate: [],
+                display: [], // 空数组
+                behavior: [],
+            };
+
+            const result = compiler.compileFromAST([ast]);
+            const event: Event = {
+                id: "1",
+                type: "meeting",
+                title: "测试",
+                startTime: new Date(),
+                endTime: new Date(),
+            };
+
+            const rendered = result.types[0].renderer(event, {});
+            expect(rendered).toBeDefined();
+            expect(rendered.color).toBe("#4285f4"); // 默认颜色
+        });
+
+        it("should extract color and icon from display rules in renderer", () => {
+            const compiler = new EventDSLCompiler();
+            const ast: EventTypeAST = {
+                type: "meeting",
+                name: "会议",
+                fields: [],
+                validate: [],
+                display: [
+                    { name: "color", value: "#ff0000" },
+                    { name: "icon", value: "calendar" },
+                ],
+                behavior: [],
+            };
+
+            const result = compiler.compileFromAST([ast]);
+            const event: Event = {
+                id: "1",
+                type: "meeting",
+                title: "测试",
+                startTime: new Date(),
+                endTime: new Date(),
+            };
+
+            const rendered = result.types[0].renderer(event, {});
+            expect(rendered.color).toBe("#ff0000");
+            expect(rendered.icon).toBe("calendar");
+        });
+
+        it("should handle display rules with non-string values", () => {
+            const compiler = new EventDSLCompiler();
+            const ast: EventTypeAST = {
+                type: "meeting",
+                name: "会议",
+                fields: [],
+                validate: [],
+                display: [
+                    { name: "color", value: { type: "Conditional" } as any }, // 非字符串值
+                    { name: "icon", value: 123 as any }, // 非字符串值
+                ],
+                behavior: [],
+            };
+
+            const result = compiler.compileFromAST([ast]);
+            const event: Event = {
+                id: "1",
+                type: "meeting",
+                title: "测试",
+                startTime: new Date(),
+                endTime: new Date(),
+            };
+
+            const rendered = result.types[0].renderer(event, {});
+            // 非字符串值应该被忽略，使用默认值
+            expect(rendered.color).toBe("#4285f4");
+            expect(rendered.icon).toBeUndefined();
+        });
+
+        it("should compile validators list", () => {
+            const compiler = new EventDSLCompiler();
+            const validators = [
+                {
+                    name: "validator1",
+                    validate: () => ({ valid: true }),
+                },
+                {
+                    name: "validator2",
+                    validate: () => ({ valid: false, errors: ["error"] }),
+                },
+            ];
+
+            // 使用私有方法测试（通过类型断言访问）
+            const result = (compiler as any).compileValidators(validators);
+
+            expect(result).toHaveLength(2);
+            expect(result[0].name).toBe("validator1");
+            expect(result[0].validate()).toEqual({ valid: true });
+            expect(result[1].name).toBe("validator2");
+            expect(result[1].validate()).toEqual({ valid: false, errors: ["error"] });
         });
     });
 });

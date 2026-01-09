@@ -453,5 +453,22 @@ describe('generateJSONSchema', () => {
       expect(schema.description).toBeUndefined();
       expect(schema.title).toBe('测试');
     });
+
+    it('should return string type for unknown field type', () => {
+      const ast: EventTypeAST = {
+        type: 'test',
+        name: '测试',
+        fields: [
+          { name: 'unknown', type: 'unknown' as any }, // 未知类型
+        ],
+        validate: [],
+        display: [],
+        behavior: [],
+      };
+
+      const schema = generateJSONSchema(ast);
+
+      expect(schema.properties?.unknown?.type).toBe('string');
+    });
   });
 });

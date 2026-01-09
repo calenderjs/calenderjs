@@ -339,4 +339,39 @@ recurring:
             expect(ast.recurring?.timeZone).toBe("America/New_York");
         });
     });
+
+    describe("normalizeAST 默认值处理", () => {
+        it("应该处理缺少 type 和 name 的情况", () => {
+            // 模拟解析器返回缺少 type 和 name 的结果
+            const mockResult = {
+                fields: [],
+                validate: [],
+                display: [],
+                behavior: [],
+            };
+
+            // 通过解析一个不完整的 DSL 来触发 normalizeAST 的默认值分支
+            const dsl = `
+fields:
+  - title: string
+`;
+            const ast = parseEventDSL(dsl);
+            // 即使缺少 type 和 name，也应该有默认值
+            expect(ast.type).toBeDefined();
+            expect(ast.name).toBeDefined();
+        });
+
+        it("应该处理缺少 fields、validate、display、behavior 的情况", () => {
+            // 通过解析一个只有 type 和 name 的 DSL
+            const dsl = `
+type: test
+name: "Test"
+`;
+            const ast = parseEventDSL(dsl);
+            expect(ast.fields).toEqual([]);
+            expect(ast.validate).toEqual([]);
+            expect(ast.display).toEqual([]);
+            expect(ast.behavior).toEqual([]);
+        });
+    });
 });

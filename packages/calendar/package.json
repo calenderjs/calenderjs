@@ -31,17 +31,17 @@
         "@calenderjs/core": "workspace:*",
         "@calenderjs/event-dsl": "workspace:*",
         "@calenderjs/event-model": "workspace:*",
-        "@wsxjs/wsx-core": "^0.0.23"
+        "@wsxjs/wsx-core": "^0.0.25"
     },
     "peerDependencies": {
-        "@wsxjs/wsx-core": "^0.0.23"
+        "@wsxjs/wsx-core": "^0.0.25"
     },
     "devDependencies": {
         "@testing-library/dom": "^10.4.1",
         "@testing-library/user-event": "^14.6.1",
         "@types/node": "^20.19.27",
-        "@wsxjs/eslint-plugin-wsx": "^0.0.23",
-        "@wsxjs/wsx-vite-plugin": "^0.0.23",
+        "@wsxjs/eslint-plugin-wsx": "^0.0.25",
+        "@wsxjs/wsx-vite-plugin": "^0.0.25",
         "eslint": "^9.39.2",
         "happy-dom": "^20.0.11",
         "typescript": "^5.9.3",

@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { Event } from "@calenderjs/event-model";
 import { User } from "@calenderjs/core";
 import { EventRuntime } from "@calenderjs/event-runtime";
+import "../Calendar.wsx";
 import Calendar from "../Calendar.wsx";
 
 // 等待 DOM 更新
@@ -42,7 +43,6 @@ function createTestEvent(overrides: Partial<Event> = {}): Event {
         title: "测试事件",
         startTime: new Date(now.getTime() + 24 * 60 * 60 * 1000), // 明天
         endTime: new Date(now.getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000), // 明天 +1小时
-        data: {},
         ...overrides,
     };
 }

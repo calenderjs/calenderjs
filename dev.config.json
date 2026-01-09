@@ -1,0 +1,13 @@
+{
+    "projectName": "calenderjs",
+    "packageManager": "pnpm",
+    "demos": [
+        {
+            "name": "CalendarJS React Demo",
+            "value": "react",
+            "description": "CalendarJS React 组件演示",
+            "package": "@calenderjs/demos-react",
+            "command": ["pnpm", "--filter", "demos-react", "dev"]
+        }
+    ]
+}
