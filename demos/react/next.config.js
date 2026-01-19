@@ -13,13 +13,35 @@ const nextConfig = {
     if (!config.resolve.alias) {
       config.resolve.alias = {};
     }
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      react: require.resolve('react'),
-      'react-dom': require.resolve('react-dom'),
-      'react/jsx-runtime': require.resolve('react/jsx-runtime'),
-      'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),
-    };
+    
+    // 确保从当前项目的 node_modules 解析
+    const path = require('path');
+    const projectRoot = __dirname;
+    const workspaceRoot = path.resolve(__dirname, '../..');
+    
+    // 优先从项目本地 node_modules 解析，然后从 workspace root
+    if (!config.resolve.modules) {
+      config.resolve.modules = [];
+    }
+    config.resolve.modules = [
+      path.resolve(projectRoot, 'node_modules'),
+      path.resolve(workspaceRoot, 'node_modules'),
+      'node_modules',
+      ...config.resolve.modules,
+    ];
+    
+    // 设置 alias 确保使用正确的 React 实例
+    try {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        react: require.resolve('react', { paths: [projectRoot, workspaceRoot] }),
+        'react-dom': require.resolve('react-dom', { paths: [projectRoot, workspaceRoot] }),
+        'react/jsx-runtime': require.resolve('react/jsx-runtime', { paths: [projectRoot, workspaceRoot] }),
+        'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime', { paths: [projectRoot, workspaceRoot] }),
+      };
+    } catch (e) {
+      console.warn('Failed to resolve React aliases:', e.message);
+    }
     
     // 确保 resolve 优先使用 package.json 的 exports 字段
     // 这样会使用 dist 目录，而不是 src 目录
