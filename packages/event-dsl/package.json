@@ -31,8 +31,7 @@
     "test": "vitest run",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist coverage",
-    "postinstall": "pnpm build:parser"
+    "clean": "rm -rf dist coverage"
   },
   "dependencies": {
     "@calenderjs/core": "workspace:*",
