@@ -1,46 +1,46 @@
 {
-    "name": "@calenderjs/event-runtime",
-    "version": "0.0.0",
-    "description": "Event Runtime - 运行时验证、渲染和行为检查引擎",
-    "type": "module",
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.mjs"
-            },
-            "require": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.cjs"
-            }
-        }
-    },
-    "files": [
-        "dist"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "scripts": {
-        "dev": "vite build --watch",
-        "build": "vite build",
-        "test": "vitest run",
-        "lint": "eslint src"
-    },
-    "dependencies": {
-        "@calenderjs/core": "workspace:*",
-        "@calenderjs/event-model": "workspace:*"
-    },
-    "devDependencies": {
-        "@calenderjs/event-dsl": "workspace:*",
-        "@types/node": "^20.19.27",
-        "@vitest/coverage-v8": "^2.1.9",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.0",
-        "vite-plugin-dts": "^4.5.4",
-        "vitest": "^2.1.9"
+  "name": "@calenderjs/event-runtime",
+  "version": "0.0.1",
+  "description": "Event Runtime - 运行时验证、渲染和行为检查引擎",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "test": "vitest run",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@calenderjs/core": "workspace:*",
+    "@calenderjs/event-model": "workspace:*"
+  },
+  "devDependencies": {
+    "@calenderjs/event-dsl": "workspace:*",
+    "@types/node": "^20.19.27",
+    "@vitest/coverage-v8": "^2.1.9",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^2.1.9"
+  }
 }

@@ -1,48 +1,48 @@
 {
-    "name": "@calenderjs/event-dsl",
-    "version": "0.0.0",
-    "description": "Event DSL - 领域特定语言用于定义事件类型和业务规则",
-    "type": "module",
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.mjs"
-            },
-            "require": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.cjs"
-            }
-        }
-    },
-    "files": [
-        "dist"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "scripts": {
-        "dev": "vite build --watch",
-        "build": "pnpm build:parser && vite build",
-        "build:parser": "peggy src/event-dsl.pegjs -o src/generated/parser.js --format es",
-        "test": "vitest run",
-        "lint": "eslint src",
-        "postinstall": "pnpm build:parser"
-    },
-    "dependencies": {
-        "@calenderjs/core": "workspace:*",
-        "@calenderjs/event-model": "workspace:*"
-    },
-    "devDependencies": {
-        "@types/node": "^20.19.27",
-        "@vitest/coverage-v8": "^2.1.9",
-        "peggy": "^4.2.0",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.0",
-        "vite-plugin-dts": "^4.5.4",
-        "vitest": "^2.1.9"
+  "name": "@calenderjs/event-dsl",
+  "version": "0.0.1",
+  "description": "Event DSL - 领域特定语言用于定义事件类型和业务规则",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "pnpm build:parser && vite build",
+    "build:parser": "peggy src/event-dsl.pegjs -o src/generated/parser.js --format es",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "postinstall": "pnpm build:parser"
+  },
+  "dependencies": {
+    "@calenderjs/core": "workspace:*",
+    "@calenderjs/event-model": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.27",
+    "@vitest/coverage-v8": "^2.1.9",
+    "peggy": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^2.1.9"
+  }
 }

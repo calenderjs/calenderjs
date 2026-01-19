@@ -1,45 +1,45 @@
 {
-    "name": "@calenderjs/core",
-    "version": "0.0.0",
-    "description": "CalenderJS 核心日历组件库 - 基于 Web Components",
-    "type": "module",
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.mjs"
-            },
-            "require": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.cjs"
-            }
-        }
-    },
-    "files": [
-        "dist"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "scripts": {
-        "dev": "vite build --watch",
-        "build": "vite build",
-        "test": "vitest run",
-        "lint": "eslint src"
-    },
-    "dependencies": {
-        "@calenderjs/date-time": "workspace:*",
-        "@calenderjs/event-model": "workspace:*"
-    },
-    "devDependencies": {
-        "@types/node": "^20.19.27",
-        "@vitest/coverage-v8": "^2.1.9",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.0",
-        "vite-plugin-dts": "^4.5.4",
-        "vitest": "^2.1.9"
+  "name": "@calenderjs/core",
+  "version": "0.0.1",
+  "description": "CalenderJS 核心日历组件库 - 基于 Web Components",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "test": "vitest run",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@calenderjs/date-time": "workspace:*",
+    "@calenderjs/event-model": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.27",
+    "@vitest/coverage-v8": "^2.1.9",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^2.1.9"
+  }
 }
