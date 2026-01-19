@@ -41,12 +41,22 @@ export function getMonthEnd(date: Date | string): Date {
 }
 
 /**
- * 获取周的开始日期（周一）
+ * 获取周的开始日期
+ * @param firstDayOfWeek 0 = 周日, 1 = 周一
  */
 export function getWeekStart(date: Date | string, firstDayOfWeek: 0 | 1 = 1): Date {
     const d = toDate(date);
     const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // 调整为周一
+    let diff: number;
+    
+    if (firstDayOfWeek === 0) {
+        // 周日作为第一天
+        diff = d.getDate() - day;
+    } else {
+        // 周一作为第一天
+        diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    }
+    
     const result = new Date(d);
     result.setDate(diff);
     result.setHours(0, 0, 0, 0);
@@ -54,13 +64,14 @@ export function getWeekStart(date: Date | string, firstDayOfWeek: 0 | 1 = 1): Da
 }
 
 /**
- * 获取周的结束日期（周日）
+ * 获取周的结束日期
+ * @param firstDayOfWeek 0 = 周日, 1 = 周一
  */
 export function getWeekEnd(date: Date | string, firstDayOfWeek: 0 | 1 = 1): Date {
     const weekStart = getWeekStart(date, firstDayOfWeek);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999);
+    weekEnd.setHours(0, 0, 0, 0);
     return weekEnd;
 }
 

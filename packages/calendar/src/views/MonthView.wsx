@@ -194,7 +194,8 @@ export default class MonthView extends WebComponent {
             this._viewDate = new Date();
         }
         try {
-            return getMonthDates(this._viewDate);
+            // 使用 firstDayOfWeek = 0（周日）以匹配 weekDays 数组的顺序 ["日", "一", "二", "三", "四", "五", "六"]
+            return getMonthDates(this._viewDate, 0);
         } catch (e) {
             console.error("Error getting month dates:", e);
             return [];
@@ -206,6 +207,7 @@ export default class MonthView extends WebComponent {
     }
 
     private get weekDays() {
+        // 从周日开始（标准日历格式）
         return ["日", "一", "二", "三", "四", "五", "六"];
     }
 
@@ -309,6 +311,7 @@ export default class MonthView extends WebComponent {
 
                         return (
                             <div
+                                key={dateKey}
                                 class={`month-view-cell ${
                                     !isCurrentMonth ? "other-month" : ""
                                 } ${isSelected ? "selected" : ""} ${

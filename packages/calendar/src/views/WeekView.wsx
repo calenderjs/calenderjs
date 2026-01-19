@@ -184,7 +184,8 @@ export default class WeekView extends WebComponent {
 
     // ========== Getters ==========
     private get weekDates() {
-        return getWeekDates(this.viewDate);
+        // 使用 firstDayOfWeek = 0（周日）以匹配周视图从周日开始
+        return getWeekDates(this.viewDate, 0);
     }
 
     private get hours() {
