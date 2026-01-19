@@ -194,7 +194,9 @@ export default class DayView extends WebComponent {
                             const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
                             const timeStr = `${hourStr}:00`;
                             return (
-                                <div class="day-view-hour" key={hour} textContent={timeStr}></div>
+                                <div class="day-view-hour-label" key={`left-hour-${hour}`}>
+                                    {timeStr}
+                                </div>
                             );
                         })}
                     </div>
@@ -203,7 +205,7 @@ export default class DayView extends WebComponent {
                             return (
                                 <div
                                     class="day-view-hour-cell"
-                                    key={hour}
+                                    key={`right-hour-${hour}`}
                                 ></div>
                             );
                         })}

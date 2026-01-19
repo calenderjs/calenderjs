@@ -81,6 +81,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.7.0(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+      '@wsxjs/wsx-vite-plugin':
+        specifier: ^0.0.28
+        version: 0.0.28(esbuild@0.27.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.4.2)
@@ -109,8 +112,8 @@ importers:
         specifier: workspace:*
         version: link:../event-model
       '@wsxjs/wsx-core':
-        specifier: ^0.0.27
-        version: 0.0.27(typescript@5.9.3)
+        specifier: ^0.0.28
+        version: 0.0.28(typescript@5.9.3)
     devDependencies:
       '@testing-library/dom':
         specifier: ^10.4.1
@@ -122,11 +125,11 @@ importers:
         specifier: ^20.19.27
         version: 20.19.27
       '@wsxjs/eslint-plugin-wsx':
-        specifier: ^0.0.27
-        version: 0.0.27(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
+        specifier: ^0.0.28
+        version: 0.0.28(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
       '@wsxjs/wsx-vite-plugin':
-        specifier: ^0.0.27
-        version: 0.0.27(esbuild@0.27.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+        specifier: ^0.0.28
+        version: 0.0.28(esbuild@0.27.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.4.2)
@@ -1643,21 +1646,21 @@ packages:
   '@vue/shared@3.5.26':
     resolution: {integrity: sha512-7Z6/y3uFI5PRoKeorTOSXKcDj0MSasfNNltcslbFrPpcw6aXRUALq4IfJlaTRspiWIUOEZbrpM+iQGmCOiWe4A==}
 
-  '@wsxjs/eslint-plugin-wsx@0.0.27':
-    resolution: {integrity: sha512-IeMTTigmpEKxXiXYyKv/5W2i3YkdwKQ2+HBGp2UsRmItngmrO8TMLhkIxpMeF49pCDijkXqij1C8WkC0ePTtbQ==}
+  '@wsxjs/eslint-plugin-wsx@0.0.28':
+    resolution: {integrity: sha512-oEuY2PJh7aqV4HQA5NjmOiG3lgaDr04NLnIpoBBWRcAXoVYBddFd5boQppCm0kpkWXUjpz1qgT4jX7g7aYcw9Q==}
     peerDependencies:
       eslint: '>=8.0.0 || ^9.0.0'
 
-  '@wsxjs/wsx-core@0.0.27':
-    resolution: {integrity: sha512-uxK1pCJKzCrjOcrecDQugOKp4m9GH1VBZevQr+1TdhE22ZDPjdYwZglXcS4furevbrkdV/eOTbVgihpRh+Zijw==}
+  '@wsxjs/wsx-core@0.0.28':
+    resolution: {integrity: sha512-z2W6eJqZmNBvXUt3sp+7LnBxFSiRlRI2wdP3vCGZlAeubbixEHb0Z4MgZTb/4bCCgH1jj2e+nekfZBm74GL++A==}
     peerDependencies:
       typescript: '>=4.7.0'
 
-  '@wsxjs/wsx-logger@0.0.27':
-    resolution: {integrity: sha512-UpNekesMzHkXL2eNtqFCs+QUfdsvIUh3XAOou+lH9Fgt6xdQtkLiUy46sB87+N4yJjKUImPy0WkvftuEwZj/nA==}
+  '@wsxjs/wsx-logger@0.0.28':
+    resolution: {integrity: sha512-3jfc8gt4ooEZbPNcAoNQz+1DWXgNvaf+AnzVlB4UAILwt03ovkATC52oKEQ2y3TnzN2vczmLkztAb6OF2WsAOA==}
 
-  '@wsxjs/wsx-vite-plugin@0.0.27':
-    resolution: {integrity: sha512-/0U4YWzlbbkgg3uCzqhlXEZS/XsOcRSv4hHpqk144hNVfQDz8ilmERnDMwU5vLuCDSMnb3jepIctndpvAdPaPw==}
+  '@wsxjs/wsx-vite-plugin@0.0.28':
+    resolution: {integrity: sha512-1VNyPIMJAJb3At0VXAiGlB6Gtm9ZFLWJPa+sJmeiLpyac3JhEnVa7kT7up2d+QdyDtUanSPK0OS4Iy5NeLtu3A==}
     peerDependencies:
       esbuild: '>=0.25.0'
       vite: '>=4.0.0'
@@ -4787,21 +4790,21 @@ snapshots:
 
   '@vue/shared@3.5.26': {}
 
-  '@wsxjs/eslint-plugin-wsx@0.0.27(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)':
+  '@wsxjs/eslint-plugin-wsx@0.0.28(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)':
     dependencies:
-      '@wsxjs/wsx-core': 0.0.27(typescript@5.9.3)
+      '@wsxjs/wsx-core': 0.0.28(typescript@5.9.3)
       eslint: 9.39.2(jiti@2.4.2)
     transitivePeerDependencies:
       - typescript
 
-  '@wsxjs/wsx-core@0.0.27(typescript@5.9.3)':
+  '@wsxjs/wsx-core@0.0.28(typescript@5.9.3)':
     dependencies:
-      '@wsxjs/wsx-logger': 0.0.27
+      '@wsxjs/wsx-logger': 0.0.28
       typescript: 5.9.3
 
-  '@wsxjs/wsx-logger@0.0.27': {}
+  '@wsxjs/wsx-logger@0.0.28': {}
 
-  '@wsxjs/wsx-vite-plugin@0.0.27(esbuild@0.27.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))':
+  '@wsxjs/wsx-vite-plugin@0.0.28(esbuild@0.27.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.28.5)
@@ -4809,7 +4812,7 @@ snapshots:
       '@babel/plugin-transform-class-static-block': 7.28.3(@babel/core@7.28.5)
       '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/types': 7.28.5
-      '@wsxjs/wsx-core': 0.0.27(typescript@5.9.3)
+      '@wsxjs/wsx-core': 0.0.28(typescript@5.9.3)
       esbuild: 0.27.2
       vite: 7.3.1(@types/node@20.19.27)(jiti@2.4.2)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:

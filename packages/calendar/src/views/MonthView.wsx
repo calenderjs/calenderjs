@@ -40,7 +40,8 @@ export default class MonthView extends WebComponent {
     }
     set viewDate(value: Date | string) {
         if (value instanceof Date) {
-            this._viewDate = value;
+            // 创建新的 Date 对象以确保 @state 能检测到变化
+            this._viewDate = new Date(value);
         } else if (typeof value === "string") {
             const date = new Date(value);
             if (!isNaN(date.getTime())) {

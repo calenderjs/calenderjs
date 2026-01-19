@@ -54,7 +54,7 @@
     grid-column: 2;
 }
 
-.day-view-hour {
+.day-view-hour-label {
     height: var(--calender-hour-cell-height, 48px);
     border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     padding: 0;

@@ -381,7 +381,11 @@ export default class Calendar extends WebComponent {
         const newDate = new Date(this.currentDate);
         switch (this.currentView) {
             case "month":
-                newDate.setMonth(newDate.getMonth() + direction);
+                // 切换到目标月份的第一天，避免日期溢出问题（如 3/31 -> 4/31 会变成 5/1）
+                const targetMonth = newDate.getMonth() + direction;
+                const targetYear = newDate.getFullYear();
+                // 创建目标月份的第一天
+                newDate.setFullYear(targetYear, targetMonth, 1);
                 break;
             case "week":
                 newDate.setDate(newDate.getDate() + direction * 7);
