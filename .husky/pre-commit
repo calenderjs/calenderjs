@@ -1,3 +1,7 @@
+# 运行 typecheck 检查
+echo "🔍 Running typecheck..."
+pnpm typecheck || exit 1
+
 # 运行 lint 检查
 echo "🔍 Running lint checks..."
 pnpm lint || exit 1

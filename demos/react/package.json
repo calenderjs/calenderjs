@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src",
-    "clean": "rm -rf dist .vite"
+    "clean": "rm -rf dist .vite",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@calenderjs/core": "workspace:*",

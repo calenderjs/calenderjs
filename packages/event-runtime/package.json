@@ -29,6 +29,7 @@
     "build": "vite build",
     "test": "vitest run",
     "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
