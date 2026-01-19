@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/event-dsl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Event DSL - 领域特定语言用于定义事件类型和业务规则",
   "type": "module",
   "main": "./dist/index.cjs",

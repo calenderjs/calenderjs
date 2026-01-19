@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/demos-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "CalenderJS React 组件演示网站",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "calenderjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "基于日历的预约管理系统，支持 Appointment DSL、多租户架构和第三方集成",
   "scripts": {

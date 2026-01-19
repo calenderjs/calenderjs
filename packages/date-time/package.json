@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/date-time",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CalenderJS 日期时间工具函数库 - 提供统一的日期和时间处理工具",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/event-model",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Event Data Model - Single Source of Truth (SSOT) for Event data structures",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CalenderJS 核心日历组件库 - 基于 Web Components",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/monaco-event-dsl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Monaco Editor 语言支持包 - 为 Event DSL 提供语法高亮和自动完成",
   "type": "module",
   "main": "./dist/index.cjs",
