@@ -6,7 +6,7 @@ echo "🚀 Running pre-push checks..."
 
 # 运行完整的构建检查（跳过 Next.js demo，已知的 monorepo 问题）
 echo "📦 Building all packages..."
-pnpm build --filter '!@calenderjs/demos-react' || {
+nx run-many --target=build --parallel --exclude=@calenderjs/demos-react || {
   echo "❌ Build failed! Please fix build errors before pushing."
   exit 1
 }
