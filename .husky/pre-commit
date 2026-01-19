@@ -1,0 +1,9 @@
+# 运行 lint 检查
+echo "🔍 Running lint checks..."
+pnpm lint || exit 1
+
+# 运行测试（只运行受影响的测试，避免太慢）
+echo "🧪 Running tests..."
+pnpm test || exit 1
+
+echo "✅ Pre-commit checks passed!"

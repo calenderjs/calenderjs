@@ -1,0 +1,25 @@
+# Pre-push hook: 在推送前运行更严格的检查
+echo "🚀 Running pre-push checks..."
+
+# 运行完整的构建检查
+echo "📦 Building all packages..."
+pnpm build || {
+  echo "❌ Build failed! Please fix build errors before pushing."
+  exit 1
+}
+
+# 运行完整的测试套件
+echo "🧪 Running full test suite..."
+pnpm test || {
+  echo "❌ Tests failed! Please fix failing tests before pushing."
+  exit 1
+}
+
+# 运行 lint 检查
+echo "🔍 Running lint checks..."
+pnpm lint || {
+  echo "❌ Lint errors found! Please fix lint errors before pushing."
+  exit 1
+}
+
+echo "✅ All pre-push checks passed! Pushing to remote..."
