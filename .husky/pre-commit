@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # 运行 lint 检查
 echo "🔍 Running lint checks..."
 pnpm lint || exit 1
