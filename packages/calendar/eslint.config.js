@@ -3,10 +3,18 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
     {
-        ignores: ["dist/**", "coverage/**", "**/*.d.ts", "**/__tests__/**", "**/*.test.ts"],
+        ignores: [
+            "dist/**",
+            "coverage/**",
+            "**/*.d.ts",
+            "**/__tests__/**",
+            "**/*.test.ts",
+            "**/*.spec.ts",
+        ],
     },
     {
         files: ["**/*.{ts,tsx}"],
+        ignores: ["**/__tests__/**", "**/*.test.ts", "**/*.spec.ts"],
         languageOptions: {
             parser: tseslint.parser,
             parserOptions: {
