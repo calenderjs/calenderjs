@@ -1,18 +1,10 @@
-"use client";
-
 import { Calendar, EventEditor, ResizableSplitter } from "@calenderjs/react";
 import type { Event } from "@calenderjs/event-model";
 import { EventDSLCompiler, parseEventDSL } from "@calenderjs/event-dsl";
 import { EventRuntime } from "@calenderjs/event-runtime";
 import { EventValidator } from "@calenderjs/event-model";
 import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
-import dynamic from "next/dynamic";
-
-// 动态导入 Monaco Editor（避免 SSR 问题）
-const Editor = dynamic(() => import("@monaco-editor/react").then((mod) => mod.Editor), {
-    ssr: false,
-});
+import { Editor } from "@monaco-editor/react";
 
 // 默认 DSL 示例
 const DEFAULT_DSL = `type: meeting
@@ -63,7 +55,7 @@ const DEFAULT_EVENTS: Event[] = [
     },
 ];
 
-export default function Home() {
+export default function App() {
     const [dslText, setDslText] = useState(DEFAULT_DSL);
     const [events, setEvents] = useState<Event[]>(DEFAULT_EVENTS);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());

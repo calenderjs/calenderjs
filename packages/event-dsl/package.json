@@ -30,6 +30,7 @@
     "build:parser": "peggy src/event-dsl.pegjs -o src/generated/parser.js --format es",
     "test": "vitest run",
     "lint": "eslint src",
+    "clean": "rm -rf dist coverage",
     "postinstall": "pnpm build:parser"
   },
   "dependencies": {

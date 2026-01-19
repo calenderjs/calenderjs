@@ -28,7 +28,8 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "test": "vitest run",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "clean": "rm -rf dist coverage"
   },
   "dependencies": {
     "@calenderjs/date-time": "workspace:*",

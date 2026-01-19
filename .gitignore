@@ -28,9 +28,12 @@ yarn-error.log*
 # Vercel
 .vercel
 
-# Nx
-.nx
-.nx/cache
+# Nx (removed, using Turbo now)
+# .nx
+# .nx/cache
+
+# Turbo
+.turbo
 
 # IDE
 .vscode/

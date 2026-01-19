@@ -10,7 +10,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-#__next {
+#root {
     height: 100vh;
     overflow: hidden;
 }
