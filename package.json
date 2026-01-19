@@ -11,6 +11,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo typecheck",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,wsx,json,css,md}\"",
     "clean": "turbo run clean && rm -rf .turbo node_modules/.cache",
     "prepare": "husky",
     "release": "qingniao"
