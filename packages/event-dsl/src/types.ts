@@ -128,29 +128,11 @@ export interface DisplayConfig {
 
 /**
  * 行为配置
+ * 
+ * 注意：BehaviorConfig 已移到 @calenderjs/event-model
+ * 类型定义在文件末尾统一导出
  */
-export interface BehaviorConfig {
-    /** 是否可拖拽 */
-    draggable?: boolean;
-    /** 是否可调整大小 */
-    resizable?: boolean;
-    /** 是否可编辑 */
-    editable?: boolean;
-    /** 是否可删除 */
-    deletable?: boolean;
-    /** 是否可复制 */
-    copyable?: boolean;
-    /** 是否允许重叠 */
-    allowOverlap?: boolean;
-    /** 最小时长（分钟） */
-    minDuration?: number;
-    /** 最大时长（分钟） */
-    maxDuration?: number;
-    /** 默认时长（分钟） */
-    defaultDuration?: number;
-    /** 时间限制 */
-    timeConstraints?: TimeConstraint[];
-}
+import type { BehaviorConfig } from '@calenderjs/event-model';
 
 /**
  * 时间限制
@@ -206,43 +188,13 @@ export interface EventRule {
 }
 
 // ============================================
-// 验证结果
+// 验证结果和渲染结果
 // ============================================
 
 /**
- * 验证结果
+ * 注意：ValidationResult 和 RenderedEvent 已移到 @calenderjs/event-model
+ * 这里使用从 @calenderjs/event-model 导入的类型
  */
-export interface ValidationResult {
-    /** 是否有效 */
-    valid: boolean;
-    /** 错误消息列表 */
-    errors?: string[];
-}
-
-// ============================================
-// 渲染结果
-// ============================================
-
-/**
- * 渲染后的事件信息
- *
- * 注意：这是 DSL 运行时渲染的结果，用于显示
- * 实际的 Event 对象在 @calenderjs/event-model 中定义
- */
-export interface RenderedEvent {
-    /** 标题 */
-    title: string;
-    /** 描述 */
-    description?: string;
-    /** 颜色 */
-    color: string;
-    /** 图标 */
-    icon?: string;
-    /** 是否全天事件 */
-    allDay?: boolean;
-    /** 其他渲染属性 */
-    [key: string]: any;
-}
 
 // ============================================
 // 注意：Event 接口在 @calenderjs/event-model 中定义
@@ -287,9 +239,6 @@ export type {
     RendererFunction,
     BehaviorConfig,
 } from '@calenderjs/event-model';
-
-// JSONSchema 在下面定义，避免重复导入
-import type { ValidatorFunction, RendererFunction, BehaviorConfig } from '@calenderjs/event-model';
 
 // 注意：EventTypeDataModel 在 @calenderjs/event-model 中定义
 // DSL 编译成 Data Model，Runtime 使用 Data Model
