@@ -12,7 +12,8 @@
     "lint": "nx run-many --target=lint --parallel",
     "clean": "nx reset && nx run-many --target=clean --parallel",
     "graph": "nx graph",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "qingniao"
   },
   "devDependencies": {
     "@nx/devkit": "^22.3.3",
