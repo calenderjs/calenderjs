@@ -1,3 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
 # Pre-push hook: 在推送前运行更严格的检查
 echo "🚀 Running pre-push checks..."
 

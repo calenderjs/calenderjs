@@ -1,6 +1,6 @@
 {
     "name": "@calenderjs/calendar",
-    "version": "0.1.0",
+    "version": "0.0.0",
     "description": "Calendar 组件 - 基于 WSX 框架构建的事件日历组件",
     "type": "module",
     "main": "./dist/index.cjs",
