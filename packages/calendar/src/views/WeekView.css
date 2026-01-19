@@ -12,14 +12,14 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background: #fff;
+    background: var(--calender-bg-color, #fff);
 }
 
 .week-view-header {
     display: grid;
-    grid-template-columns: 60px repeat(7, 1fr);
-    border-bottom: 1px solid #dadce0;
-    background: #fff;
+    grid-template-columns: var(--calender-week-time-gutter-width, 60px) repeat(7, 1fr);
+    border-bottom: 1px solid var(--calender-border-color, #dadce0);
+    background: var(--calender-bg-color, #fff);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -27,37 +27,37 @@
 
 /* Header 中的时间列（空占位） */
 .week-view-header > .week-view-time-gutter {
-    border-right: 1px solid #dadce0;
-    background: #fff;
+    border-right: 1px solid var(--calender-border-color, #dadce0);
+    background: var(--calender-bg-color, #fff);
 }
 
 .week-view-day-header {
-    padding: 12px 4px;
+    padding: var(--calender-week-header-padding, 12px 4px);
     text-align: center;
-    border-right: 1px solid #dadce0;
-    background: #fff;
+    border-right: 1px solid var(--calender-border-color, #dadce0);
+    background: var(--calender-bg-color, #fff);
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color var(--calender-transition-duration-fast, 0.15s);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: var(--calender-week-header-gap, 2px);
 }
 
 .week-view-day-header:hover {
-    background-color: #f8f9fa;
+    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .week-view-day-header.today {
-    background-color: #e8f0fe;
+    background-color: var(--calender-today-bg-color, #e8f0fe);
 }
 
 .week-view-day-header.today .week-view-day-date {
-    background-color: #1a73e8;
-    color: #fff;
-    width: 40px;
-    height: 40px;
+    background-color: var(--calender-primary-color, #1a73e8);
+    color: var(--calender-primary-text-color, #fff);
+    width: var(--calender-week-today-indicator-size, 40px);
+    height: var(--calender-week-today-indicator-size, 40px);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -65,7 +65,7 @@
 }
 
 .week-view-day-header.selected {
-    background-color: #e8f0fe;
+    background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 .week-view-day-header:last-child {
@@ -73,17 +73,17 @@
 }
 
 .week-view-day-name {
-    font-size: 11px;
-    font-weight: 500;
-    color: #70757a;
+    font-size: var(--calender-week-day-name-font-size, 11px);
+    font-weight: var(--calender-week-day-name-font-weight, 500);
+    color: var(--calender-text-secondary-color, #70757a);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: var(--calender-week-day-name-letter-spacing, 0.8px);
 }
 
 .week-view-day-date {
-    font-size: 26px;
-    font-weight: 400;
-    color: #3c4043;
+    font-size: var(--calender-week-day-date-font-size, 26px);
+    font-weight: var(--calender-week-day-date-font-weight, 400);
+    color: var(--calender-text-color, #3c4043);
     line-height: 1;
     /* 默认为inline，当是today时会变为flex容器 */
     display: inline-block;
@@ -91,14 +91,14 @@
 
 /* 选中状态的日期（非今日） */
 .week-view-day-header.selected:not(.today) .week-view-day-date {
-    color: #1a73e8;
-    font-weight: 500;
+    color: var(--calender-primary-color, #1a73e8);
+    font-weight: var(--calender-selected-font-weight, 500);
 }
 
 .week-view-day-events-count {
-    font-size: 11px;
-    color: #70757a;
-    margin-top: 4px;
+    font-size: var(--calender-week-events-count-font-size, 11px);
+    color: var(--calender-text-secondary-color, #70757a);
+    margin-top: var(--calender-week-events-count-margin-top, 4px);
     line-height: 1.2;
 }
 
@@ -112,10 +112,10 @@
 
 /* 时间轴（左侧） */
 .week-view-time-gutter {
-    width: 60px;
-    min-width: 60px;
-    border-right: 1px solid #dadce0;
-    background: #fff;
+    width: var(--calender-week-time-gutter-width, 60px);
+    min-width: var(--calender-week-time-gutter-width, 60px);
+    border-right: 1px solid var(--calender-border-color, #dadce0);
+    background: var(--calender-bg-color, #fff);
     position: sticky;
     left: 0;
     z-index: 5;
@@ -124,13 +124,13 @@
 }
 
 .week-view-time-label {
-    height: 48px;
-    padding-top: 4px;
-    padding-right: 8px;
+    height: var(--calender-hour-cell-height, 48px);
+    padding-top: var(--calender-time-label-padding-top, 4px);
+    padding-right: var(--calender-time-label-padding-right, 8px);
     text-align: right;
-    font-size: 12px;
-    color: #70757a;
-    border-bottom: 1px solid #e8eaed;
+    font-size: var(--calender-time-label-font-size, 12px);
+    color: var(--calender-text-secondary-color, #70757a);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     box-sizing: border-box;
 }
 
@@ -144,7 +144,7 @@
 
 /* 单个日期列 */
 .week-view-day-column {
-    border-right: 1px solid #dadce0;
+    border-right: 1px solid var(--calender-border-color, #dadce0);
     position: relative;
     min-width: 0;
 }
@@ -154,71 +154,71 @@
 }
 
 .week-view-hour-cell {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color var(--calender-transition-duration-fast, 0.15s);
     position: relative;
     box-sizing: border-box;
 }
 
 .week-view-hour-cell:hover {
-    background-color: #f8f9fa;
+    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .week-view-hour-cell.selected {
-    background-color: #e8f0fe;
+    background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 .week-view-time-slot-cell {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color var(--calender-transition-duration-fast, 0.15s);
     position: relative;
 }
 
 .week-view-time-slot-cell:hover {
-    background-color: #f8f9fa;
+    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .week-view-time-slot-cell.selected {
-    background-color: #e8f0fe;
+    background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 .week-view-event {
     position: absolute;
-    left: 1px;
-    right: 1px;
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-size: 12px;
-    color: #fff;
+    left: var(--calender-week-event-margin, 1px);
+    right: var(--calender-week-event-margin, 1px);
+    padding: var(--calender-week-event-padding, 2px 4px);
+    border-radius: var(--calender-event-border-radius, 3px);
+    font-size: var(--calender-event-font-size, 12px);
+    color: var(--calender-event-text-color, #fff);
     cursor: pointer;
     overflow: hidden;
     z-index: 2;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s, z-index 0.2s;
-    line-height: 1.3;
+    box-shadow: var(--calender-event-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.1));
+    transition: box-shadow var(--calender-transition-duration, 0.2s), z-index var(--calender-transition-duration, 0.2s);
+    line-height: var(--calender-week-event-line-height, 1.3);
 }
 
 .week-view-event:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--calender-event-hover-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.15));
     z-index: 3;
 }
 
 .week-view-event-time {
-    font-size: 11px;
-    opacity: 0.95;
-    margin-bottom: 2px;
+    font-size: var(--calender-event-time-font-size, 11px);
+    opacity: var(--calender-event-time-opacity, 0.95);
+    margin-bottom: var(--calender-event-time-margin-bottom, 2px);
     line-height: 1.2;
 }
 
 .week-view-event-title {
-    font-weight: 500;
+    font-weight: var(--calender-event-title-font-weight, 500);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 1.3;
-    margin-bottom: 2px;
+    line-height: var(--calender-week-event-line-height, 1.3);
+    margin-bottom: var(--calender-event-title-margin-bottom, 2px);
 }

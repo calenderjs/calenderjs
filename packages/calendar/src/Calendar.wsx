@@ -10,7 +10,7 @@
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
 import type { Event as CalendarEvent } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
-import { getWeekDates } from "./utils/date-utils";
+import { getWeekDates } from "@calenderjs/date-time";
 import styles from "./Calendar.css?inline";
 // 导入视图组件以确保它们被注册
 import "./views/DayView.wsx";

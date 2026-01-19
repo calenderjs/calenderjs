@@ -7,7 +7,7 @@ import {
     isSameDay,
     isSameMonth,
     formatDateKey,
-} from "../utils/date-utils";
+} from "@calenderjs/date-time";
 import { groupEventsByDate, sortEventsByTime } from "../utils/event-utils";
 import styles from "./MonthView.css?inline";
 
@@ -31,6 +31,8 @@ export default class MonthView extends WebComponent {
         email: "john.doe@example.com",
         role: "user",
     };
+    // 保存"今天"的日期，确保在切换视图时不会改变
+    private readonly _today: Date;
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
@@ -109,6 +111,10 @@ export default class MonthView extends WebComponent {
             styles,
             styleName: "wsx-month-view",
         });
+        // 在构造函数中初始化"今天"的日期，确保只计算一次
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this._today = today;
     }
 
     // ========== 生命周期 ==========
@@ -280,7 +286,11 @@ export default class MonthView extends WebComponent {
                         ) {
                             return null;
                         }
-                        const dateKey = formatDateKey(date);
+                        // 确保日期对象的时间部分为 0，便于准确比较
+                        const normalizedDate = new Date(date);
+                        normalizedDate.setHours(0, 0, 0, 0);
+                        
+                        const dateKey = formatDateKey(normalizedDate);
                         const dayEvents = sortEventsByTime(
                             this.eventsByDate.get(dateKey) || []
                         );
@@ -288,13 +298,14 @@ export default class MonthView extends WebComponent {
                             this._viewDate &&
                             this._viewDate instanceof Date &&
                             !isNaN(this._viewDate.getTime())
-                                ? isSameMonth(date, this._viewDate)
+                                ? isSameMonth(normalizedDate, this._viewDate)
                                 : false;
                         // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
                         const isSelected =
                             this._selectedDate.getTime() !== 0 &&
-                            isSameDay(date, this._selectedDate);
-                        const isToday = isSameDay(date, new Date());
+                            isSameDay(normalizedDate, this._selectedDate);
+                        // 使用规范化后的日期与 _today 比较
+                        const isToday = isSameDay(normalizedDate, this._today);
 
                         return (
                             <div
@@ -303,13 +314,13 @@ export default class MonthView extends WebComponent {
                                 } ${isSelected ? "selected" : ""} ${
                                     isToday ? "today" : ""
                                 }`}
-                                onClick={() => this.handleDateClick(date)}
+                                onClick={() => this.handleDateClick(normalizedDate)}
                                 onDblClick={() =>
-                                    this.handleDateDoubleClick(date)
+                                    this.handleDateDoubleClick(normalizedDate)
                                 }
                             >
                                 <div class="month-view-cell-date">
-                                    {date.getDate()}
+                                    {normalizedDate.getDate()}
                                 </div>
                                 <div class="month-view-cell-events">
                                     {dayEvents.slice(0, 3).map((event) => {

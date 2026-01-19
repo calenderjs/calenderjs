@@ -2,7 +2,7 @@
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
 import type { Event } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
-import { getWeekDates, isSameDay, getTimeString } from "../utils/date-utils";
+import { getWeekDates, isSameDay, getTimeString } from "@calenderjs/date-time";
 import {
     getEventsForDate,
     sortEventsByTime,
@@ -30,6 +30,8 @@ export default class WeekView extends WebComponent {
         email: "john.doe@example.com",
         role: "user",
     };
+    // 保存"今天"的日期，确保在切换视图时不会改变
+    private readonly _today: Date;
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
@@ -108,6 +110,10 @@ export default class WeekView extends WebComponent {
             styles,
             styleName: "wsx-week-view",
         });
+        // 在构造函数中初始化"今天"的日期，确保只计算一次
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this._today = today;
     }
 
     // ========== 生命周期 ==========
@@ -229,13 +235,18 @@ export default class WeekView extends WebComponent {
                 <div class="week-view-header">
                     <div class="week-view-time-gutter"></div>
                     {this.weekDates.map((date) => {
+                        // 确保日期对象的时间部分为 0，便于准确比较
+                        const normalizedDate = new Date(date);
+                        normalizedDate.setHours(0, 0, 0, 0);
+                        
                         // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
                         const isSelected =
                             this.selectedDate.getTime() !== 0 &&
-                            isSameDay(date, this.selectedDate);
-                        const isToday = isSameDay(date, new Date());
+                            isSameDay(normalizedDate, this.selectedDate);
+                        // 使用规范化后的日期与 _today 比较
+                        const isToday = isSameDay(normalizedDate, this._today);
                         const dayEvents = sortEventsByTime(
-                            getEventsForDate(this.events, date)
+                            getEventsForDate(this.events, normalizedDate)
                         );
 
                         return (
@@ -243,7 +254,7 @@ export default class WeekView extends WebComponent {
                                 class={`week-view-day-header ${
                                     isSelected ? "selected" : ""
                                 } ${isToday ? "today" : ""}`}
-                                onClick={() => this.handleDateClick(date)}
+                                onClick={() => this.handleDateClick(normalizedDate)}
                             >
                                 <div class="week-view-day-name">
                                     {
@@ -255,11 +266,11 @@ export default class WeekView extends WebComponent {
                                             "四",
                                             "五",
                                             "六",
-                                        ][date.getDay()]
+                                        ][normalizedDate.getDay()]
                                     }
                                 </div>
                                 <div class="week-view-day-date">
-                                    {date.getDate()}
+                                    {normalizedDate.getDate()}
                                 </div>
                                 <div class="week-view-day-events-count">
                                     {dayEvents.length} 个事件
@@ -285,18 +296,22 @@ export default class WeekView extends WebComponent {
                     </div>
                     <div class="week-view-columns">
                         {this.weekDates.map((date) => {
+                            // 确保日期对象的时间部分为 0，便于准确比较
+                            const normalizedDate = new Date(date);
+                            normalizedDate.setHours(0, 0, 0, 0);
+                            
                             const dayEvents = sortEventsByTime(
-                                getEventsForDate(this.events, date)
+                                getEventsForDate(this.events, normalizedDate)
                             );
-                            const dayStart = new Date(date);
+                            const dayStart = new Date(normalizedDate);
                             dayStart.setHours(0, 0, 0, 0);
-                            const dayEnd = new Date(date);
+                            const dayEnd = new Date(normalizedDate);
                             dayEnd.setHours(23, 59, 59, 999);
 
                             return (
                                 <div
                                     class="week-view-day-column"
-                                    key={"day-column-" + date.getTime()}
+                                    key={"day-column-" + normalizedDate.getTime()}
                                 >
                                     {this.hours.map((hour) => {
                                         return (

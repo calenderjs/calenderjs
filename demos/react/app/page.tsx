@@ -1,16 +1,16 @@
 "use client";
 
-import { Calendar } from "@calenderjs/react";
+import { Calendar, EventEditor, ResizableSplitter } from "@calenderjs/react";
 import type { Event } from "@calenderjs/event-model";
 import { EventDSLCompiler, parseEventDSL } from "@calenderjs/event-dsl";
 import { EventRuntime } from "@calenderjs/event-runtime";
 import { EventValidator } from "@calenderjs/event-model";
 import { useState, useEffect, useMemo } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 // 动态导入 Monaco Editor（避免 SSR 问题）
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+const Editor = dynamic(() => import("@monaco-editor/react").then((mod) => mod.Editor), {
     ssr: false,
 });
 
@@ -77,6 +77,7 @@ export default function Home() {
         Array<{ eventId: string; valid: boolean; errors?: string[] }>
     >([]);
     const [renderedEvents, setRenderedEvents] = useState<any[]>([]);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     // 编译 DSL
     const compiledDataModel = useMemo(() => {
@@ -185,179 +186,292 @@ export default function Home() {
         console.log("Event clicked:", e.detail.event);
     };
 
+    // 暗色模式样式变量
+    const darkModeStyles = {
+        bg: isDarkMode ? "#1a1a1a" : "#fff",
+        bgSecondary: isDarkMode ? "#2d2d2d" : "#f5f5f5",
+        bgTertiary: isDarkMode ? "#3d3d3d" : "#f9f9f9",
+        text: isDarkMode ? "#e0e0e0" : "#000",
+        textSecondary: isDarkMode ? "#aaa" : "#666",
+        border: isDarkMode ? "#444" : "#ddd",
+        errorBg: isDarkMode ? "#4a1f1f" : "#fee",
+        errorText: isDarkMode ? "#ff6b6b" : "#c33",
+        successBg: isDarkMode ? "#1f4a1f" : "#efe",
+        successText: isDarkMode ? "#6bff6b" : "#3c3",
+        headerBg: isDarkMode ? "#0d0d0d" : "#1a1a1a",
+        splitterColor: isDarkMode ? "#444" : "#ddd",
+        splitterHover: isDarkMode ? "#555" : "#bbb",
+    };
+
     return (
         <div
             style={{
                 display: "flex",
                 flexDirection: "column",
                 height: "100vh",
-            }}
+                backgroundColor: darkModeStyles.bg,
+                color: darkModeStyles.text,
+                // 设置日历 CSS 变量以支持暗色模式
+                ...(isDarkMode
+                    ? {
+                          "--calender-bg-color": "#1a1a1a",
+                          "--calender-text-color": "#e0e0e0",
+                          "--calender-text-secondary-color": "#aaa",
+                          "--calender-primary-text-color": "#fff",
+                          "--calender-border-color": "#444",
+                          "--calender-border-light-color": "#3d3d3d",
+                          "--calender-border-hover-color": "#555",
+                          "--calender-primary-color": "#4285f4",
+                          "--calender-primary-hover-color": "#357ae8",
+                          "--calender-today-bg-color": "#2d2d2d",
+                          "--calender-selected-bg-color": "#2d2d2d",
+                          "--calender-hover-bg-color": "#2d2d2d",
+                          "--calender-hover-bg-color-light": "#3d3d3d",
+                          "--calender-active-bg-color": "#3d3d3d",
+                          "--calender-event-text-color": "#fff",
+                      }
+                    : {
+                          "--calender-bg-color": "#fff",
+                          "--calender-text-color": "#202124",
+                          "--calender-text-secondary-color": "#5f6368",
+                          "--calender-primary-text-color": "#fff",
+                          "--calender-border-color": "#dadce0",
+                          "--calender-border-light-color": "#e8eaed",
+                          "--calender-border-hover-color": "#c4c7c5",
+                          "--calender-primary-color": "#1a73e8",
+                          "--calender-primary-hover-color": "#1765cc",
+                          "--calender-today-bg-color": "#e8f0fe",
+                          "--calender-selected-bg-color": "#e8f0fe",
+                          "--calender-hover-bg-color": "#f1f3f4",
+                          "--calender-hover-bg-color-light": "#f8f9fa",
+                          "--calender-active-bg-color": "#e8eaed",
+                          "--calender-event-text-color": "#fff",
+                      }),
+            } as React.CSSProperties}
         >
             {/* Header */}
             <header
                 style={{
                     padding: "20px",
-                    backgroundColor: "#1a1a1a",
+                    backgroundColor: darkModeStyles.headerBg,
                     color: "white",
-                    borderBottom: "1px solid #333",
+                    borderBottom: `1px solid ${darkModeStyles.border}`,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                 }}
             >
-                <h1 style={{ margin: 0, fontSize: "24px" }}>CalenderJS Demo</h1>
-                <p
+                <div>
+                    <h1 style={{ margin: 0, fontSize: "24px" }}>
+                        CalenderJS Demo
+                    </h1>
+                    <p
+                        style={{
+                            margin: "8px 0 0 0",
+                            color: "#aaa",
+                            fontSize: "14px",
+                        }}
+                    >
+                        DSL → Data Model → Event 验证 → Calendar 显示
+                    </p>
+                </div>
+                <button
+                    onClick={() => setIsDarkMode(!isDarkMode)}
                     style={{
-                        margin: "8px 0 0 0",
-                        color: "#aaa",
+                        padding: "8px 16px",
+                        backgroundColor: isDarkMode ? "#4a4a4a" : "#4285f4",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
                         fontSize: "14px",
+                        fontWeight: "500",
+                        transition: "background-color 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = isDarkMode
+                            ? "#5a5a5a"
+                            : "#357ae8";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = isDarkMode
+                            ? "#4a4a4a"
+                            : "#4285f4";
                     }}
                 >
-                    DSL → Data Model → Event 验证 → Calendar 显示
-                </p>
+                    {isDarkMode ? "☀️ 浅色模式" : "🌙 暗色模式"}
+                </button>
             </header>
 
-            {/* Main Content */}
-            <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-                {/* Left Panel: DSL Editor */}
-                <div
-                    style={{
-                        width: "40%",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderRight: "1px solid #ddd",
-                        backgroundColor: "#f5f5f5",
-                    }}
-                >
-                    <div
-                        style={{
-                            padding: "15px",
-                            backgroundColor: "#fff",
-                            borderBottom: "1px solid #ddd",
-                        }}
-                    >
-                        <h2 style={{ margin: 0, fontSize: "18px" }}>
-                            DSL 编辑器
-                        </h2>
-                        <p
-                            style={{
-                                margin: "5px 0 0 0",
-                                fontSize: "12px",
-                                color: "#666",
-                            }}
-                        >
-                            编辑 Event DSL 定义，实时查看编译结果
-                        </p>
-                    </div>
-                    <div style={{ flex: 1, position: "relative" }}>
-                        <MonacoEditor
-                            height="100%"
-                            language="plaintext"
-                            value={dslText}
-                            onChange={(value) => setDslText(value || "")}
-                            theme="vs-light"
-                            options={{
-                                minimap: { enabled: false },
-                                fontSize: 14,
-                                wordWrap: "on",
-                                lineNumbers: "on",
-                                scrollBeyondLastLine: false,
-                            }}
-                        />
-                    </div>
-                    {compilationError && (
-                        <div
-                            style={{
-                                padding: "10px 15px",
-                                backgroundColor: "#fee",
-                                color: "#c33",
-                                fontSize: "12px",
-                                borderTop: "1px solid #ddd",
-                            }}
-                        >
-                            <strong>编译错误:</strong> {compilationError}
-                        </div>
-                    )}
-                    {!compilationError && compiledDataModel && (
-                        <div
-                            style={{
-                                padding: "10px 15px",
-                                backgroundColor: "#efe",
-                                color: "#3c3",
-                                fontSize: "12px",
-                                borderTop: "1px solid #ddd",
-                            }}
-                        >
-                            <strong>✓ 编译成功:</strong>{" "}
-                            {compiledDataModel.name} ({compiledDataModel.id})
-                        </div>
-                    )}
-                </div>
+            {/* Main Content with Resizable Splitter */}
+            <div style={{ flex: 1, overflow: "hidden" }}>
+                <ResizableSplitter
+                    initialLeftWidth={40}
+                    minLeftWidth={20}
+                    maxLeftWidth={80}
+                    left={
+                        <>
+                            {/* Left Panel: DSL Editor */}
+                            <div
+                                style={{
+                                    padding: "15px",
+                                    backgroundColor: darkModeStyles.bgSecondary,
+                                    borderBottom: `1px solid ${darkModeStyles.border}`,
+                                }}
+                            >
+                                <h2
+                                    style={{
+                                        margin: 0,
+                                        fontSize: "18px",
+                                        color: darkModeStyles.text,
+                                    }}
+                                >
+                                    DSL 编辑器
+                                </h2>
+                                <p
+                                    style={{
+                                        margin: "5px 0 0 0",
+                                        fontSize: "12px",
+                                        color: darkModeStyles.textSecondary,
+                                    }}
+                                >
+                                    编辑 Event DSL 定义，实时查看编译结果
+                                </p>
+                            </div>
+                            <div
+                                style={{
+                                    flex: 1,
+                                    position: "relative",
+                                    backgroundColor: darkModeStyles.bg,
+                                }}
+                            >
+                                <EventEditor
+                                    EditorComponent={Editor}
+                                    value={dslText}
+                                    onChange={(value) =>
+                                        setDslText(value || "")
+                                    }
+                                    height="100%"
+                                    darkMode={isDarkMode}
+                                />
+                            </div>
+                            {compilationError && (
+                                <div
+                                    style={{
+                                        padding: "10px 15px",
+                                        backgroundColor: darkModeStyles.errorBg,
+                                        color: darkModeStyles.errorText,
+                                        fontSize: "12px",
+                                        borderTop: `1px solid ${darkModeStyles.border}`,
+                                    }}
+                                >
+                                    <strong>编译错误:</strong>{" "}
+                                    {compilationError}
+                                </div>
+                            )}
+                            {!compilationError && compiledDataModel && (
+                                <div
+                                    style={{
+                                        padding: "10px 15px",
+                                        backgroundColor:
+                                            darkModeStyles.successBg,
+                                        color: darkModeStyles.successText,
+                                        fontSize: "12px",
+                                        borderTop: `1px solid ${darkModeStyles.border}`,
+                                    }}
+                                >
+                                    <strong>✓ 编译成功:</strong>{" "}
+                                    {compiledDataModel.name} (
+                                    {compiledDataModel.id})
+                                </div>
+                            )}
+                        </>
+                    }
+                    right={
+                        <>
+                            {/* Right Panel: Calendar */}
+                            {/* Validation Status */}
+                            <div
+                                style={{
+                                    padding: "15px",
+                                    backgroundColor: darkModeStyles.bgTertiary,
+                                    borderBottom: `1px solid ${darkModeStyles.border}`,
+                                }}
+                            >
+                                <h2
+                                    style={{
+                                        margin: 0,
+                                        fontSize: "18px",
+                                        color: darkModeStyles.text,
+                                    }}
+                                >
+                                    验证状态
+                                </h2>
+                                <div
+                                    style={{
+                                        marginTop: "10px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    {validationResults.map((result) => {
+                                        const event = events.find(
+                                            (e) => e.id === result.eventId
+                                        );
+                                        return (
+                                            <div
+                                                key={result.eventId}
+                                                style={{
+                                                    marginBottom: "5px",
+                                                    color: result.valid
+                                                        ? darkModeStyles.successText
+                                                        : darkModeStyles.errorText,
+                                                }}
+                                            >
+                                                {result.valid ? "✓" : "✗"}{" "}
+                                                {event?.title || result.eventId}
+                                                {result.errors &&
+                                                    result.errors.length >
+                                                        0 && (
+                                                        <span
+                                                            style={{
+                                                                marginLeft:
+                                                                    "10px",
+                                                                color: darkModeStyles.textSecondary,
+                                                            }}
+                                                        >
+                                                            {result.errors.join(
+                                                                ", "
+                                                            )}
+                                                        </span>
+                                                    )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
 
-                {/* Right Panel: Calendar */}
-                <div
-                    style={{
-                        flex: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "#fff",
-                    }}
-                >
-                    {/* Validation Status */}
-                    <div
-                        style={{
-                            padding: "15px",
-                            backgroundColor: "#f9f9f9",
-                            borderBottom: "1px solid #ddd",
-                        }}
-                    >
-                        <h2 style={{ margin: 0, fontSize: "18px" }}>
-                            验证状态
-                        </h2>
-                        <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                            {validationResults.map((result) => {
-                                const event = events.find(
-                                    (e) => e.id === result.eventId
-                                );
-                                return (
-                                    <div
-                                        key={result.eventId}
-                                        style={{
-                                            marginBottom: "5px",
-                                            color: result.valid
-                                                ? "#3c3"
-                                                : "#c33",
-                                        }}
-                                    >
-                                        {result.valid ? "✓" : "✗"}{" "}
-                                        {event?.title || result.eventId}
-                                        {result.errors &&
-                                            result.errors.length > 0 && (
-                                                <span
-                                                    style={{
-                                                        marginLeft: "10px",
-                                                        color: "#666",
-                                                    }}
-                                                >
-                                                    {result.errors.join(", ")}
-                                                </span>
-                                            )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Calendar */}
-                    <div style={{ flex: 1, padding: "20px", overflow: "auto" }}>
-                        <Calendar
-                            view={currentView}
-                            date={currentDate}
-                            events={renderedEvents as any}
-                            onDateChange={handleDateChange}
-                            onViewChange={handleViewChange}
-                            onEventClick={handleEventClick}
-                            style={{ width: "100%", height: "100%" }}
-                        />
-                    </div>
-                </div>
+                            {/* Calendar */}
+                            <div
+                                style={{
+                                    flex: 1,
+                                    padding: "20px",
+                                    overflow: "auto",
+                                    backgroundColor: darkModeStyles.bg,
+                                }}
+                            >
+                                <Calendar
+                                    view={currentView}
+                                    date={currentDate}
+                                    events={renderedEvents as any}
+                                    onDateChange={handleDateChange}
+                                    onViewChange={handleViewChange}
+                                    onEventClick={handleEventClick}
+                                    style={{ width: "100%", height: "100%" }}
+                                />
+                            </div>
+                        </>
+                    }
+                />
             </div>
         </div>
     );

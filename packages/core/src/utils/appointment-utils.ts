@@ -5,7 +5,7 @@
  */
 
 import type { Event } from "@calenderjs/event-model";
-import { formatDateKey } from "./date-utils";
+import { formatDateKey } from "@calenderjs/date-time";
 
 /**
  * 判断事件是否在指定日期

@@ -12,41 +12,41 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background: #fff;
+    background: var(--calender-bg-color, #fff);
 }
 
 .day-view-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid #dadce0;
-    background: #fff;
+    padding: var(--calender-day-header-padding, 16px 24px);
+    border-bottom: 1px solid var(--calender-border-color, #dadce0);
+    background: var(--calender-bg-color, #fff);
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
 .day-view-date {
-    font-size: 22px;
-    font-weight: 400;
-    color: #202124;
+    font-size: var(--calender-day-header-date-font-size, 22px);
+    font-weight: var(--calender-day-header-date-font-weight, 400);
+    color: var(--calender-text-color, #202124);
 }
 
 .day-view-body {
     display: grid;
-    grid-template-columns: 60px 1fr;
+    grid-template-columns: var(--calender-day-time-gutter-width, 60px) 1fr;
     flex: 1;
     overflow: auto;
     position: relative;
 }
 
 .day-view-time-column {
-    border-right: 1px solid #dadce0;
+    border-right: 1px solid var(--calender-border-color, #dadce0);
     position: sticky;
     left: 0;
-    background: #fff;
+    background: var(--calender-bg-color, #fff);
     z-index: 5;
     grid-column: 1;
-    width: 60px;
-    min-width: 60px;
+    width: var(--calender-day-time-gutter-width, 60px);
+    min-width: var(--calender-day-time-gutter-width, 60px);
 }
 
 .day-view-events-column {
@@ -55,18 +55,18 @@
 }
 
 .day-view-hour {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     padding: 0;
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
-    font-size: 12px;
-    color: #70757a;
+    font-size: var(--calender-time-label-font-size, 12px);
+    color: var(--calender-text-secondary-color, #70757a);
     position: relative;
     box-sizing: border-box;
-    padding-right: 8px;
-    padding-top: 4px;
+    padding-right: var(--calender-time-label-padding-right, 8px);
+    padding-top: var(--calender-time-label-padding-top, 4px);
 }
 
 .day-view-hour::before {
@@ -76,18 +76,18 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: #e8eaed;
+    background: var(--calender-border-light-color, #e8eaed);
 }
 
 /* 保留旧的类名以兼容 */
 .day-view-time-slot {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
-    padding: 0 8px;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
+    padding: 0 var(--calender-time-label-padding-right, 8px);
     display: flex;
     align-items: flex-start;
-    font-size: 12px;
-    color: #70757a;
+    font-size: var(--calender-time-label-font-size, 12px);
+    color: var(--calender-text-secondary-color, #70757a);
     position: relative;
 }
 
@@ -98,7 +98,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: #e8eaed;
+    background: var(--calender-border-light-color, #e8eaed);
 }
 
 .day-view-main-column {
@@ -106,74 +106,78 @@
 }
 
 .day-view-hour-cell {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color var(--calender-transition-duration-fast, 0.15s);
     position: relative;
     box-sizing: border-box;
 }
 
 .day-view-hour-cell:hover {
-    background-color: #f8f9fa;
+    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .day-view-hour-cell.selected {
-    background-color: #e8f0fe;
+    background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 /* 保留旧的类名以兼容 */
 .day-view-time-slot-cell {
-    height: 48px;
-    border-bottom: 1px solid #e8eaed;
+    height: var(--calender-hour-cell-height, 48px);
+    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color var(--calender-transition-duration-fast, 0.15s);
     position: relative;
 }
 
 .day-view-time-slot-cell:hover {
-    background-color: #f8f9fa;
+    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .day-view-time-slot-cell.selected {
-    background-color: #e8f0fe;
+    background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 .day-view-event {
     position: absolute;
-    left: 2px;
-    right: 2px;
-    padding: 6px 10px;
-    border-radius: 3px;
-    font-size: 13px;
-    color: #fff;
+    left: var(--calender-day-event-margin, 2px);
+    right: var(--calender-day-event-margin, 2px);
+    padding: var(--calender-day-event-padding, 6px 10px);
+    border-radius: var(--calender-event-border-radius, 3px);
+    font-size: var(--calender-day-event-font-size, 13px);
+    color: var(--calender-event-text-color, #fff);
     cursor: pointer;
     overflow: hidden;
     z-index: 2;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s, z-index 0.2s;
-    line-height: 1.4;
+    box-shadow: var(--calender-event-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.1));
+    transition: box-shadow var(--calender-transition-duration, 0.2s),
+        z-index var(--calender-transition-duration, 0.2s);
+    line-height: var(--calender-day-event-line-height, 1.4);
 }
 
 .day-view-event:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: var(
+        --calender-event-hover-box-shadow,
+        0 2px 4px rgba(0, 0, 0, 0.15)
+    );
     z-index: 3;
 }
 
 .day-view-event-title {
-    font-weight: 500;
-    margin-bottom: 4px;
+    font-weight: var(--calender-event-title-font-weight, 500);
+    margin-bottom: var(--calender-day-event-title-margin-bottom, 4px);
 }
 
 .day-view-event-time {
-    font-size: 12px;
-    opacity: 0.9;
+    font-size: var(--calender-event-time-font-size, 12px);
+    opacity: var(--calender-event-time-opacity, 0.9);
 }
 
 .day-view-event-description {
-    font-size: 12px;
-    opacity: 0.85;
-    margin-top: 4px;
+    font-size: var(--calender-event-description-font-size, 12px);
+    opacity: var(--calender-event-description-opacity, 0.85);
+    margin-top: var(--calender-event-description-margin-top, 4px);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

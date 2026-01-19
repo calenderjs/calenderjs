@@ -1008,7 +1008,10 @@ fields:
             expect(result[0].name).toBe("validator1");
             expect(result[0].validate()).toEqual({ valid: true });
             expect(result[1].name).toBe("validator2");
-            expect(result[1].validate()).toEqual({ valid: false, errors: ["error"] });
+            expect(result[1].validate()).toEqual({
+                valid: false,
+                errors: ["error"],
+            });
         });
     });
 });

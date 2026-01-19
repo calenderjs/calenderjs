@@ -14,3 +14,21 @@ body {
     height: 100vh;
     overflow: hidden;
 }
+
+/* Resizable Splitter Styles */
+.resizable-splitter {
+    --splitter-color: #ddd;
+    --splitter-hover-color: #bbb;
+    --splitter-handle-color: rgba(0, 0, 0, 0.1);
+    --splitter-dot-color: #999;
+}
+
+/* Dark mode support for splitter */
+@media (prefers-color-scheme: dark) {
+    .resizable-splitter {
+        --splitter-color: #444;
+        --splitter-hover-color: #555;
+        --splitter-handle-color: rgba(255, 255, 255, 0.1);
+        --splitter-dot-color: #ccc;
+    }
+}

@@ -9,6 +9,18 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   
   webpack: (config, { isServer }) => {
+    // Monorepo: 确保 React 使用单一实例（必需！）
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      react: require.resolve('react'),
+      'react-dom': require.resolve('react-dom'),
+      'react/jsx-runtime': require.resolve('react/jsx-runtime'),
+      'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),
+    };
+    
     // 确保 resolve 优先使用 package.json 的 exports 字段
     // 这样会使用 dist 目录，而不是 src 目录
     config.resolve.conditionNames = ['import', 'require', 'default'];
@@ -39,6 +51,9 @@ const nextConfig = {
     config.ignoreWarnings = [
       { module: /node_modules/ },
       { file: /\.map$/ },
+      // 忽略 @next/swc-* 平台特定二进制包的 FileSystemInfo 警告
+      // 这些是符号链接，不是标准 npm 包，警告是无害的
+      /Managed item .*@next\/swc-.* isn't a directory or doesn't contain a package\.json/,
     ];
     
     return config;

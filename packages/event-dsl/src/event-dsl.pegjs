@@ -15,7 +15,7 @@
 // ============================================
 
 EventTypeDefinition
-  = _ sections:Section+ _ {
+  = _ sections:Section* _ {
       const result = {};
       sections.forEach(section => {
         result[section.name] = section.value;
@@ -96,13 +96,14 @@ FieldModifier
 // ============================================
 
 ValidateSection
-  = "validate:" _ rules:ValidationRule+ {
+  = "validate:" _ rules:ValidationRule* {
       return { name: 'validate', value: rules };
     }
 
 ValidationRule
-  = _ WhenExpression
-  / _ ComparisonExpression
+  = _ !("display:" / "behavior:" / "constraints:" / "recurring:" / "type:" / "name:" / "description:" / "fields:") rule:(WhenExpression / ComparisonExpression) {
+      return rule;
+    }
 
 WhenExpression
   = "when" _ condition:LogicalExpression ":" _ rules:ValidationRule+ {
@@ -185,7 +186,7 @@ ComparisonTerm
         right: right
       };
     }
-  / FieldAccess
+  / FieldAccess _
 
 ModExpression
   = left:FieldAccess _ "mod" _ modValue:Literal _ operator:("is" / "equals" / "is not" / "not equals" / ">" / ">=" / "<" / "<=") _ right:Literal _ {
@@ -242,8 +243,9 @@ BehaviorRule
     }
 
 BehaviorValue
-  = LogicalExpression
-  / Boolean
+  = "true" { return true; }
+  / "false" { return false; }
+  / LogicalExpression
 
 // ============================================
 // 约束部分

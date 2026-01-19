@@ -41,3 +41,4 @@ yarn-error.log*
 
 # Generated files
 **/generated/
+logs/

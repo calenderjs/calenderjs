@@ -28,6 +28,7 @@
         "lint": "eslint src"
     },
     "dependencies": {
+        "@calenderjs/date-time": "workspace:*",
         "@calenderjs/event-model": "workspace:*"
     },
     "devDependencies": {

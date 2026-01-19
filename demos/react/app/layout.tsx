@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     description: "CalenderJS 演示网站：展示 DSL → Data Model → Event 验证 → Calendar 显示的完整流程",
 };
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
     children,
 }: {
