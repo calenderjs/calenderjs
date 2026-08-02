@@ -25,7 +25,7 @@
  * 2. **Event 必须有时间** - Event 必须有 startTime 和 endTime
  * 3. **Appointment 和 Holiday 都是 Event 的扩展** - 它们都是 Event，只是 `type` 不同
  * 4. **Event 包含 Calendar 需要的数据** - Event 数据模型包含 Calendar 显示所需的核心字段
- * 5. **扩展属性用于详情卡片** - Event 的 `extra` 字段存储详情卡片数据，不同类型的事件有不同的详情卡片
+ * 5. **扩展属性用于详情卡片** - Event 的 `data` 字段存储详情卡片数据，不同类型的事件有不同的详情卡片
  * 
  * @example
  * ```typescript
@@ -37,7 +37,7 @@
  *   startTime: new Date("2025-01-15T10:00:00"),
  *   endTime: new Date("2025-01-15T11:00:00"),
  *   color: "#4285f4",
- *   extra: {
+ *   data: {
  *     attendees: ["user1@example.com", "user2@example.com"],
  *     location: "会议室 A",
  *     agenda: "讨论项目进度"
@@ -52,7 +52,7 @@
  *   startTime: new Date("2025-01-15T14:00:00"),
  *   endTime: new Date("2025-01-15T15:00:00"),
  *   color: "#fbbc04",
- *   extra: {
+ *   data: {
  *     doctor: "Dr. Smith",
  *     department: "内科",
  *     notes: "带病历"
@@ -67,7 +67,7 @@
  *   startTime: new Date("2025-01-29T00:00:00"),
  *   endTime: new Date("2025-02-04T23:59:59"),
  *   color: "#ea4335",
- *   extra: {
+ *   data: {
  *     country: "CN",
  *     isOfficial: true,
  *     description: "法定节假日"
@@ -116,18 +116,18 @@ export interface Event {
    * 
    * **重要**：
    * - Appointment 和 Holiday 都是 Event 的扩展类型
-   * - 它们都是 Event，只是 `type` 不同，`extra` 的内容不同
+   * - 它们都是 Event，只是 `type` 不同，`data` 的内容不同
    * - 在 Calendar 中显示时，根据 `type` 显示不同的详情卡片
    * 
    * 例如：
-   * - `type: "meeting"` → `extra: { attendees, location, agenda }`
-   * - `type: "appointment"` → `extra: { doctor, department, notes }`
-   * - `type: "holiday"` → `extra: { country, isOfficial, description }`
-   * - `type: "task"` → `extra: { assignee, status, priority }`
+   * - `type: "meeting"` → `data: { attendees, location, agenda }`
+   * - `type: "appointment"` → `data: { doctor, department, notes }`
+   * - `type: "holiday"` → `data: { country, isOfficial, description }`
+   * - `type: "task"` → `data: { assignee, status, priority }`
    * 
    * 这些数据不影响 Calendar 的显示，只用于详情卡片
    */
-  extra?: Record<string, any>;
+  data?: Record<string, any>;
   
   /** 
    * 时区（可选）

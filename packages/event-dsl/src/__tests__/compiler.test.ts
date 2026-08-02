@@ -17,7 +17,7 @@ fields:
             expect(result.types).toHaveLength(1);
             expect(result.types[0].id).toBe("meeting");
             expect(result.types[0].name).toBe("会议");
-            expect(result.types[0].extraSchema).toBeDefined();
+            expect(result.types[0].dataSchema).toBeDefined();
         });
 
         it("should throw error on invalid DSL text", () => {
@@ -61,7 +61,7 @@ fields:
             expect(result.types).toHaveLength(1);
             expect(result.types[0].id).toBe("meeting");
             expect(result.types[0].name).toBe("会议");
-            expect(result.types[0].extraSchema).toBeDefined();
+            expect(result.types[0].dataSchema).toBeDefined();
             expect(result.types[0].validationRules).toEqual([]);
             expect(result.types[0].displayRules).toEqual([]);
             expect(result.types[0].behaviorRules).toEqual([]);
@@ -98,7 +98,7 @@ fields:
             expect(result.types[1].id).toBe("holiday");
         });
 
-        it("should generate extraSchema from fields", () => {
+        it("should generate dataSchema from fields", () => {
             const compiler = new EventDSLCompiler();
             const ast: EventTypeAST = {
                 type: "meeting",
@@ -123,14 +123,14 @@ fields:
             const result = compiler.compileFromAST([ast]);
             const compiledType = result.types[0];
 
-            expect(compiledType.extraSchema).toBeDefined();
-            expect(compiledType.extraSchema.type).toBe("object");
-            expect(compiledType.extraSchema.properties).toBeDefined();
-            expect(compiledType.extraSchema.properties?.title).toBeDefined();
+            expect(compiledType.dataSchema).toBeDefined();
+            expect(compiledType.dataSchema.type).toBe("object");
+            expect(compiledType.dataSchema.properties).toBeDefined();
+            expect(compiledType.dataSchema.properties?.title).toBeDefined();
             expect(
-                compiledType.extraSchema.properties?.attendees
+                compiledType.dataSchema.properties?.attendees
             ).toBeDefined();
-            expect(compiledType.extraSchema.required).toContain("title");
+            expect(compiledType.dataSchema.required).toContain("title");
         });
 
         it("should include validation rules in CompiledType", () => {
@@ -248,7 +248,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const validation1 = validator(event1);
@@ -262,7 +262,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {
+                data: {
                     title: "Meeting Title",
                 },
             };
@@ -298,7 +298,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {
+                data: {
                     title: "",
                 },
             };
@@ -334,7 +334,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {
+                data: {
                     title: null,
                 },
             };
@@ -370,7 +370,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const validation = validator(event);
@@ -415,7 +415,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {
+                data: {
                     title: "Meeting Title",
                 },
             };
@@ -432,7 +432,7 @@ fields:
                 title: "Test",
                 startTime: new Date("2024-01-01T10:00:00Z"),
                 endTime: new Date("2024-01-01T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const validation2 = validator(event2);

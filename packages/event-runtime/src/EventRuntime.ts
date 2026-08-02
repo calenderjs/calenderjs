@@ -23,7 +23,7 @@
  *
  * **正确的架构**：
  * 1. **DSL 编译成 Data Model**：
- *    - DSL → EventDSLCompiler → 编译成 Data Model（JSON Schema for Event.extra + 业务规则）
+ *    - DSL → EventDSLCompiler → 编译成 Data Model（JSON Schema for Event.data + 业务规则）
  *    - Data Model 包含：
  *      - JSON Schema（用于 EventValidator 验证结构）
  *      - 业务规则（用于 EventRuntime 验证业务逻辑）
@@ -94,7 +94,7 @@ export class EventRuntime {
      * **验证内容**（基于 DSL 中定义的验证规则，业务规则，需要运行时数据）：
      * 1. **Between 规则**：字段值在范围内
      *    - DSL：`attendees.count between 1 and 50`
-     *    - 验证：`event.extra.attendees.length` 是否在 1-50 之间
+     *    - 验证：`event.data.attendees.length` 是否在 1-50 之间
      *
      * 2. **Comparison 规则**：比较表达式
      *    - DSL：`startTime.hour >= 9`、`duration < 2 hours`
@@ -115,7 +115,7 @@ export class EventRuntime {
      * **重要**：
      * - 运行时**使用** AST 中的验证规则（`this.ast.validate`）
      * - 运行时**验证** Event 数据模型的数据（`event: Event`，来自 @calenderjs/event-model）
-     * - 这些验证需要运行时数据（event.extra.attendees.length）
+     * - 这些验证需要运行时数据（event.data.attendees.length）
      * - 这些验证需要上下文信息（context.events, context.now, context.user）
      * - 这些验证无法在编译时验证（数据是动态的）
      * - 这些验证无法通过 JSON Schema 验证（JSON Schema 只能验证结构）
@@ -1074,9 +1074,9 @@ export class EventRuntime {
                     return event.id;
                 }
                 if (fieldName === "duration") {
-                    // 优先使用 event.extra.duration，如果不存在则计算
-                    if (event.extra?.duration !== undefined) {
-                        return event.extra.duration;
+                    // 优先使用 event.data.duration，如果不存在则计算
+                    if (event.data?.duration !== undefined) {
+                        return event.data.duration;
                     }
                     // 计算持续时间（分钟数）
                     const start =
@@ -1102,9 +1102,9 @@ export class EventRuntime {
             }
         }
 
-        // 访问 event.extra 中的字段
-        if (path[0] === "extra") {
-            let current: any = event.extra;
+        // 访问 event.data 中的字段
+        if (path[0] === "data") {
+            let current: any = event.data;
             for (let i = 1; i < path.length; i++) {
                 if (current === undefined || current === null) {
                     return undefined;
@@ -1118,10 +1118,10 @@ export class EventRuntime {
             return current;
         }
 
-        // 访问 event.extra 中的嵌套字段（如 priority, status 等）
+        // 访问 event.data 中的嵌套字段（如 priority, status 等）
         // 例如：priority.level, status.value, attendees.count
         if (path.length > 1) {
-            let current: any = event.extra;
+            let current: any = event.data;
             for (let i = 0; i < path.length; i++) {
                 if (current === undefined || current === null) {
                     return undefined;
@@ -1135,9 +1135,9 @@ export class EventRuntime {
             return current;
         }
 
-        // 直接访问 event.extra[fieldName]
-        if (path.length === 1 && event.extra) {
-            return event.extra[path[0]];
+        // 直接访问 event.data[fieldName]
+        if (path.length === 1 && event.data) {
+            return event.data[path[0]];
         }
 
         return undefined;

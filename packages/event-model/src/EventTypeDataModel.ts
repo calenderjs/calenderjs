@@ -24,8 +24,8 @@ import type {
 export interface EventTypeDataModel {
     id: string;
     name: string;
-    /** JSON Schema for Event.extra（从 DSL fields 生成，用于 EventValidator） */
-    extraSchema?: JSONSchema;
+    /** JSON Schema for Event.data（从 DSL fields 生成，用于 EventValidator） */
+    dataSchema?: JSONSchema;
     /** 业务规则（从 DSL validate 部分生成） */
     validationRules?: any[];
     /** 显示规则（从 DSL display 部分生成） */

@@ -77,7 +77,7 @@ describe("DSL → Calendar 完整流程验证", () => {
         expect(eventTypeDataModel).toBeDefined();
         expect(eventTypeDataModel.id).toBe("meeting");
         expect(eventTypeDataModel.name).toBe("团队会议");
-        expect(eventTypeDataModel.extraSchema).toBeDefined();
+        expect(eventTypeDataModel.dataSchema).toBeDefined();
         expect(eventTypeDataModel.validationRules).toBeDefined();
         expect(eventTypeDataModel.displayRules).toBeDefined();
         expect(eventTypeDataModel.behaviorRules).toBeDefined();
@@ -89,7 +89,7 @@ describe("DSL → Calendar 完整流程验证", () => {
             title: "团队会议",
             startTime: new Date("2024-12-30T10:00:00Z"),
             endTime: new Date("2024-12-30T11:00:00Z"),
-            extra: {
+            data: {
                 attendees: ["user1@example.com", "user2@example.com"],
                 location: "会议室 A",
             },
@@ -100,11 +100,11 @@ describe("DSL → Calendar 完整流程验证", () => {
         const baseValidation = eventValidator.validateBase(event);
         expect(baseValidation.valid).toBe(true);
 
-        // ========== 步骤 5: 使用 EventValidator 验证 Event.extra（使用生成的 JSON Schema）==========
-        if (eventTypeDataModel.extraSchema) {
-            const extraValidation = eventValidator.validateExtra(
+        // ========== 步骤 5: 使用 EventValidator 验证 Event.data（使用生成的 JSON Schema）==========
+        if (eventTypeDataModel.dataSchema) {
+            const extraValidation = eventValidator.validateData(
                 event,
-                eventTypeDataModel.extraSchema
+                eventTypeDataModel.dataSchema
             );
             expect(extraValidation.valid).toBe(true);
         }
@@ -144,9 +144,9 @@ describe("DSL → Calendar 完整流程验证", () => {
         expect(calendarEvent.endTime).toBeInstanceOf(Date);
         expect(calendarEvent.color).toBe("#4285f4");
         expect(calendarEvent.icon).toBe("meeting");
-        expect(calendarEvent.extra).toBeDefined();
-        expect(calendarEvent.extra.attendees).toHaveLength(2);
-        expect(calendarEvent.extra.location).toBe("会议室 A");
+        expect(calendarEvent.data).toBeDefined();
+        expect(calendarEvent.data.attendees).toHaveLength(2);
+        expect(calendarEvent.data.location).toBe("会议室 A");
 
         // ========== 验证完成 ==========
         // 如果所有步骤都通过，说明 DSL → Data Model → Event 验证 → 显示流程正常工作

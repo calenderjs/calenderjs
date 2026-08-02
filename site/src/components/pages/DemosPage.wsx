@@ -13,7 +13,7 @@ const SAMPLE_EVENTS_JSON = JSON.stringify([
     title: "团队会议",
     startTime: new Date().toISOString().slice(0, 10) + "T10:00:00.000Z",
     endTime: new Date().toISOString().slice(0, 10) + "T11:00:00.000Z",
-    extra: { attendees: ["a@example.com"], location: "会议室 A" },
+    data: { attendees: ["a@example.com"], location: "会议室 A" },
   },
   {
     id: "site-demo-2",
@@ -21,7 +21,7 @@ const SAMPLE_EVENTS_JSON = JSON.stringify([
     title: "客户演示",
     startTime: new Date().toISOString().slice(0, 10) + "T14:00:00.000Z",
     endTime: new Date().toISOString().slice(0, 10) + "T15:30:00.000Z",
-    extra: { attendees: ["b@example.com"], location: "线上" },
+    data: { attendees: ["b@example.com"], location: "线上" },
   },
 ]);
 

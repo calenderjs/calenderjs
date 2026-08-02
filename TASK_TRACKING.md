@@ -1,37 +1,37 @@
 # CalenderJS Task Tracking
 
 > **当前里程碑**: M4 - DSL 集成  
-> **最后更新**: 2026-03-15
+> **最后更新**: 2026-08-02
 
 ## 当前 Sprint: DSL 集成
 
-### 阶段 1: `extra` → `data` 全局重命名 (P1 前置)
+### 阶段 1: `extra` → `data` 全局重命名 (P1 前置) — **已完成**
 
 | # | 任务 | 状态 | 文件 |
 |---|------|------|------|
-| 1 | 重命名 Event.extra → Event.data | Pending | `packages/event-model/src/Event.ts` |
-| 2 | 更新 EVENT_BASE_SCHEMA 中的 extra → data | Pending | `packages/event-model/src/validator.ts` |
-| 3 | 更新 EventValidator 中 validateExtra → validateData | Pending | `packages/event-model/src/validator.ts` |
-| 4 | 更新 EventTypeDataModel.extraSchema → dataSchema | Pending | `packages/event-model/src/EventTypeDataModel.ts` |
-| 5 | 更新 event-dsl 编译器输出 | Pending | `packages/event-dsl/src/compiler.ts` |
-| 6 | 更新 event-runtime 字段访问路径 | Pending | `packages/event-runtime/src/EventRuntime.ts` |
-| 7 | 更新 Calendar 组件（如有引用） | Pending | `packages/calendar/src/Calendar.wsx` |
-| 8 | 更新 React demo | Pending | `demos/react/` |
-| 9 | 运行全量测试确认无回归 | Pending | — |
+| 1 | 重命名 Event.extra → Event.data | Done | `packages/event-model/src/Event.ts` |
+| 2 | 更新 EVENT_BASE_SCHEMA 中的 extra → data | Done | `packages/event-model/src/validator.ts` |
+| 3 | 更新 EventValidator 中 validateExtra → validateData | Done | `packages/event-model/src/validator.ts` |
+| 4 | 更新 EventTypeDataModel.extraSchema → dataSchema | Done | `packages/event-model/src/EventTypeDataModel.ts` |
+| 5 | 更新 event-dsl 编译器输出 | Done | `packages/event-dsl/src/compiler.ts` |
+| 6 | 更新 event-runtime 字段访问路径 | Done | `packages/event-runtime/src/EventRuntime.ts` |
+| 7 | 更新 Calendar 组件（如有引用） | Done | `packages/calendar/src/views/` |
+| 8 | 更新 React demo | Done | `demos/react/` |
+| 9 | 运行全量测试确认无回归 | Done | `pnpm test` |
 
-### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4)
+### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4) — **已完成**
 
 | # | 任务 | 状态 | 文件 |
 |---|------|------|------|
-| 1 | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx` |
-| 2 | 渲染集成：有 runtime 时 runtime.render() 增强 | Pending | `packages/calendar/src/Calendar.wsx` |
-| 3 | 验证集成：创建/更新前 runtime.validate() | Pending | `packages/calendar/src/Calendar.wsx` |
-| 4 | 行为集成：拖拽/编辑/删除前 runtime.canPerform() | Pending | `packages/calendar/src/Calendar.wsx` |
-| 5 | 错误事件：event-create-error, event-update-error | Pending | `packages/calendar/src/Calendar.wsx` |
-| 6 | 添加 EventRuntime 集成测试 | Pending | `packages/calendar/src/__tests__/` |
+| 1 | Calendar 添加 eventRuntime property (getter/setter) | Done | `packages/calendar/src/Calendar.wsx` |
+| 2 | 渲染集成：有 runtime 时 runtime.render() 增强 | Done | `displayEvents` + views |
+| 3 | 验证集成：创建/更新前 runtime.validate() | Done | `validateEventForCreate/Update` |
+| 4 | 行为集成：拖拽/编辑/删除前 runtime.canPerform() | Done | `canPerformAction` |
+| 5 | 错误事件：event-create-error, event-update-error | Done | `proposeEventCreate/Update` |
+| 6 | 添加 EventRuntime 集成测试 | Done | `EventRuntime.integration.test.ts` |
 | 7 | 更新 RFC-0005 状态 → Implemented | Pending | `docs/rfc/0005-calendar-component.md` |
 
-### 阶段 3: EventDataGenerator (RFC-0011)
+### 阶段 3: EventDataGenerator (RFC-0011) — **进行中**
 
 | # | 任务 | 状态 | 文件 |
 |---|------|------|------|
@@ -44,6 +44,19 @@
 ---
 
 ## 已完成
+
+### 2026-08-02: Calendar EventRuntime 集成 (RFC-0005 M4)
+
+- [x] `eventRuntime` / `eventDSL` property
+- [x] `displayEvents` 渲染增强
+- [x] `validateEventForCreate/Update`, `canPerformAction`, `proposeEvent*`
+- [x] 集成测试
+
+### 2026-08-02: `extra` → `data` 全局重命名
+
+- [x] Event.data、dataSchema、validateData 全仓迁移
+- [x] Calendar views、React demo、EventRuntime 路径更新
+- [x] 全量测试通过
 
 ### 2026-03-15: RFC 重写与架构澄清
 

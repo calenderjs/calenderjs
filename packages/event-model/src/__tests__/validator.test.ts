@@ -22,7 +22,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {
+        data: {
           attendees: ["user1@example.com"],
           location: "会议室 A",
         },
@@ -52,7 +52,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: "invalid-date" as any,
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {},
+        data: {},
       };
 
       const result = validator.validateBase(event);
@@ -67,7 +67,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {},
+        data: {},
         metadata: {
           createdAt: new Date("2026-01-01T00:00:00Z"),
           updatedAt: new Date("2026-01-01T00:00:00Z"),
@@ -82,22 +82,22 @@ describe("EventValidator", () => {
     });
   });
 
-  describe("validateExtra", () => {
-    it("应该验证 Event.extra 符合指定的 JSON Schema", () => {
+  describe("validateData", () => {
+    it("应该验证 Event.data 符合指定的 JSON Schema", () => {
       const event: Event = {
         id: "event-1",
         type: "meeting",
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {
+        data: {
           attendees: ["user1@example.com", "user2@example.com"],
           location: "会议室 A",
           priority: "normal",
         },
       };
 
-      const extraSchema = {
+      const dataSchema = {
         type: "object",
         required: ["attendees", "location"],
         properties: {
@@ -120,7 +120,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateExtra(event, extraSchema);
+      const result = validator.validateData(event, dataSchema);
       expect(result.valid).toBe(true);
       expect(result.errors).toEqual([]);
     });
@@ -132,13 +132,13 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {
+        data: {
           // 缺少必需的 location 字段
           attendees: ["user1@example.com"],
         },
       };
 
-      const extraSchema = {
+      const dataSchema = {
         type: "object",
         required: ["attendees", "location"],
         properties: {
@@ -155,7 +155,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateExtra(event, extraSchema);
+      const result = validator.validateData(event, dataSchema);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
       expect(result.errors?.length).toBeGreaterThan(0);
@@ -168,12 +168,12 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {
+        data: {
           attendees: ["invalid-email"],
         },
       };
 
-      const extraSchema = {
+      const dataSchema = {
         type: "object",
         properties: {
           attendees: {
@@ -187,7 +187,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validateExtra(event, extraSchema);
+      const result = validator.validateData(event, dataSchema);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
     });
@@ -201,7 +201,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {},
+        data: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -216,7 +216,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T11:00:00Z"),
         endTime: new Date("2026-01-15T10:00:00Z"),
-        extra: {},
+        data: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -231,7 +231,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: "2026-01-15T10:00:00Z" as any,
         endTime: "2026-01-15T11:00:00Z" as any,
-        extra: {},
+        data: {},
       };
 
       const result = validator.validateTimeLogic(event);
@@ -241,19 +241,19 @@ describe("EventValidator", () => {
   });
 
   describe("validate", () => {
-    it("应该使用 extraSchema 验证完整 Event", () => {
+    it("应该使用 dataSchema 验证完整 Event", () => {
       const event: Event = {
         id: "event-1",
         type: "meeting",
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {
+        data: {
           location: "会议室 A",
         },
       };
 
-      const extraSchema = {
+      const dataSchema = {
         type: "object",
         required: ["location"],
         properties: {
@@ -264,7 +264,7 @@ describe("EventValidator", () => {
         additionalProperties: false,
       };
 
-      const result = validator.validate(event, extraSchema);
+      const result = validator.validate(event, dataSchema);
       expect(result.valid).toBe(true);
     });
 
@@ -275,7 +275,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {},
+        data: {},
       };
 
       const result = validator.validate(event);
@@ -295,7 +295,7 @@ describe("EventValidator", () => {
         title: "团队会议",
         startTime: new Date("2026-01-15T10:00:00Z"),
         endTime: new Date("2026-01-15T11:00:00Z"),
-        extra: {},
+        data: {},
       };
 
       const result = defaultEventValidator.validateBase(event);

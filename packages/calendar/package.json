@@ -37,6 +37,7 @@
     "@calenderjs/date-time": "workspace:*",
     "@calenderjs/event-dsl": "workspace:*",
     "@calenderjs/event-model": "workspace:*",
+    "@calenderjs/event-runtime": "workspace:*",
     "@wsxjs/wsx-core": "^0.0.28"
   },
   "peerDependencies": {

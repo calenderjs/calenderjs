@@ -76,7 +76,7 @@ describe("Calendar 组件集成测试", () => {
         expect(eventTypeDataModel).toBeDefined();
         expect(eventTypeDataModel.id).toBe("meeting");
         expect(eventTypeDataModel.name).toBe("团队会议");
-        expect(eventTypeDataModel.extraSchema).toBeDefined();
+        expect(eventTypeDataModel.dataSchema).toBeDefined();
         expect(eventTypeDataModel.validationRules).toBeDefined();
         expect(eventTypeDataModel.displayRules).toBeDefined();
         expect(eventTypeDataModel.behaviorRules).toBeDefined();
@@ -88,7 +88,7 @@ describe("Calendar 组件集成测试", () => {
             title: "团队会议",
             startTime: new Date("2024-12-30T10:00:00Z"),
             endTime: new Date("2024-12-30T11:00:00Z"),
-            extra: {
+            data: {
                 attendees: ["user1@example.com", "user2@example.com"],
                 location: "会议室 A",
             },
@@ -100,11 +100,11 @@ describe("Calendar 组件集成测试", () => {
         expect(baseValidation.valid).toBe(true);
         expect(baseValidation.errors || []).toEqual([]);
 
-        // ========== 步骤 5: 使用 EventValidator 验证 Event.extra（使用生成的 JSON Schema）==========
-        if (eventTypeDataModel.extraSchema) {
-            const extraValidation = eventValidator.validateExtra(
+        // ========== 步骤 5: 使用 EventValidator 验证 Event.data（使用生成的 JSON Schema）==========
+        if (eventTypeDataModel.dataSchema) {
+            const extraValidation = eventValidator.validateData(
                 event,
-                eventTypeDataModel.extraSchema
+                eventTypeDataModel.dataSchema
             );
             expect(extraValidation.valid).toBe(true);
             expect(extraValidation.errors || []).toEqual([]);
@@ -146,9 +146,9 @@ describe("Calendar 组件集成测试", () => {
         expect(event.title).toBe("团队会议");
         expect(event.startTime).toBeInstanceOf(Date);
         expect(event.endTime).toBeInstanceOf(Date);
-        expect(event.extra).toBeDefined();
-        expect(event.extra.attendees).toHaveLength(2);
-        expect(event.extra.location).toBe("会议室 A");
+        expect(event.data).toBeDefined();
+        expect(event.data.attendees).toHaveLength(2);
+        expect(event.data.location).toBe("会议室 A");
 
         // 验证 RenderedEvent（Calendar 组件的显示属性）
         expect(rendered.color).toBe("#4285f4");
@@ -170,9 +170,9 @@ describe("Calendar 组件集成测试", () => {
         expect(calendarEvent.endTime).toBeInstanceOf(Date);
         expect(calendarEvent.color).toBe("#4285f4");
         expect(calendarEvent.icon).toBe("meeting");
-        expect(calendarEvent.extra).toBeDefined();
-        expect(calendarEvent.extra.attendees).toHaveLength(2);
-        expect(calendarEvent.extra.location).toBe("会议室 A");
+        expect(calendarEvent.data).toBeDefined();
+        expect(calendarEvent.data.attendees).toHaveLength(2);
+        expect(calendarEvent.data.location).toBe("会议室 A");
     });
 
     it("应该处理多个事件的完整流程", () => {
@@ -216,7 +216,7 @@ describe("Calendar 组件集成测试", () => {
                 title: "预约 1",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: { patient: "张三" },
+                data: { patient: "张三" },
             },
             {
                 id: "event-2",
@@ -224,7 +224,7 @@ describe("Calendar 组件集成测试", () => {
                 title: "预约 2",
                 startTime: new Date("2024-12-30T14:00:00Z"),
                 endTime: new Date("2024-12-30T15:00:00Z"),
-                extra: { patient: "李四" },
+                data: { patient: "李四" },
             },
         ];
 
@@ -289,7 +289,7 @@ describe("Calendar 组件集成测试", () => {
             endTime: new Date("2024-12-30T23:59:59Z"),
             timeZone: "Asia/Shanghai",
             allDay: true,
-            extra: {
+            data: {
                 description: "元旦假期",
             },
         };

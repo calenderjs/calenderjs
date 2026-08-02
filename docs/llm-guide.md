@@ -35,8 +35,10 @@ Use these markers when reasoning about the codebase. **Do not assume PLANNED fea
 | React wrapper + demo | **IMPLEMENTED** | RFC-0004 |
 | Event DSL parse/compile | **IMPLEMENTED** | `packages/event-dsl/` |
 | EventRuntime (validate/render/canPerform) | **IMPLEMENTED** | Not yet wired into Calendar |
-| Calendar `eventRuntime` property | **PLANNED** | RFC-0005 M4 — see TASK_TRACKING |
-| `extra` → `data` rename | **PLANNED** | RFC-0011 — code still uses `extra` |
+| Calendar `eventRuntime` property | **IMPLEMENTED** | RFC-0005 M4 |
+| DSL-driven render via `displayEvents` | **IMPLEMENTED** | Uses `EventRuntime.render()` |
+| validate / canPerform / proposeEvent* | **IMPLEMENTED** | Calendar.wsx public methods |
+| `extra` → `data` rename | **IMPLEMENTED** | RFC-0011 — use `Event.data` |
 | EventDataGenerator | **PLANNED** | RFC-0011 |
 | Calendar plugin mechanism | **PLANNED** | RFC-0012 |
 | Multi-tenant backend service | **DO NOT IMPLEMENT** | RFC-0003 Future Plan |
@@ -63,7 +65,7 @@ MONOREPO_TOOL        = turbo + pnpm workspaces
 3. **WSX and Vue/React must not mix** inside `.wsx` files. See `.cursor/skills/wsx-work/SKILL.md`.
 4. **Non-trivial changes require RFC** in `docs/rfc/` before implementation.
 5. **Use `pnpm`**, not `npx`. Check `package.json` scripts first.
-6. **Field name is `extra` today** — rename to `data` is planned but not done. Match existing code unless task is explicitly the rename.
+6. **Field name is `data`** — stores DSL-defined business fields on Event.
 7. **WSX tests are async** — always `await element.updateComplete` before assertions.
 
 ---
@@ -167,7 +169,7 @@ pnpm --filter @calenderjs/event-dsl build
 |---------|---------|
 | Import Calendar from `@calenderjs/core` | Import from `@calenderjs/calendar` |
 | Use Vue refs in `.wsx` | Use `@state` decorator |
-| Use `data` field on Event | Use `extra` until rename task completes |
+| Use `extra` field on Event | Use `data` |
 | Assume `eventRuntime` prop exists on Calendar | Not implemented yet — check TASK_TRACKING |
 | Run `npx vitest` | `pnpm --filter @calenderjs/calendar test` |
 | Implement RFC-0003 backend | Future plan — out of scope |

@@ -68,7 +68,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -91,7 +91,7 @@ describe("EventRuntime", () => {
                         type: "Between",
                         field: {
                             type: "FieldAccess",
-                            path: ["extra", "priority"],
+                            path: ["data", "priority"],
                         },
                         min: 1,
                         max: 10,
@@ -112,7 +112,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 5,
                 },
             };
@@ -157,7 +157,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 0,
                 },
             };
@@ -204,7 +204,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 15,
                 },
             };
@@ -249,7 +249,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -272,7 +272,7 @@ describe("EventRuntime", () => {
                         operator: "equals",
                         left: {
                             type: "FieldAccess",
-                            path: ["extra", "status"],
+                            path: ["data", "status"],
                         },
                         right: "active",
                     },
@@ -291,7 +291,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                 },
             };
@@ -335,7 +335,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                 },
             };
@@ -379,7 +379,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -423,7 +423,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 3,
                 },
             };
@@ -461,7 +461,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const otherEvent: Event = {
@@ -470,7 +470,7 @@ describe("EventRuntime", () => {
                 title: "Other Meeting",
                 startTime: new Date("2024-12-30T14:00:00"),
                 endTime: new Date("2024-12-30T15:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -506,7 +506,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const otherEvent: Event = {
@@ -515,7 +515,7 @@ describe("EventRuntime", () => {
                 title: "Other Meeting",
                 startTime: new Date("2024-12-30T10:30:00"),
                 endTime: new Date("2024-12-30T11:30:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -552,7 +552,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const otherEvent: Event = {
@@ -561,7 +561,7 @@ describe("EventRuntime", () => {
                 title: "Other Meeting",
                 startTime: new Date("2024-12-30T10:30:00"),
                 endTime: new Date("2024-12-30T11:30:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -597,7 +597,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const otherEvent: Event = {
@@ -606,7 +606,7 @@ describe("EventRuntime", () => {
                 title: "Other Meeting",
                 startTime: new Date("2024-12-30T14:00:00"),
                 endTime: new Date("2024-12-30T15:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -662,7 +662,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                     priority: 8,
                 },
@@ -721,7 +721,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "inactive",
                     priority: 8,
                 },
@@ -779,7 +779,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                     priority: 8,
                 },
@@ -837,7 +837,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "pending",
                 },
             };
@@ -885,7 +885,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                 },
             };
@@ -906,7 +906,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -925,7 +925,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -983,7 +983,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "inactive",
                     priority: 15,
                 },
@@ -1008,7 +1008,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1025,7 +1025,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1041,7 +1041,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1083,7 +1083,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1115,7 +1115,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1158,7 +1158,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -1207,7 +1207,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "inactive",
                 },
             };
@@ -1250,7 +1250,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -1301,7 +1301,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "inactive",
                 },
             };
@@ -1346,7 +1346,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1370,7 +1370,7 @@ describe("EventRuntime", () => {
                                 "Priority ",
                                 {
                                     type: "FieldAccess",
-                                    path: ["extra", "priority"],
+                                    path: ["data", "priority"],
                                 },
                                 ": ",
                                 {
@@ -1394,7 +1394,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -1439,7 +1439,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1476,7 +1476,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1494,7 +1494,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1514,7 +1514,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1552,7 +1552,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1602,7 +1602,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1652,7 +1652,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1715,7 +1715,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                 },
             };
@@ -1780,7 +1780,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -1834,7 +1834,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: "active",
                 },
             };
@@ -1855,7 +1855,7 @@ describe("EventRuntime", () => {
     });
 
     describe("field access", () => {
-        it("should access event.extra fields", () => {
+        it("should access event.data fields", () => {
             const astWithFieldAccess: EventTypeAST = {
                 type: "meeting",
                 name: "会议",
@@ -1869,7 +1869,7 @@ describe("EventRuntime", () => {
                             parts: [
                                 {
                                     type: "FieldAccess",
-                                    path: ["extra", "title"],
+                                    path: ["data", "title"],
                                 },
                             ],
                         },
@@ -1888,7 +1888,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     title: "Custom Title",
                 },
             };
@@ -1937,7 +1937,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -1984,7 +1984,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -2031,7 +2031,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -2073,7 +2073,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -2117,7 +2117,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -2155,7 +2155,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             // 包含自己的事件（应该被跳过）
@@ -2198,7 +2198,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     priority: 8,
                 },
             };
@@ -2250,7 +2250,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     duration: 60, // 60 minutes
                 },
             };
@@ -2302,7 +2302,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     duration: 2880, // 2 days in minutes
                 },
             };
@@ -2354,7 +2354,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     duration: 50,
                 },
             };
@@ -2398,7 +2398,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     status: null,
                 },
             };
@@ -2412,7 +2412,7 @@ describe("EventRuntime", () => {
             expect(result.valid).toBe(true);
         });
 
-        it("should access nested event.extra fields (path.length > 1)", () => {
+        it("should access nested event.data fields (path.length > 1)", () => {
             const astWithNested: EventTypeAST = {
                 type: "meeting",
                 name: "会议",
@@ -2445,7 +2445,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     nested: {
                         field: {
                             value: "Nested Value",
@@ -2493,7 +2493,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     nested: null,
                 },
             };
@@ -2531,7 +2531,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -2576,7 +2576,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -2613,7 +2613,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -2654,7 +2654,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -2677,7 +2677,7 @@ describe("EventRuntime", () => {
                             parts: [
                                 {
                                     type: "FieldAccess",
-                                    path: ["extra", "nested", "value"],
+                                    path: ["data", "nested", "value"],
                                 },
                             ],
                         },
@@ -2696,7 +2696,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {
+                data: {
                     nested: null,
                 },
             };
@@ -2740,7 +2740,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -2783,7 +2783,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const context: RenderContext = {};
@@ -2826,7 +2826,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00"),
                 endTime: new Date("2024-12-30T11:00:00"),
-                extra: {},
+                data: {},
             };
 
             const user: User = {
@@ -2874,7 +2874,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -2915,7 +2915,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -2956,7 +2956,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
                 timeZone: "Asia/Shanghai",
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3008,7 +3008,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3077,7 +3077,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3126,7 +3126,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3168,7 +3168,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3219,7 +3219,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3272,7 +3272,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3312,7 +3312,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3352,7 +3352,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-28T10:00:00Z"),
                 endTime: new Date("2024-12-28T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3394,7 +3394,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3427,7 +3427,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T11:00:00Z"),
                 endTime: new Date("2024-12-30T10:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3469,7 +3469,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T10:15:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3513,7 +3513,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T13:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3557,7 +3557,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:17:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3602,7 +3602,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3647,7 +3647,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2025-02-03T10:00:00Z"),
                 endTime: new Date("2025-02-03T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3690,7 +3690,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
                 timeZone: "America/New_York",
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3731,7 +3731,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
                 timeZone: "Europe/London",
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3772,7 +3772,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T23:00:00Z"),
                 endTime: new Date("2024-12-31T01:00:00Z"),
                 allDay: false,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3816,7 +3816,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2025-01-09T10:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3863,7 +3863,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3905,7 +3905,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:17:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3949,7 +3949,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:45:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -3991,7 +3991,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:25:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4032,7 +4032,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4091,7 +4091,7 @@ describe("EventRuntime", () => {
                 title: "Test Meeting",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4128,7 +4128,7 @@ describe("EventRuntime", () => {
                     frequency: "daily",
                     interval: 1,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4169,7 +4169,7 @@ describe("EventRuntime", () => {
                     interval: 1,
                     endDate: new Date("2024-12-29T10:00:00Z"), // 早于 startTime
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4210,7 +4210,7 @@ describe("EventRuntime", () => {
                     interval: 1,
                     count: 10,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4252,7 +4252,7 @@ describe("EventRuntime", () => {
                     daysOfWeek: [1, 3, 5, 7], // 7 是无效值
                     count: 10,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4293,7 +4293,7 @@ describe("EventRuntime", () => {
                     interval: 1,
                     count: 10,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4335,7 +4335,7 @@ describe("EventRuntime", () => {
                     dayOfMonth: 32, // 无效值
                     count: 10,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4376,7 +4376,7 @@ describe("EventRuntime", () => {
                     interval: 0, // 无效值
                     count: 10,
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4415,7 +4415,7 @@ describe("EventRuntime", () => {
                     interval: 1,
                     count: 0, // 无效值
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4457,7 +4457,7 @@ describe("EventRuntime", () => {
                     excludeDates: [new Date("2025-01-01T10:00:00Z")],
                     timeZone: "Asia/Shanghai",
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4494,7 +4494,7 @@ describe("EventRuntime", () => {
                     dayOfMonth: 15, // 每月 15 号
                     count: 12, // 重复 12 次
                 },
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4528,7 +4528,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T10:00:00Z"), // 不是 00:00:00
                 endTime: new Date("2024-12-30T23:59:59Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4565,7 +4565,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-30T22:00:00Z"), // 不是 23:59:59
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4604,7 +4604,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-30T23:59:59Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4636,7 +4636,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-31T00:00:00Z"), // 次日 00:00:00
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4668,7 +4668,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2025-01-03T00:00:00Z"), // 跨多天
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4706,7 +4706,7 @@ describe("EventRuntime", () => {
                 startTime: new Date("2024-12-30T23:00:00Z"),
                 endTime: new Date("2024-12-31T01:00:00Z"),
                 allDay: false,
-                extra: {},
+                data: {},
             };
 
             const context: ValidationContext = {
@@ -4784,7 +4784,7 @@ describe("EventRuntime", () => {
                     title: "Team Meeting",
                     startTime: new Date("2024-12-30T10:00:00Z"),
                     endTime: new Date("2024-12-30T11:00:00Z"),
-                    extra: {
+                    data: {
                         attendees: ["user1@example.com", "user2@example.com"],
                         location: "Meeting Room A",
                     },
@@ -4858,7 +4858,7 @@ describe("EventRuntime", () => {
                     startTime: new Date("2024-12-30T10:00:00Z"),
                     endTime: new Date("2024-12-30T11:00:00Z"),
                     timeZone: "Asia/Shanghai",
-                    extra: {
+                    data: {
                         patient: "John Doe",
                     },
                 };
@@ -4897,7 +4897,7 @@ describe("EventRuntime", () => {
                     startTime: new Date("2024-12-30T10:00:00Z"),
                     endTime: new Date("2024-12-30T11:00:00Z"),
                     timeZone: "UTC",
-                    extra: {},
+                    data: {},
                 };
 
                 // 上海时区事件
@@ -4908,7 +4908,7 @@ describe("EventRuntime", () => {
                     startTime: new Date("2024-12-30T10:00:00Z"),
                     endTime: new Date("2024-12-30T11:00:00Z"),
                     timeZone: "Asia/Shanghai",
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -4948,7 +4948,7 @@ describe("EventRuntime", () => {
                         count: 10,
                         timeZone: "America/New_York",
                     },
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -4991,7 +4991,7 @@ describe("EventRuntime", () => {
                         ],
                         timeZone: "Asia/Shanghai",
                     },
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -5027,7 +5027,7 @@ describe("EventRuntime", () => {
                         dayOfMonth: 15, // 每月 15 号
                         count: 12, // 重复 12 次
                     },
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -5061,7 +5061,7 @@ describe("EventRuntime", () => {
                     startTime: new Date("2024-12-30T00:00:00Z"),
                     endTime: new Date("2024-12-30T23:59:59Z"),
                     allDay: true,
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -5096,7 +5096,7 @@ describe("EventRuntime", () => {
                     startTime: new Date("2024-12-30T00:00:00Z"),
                     endTime: new Date("2025-01-01T23:59:59Z"),
                     allDay: true,
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -5170,7 +5170,7 @@ describe("EventRuntime", () => {
                     title: "Appointment",
                     startTime,
                     endTime,
-                    extra: {
+                    data: {
                         patient: "John Doe",
                     },
                 };
@@ -5206,7 +5206,7 @@ describe("EventRuntime", () => {
                     title: "会议 1",
                     startTime: new Date("2024-12-30T10:00:00Z"),
                     endTime: new Date("2024-12-30T11:00:00Z"),
-                    extra: {},
+                    data: {},
                 };
 
                 const event2: Event = {
@@ -5215,7 +5215,7 @@ describe("EventRuntime", () => {
                     title: "会议 2",
                     startTime: new Date("2024-12-30T10:30:00Z"),
                     endTime: new Date("2024-12-30T11:30:00Z"),
-                    extra: {},
+                    data: {},
                 };
 
                 const context: ValidationContext = {
@@ -5253,7 +5253,7 @@ describe("EventRuntime", () => {
                         title: `会议 ${i}`,
                         startTime: new Date(`2024-12-30T${10 + (i % 8)}:00:00Z`),
                         endTime: new Date(`2024-12-30T${11 + (i % 8)}:00:00Z`),
-                        extra: {},
+                        data: {},
                     });
                 }
 

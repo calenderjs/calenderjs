@@ -1,11 +1,11 @@
 /**
  * JSON Schema 生成器
  * 
- * 从 Event DSL AST 生成 JSON Schema，用于验证 Event.extra 字段
- * 
+ * 从 Event DSL AST 生成 JSON Schema，用于验证 Event.data 字段
+ *
  * 根据 RFC-0001 定义
- * 
- * **用途**：生成的 JSON Schema 用于 `EventValidator.validateExtra(event, extraSchema)`
+ *
+ * **用途**：生成的 JSON Schema 用于 `EventValidator.validateData(event, dataSchema)`
  */
 
 import type { EventTypeAST, FieldDefinition, FieldType } from '../ast/types';
@@ -28,7 +28,7 @@ export interface JSONSchemaGeneratorOptions {
  * 
  * @param ast - Event DSL AST
  * @param options - 生成器选项
- * @returns JSON Schema（用于验证 Event.extra 字段）
+ * @returns JSON Schema（用于验证 Event.data 字段）
  */
 export function generateJSONSchema(
   ast: EventTypeAST,

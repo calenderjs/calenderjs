@@ -13,7 +13,7 @@ describe("generateRecurringInstances", () => {
         title: "Test Meeting",
         startTime: new Date("2024-12-30T10:00:00Z"),
         endTime: new Date("2024-12-30T11:00:00Z"),
-        extra: {},
+        data: {},
     };
 
     describe("daily 重复", () => {

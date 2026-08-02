@@ -335,7 +335,7 @@ export default class WeekView extends WebComponent {
 
                                         const eventColor =
                                             event.color || "#4285f4";
-                                        const eventDescription = event.extra
+                                        const eventDescription = event.data
                                             ?.description as string | undefined;
 
                                         return (

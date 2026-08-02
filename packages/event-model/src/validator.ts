@@ -65,7 +65,7 @@ export const EVENT_BASE_SCHEMA = {
       type: "string",
       description: "Calendar 显示图标（可选）",
     },
-    extra: {
+    data: {
       type: "object",
       description: "扩展属性（可选，用于详情卡片显示）",
       additionalProperties: true,
@@ -220,61 +220,61 @@ export class EventValidator {
   }
 
   /**
-   * 验证 Event.extra 字段是否符合指定的 JSON Schema
-   * 
+   * 验证 Event.data 字段是否符合指定的 JSON Schema
+   *
    * @param event - 要验证的 Event 对象
-   * @param extraSchema - Event.extra 字段的 JSON Schema
+   * @param dataSchema - Event.data 字段的 JSON Schema
    * @returns 验证结果
    */
-  validateExtra(event: Event, extraSchema: any): ValidationResult {
+  validateData(event: Event, dataSchema: any): ValidationResult {
     // 验证基础结构
     const baseResult = this.validateBase(event);
     if (!baseResult.valid) {
       return baseResult;
     }
 
-    // 如果 event.extra 不存在，跳过验证
-    if (!event.extra) {
+    // 如果 event.data 不存在，跳过验证
+    if (!event.data) {
       return { valid: true, errors: [] };
     }
 
-    // 编译 extra Schema
-    const validateExtra = this.ajv.compile({
+    // 编译 data Schema
+    const validateDataFields = this.ajv.compile({
       $schema: "http://json-schema.org/draft-07/schema#",
-      ...extraSchema,
+      ...dataSchema,
     });
 
-    // 验证 extra 字段
-    const valid = validateExtra(event.extra);
+    // 验证 data 字段
+    const valid = validateDataFields(event.data);
 
     if (valid) {
       return { valid: true, errors: [] };
     }
 
     // 收集错误消息
-    const errors = validateExtra.errors?.map((error: ErrorObject) => {
+    const errors = validateDataFields.errors?.map((error: ErrorObject) => {
       const path = (error.instancePath || error.schemaPath || "").toString();
-      return `extra${path}: ${error.message || "验证失败"}`;
+      return `data${path}: ${error.message || "验证失败"}`;
     }) || [];
 
     return {
       valid: false,
       errors,
-      errorDetails: validateExtra.errors || [],
+      errorDetails: validateDataFields.errors || [],
     };
   }
 
   /**
-   * 验证 Event 对象是否符合完整的 Schema（包括基础结构和 extra 字段）
-   * 
+   * 验证 Event 对象是否符合完整的 Schema（包括基础结构和 data 字段）
+   *
    * @param event - 要验证的 Event 对象
-   * @param extraSchema - Event.extra 字段的 JSON Schema（可选）
+   * @param dataSchema - Event.data 字段的 JSON Schema（可选）
    * @returns 验证结果
    */
-  validate(event: Event, extraSchema?: any): ValidationResult {
-    // 如果提供了 extraSchema，验证完整结构
-    if (extraSchema) {
-      return this.validateExtra(event, extraSchema);
+  validate(event: Event, dataSchema?: any): ValidationResult {
+    // 如果提供了 dataSchema，验证完整结构
+    if (dataSchema) {
+      return this.validateData(event, dataSchema);
     }
 
     // 否则只验证基础结构
@@ -308,8 +308,8 @@ export class EventValidator {
       json.icon = event.icon;
     }
 
-    if (event.extra) {
-      json.extra = event.extra;
+    if (event.data) {
+      json.data = event.data;
     }
 
     if (event.timeZone) {

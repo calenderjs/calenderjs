@@ -22,7 +22,7 @@ repo:           calenderjs monorepo
 calendar_pkg:   @calenderjs/calendar     # NOT @calenderjs/core
 calendar_tag:   wsx-calendar
 event_ssot:     packages/event-model/src/Event.ts
-event_field:    extra                    # rename to data PLANNED (RFC-0011)
+event_field:    data
 milestone:      M4 DSL integration
 package_mgr:    pnpm                     # NEVER npx
 test:           vitest via pnpm scripts
@@ -158,7 +158,7 @@ const events: Event[] = [
     startTime: new Date('2024-12-30T10:00:00'),
     endTime: new Date('2024-12-30T11:00:00'),
     color: '#4285f4',
-    extra: { location: '会议室 A' },
+    data: { location: '会议室 A' },
   },
 ];
 
@@ -206,7 +206,7 @@ const compiled = compile(ast);
 
 - **Event** 是技术模型：所有日历活动（会议、预约、假日等）都是 Event，`type` 区分业务类型
 - **Appointment** 是业务概念，通过 DSL 定义，编译后生成符合 Event 接口的数据
-- 扩展字段当前为 `extra`（计划重命名为 `data`，见 RFC-0011）
+- 扩展字段为 `data`（RFC-0011）
 
 ### Event DSL 架构
 

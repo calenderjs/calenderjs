@@ -64,7 +64,7 @@ describe("time-utils", () => {
                 title: "Meeting 1",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const event2: Event = {
@@ -73,7 +73,7 @@ describe("time-utils", () => {
                 title: "Meeting 2",
                 startTime: new Date("2024-12-30T10:30:00Z"),
                 endTime: new Date("2024-12-30T11:30:00Z"),
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event2)).toBe(true);
@@ -86,7 +86,7 @@ describe("time-utils", () => {
                 title: "Meeting 1",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             const event2: Event = {
@@ -95,7 +95,7 @@ describe("time-utils", () => {
                 title: "Meeting 2",
                 startTime: new Date("2024-12-30T12:00:00Z"),
                 endTime: new Date("2024-12-30T13:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event2)).toBe(false);
@@ -109,7 +109,7 @@ describe("time-utils", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-31T00:00:00Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const event2: Event = {
@@ -119,7 +119,7 @@ describe("time-utils", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-30T23:59:59Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event2)).toBe(true);
@@ -133,7 +133,7 @@ describe("time-utils", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-30T23:59:59Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const event2: Event = {
@@ -142,7 +142,7 @@ describe("time-utils", () => {
                 title: "Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event2)).toBe(true);
@@ -156,7 +156,7 @@ describe("time-utils", () => {
                 startTime: new Date("2024-12-30T00:00:00Z"),
                 endTime: new Date("2024-12-30T23:59:59Z"),
                 allDay: true,
-                extra: {},
+                data: {},
             };
 
             const event2: Event = {
@@ -165,7 +165,7 @@ describe("time-utils", () => {
                 title: "Meeting",
                 startTime: new Date("2024-12-31T10:00:00Z"),
                 endTime: new Date("2024-12-31T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event2)).toBe(false);
@@ -178,7 +178,7 @@ describe("time-utils", () => {
                 title: "Meeting",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: {},
+                data: {},
             };
 
             expect(hasTimeConflict(event1, event1)).toBe(false);

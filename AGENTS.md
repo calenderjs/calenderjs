@@ -37,7 +37,7 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 | Calendar 与 DSL | DSL 驱动；Calendar 接受 EventRuntime，无 runtime 时降级 |
 | Event vs Appointment | Appointment 是业务概念，Event 是技术模型 |
 | DSL 形态 | 文本 DSL（PEG.js → AST） |
-| 扩展字段 | `extra`（计划重命名为 `data`，RFC-0011） |
+| 扩展字段 | `data`（RFC-0011） |
 | 编译/运行时 | `event-dsl`（编译时）与 `event-runtime`（运行时）分离 |
 
 ---

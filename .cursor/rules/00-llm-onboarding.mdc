@@ -19,14 +19,14 @@ Index: `llms.txt` at repo root.
 - Calendar package: `@calenderjs/calendar` (NOT `@calenderjs/core`)
 - Web component tag: `wsx-calendar`
 - Event SSOT: `packages/event-model/src/Event.ts`
-- Event extension field: `extra` (rename to `data` is PLANNED — do not use `data` unless doing that task)
+- Event extension field: `data`
 - Package manager: `pnpm` only — never `npx`
 - Tests: `pnpm --filter @calenderjs/calendar test` (vitest)
 
 ## Not implemented yet (do not assume)
 
-- Calendar `eventRuntime` property (RFC-0005 M4)
-- `extra` → `data` rename (RFC-0011)
+- EventDataGenerator (RFC-0011)
+- Calendar plugin mechanism (RFC-0012)
 - RFC-0003 multi-tenant backend (DO NOT IMPLEMENT)
 
 ## Task routing

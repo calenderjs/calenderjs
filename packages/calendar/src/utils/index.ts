@@ -3,3 +3,4 @@
  */
 
 export * from "./event-utils";
+export * from "./event-runtime-integration";

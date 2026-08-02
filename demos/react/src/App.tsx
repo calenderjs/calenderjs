@@ -37,7 +37,7 @@ const DEFAULT_EVENTS: Event[] = [
         title: "团队会议",
         startTime: new Date(new Date().setHours(10, 0, 0, 0)),
         endTime: new Date(new Date().setHours(11, 0, 0, 0)),
-        extra: {
+        data: {
             attendees: ["user1@example.com", "user2@example.com"],
             location: "会议室 A",
         },
@@ -48,7 +48,7 @@ const DEFAULT_EVENTS: Event[] = [
         title: "客户演示",
         startTime: new Date(new Date().setHours(14, 0, 0, 0)),
         endTime: new Date(new Date().setHours(15, 30, 0, 0)),
-        extra: {
+        data: {
             attendees: ["client@example.com"],
             location: "线上会议",
         },
@@ -117,10 +117,10 @@ export default function App() {
             }
 
             // 验证 extra
-            if (compiledDataModel.extraSchema) {
-                const extraValidation = eventValidator.validateExtra(
+            if (compiledDataModel.dataSchema) {
+                const extraValidation = eventValidator.validateData(
                     event,
-                    compiledDataModel.extraSchema
+                    compiledDataModel.dataSchema
                 );
                 if (!extraValidation.valid) {
                     results.push({

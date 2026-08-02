@@ -237,7 +237,7 @@ describe("WeekView 组件", () => {
                 id: "event-1",
                 startTime: new Date(2024, 0, 15, 10, 0, 0),
                 endTime: new Date(2024, 0, 15, 11, 0, 0),
-                extra: {
+                data: {
                     description: "这是一个重要会议",
                 },
             });
@@ -270,7 +270,7 @@ describe("WeekView 组件", () => {
                 id: "event-1",
                 startTime: new Date(2024, 0, 15, 10, 0, 0),
                 endTime: new Date(2024, 0, 15, 11, 0, 0),
-                extra: {},
+                data: {},
             });
 
             weekView = document.createElement("wsx-week-view") as WeekView;

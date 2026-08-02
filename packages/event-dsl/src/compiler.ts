@@ -7,7 +7,7 @@
  * - Event DSL 是生成工具，用于生成符合 Event Data Model 的数据
  * - Event Data Model 是 SSOT，定义了 Event 接口结构（在 @calenderjs/event-model 中）
  * - 编译器将 AST 编译成 Data Model，包含：
- *   - extraSchema: JSON Schema（从 DSL fields 生成，用于验证 Event.extra 结构）
+ *   - dataSchema: JSON Schema（从 DSL fields 生成，用于验证 Event.data 结构）
  *   - validationRules: 业务规则（从 DSL validate 部分生成）
  *   - displayRules: 显示规则（从 DSL display 部分生成）
  *   - behaviorRules: 行为规则（从 DSL behavior 部分生成）
@@ -68,8 +68,8 @@ export class EventDSLCompiler {
      * @returns 编译后的 Data Model (EventTypeDataModel)
      */
     private compileType(ast: EventTypeAST): EventTypeDataModel {
-        // 生成 extraSchema（从 DSL fields 生成）
-        const extraSchema = generateJSONSchema(ast);
+        // 生成 dataSchema（从 DSL fields 生成）
+        const dataSchema = generateJSONSchema(ast);
 
         // 生成 validationRules（从 DSL validate 部分生成）
         const validationRules = ast.validate || [];
@@ -98,7 +98,7 @@ export class EventDSLCompiler {
         return {
             id: ast.type,
             name: ast.name,
-            extraSchema,
+            dataSchema,
             validationRules,
             displayRules,
             behaviorRules,
@@ -119,9 +119,9 @@ export class EventDSLCompiler {
         return (event: Event): ValidationResult => {
             const errors: string[] = [];
 
-            // 字段验证（从 event.extra 中获取字段值）
+            // 字段验证（从 event.data 中获取字段值）
             ast.fields.forEach((field) => {
-                const value = event.extra?.[field.name];
+                const value = event.data?.[field.name];
 
                 // 必填验证
                 if (

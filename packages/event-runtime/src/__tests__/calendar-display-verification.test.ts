@@ -73,7 +73,7 @@ describe("Calendar 显示验证", () => {
             title: "团队会议",
             startTime: new Date("2024-12-30T10:00:00Z"),
             endTime: new Date("2024-12-30T11:00:00Z"),
-            extra: {
+            data: {
                 attendees: ["user1@example.com", "user2@example.com"],
                 location: "会议室 A",
             },
@@ -84,10 +84,10 @@ describe("Calendar 显示验证", () => {
         const baseValidation = eventValidator.validateBase(event);
         expect(baseValidation.valid).toBe(true);
 
-        if (eventTypeDataModel.extraSchema) {
-            const extraValidation = eventValidator.validateExtra(
+        if (eventTypeDataModel.dataSchema) {
+            const extraValidation = eventValidator.validateData(
                 event,
-                eventTypeDataModel.extraSchema
+                eventTypeDataModel.dataSchema
             );
             expect(extraValidation.valid).toBe(true);
         }
@@ -121,7 +121,7 @@ describe("Calendar 显示验证", () => {
         expect(calendarEvent.endTime).toBeInstanceOf(Date); // ✅ Event.endTime
         expect(calendarEvent.color).toBeDefined(); // ✅ RenderedEvent.color
         expect(calendarEvent.icon).toBeDefined(); // ✅ RenderedEvent.icon
-        expect(calendarEvent.extra).toBeDefined(); // ✅ Event.extra
+        expect(calendarEvent.data).toBeDefined(); // ✅ Event.data
 
         // 验证具体值
         expect(calendarEvent.id).toBe("event-1");
@@ -129,8 +129,8 @@ describe("Calendar 显示验证", () => {
         expect(calendarEvent.title).toBe("团队会议");
         expect(calendarEvent.color).toBe("#4285f4");
         expect(calendarEvent.icon).toBe("meeting");
-        expect(calendarEvent.extra.attendees).toHaveLength(2);
-        expect(calendarEvent.extra.location).toBe("会议室 A");
+        expect(calendarEvent.data.attendees).toHaveLength(2);
+        expect(calendarEvent.data.location).toBe("会议室 A");
 
         // 8. 验证时间字段（Calendar 组件用于布局和显示）
         expect(calendarEvent.startTime.getTime()).toBe(
@@ -177,7 +177,7 @@ describe("Calendar 显示验证", () => {
                 title: "预约 1",
                 startTime: new Date("2024-12-30T10:00:00Z"),
                 endTime: new Date("2024-12-30T11:00:00Z"),
-                extra: { patient: "张三" },
+                data: { patient: "张三" },
             },
             {
                 id: "event-2",
@@ -185,7 +185,7 @@ describe("Calendar 显示验证", () => {
                 title: "预约 2",
                 startTime: new Date("2024-12-30T14:00:00Z"),
                 endTime: new Date("2024-12-30T15:00:00Z"),
-                extra: { patient: "李四" },
+                data: { patient: "李四" },
             },
         ];
 

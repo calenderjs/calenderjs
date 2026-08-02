@@ -10,8 +10,17 @@
 import { WebComponent, autoRegister, state } from "@wsxjs/wsx-core";
 import type { Event as CalendarEvent } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
+import { EventDSLCompiler, parseEventDSL } from "@calenderjs/event-dsl";
+import type { EventTypeAST } from "@calenderjs/event-dsl";
+import { EventRuntime } from "@calenderjs/event-runtime";
 import { getWeekDates } from "@calenderjs/date-time";
 import styles from "./Calendar.css?inline";
+import {
+    canPerformEventAction,
+    createRuntimeMap,
+    getDisplayEvents,
+    validateEventWithRuntime,
+} from "./utils/event-runtime-integration";
 // 导入视图组件以确保它们被注册
 import "./views/DayView.wsx";
 import "./views/MonthView.wsx";
@@ -41,8 +50,45 @@ export default class Calendar extends WebComponent {
         email: "john.doe@example.com",
         role: "user",
     };
+    @state private _eventDSL: string | EventTypeAST | EventTypeAST[] | null =
+        null;
+    private _eventRuntime: EventRuntime | null = null;
+    private _runtimeByType: Map<string, EventRuntime> | null = null;
 
     // ========== 属性访问器（支持 property 和 attribute 两种设置方式） ==========
+    get defaultView(): "month" | "week" | "day" {
+        return this.currentView;
+    }
+    set defaultView(value: "month" | "week" | "day") {
+        this.currentView = value;
+    }
+
+    get eventDSL(): string | EventTypeAST | EventTypeAST[] | null {
+        return this._eventDSL;
+    }
+    set eventDSL(value: string | EventTypeAST | EventTypeAST[] | null) {
+        this._eventDSL = value;
+        this.rebuildRuntimeFromDSL();
+    }
+
+    get eventRuntime(): EventRuntime | null {
+        return this._eventRuntime;
+    }
+    set eventRuntime(value: EventRuntime | null) {
+        this._eventRuntime = value;
+        if (value) {
+            const typeId = value.getDataModel().id;
+            this._runtimeByType = new Map([[typeId, value]]);
+        } else if (!this._eventDSL) {
+            this._runtimeByType = null;
+        }
+    }
+
+    /** 经 EventRuntime 增强后的显示用事件列表 */
+    get displayEvents(): CalendarEvent[] {
+        return getDisplayEvents(this._events, this._runtimeByType, this._user);
+    }
+
     get events(): CalendarEvent[] {
         return this._events;
     }
@@ -295,7 +341,7 @@ export default class Calendar extends WebComponent {
         return (
             <wsx-month-view
                 view-date={this.currentDate.toISOString()}
-                events={JSON.stringify(this.events)}
+                events={JSON.stringify(this.displayEvents)}
                 selected-date={this.currentDate.toISOString()}
                 user={this.user ? JSON.stringify(this.user) : undefined}
             ></wsx-month-view>
@@ -307,7 +353,7 @@ export default class Calendar extends WebComponent {
         return (
             <wsx-week-view
                 view-date={this.currentDate.toISOString()}
-                events={JSON.stringify(this.events)}
+                events={JSON.stringify(this.displayEvents)}
                 selected-date={this.currentDate.toISOString()}
                 user={this.user ? JSON.stringify(this.user) : undefined}
             ></wsx-week-view>
@@ -319,7 +365,7 @@ export default class Calendar extends WebComponent {
         return (
             <wsx-day-view
                 view-date={this.currentDate.toISOString()}
-                events={JSON.stringify(this.events)}
+                events={JSON.stringify(this.displayEvents)}
                 user={this.user ? JSON.stringify(this.user) : undefined}
             ></wsx-day-view>
         );
@@ -401,5 +447,115 @@ export default class Calendar extends WebComponent {
                 bubbles: true,
             })
         );
+    }
+
+    /** 从 eventDSL 重新编译 Runtime 映射 */
+    private rebuildRuntimeFromDSL() {
+        if (!this._eventDSL) {
+            this._runtimeByType = this._eventRuntime
+                ? new Map([
+                      [
+                          this._eventRuntime.getDataModel().id,
+                          this._eventRuntime,
+                      ],
+                  ])
+                : null;
+            return;
+        }
+
+        try {
+            const asts: EventTypeAST[] =
+                typeof this._eventDSL === "string"
+                    ? [parseEventDSL(this._eventDSL)]
+                    : Array.isArray(this._eventDSL)
+                      ? this._eventDSL
+                      : [this._eventDSL];
+            const compiler = new EventDSLCompiler();
+            this._runtimeByType = createRuntimeMap(
+                compiler.compileFromAST(asts)
+            );
+        } catch (error) {
+            console.error("Invalid event DSL:", error);
+            this._runtimeByType = null;
+        }
+    }
+
+    /** 验证待创建的事件（有 Runtime 时） */
+    validateEventForCreate(event: CalendarEvent) {
+        return validateEventWithRuntime(
+            event,
+            this._runtimeByType,
+            [...this._events, event],
+            this._user
+        );
+    }
+
+    /** 验证待更新的事件（有 Runtime 时） */
+    validateEventForUpdate(event: CalendarEvent) {
+        const others = this._events.filter((item) => item.id !== event.id);
+        return validateEventWithRuntime(
+            event,
+            this._runtimeByType,
+            [...others, event],
+            this._user
+        );
+    }
+
+    /** 检查是否允许对事件执行某操作 */
+    canPerformAction(action: string, event: CalendarEvent): boolean {
+        return canPerformEventAction(
+            action,
+            event,
+            this._runtimeByType,
+            this._user
+        );
+    }
+
+    /**
+     * 提议创建事件：先验证，成功派发 event-create，失败派发 event-create-error
+     */
+    proposeEventCreate(event: CalendarEvent): boolean {
+        const validation = this.validateEventForCreate(event);
+        if (!validation.valid) {
+            this.dispatchEvent(
+                new CustomEvent("event-create-error", {
+                    detail: { event, errors: validation.errors ?? [] },
+                    bubbles: true,
+                })
+            );
+            return false;
+        }
+
+        this.dispatchEvent(
+            new CustomEvent("event-create", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+        return true;
+    }
+
+    /**
+     * 提议更新事件：先验证，成功派发 event-update，失败派发 event-update-error
+     */
+    proposeEventUpdate(event: CalendarEvent): boolean {
+        const validation = this.validateEventForUpdate(event);
+        if (!validation.valid) {
+            this.dispatchEvent(
+                new CustomEvent("event-update-error", {
+                    detail: { event, errors: validation.errors ?? [] },
+                    bubbles: true,
+                })
+            );
+            return false;
+        }
+
+        this.dispatchEvent(
+            new CustomEvent("event-update", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+        return true;
     }
 }

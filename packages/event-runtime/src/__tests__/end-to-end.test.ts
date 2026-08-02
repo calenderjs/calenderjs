@@ -75,7 +75,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
         expect(eventTypeDataModel).toBeDefined();
         expect(eventTypeDataModel.id).toBe("meeting");
         expect(eventTypeDataModel.name).toBe("团队会议");
-        expect(eventTypeDataModel.extraSchema).toBeDefined();
+        expect(eventTypeDataModel.dataSchema).toBeDefined();
         expect(eventTypeDataModel.validationRules).toBeDefined();
         expect(eventTypeDataModel.displayRules).toBeDefined();
         expect(eventTypeDataModel.behaviorRules).toBeDefined();
@@ -87,7 +87,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
             title: "团队会议",
             startTime: new Date("2024-12-30T10:00:00Z"),
             endTime: new Date("2024-12-30T11:00:00Z"),
-            extra: {
+            data: {
                 attendees: ["user1@example.com", "user2@example.com"],
                 location: "会议室 A",
             },
@@ -98,11 +98,11 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
         const baseValidation = eventValidator.validateBase(event);
         expect(baseValidation.valid).toBe(true);
 
-        // 5. 使用 EventValidator 验证 Event.extra（使用生成的 JSON Schema）
-        if (eventTypeDataModel.extraSchema) {
-            const extraValidation = eventValidator.validateExtra(
+        // 5. 使用 EventValidator 验证 Event.data（使用生成的 JSON Schema）
+        if (eventTypeDataModel.dataSchema) {
+            const extraValidation = eventValidator.validateData(
                 event,
-                eventTypeDataModel.extraSchema
+                eventTypeDataModel.dataSchema
             );
             expect(extraValidation.valid).toBe(true);
         }
@@ -170,7 +170,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
             startTime: new Date("2024-12-30T14:00:00Z"),
             endTime: new Date("2024-12-30T15:00:00Z"),
             timeZone: "Asia/Shanghai",
-            extra: {
+            data: {
                 patient: "张三",
             },
         };
@@ -230,7 +230,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
                 daysOfWeek: [1, 3, 5], // 周一、周三、周五
                 endDate: new Date("2025-12-31T23:59:59Z"),
             },
-            extra: {
+            data: {
                 agenda: "讨论项目进度",
             },
         };
@@ -278,7 +278,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
             startTime: new Date("2024-12-30T00:00:00Z"),
             endTime: new Date("2024-12-30T23:59:59Z"),
             allDay: true,
-            extra: {
+            data: {
                 description: "元旦假期",
             },
         };
@@ -335,7 +335,7 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
             title: "会议",
             startTime: new Date("2024-12-30T20:00:00Z"), // 20:00 不在 9-18 之间
             endTime: new Date("2024-12-30T21:00:00Z"),
-            extra: {
+            data: {
                 attendees: ["user1@example.com"],
             },
         };
