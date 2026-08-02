@@ -7,6 +7,8 @@
 /**
  * 将输入转换为 Date 对象
  */
+const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 function toDate(date: Date | string): Date {
     if (date instanceof Date) {
         if (isNaN(date.getTime())) {
@@ -15,6 +17,13 @@ function toDate(date: Date | string): Date {
         return date;
     }
     if (typeof date === "string") {
+        const dateOnlyMatch = DATE_ONLY_PATTERN.exec(date);
+        if (dateOnlyMatch) {
+            const year = Number(dateOnlyMatch[1]);
+            const month = Number(dateOnlyMatch[2]);
+            const day = Number(dateOnlyMatch[3]);
+            return new Date(year, month - 1, day);
+        }
         const d = new Date(date);
         if (isNaN(d.getTime())) {
             throw new Error(`Invalid date: ${date}`);
