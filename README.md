@@ -1,217 +1,273 @@
 # CalenderJS
 
-基于日历的预约管理系统，支持 Appointment DSL、多租户架构和第三方集成。
+基于日历的事件/预约管理系统。WSX Web Components 日历组件 + Event DSL + React 封装。
+
+---
+
+## For AI agents
+
+> **Start here.** This section routes LLMs to the right docs before any code change.
+
+| Priority | File | Purpose |
+|----------|------|---------|
+| 1 | [docs/llm-guide.md](./docs/llm-guide.md) | Task routing, file map, invariants, implementation status |
+| 2 | [TASK_TRACKING.md](./TASK_TRACKING.md) | Current sprint — what is **pending** right now |
+| 3 | [AGENTS.md](./AGENTS.md) | Rules: pnpm only, RFC-driven, WSX conventions |
+| 4 | [llms.txt](./llms.txt) | Compact link index ([llms.txt spec](https://llmstxt.org/)) |
+
+### Quick facts (machine-readable)
+
+```
+repo:           calenderjs monorepo
+calendar_pkg:   @calenderjs/calendar     # NOT @calenderjs/core
+calendar_tag:   wsx-calendar
+event_ssot:     packages/event-model/src/Event.ts
+event_field:    extra                    # rename to data PLANNED (RFC-0011)
+milestone:      M4 DSL integration
+package_mgr:    pnpm                     # NEVER npx
+test:           vitest via pnpm scripts
+wsx_skill:      .cursor/skills/wsx-work/SKILL.md
+```
+
+### Task → file routing
+
+| Task | Go to |
+|------|-------|
+| Edit calendar views | `packages/calendar/src/views/*.wsx` + wsx-work skill |
+| Change Event model | `packages/event-model/src/Event.ts` |
+| Change DSL grammar | `packages/event-dsl/src/event-dsl.pegjs` |
+| React integration | `packages/react/src/` |
+| Know what's done vs planned | [docs/llm-guide.md §2](./docs/llm-guide.md#2-implementation-status) |
+
+---
 
 ## 项目概述
 
-CalenderJS 是一个完整的日历预约管理解决方案，包含：
+CalenderJS 提供：
 
-1. **CalenderJS 组件库**：基于 Web Components 的日历组件集合（RFC-0001）
-2. **Appointment DSL**：领域特定语言，用于定义和扩展特殊预约事件类型（RFC-0002）
-3. **React 演示网站**：展示组件和 DSL 功能的演示网站（RFC-0004，React + Vite）
-4. **Next.js 多租户服务**：支持多租户的日历服务（RFC-0003，未来计划，使用 Next.js）
+1. **日历组件**（`@calenderjs/calendar`）：基于 WSX 的 `<wsx-calendar>`，月/周/日视图
+2. **Event DSL**（`@calenderjs/event-dsl`）：PEG.js 文本 DSL，定义事件类型与业务规则
+3. **Event 数据模型**（`@calenderjs/event-model`）：Event 接口 SSOT + JSON Schema 校验
+4. **Event 运行时**（`@calenderjs/event-runtime`）：验证、渲染增强、权限检查
+5. **React 集成**（`@calenderjs/react`）：Calendar、EventEditor、ResizableSplitter
+6. **演示与文档**：`demos/react/`（React Demo）、`site/`（官网与文档站）
 
-**当前阶段**：
-- 实现 RFC-0001（组件库）和 RFC-0002（DSL）
-- 实现 RFC-0004（React + Vite 演示网站）
-- RFC-0003（Next.js 业务服务）保留在文档中，作为未来计划
+**当前里程碑**：M4 DSL 集成（详见 [ROADMAP.md](./ROADMAP.md)）
 
 ## 项目结构
 
 ```
 calenderjs/
-├── docs/
-│   ├── rfc/
-│   │   ├── 0001-calendar-appointment-management.md
-│   │   ├── 0002-appointment-dsl.md
-│   │   └── 0003-tob-calendar-service.md
-│   ├── examples/
-│   │   └── appointment-dsl-examples.ts
-│   └── setup/
-│       └── pnpm-nx-setup.md
-│
 ├── packages/
-│   ├── core/                      # 核心日历组件库（RFC-0001）
-│   │   ├── src/
-│   │   │   ├── Calendar.wsx
-│   │   │   ├── views/
-│   │   │   └── utils/
-│   │   └── package.json
-│   │
-│   ├── dsl/                       # Appointment DSL 支持（RFC-0002）
-│   │   ├── src/
-│   │   │   ├── compiler.ts
-│   │   │   ├── runtime.ts
-│   │   │   └── types.ts
-│   │   └── package.json
-│   │
-│   └── integrations/              # 第三方集成组件
-│       ├── src/
-│       │   ├── GoogleCalendarSync.wsx
-│       │   └── SlackIntegration.wsx
-│       └── package.json
-│
-├── apps/
-│   └── calendar-service/          # Next.js 多租户服务
-│       ├── app/
-│       ├── lib/
-│       └── package.json
-│
-└── package.json                   # Monorepo 根配置
+│   ├── core/                 # 核心模型、上下文、工具函数
+│   ├── calendar/             # WSX 日历组件 <wsx-calendar>
+│   ├── event-model/          # Event 接口 SSOT、EventValidator
+│   ├── event-dsl/            # PEG.js DSL 解析、编译器、生成器
+│   ├── event-runtime/        # EventRuntime（验证/渲染/行为）
+│   ├── date-time/            # 日期时间工具
+│   ├── react/                # React 封装
+│   └── monaco-event-dsl/     # Monaco Editor DSL 集成
+├── demos/react/                # React + Vite 演示
+├── site/                       # WSX 官网（i18n、路由、文档）
+├── docs/
+│   ├── llm-guide.md            # AI 代理主指南
+│   ├── rfc/                    # RFC 驱动开发文档
+│   ├── persona/                # AI 角色定义
+│   └── examples/               # 示例代码
+├── llms.txt                    # AI 链接索引
+├── ROADMAP.md                  # 路线图与 RFC 状态
+└── TASK_TRACKING.md            # 当前 Sprint 任务
 ```
 
-## 核心概念
+### 包依赖关系
 
-### 1. Appointment DSL
-
-Appointment DSL 是用于定义预约类型和业务规则的领域特定语言。它允许你：
-
-- **声明式定义**：通过 DSL 声明预约的业务规则
-- **类型安全**：生成 TypeScript 类型定义
-- **可扩展性**：轻松添加新的预约类型
-- **业务逻辑分离**：将业务规则从组件逻辑中分离
-
-**示例**：
-
-```typescript
-const meetingType: AppointmentType = {
-  id: 'meeting',
-  name: '会议',
-  fields: [
-    { name: 'title', type: 'string', required: true },
-    { name: 'attendees', type: 'array', items: { type: 'string' } }
-  ],
-  display: {
-    color: '#4285f4',
-    titleTemplate: '${title}'
-  },
-  behavior: {
-    draggable: true,
-    minDuration: 15,
-    timeConstraints: [
-      { type: 'workingHours', value: { start: '09:00', end: '18:00' } }
-    ]
-  }
-};
 ```
-
-### 2. 多租户架构
-
-服务支持多租户模式：
-
-- **租户隔离**：每个租户的数据完全隔离
-- **子域名支持**：每个租户可以有自己的子域名（如：acme.calenderjs.com）
-- **独立配置**：每个租户可以配置自己的 DSL 和集成设置
-- **可扩展性**：支持从单个客户到大规模企业的扩展
-
-### 3. 第三方集成
-
-#### Google Calendar 同步
-
-- 双向同步预约
-- 支持 OAuth 2.0 认证
-- 自动处理冲突
-
-#### Slack 集成
-
-- 发送预约通知
-- 快速创建预约
-- 团队协作支持
+event-model (SSOT)
+    ↑
+core ← date-time
+    ↑
+event-dsl (编译时)     event-runtime (运行时)
+    ↑                        ↑
+calendar ←───────────────────┘
+    ↑
+react → demos/react
+```
 
 ## 快速开始
 
 ### 前置要求
 
-- Node.js >= 18.0.0
+- Node.js >= 20.19.0 或 >= 22.12.0
 - pnpm >= 10.0.0
 
-### 安装依赖
+### 安装
 
 ```bash
 pnpm install
 ```
 
-### 开发所有包
+### 开发
 
 ```bash
-pnpm dev
+pnpm dev                    # pangu 开发所有包
+pnpm dev:react              # React 演示站
+pnpm --filter @calenderjs/site dev   # 官网
 ```
 
-### 开发特定包
-
-```bash
-# 开发组件库
-pnpm --filter @calenderjs/core dev
-
-# 开发服务
-pnpm --filter calendar-service dev
-
-# 使用 nx
-nx dev @calenderjs/core
-nx dev calendar-service
-```
-
-### 构建所有包
+### 构建与测试
 
 ```bash
 pnpm build
-```
-
-### 运行测试
-
-```bash
 pnpm test
+pnpm lint
+pnpm typecheck
+pnpm validate:docs   # LLM doc links + sync llms.txt to site/public
 ```
 
-### 查看依赖图
+### 单包操作
 
 ```bash
-nx graph
+pnpm --filter @calenderjs/calendar test
+pnpm --filter @calenderjs/calendar build
+pnpm --filter @calenderjs/event-dsl build
 ```
+
+## 使用示例
+
+### Web Component
+
+```html
+<script type="module">
+  import '@calenderjs/calendar';
+</script>
+
+<wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
+```
+
+```typescript
+import { Calendar } from '@calenderjs/calendar';
+import type { Event } from '@calenderjs/event-model';
+
+const calendar = document.querySelector('wsx-calendar') as Calendar;
+
+const events: Event[] = [
+  {
+    id: '1',
+    type: 'meeting',
+    title: '团队会议',
+    startTime: new Date('2024-12-30T10:00:00'),
+    endTime: new Date('2024-12-30T11:00:00'),
+    color: '#4285f4',
+    extra: { location: '会议室 A' },
+  },
+];
+
+calendar.events = events;
+```
+
+### React
+
+```tsx
+import { Calendar } from '@calenderjs/react';
+import type { Event } from '@calenderjs/event-model';
+
+function App() {
+  const events: Event[] = [/* ... */];
+
+  return <Calendar view="month" events={events} />;
+}
+```
+
+详见 [packages/react/README.md](./packages/react/README.md)。
+
+### Event DSL
+
+```typescript
+import { parse, compile } from '@calenderjs/event-dsl';
+
+const ast = parse(`
+  type meeting {
+    name: "团队会议"
+    fields {
+      title: string required
+      location: string
+    }
+  }
+`);
+
+const compiled = compile(ast);
+```
+
+详见 [packages/event-dsl/README.md](./packages/event-dsl/README.md)。
+
+## 核心概念
+
+### Event 数据模型
+
+- **Event** 是技术模型：所有日历活动（会议、预约、假日等）都是 Event，`type` 区分业务类型
+- **Appointment** 是业务概念，通过 DSL 定义，编译后生成符合 Event 接口的数据
+- 扩展字段当前为 `extra`（计划重命名为 `data`，见 RFC-0011）
+
+### Event DSL 架构
+
+| 层 | 包 | 职责 |
+|----|-----|------|
+| 编译时 | `@calenderjs/event-dsl` | PEG 解析 → AST → 编译器 → 类型/Schema 生成 |
+| 运行时 | `@calenderjs/event-runtime` | 验证、渲染增强、行为检查（`canPerform`） |
+| 数据模型 | `@calenderjs/event-model` | Event 接口 SSOT + JSON Schema 结构校验 |
+
+### Calendar 与 DSL
+
+- Calendar 接受 `events` 数组进行纯数据驱动渲染（已实现）
+- Calendar 将接受 `EventRuntime` property 进行 DSL 驱动增强（M4 进行中）
+- 无 runtime 时降级为纯数据驱动
 
 ## 文档
 
+### AI / LLM
+
+- [docs/llm-guide.md](./docs/llm-guide.md) — AI 代理主指南
+- [llms.txt](./llms.txt) — 链接索引
+- [AGENTS.md](./AGENTS.md) — 开发规范（`CLAUDE.md`、`GEMINI.md` 同步）
+
+### 路线图与任务
+
+- [ROADMAP.md](./ROADMAP.md) — RFC 状态、里程碑、架构决策
+- [TASK_TRACKING.md](./TASK_TRACKING.md) — 当前 Sprint 任务
+
 ### RFC 文档
 
-- **[RFC-0001: Calendar Component for Appointment Management](./docs/rfc/0001-calendar-appointment-management.md)**
-  - 基于 WSX 的纯前端日历组件库（无服务）
-  - 提供月视图、周视图、日视图三种显示模式
-  - 支持拖拽、调整大小等交互功能
-  - 参考 Google 日历的 UI/UX 设计
+| RFC | 标题 | 状态 |
+|-----|------|------|
+| [0002](./docs/rfc/0002-event-dsl.md) | Event DSL | Implemented（集成进行中） |
+| [0004](./docs/rfc/0004-react-demo-site.md) | React Package & Demo | Implemented |
+| [0005](./docs/rfc/0005-calendar-component.md) | Calendar Component | In Progress |
+| [0008](./docs/rfc/0008-calendar-component-api-redesign.md) | Calendar API 重新设计 | Implemented |
+| [0010](./docs/rfc/0010-week-view-layout-fix.md) | Week View 布局修复 | Implemented |
+| [0013](./docs/rfc/completed/0013-fix-today-handling.md) | 今天高亮修复 | Implemented |
+| [0011](./docs/rfc/0011-event-data-model-integration.md) | Event 数据模型与 DSL 集成 | Draft |
+| [0012](./docs/rfc/0012-calendar-plugin-mechanism.md) | Calendar 插件机制 | Draft |
+| [0003](./docs/rfc/0003-multi-tenant-service.md) | Multi-Tenant Service | Future Plan |
 
-- **[RFC-0002: Appointment DSL](./docs/rfc/0002-appointment-dsl.md)**
-  - 领域特定语言，用于定义预约类型和业务规则
-  - 支持声明式定义、类型安全、可扩展
-  - 包含编译器和运行时系统
-  - 与 RFC-0001 组件库集成
+### 包文档
 
-- **[RFC-0003: Multi-Tenant Calendar Service](./docs/rfc/0003-multi-tenant-service.md)** ⏳ 未来计划
-  - 基于 Next.js 的多租户日历服务（ToB）
-  - 支持客户注册、员工登录
-  - 集成 Google Calendar 和 Slack
-  - 使用 RFC-0001 组件和 RFC-0002 DSL
-  - **状态**：仅保留在 RFC 文档中，暂不实现
-
-- **[RFC-0004: React Demo Site](./docs/rfc/0004-react-demo-site.md)**
-  - 基于 React + Vite 的演示网站
-  - 展示组件使用和 DSL 功能
-  - 提供 React 集成示例
-  - 适合快速上手和组件展示
-
-### 设置文档
-
-- [pnpm + Nx Monorepo 设置指南](./docs/setup/pnpm-nx-setup.md)
+- [@calenderjs/calendar](./packages/calendar/) — 日历 Web Component
+- [@calenderjs/react](./packages/react/README.md) — React 封装
+- [@calenderjs/event-dsl](./packages/event-dsl/README.md) — Event DSL
+- [@calenderjs/event-model](./packages/event-model/README.md) — Event 数据模型
+- [@calenderjs/core](./packages/core/README.md) — 核心模型与工具
 
 ## 技术栈
 
-- **前端组件**: Web Components (WSX)
-- **服务框架**: Next.js 14
-- **数据库**: PostgreSQL
-- **ORM**: Prisma / Drizzle
-- **认证**: NextAuth.js
-- **构建工具**: Vite, Nx
-- **包管理**: pnpm
-- **Monorepo**: pnpm + Nx
+| 类别 | 技术 |
+|------|------|
+| UI 组件 | WSX (`@wsxjs/wsx-core`) Web Components |
+| React 集成 | `@calenderjs/react` |
+| DSL 解析 | PEG.js (peggy) |
+| 数据校验 | AJV + JSON Schema |
+| 构建 | Vite + Turbo |
+| 包管理 | pnpm workspaces |
+| 测试 | Vitest + happy-dom |
 
 ## 许可证
 

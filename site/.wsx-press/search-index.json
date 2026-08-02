@@ -1,0 +1,33 @@
+{
+  "documents": [
+    {
+      "id": "guide/getting-started",
+      "title": "Getting Started",
+      "category": "guide",
+      "route": "/docs/guide/getting-started",
+      "content": "快速开始\n\n本指南帮助你在 5 分钟内运行第一个 CalenderJS 日历与 Event DSL。\n\n 安装\n\n在已有项目中安装所需包：\n\n\n\n 使用日历组件\n\n在 HTML 中直接使用 Web Component：\n\n\n\n或通过 React 包装器：\n\n\n\n 使用 Event DSL\n\n定义事件类型并编译为 Data Model：\n\n\n\n 下一步\n\n- DSL 语法指南./dsl-guide.md\n- 演示站点/demos 查看完整 DSL → 日历流程"
+    },
+    {
+      "id": "guide/dsl-guide",
+      "title": "Event DSL 指南",
+      "category": "guide",
+      "route": "/docs/guide/dsl-guide",
+      "content": "Event DSL 指南\n\nEvent DSL 用于声明式定义事件类型、字段、校验规则与展示规则。\n\n 基本结构\n\n\n\n 字段类型\n\n- string、number、boolean\n- list of <type>：如 list of email\n- required 表示必填\n\n 校验规则\n\n在 validate: 下写约束，例如：\n\n- attendees.count between 1 and 50\n- startTime.hour >= 9\n\n 展示\n\n- display.color：事件块颜色\n- display.icon：图标标识\n\n编译后由 @calenderjs/event-runtime 在运行时做校验与渲染。"
+    }
+  ],
+  "options": {
+    "keys": [
+      {
+        "name": "title",
+        "weight": 0.7
+      },
+      {
+        "name": "content",
+        "weight": 0.3
+      }
+    ],
+    "threshold": 0.3,
+    "includeScore": true,
+    "includeMatches": true
+  }
+}

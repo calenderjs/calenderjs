@@ -1,0 +1,68 @@
+{
+  "guide/getting-started": [
+    {
+      "level": 1,
+      "text": "快速开始",
+      "id": "快速开始",
+      "children": [
+        {
+          "level": 2,
+          "text": "安装",
+          "id": "安装",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "使用日历组件",
+          "id": "使用日历组件",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "使用 Event DSL",
+          "id": "使用-event-dsl",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "下一步",
+          "id": "下一步",
+          "children": []
+        }
+      ]
+    }
+  ],
+  "guide/dsl-guide": [
+    {
+      "level": 1,
+      "text": "Event DSL 指南",
+      "id": "event-dsl-指南",
+      "children": [
+        {
+          "level": 2,
+          "text": "基本结构",
+          "id": "基本结构",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "字段类型",
+          "id": "字段类型",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "校验规则",
+          "id": "校验规则",
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "展示",
+          "id": "展示",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

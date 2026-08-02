@@ -1,6 +1,7 @@
 # RFC-0004: React Calendar Package and Demo Site
 
-**状态**: Draft  
+**状态**: Implemented  
+**完成日期**: 2026-03-15  
 **创建日期**: 2024-12-19  
 **作者**: WSX Team  
 **关联 RFC**: RFC-0001

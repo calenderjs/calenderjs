@@ -1,0 +1,42 @@
+---
+description: CalenderJS AI onboarding — read order, invariants, task routing
+alwaysApply: true
+---
+
+# CalenderJS — AI agent onboarding
+
+Before non-trivial work, read in order:
+
+1. `docs/llm-guide.md` — task routing, file map, implementation status
+2. `TASK_TRACKING.md` — current sprint (what is pending)
+3. Relevant RFC in `docs/rfc/`
+4. `AGENTS.md` — pnpm-only, RFC-driven rules
+
+Index: `llms.txt` at repo root.
+
+## Invariants
+
+- Calendar package: `@calenderjs/calendar` (NOT `@calenderjs/core`)
+- Web component tag: `wsx-calendar`
+- Event SSOT: `packages/event-model/src/Event.ts`
+- Event extension field: `extra` (rename to `data` is PLANNED — do not use `data` unless doing that task)
+- Package manager: `pnpm` only — never `npx`
+- Tests: `pnpm --filter @calenderjs/calendar test` (vitest)
+
+## Not implemented yet (do not assume)
+
+- Calendar `eventRuntime` property (RFC-0005 M4)
+- `extra` → `data` rename (RFC-0011)
+- RFC-0003 multi-tenant backend (DO NOT IMPLEMENT)
+
+## Task routing
+
+| Task | Primary files |
+|------|---------------|
+| Calendar views | `packages/calendar/src/views/*.wsx` |
+| Calendar API | `packages/calendar/src/Calendar.wsx` |
+| Event model | `packages/event-model/src/Event.ts` |
+| DSL grammar | `packages/event-dsl/src/event-dsl.pegjs` |
+| React wrapper | `packages/react/src/` |
+
+Editing `.wsx` files: follow `.cursor/skills/wsx-work/SKILL.md`.

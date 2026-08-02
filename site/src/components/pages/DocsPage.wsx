@@ -1,0 +1,19 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import "@wsxjs/wsx-press/client";
+import styles from "./DocsPage.css?inline";
+
+@autoRegister({ tagName: "docs-page" })
+export class DocsPage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "docs-page" });
+  }
+
+  render() {
+    return (
+      <div class="docs-page">
+        <wsx-doc-layout />
+      </div>
+    );
+  }
+}

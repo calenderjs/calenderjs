@@ -1,0 +1,62 @@
+.features-page {
+  flex: 1;
+}
+
+.features-hero {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid var(--calenderjs-border);
+}
+
+.features-hero-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.features-hero-title {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--calenderjs-text-primary);
+}
+
+.features-hero-description {
+  color: var(--calenderjs-text-secondary);
+  margin: 0;
+}
+
+.features-list {
+  padding: 2rem 1.5rem;
+}
+
+.features-list-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  background: var(--calenderjs-bg-secondary);
+  border: 1px solid var(--calenderjs-border);
+  border-radius: 8px;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-title {
+  font-size: 1.125rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--calenderjs-text-primary);
+}
+
+.feature-desc {
+  font-size: 0.875rem;
+  color: var(--calenderjs-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}

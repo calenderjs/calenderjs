@@ -1,0 +1,51 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import styles from "./AppHeader.css?inline";
+
+@autoRegister({ tagName: "calenderjs-app-header" })
+@i18n("common")
+export class AppHeader extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "calenderjs-app-header" });
+  }
+
+  toggleTheme = () => {
+    const el = document.documentElement;
+    const next = el.getAttribute("data-theme") === "light" ? "dark" : "light";
+    el.setAttribute("data-theme", next);
+    localStorage.setItem("calenderjs-theme", next);
+  };
+
+  render() {
+    return (
+      <header class="header">
+        <div class="header-container">
+          <div class="header-brand">
+            <wsx-link to="/" class="brand-link">
+              <span class="brand-title">{this.t("brandName")}</span>
+            </wsx-link>
+          </div>
+          <nav class="header-nav">
+            <wsx-link to="/" class="nav-link" active-class="nav-link-active" exact>
+              {this.t("home")}
+            </wsx-link>
+            <wsx-link to="/features" class="nav-link" active-class="nav-link-active">
+              {this.t("features")}
+            </wsx-link>
+            <wsx-link to="/docs/guide/getting-started" class="nav-link" active-class="nav-link-active">
+              {this.t("docs")}
+            </wsx-link>
+            <wsx-link to="/demos" class="nav-link" active-class="nav-link-active">
+              {this.t("demos")}
+            </wsx-link>
+            <button type="button" class="theme-toggle" onClick={this.toggleTheme} aria-label="Toggle theme">
+              ☀️/🌙
+            </button>
+          </nav>
+        </div>
+      </header>
+    );
+  }
+}

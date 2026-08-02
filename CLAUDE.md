@@ -1,10 +1,51 @@
-# AGENTS.md - calenderjs 项目角色定义
+# CLAUDE.md - calenderjs 项目指南
 
-本文档包含所有可用的 AI 角色定义（Personas）。每个角色都有其独特的视角、哲学和沟通原则。
+> 与 [AGENTS.md](./AGENTS.md) 保持同步。以 AGENTS.md 为准。
+> **AI 代理入口**：[docs/llm-guide.md](./docs/llm-guide.md) · [llms.txt](./llms.txt)
+
+本文档为 AI 代理与开发者提供项目上下文、角色定义和开发规范。
+
+## 项目概览
+
+CalenderJS 是基于日历的事件/预约管理系统 monorepo：
+
+- **日历组件**：`@calenderjs/calendar`（WSX Web Component `<wsx-calendar>`）
+- **Event DSL**：`@calenderjs/event-dsl`（PEG.js 文本 DSL）
+- **数据模型**：`@calenderjs/event-model`（Event 接口 SSOT）
+- **运行时**：`@calenderjs/event-runtime`（验证/渲染/行为）
+- **React**：`@calenderjs/react` + `demos/react/`
+- **官网**：`site/`（WSX + i18n）
+
+当前里程碑：**M4 DSL 集成**（详见 [ROADMAP.md](./ROADMAP.md)、[TASK_TRACKING.md](./TASK_TRACKING.md)）
+
+### 包一览
+
+| 包 | 说明 |
+|----|------|
+| `@calenderjs/core` | 核心模型、上下文、工具函数 |
+| `@calenderjs/calendar` | WSX 日历组件（月/周/日视图） |
+| `@calenderjs/event-model` | Event 接口 SSOT、JSON Schema 校验 |
+| `@calenderjs/event-dsl` | DSL 解析、编译器、生成器（编译时） |
+| `@calenderjs/event-runtime` | EventRuntime（运行时） |
+| `@calenderjs/date-time` | 日期时间工具 |
+| `@calenderjs/react` | React 封装 |
+| `@calenderjs/monaco-event-dsl` | Monaco Editor DSL 集成 |
+
+### 关键架构决策
+
+| 决策 | 选择 |
+|------|------|
+| Calendar 与 DSL | DSL 驱动；Calendar 接受 EventRuntime，无 runtime 时降级 |
+| Event vs Appointment | Appointment 是业务概念，Event 是技术模型 |
+| DSL 形态 | 文本 DSL（PEG.js → AST） |
+| 扩展字段 | `extra`（计划重命名为 `data`，RFC-0011） |
+| 编译/运行时 | `event-dsl`（编译时）与 `event-runtime`（运行时）分离 |
+
+---
 
 ## 角色列表
 
-所有角色定义已分离到独立文件中，位于 `docs/persona/` 目录：
+所有角色定义位于 `docs/persona/` 目录：
 
 ### 技术专家
 
@@ -46,14 +87,7 @@
 
 ## 使用方式
 
-每个角色文件包含：
-
-- 角色介绍和背景
-- 核心哲学和原则
-- 沟通原则和规范
-- 需求确认流程
-- 决策输出模式
-- 代码审查标准
+每个角色文件包含：角色介绍、核心哲学、沟通原则、需求确认流程、决策输出模式、代码审查标准。
 
 ## 软件架构宗师之心法
 
@@ -61,8 +95,68 @@
 
 ---
 
-_最后更新：2024年_
+## 行为准则
 
+**所有 AI 代理必须严格遵守：**
+
+1. **尊重项目配置**
+   - **严禁**随意使用 `npx` 或猜测命令
+   - **必须**先检查 `package.json`、`turbo.json`
+   - 使用 `pnpm` 运行脚本（`pnpm test`、`pnpm build` 等）
+   - Monorepo 任务通过 Turbo 或 `pnpm --filter` 执行
+
+2. **RFC 驱动开发**
+   - 非琐碎变更**必须**先在 `docs/rfc/` 创建或更新 RFC
+   - 严禁无 RFC 支持的重大重构或功能移除
+   - RFC 必须反映当前决策状态
+
+3. **语言规范**
+   - 默认使用**中文**与用户沟通（除非用户明确要求其他语言）
+
+4. **WSX 组件开发**
+   - 日历组件位于 `packages/calendar/`，使用 `.wsx` 文件
+   - 参考 `.cursor/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
+
+---
+
+## 项目开发规范
+
+### 包管理器
+
+本项目使用 **pnpm**，**严禁使用 npx**。
+
+### 常用命令
+
+| 任务 | 命令 |
+|------|------|
+| 运行所有测试 | `pnpm test` |
+| 运行 calendar 包测试 | `pnpm --filter @calenderjs/calendar test` |
+| 构建所有包 | `pnpm build` |
+| 构建 calendar 包 | `pnpm build:calendar` |
+| 开发模式 | `pnpm dev` |
+| React 演示 | `pnpm dev:react` |
+| 代码检查 | `pnpm lint` |
+| 类型检查 | `pnpm typecheck` |
+| 校验 LLM 文档链接 | `pnpm validate:docs` |
+
+### Cursor 规则
+
+AI 代理自动加载 `.cursor/rules/`：
+
+- `00-llm-onboarding.mdc` — 始终生效，任务路由与不变量
+- `wsx-calendar.mdc` — 编辑 `packages/calendar/**` 时生效
+
+### 关键约定
+
+- 测试框架：**vitest**（通过 pnpm 脚本调用，不要直接用 npx）
+- Monorepo 工具：**Turbo + pnpm workspaces**
+- 运行时版本：Node >= 20.19.0 或 >= 22.12.0，pnpm 10.27.0（Volta 管理）
+- RFC 文档位于 `docs/rfc/`，实现前必须经过审批流程
+- 日历组件标签：`<wsx-calendar>`，主包 `@calenderjs/calendar`（非 `@calenderjs/core`）
+
+---
+
+_最后更新：2026年3月_
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

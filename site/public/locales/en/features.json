@@ -1,0 +1,24 @@
+{
+  "hero": {
+    "title": "Features",
+    "description": "What the calendar and Event DSL provide."
+  },
+  "items": {
+    "calendar": {
+      "title": "Calendar Component",
+      "description": "Month / Week / Day views, Web Components, framework-agnostic."
+    },
+    "dsl": {
+      "title": "Event DSL",
+      "description": "Declarative event types, fields, validation and display rules."
+    },
+    "views": {
+      "title": "Multi-View",
+      "description": "Switch and navigate between month, week, and day views."
+    },
+    "validation": {
+      "title": "Validation & Render",
+      "description": "DSL-based event validation and runtime render (color, icon)."
+    }
+  }
+}

@@ -1,0 +1,33 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import styles from "./App.css?inline";
+import "@wsxjs/wsx-base-components";
+import "@wsxjs/wsx-router";
+import "./components/layout/AppHeader.wsx";
+import "./components/layout/AppFooter.wsx";
+import "./components/pages/HomePage.wsx";
+import "./components/pages/FeaturesPage.wsx";
+import "./components/pages/DocsPage.wsx";
+import "./components/pages/DemosPage.wsx";
+
+@autoRegister({ tagName: "calenderjs-app" })
+export default class App extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "calenderjs-app" });
+  }
+
+  render() {
+    return (
+      <div class="app-container">
+        <calenderjs-app-header />
+        <wsx-router mode="hash">
+          <wsx-view route="/" component="home-page"></wsx-view>
+          <wsx-view route="/features" component="features-page"></wsx-view>
+          <wsx-view route="/docs/:category/:page" component="docs-page"></wsx-view>
+          <wsx-view route="/demos" component="demos-page"></wsx-view>
+        </wsx-router>
+        <calenderjs-app-footer />
+      </div>
+    );
+  }
+}

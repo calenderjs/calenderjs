@@ -1,3 +1,7 @@
+# 校验 LLM 文档链接
+echo "🔍 Validating LLM docs..."
+pnpm validate:docs || exit 1
+
 # 运行 typecheck 检查
 echo "🔍 Running typecheck..."
 pnpm typecheck || exit 1

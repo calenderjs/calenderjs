@@ -1,0 +1,11 @@
+{
+  "brandName": "CalenderJS",
+  "description": "日历预约与 Event DSL 组件库。",
+  "resources": {
+    "title": "资源",
+    "docs": "文档",
+    "demos": "演示",
+    "github": "GitHub"
+  },
+  "copyright": "© CalenderJS. MIT License."
+}

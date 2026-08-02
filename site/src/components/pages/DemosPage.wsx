@@ -1,0 +1,64 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import "@calenderjs/calendar";
+import styles from "./DemosPage.css?inline";
+
+/** 站点内嵌日历演示用示例事件（ISO 时间字符串，日历内部会解析） */
+const SAMPLE_EVENTS_JSON = JSON.stringify([
+  {
+    id: "site-demo-1",
+    type: "meeting",
+    title: "团队会议",
+    startTime: new Date().toISOString().slice(0, 10) + "T10:00:00.000Z",
+    endTime: new Date().toISOString().slice(0, 10) + "T11:00:00.000Z",
+    extra: { attendees: ["a@example.com"], location: "会议室 A" },
+  },
+  {
+    id: "site-demo-2",
+    type: "meeting",
+    title: "客户演示",
+    startTime: new Date().toISOString().slice(0, 10) + "T14:00:00.000Z",
+    endTime: new Date().toISOString().slice(0, 10) + "T15:30:00.000Z",
+    extra: { attendees: ["b@example.com"], location: "线上" },
+  },
+]);
+
+@autoRegister({ tagName: "demos-page" })
+@i18n("common")
+export class DemosPage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "demos-page" });
+  }
+
+  /** 当前日期 ISO 字符串，供 wsx-calendar date 属性使用 */
+  private get _dateStr() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  render() {
+    return (
+      <div class="demos-page">
+        <section class="demos-hero">
+          <div class="demos-hero-container">
+            <h1 class="demos-hero-title">{this.t("demosTitle")}</h1>
+            <p class="demos-hero-description">{this.t("demosDescription")}</p>
+          </div>
+        </section>
+        <section class="demos-calendar">
+          <div class="demos-calendar-container">
+            <p class="demos-calendar-caption">月 / 周 / 日视图，点击日期与事件可交互。</p>
+            <div class="demos-calendar-wrap">
+              <wsx-calendar
+                view="month"
+                date={this._dateStr}
+                events={SAMPLE_EVENTS_JSON}
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+}

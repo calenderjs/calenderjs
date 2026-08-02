@@ -1,0 +1,8 @@
+{
+  "title": "CalenderJS",
+  "subtitle": "Calendar components and Event DSL with Web Components. Declarative event types, validation, and multi-view display.",
+  "stats": {
+    "license": "MIT License",
+    "webComponents": "Web Components"
+  }
+}

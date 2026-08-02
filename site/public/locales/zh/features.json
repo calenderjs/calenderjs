@@ -1,0 +1,24 @@
+{
+  "hero": {
+    "title": "功能特性",
+    "description": "日历组件与 Event DSL 提供的核心能力。"
+  },
+  "items": {
+    "calendar": {
+      "title": "日历组件",
+      "description": "月 / 周 / 日视图，Web Components，无框架绑定。"
+    },
+    "dsl": {
+      "title": "Event DSL",
+      "description": "声明式定义事件类型、字段、校验与展示规则。"
+    },
+    "views": {
+      "title": "多视图",
+      "description": "月视图、周视图、日视图切换与导航。"
+    },
+    "validation": {
+      "title": "校验与渲染",
+      "description": "基于 DSL 的事件校验与运行时渲染（颜色、图标）。"
+    }
+  }
+}

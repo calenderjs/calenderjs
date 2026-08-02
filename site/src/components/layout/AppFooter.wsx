@@ -1,0 +1,38 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import styles from "./AppFooter.css?inline";
+
+@autoRegister({ tagName: "calenderjs-app-footer" })
+@i18n("footer")
+export class AppFooter extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "calenderjs-app-footer" });
+  }
+
+  render() {
+    return (
+      <footer class="footer">
+        <div class="footer-container">
+          <div class="footer-content">
+            <div class="footer-section">
+              <h3 class="footer-title">{this.t("brandName")}</h3>
+              <p class="footer-description">{this.t("description")}</p>
+            </div>
+            <div class="footer-section">
+              <h4 class="footer-heading">{this.t("resources.title")}</h4>
+              <ul class="footer-links">
+                <li><a href="#/docs/guide/getting-started">{this.t("resources.docs")}</a></li>
+                <li><a href="#/demos">{this.t("resources.demos")}</a></li>
+                <li><a href="https://github.com/calenderjs/calenderjs" target="_blank" rel="noopener noreferrer">{this.t("resources.github")}</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p class="footer-copyright">{this.t("copyright")}</p>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+}

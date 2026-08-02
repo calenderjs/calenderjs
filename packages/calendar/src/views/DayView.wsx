@@ -28,6 +28,8 @@ export default class DayView extends WebComponent {
         email: "john.doe@example.com",
         role: "user",
     };
+    // 保存"今天"的日期，确保在切换视图时不会改变
+    private readonly _today: Date;
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
@@ -85,6 +87,10 @@ export default class DayView extends WebComponent {
             styles,
             styleName: "wsx-day-view",
         });
+        // 在构造函数中初始化"今天"的日期，确保只计算一次
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this._today = today;
     }
 
     // ========== 生命周期 ==========
@@ -96,7 +102,7 @@ export default class DayView extends WebComponent {
     onAttributeChanged(
         name: string,
         oldValue: string | null,
-        newValue: string | null
+        newValue: string | null,
     ) {
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
@@ -170,7 +176,7 @@ export default class DayView extends WebComponent {
             new CustomEvent("event-click", {
                 detail: { event },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -179,7 +185,11 @@ export default class DayView extends WebComponent {
         return (
             <div class="day-view">
                 <div class="day-view-header">
-                    <div class="day-view-date">
+                    <div
+                        class={`day-view-date ${
+                            isSameDay(this.viewDate, this._today) ? "today" : ""
+                        }`}
+                    >
                         {this.viewDate.getFullYear()}年
                         {this.viewDate.getMonth() + 1}月
                         {this.viewDate.getDate()}日
@@ -194,7 +204,10 @@ export default class DayView extends WebComponent {
                             const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
                             const timeStr = `${hourStr}:00`;
                             return (
-                                <div class="day-view-hour-label" key={`left-hour-${hour}`}>
+                                <div
+                                    class="day-view-hour-label"
+                                    key={`left-hour-${hour}`}
+                                >
                                     {timeStr}
                                 </div>
                             );
@@ -213,10 +226,11 @@ export default class DayView extends WebComponent {
                             const position = calculateEventPosition(
                                 event,
                                 this.dayStart,
-                                this.dayEnd
+                                this.dayEnd,
                             );
                             const eventColor = event.color || "#4285f4";
-                            const eventDescription = event.extra?.description as string | undefined;
+                            const eventDescription = event.extra
+                                ?.description as string | undefined;
 
                             return (
                                 <div

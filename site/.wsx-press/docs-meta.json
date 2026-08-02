@@ -1,0 +1,20 @@
+{
+  "guide/getting-started": {
+    "title": "Getting Started",
+    "category": "guide",
+    "route": "/docs/guide/getting-started",
+    "order": 1,
+    "description": "5 分钟上手 CalenderJS：安装、第一个日历与 Event DSL。",
+    "prev": null,
+    "next": "/docs/guide/dsl-guide"
+  },
+  "guide/dsl-guide": {
+    "title": "Event DSL 指南",
+    "category": "guide",
+    "route": "/docs/guide/dsl-guide",
+    "order": 2,
+    "description": "Event DSL 语法与结构说明。",
+    "prev": "/docs/guide/getting-started",
+    "next": null
+  }
+}

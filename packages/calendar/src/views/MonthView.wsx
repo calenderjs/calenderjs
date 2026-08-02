@@ -127,7 +127,7 @@ export default class MonthView extends WebComponent {
     onAttributeChanged(
         name: string,
         oldValue: string | null,
-        newValue: string | null
+        newValue: string | null,
     ) {
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
@@ -221,7 +221,7 @@ export default class MonthView extends WebComponent {
             new CustomEvent("date-click", {
                 detail: { date },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -233,7 +233,7 @@ export default class MonthView extends WebComponent {
             new CustomEvent("date-double-click", {
                 detail: { date },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -248,7 +248,7 @@ export default class MonthView extends WebComponent {
             new CustomEvent("event-click", {
                 detail: { event },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -263,7 +263,7 @@ export default class MonthView extends WebComponent {
             new CustomEvent("event-delete", {
                 detail: { event },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -292,10 +292,10 @@ export default class MonthView extends WebComponent {
                         // 确保日期对象的时间部分为 0，便于准确比较
                         const normalizedDate = new Date(date);
                         normalizedDate.setHours(0, 0, 0, 0);
-                        
+
                         const dateKey = formatDateKey(normalizedDate);
                         const dayEvents = sortEventsByTime(
-                            this.eventsByDate.get(dateKey) || []
+                            this.eventsByDate.get(dateKey) || [],
                         );
                         const isCurrentMonth =
                             this._viewDate &&
@@ -315,10 +315,10 @@ export default class MonthView extends WebComponent {
                                 key={dateKey}
                                 class={`month-view-cell ${
                                     !isCurrentMonth ? "other-month" : ""
-                                } ${isSelected ? "selected" : ""} ${
-                                    isToday ? "today" : ""
-                                }`}
-                                onClick={() => this.handleDateClick(normalizedDate)}
+                                } ${isToday && isCurrentMonth ? "today" : ""}`}
+                                onClick={() =>
+                                    this.handleDateClick(normalizedDate)
+                                }
                                 onDblClick={() =>
                                     this.handleDateDoubleClick(normalizedDate)
                                 }
@@ -338,7 +338,7 @@ export default class MonthView extends WebComponent {
                                                 onClick={(evt) =>
                                                     this.handleEventClick(
                                                         event,
-                                                        evt
+                                                        evt,
                                                     )
                                                 }
                                             >
@@ -351,7 +351,7 @@ export default class MonthView extends WebComponent {
                                                         onClick={(evt) =>
                                                             this.handleEventDelete(
                                                                 event,
-                                                                evt
+                                                                evt,
                                                             )
                                                         }
                                                     >

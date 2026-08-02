@@ -1,0 +1,26 @@
+---
+description: WSX calendar component rules for packages/calendar
+globs: packages/calendar/**/*
+alwaysApply: false
+---
+
+# WSX calendar development
+
+Full guide: `.cursor/skills/wsx-work/SKILL.md`
+
+## Rules
+
+- Use `@autoRegister`, `WebComponent`, `@state` — no Vue/React inside `.wsx`
+- Styles: `import styles from "./X.css?inline"`
+- Events: `CustomEvent` with `bubbles: true`
+- Tests: `await element.updateComplete` before assertions (WSX render is async)
+
+## Structure
+
+- `Calendar.wsx` — root `<wsx-calendar>`
+- `views/DayView.wsx`, `WeekView.wsx`, `MonthView.wsx` — view components
+- `utils/event-utils.ts` — pure helpers
+
+## API reference
+
+RFC-0008: `observedAttributes` = `view`, `date`, `events`, `user` with getter/setter.

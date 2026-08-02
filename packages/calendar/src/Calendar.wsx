@@ -36,13 +36,13 @@ export default class Calendar extends WebComponent {
     @state currentView: "month" | "week" | "day" = "month";
     @state currentDate: Date = new Date();
     @state private _events: CalendarEvent[] = [];
-    @state user: User = {
+    @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
         role: "user",
     };
 
-    // ========== 属性访问器（支持 property 设置） ==========
+    // ========== 属性访问器（支持 property 和 attribute 两种设置方式） ==========
     get events(): CalendarEvent[] {
         return this._events;
     }
@@ -61,8 +61,20 @@ export default class Calendar extends WebComponent {
         }
     }
 
-    // ========== 私有属性 ==========
-    private _initialized = false;
+    get user(): User {
+        return this._user;
+    }
+    set user(value: User | string) {
+        if (typeof value === "string") {
+            try {
+                this._user = JSON.parse(value);
+            } catch (e) {
+                console.error("Invalid user JSON:", value);
+            }
+        } else if (value && typeof value === "object") {
+            this._user = value;
+        }
+    }
 
     constructor() {
         super({
@@ -74,7 +86,6 @@ export default class Calendar extends WebComponent {
     // ========== Web Components 生命周期 ==========
     onConnected() {
         super.onConnected?.();
-        this.initializeComponent();
         this.setupEventListeners();
     }
 
@@ -185,47 +196,6 @@ export default class Calendar extends WebComponent {
                 }
                 break;
         }
-    }
-
-    // ========== 初始化 ==========
-    private initializeComponent() {
-        // 从 attributes 初始化（对外使用）
-        const viewAttr = this.getAttribute("view");
-        if (viewAttr && ["month", "week", "day"].includes(viewAttr)) {
-            this.currentView = viewAttr as "month" | "week" | "day";
-        }
-
-        const dateAttr = this.getAttribute("date");
-        if (dateAttr) {
-            try {
-                const date = new Date(dateAttr);
-                if (!isNaN(date.getTime())) {
-                    this.currentDate = date;
-                }
-            } catch (e) {
-                console.error("Invalid date format:", dateAttr);
-            }
-        }
-
-        const eventsAttr = this.getAttribute("events");
-        if (eventsAttr) {
-            try {
-                this.events = JSON.parse(eventsAttr);
-            } catch (e) {
-                console.error("Invalid events JSON:", eventsAttr);
-            }
-        }
-
-        const userAttr = this.getAttribute("user");
-        if (userAttr) {
-            try {
-                this.user = JSON.parse(userAttr);
-            } catch (e) {
-                console.error("Invalid user JSON:", userAttr);
-            }
-        }
-
-        this._initialized = true;
     }
 
     // ========== 渲染 ==========
@@ -418,18 +388,6 @@ export default class Calendar extends WebComponent {
         this.dispatchEvent(
             new CustomEvent("date-change", {
                 detail: { date },
-                bubbles: true,
-            })
-        );
-    }
-
-    private handleTimeSlotClick(date: Date, hour: number) {
-        const clickedDate = new Date(date);
-        clickedDate.setHours(hour, 0, 0, 0);
-        this.currentDate = clickedDate;
-        this.dispatchEvent(
-            new CustomEvent("date-change", {
-                detail: { date: clickedDate },
                 bubbles: true,
             })
         );

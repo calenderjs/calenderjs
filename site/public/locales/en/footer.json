@@ -1,0 +1,11 @@
+{
+  "brandName": "CalenderJS",
+  "description": "Calendar appointment and Event DSL component library.",
+  "resources": {
+    "title": "Resources",
+    "docs": "Docs",
+    "demos": "Demos",
+    "github": "GitHub"
+  },
+  "copyright": "© CalenderJS. MIT License."
+}

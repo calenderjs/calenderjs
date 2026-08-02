@@ -1,0 +1,84 @@
+.home-page {
+  flex: 1;
+}
+
+.hero {
+  padding: 4rem 1.5rem;
+}
+
+.hero-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+  color: var(--calenderjs-text-primary);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--calenderjs-text-secondary);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--calenderjs-accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: var(--calenderjs-bg-tertiary);
+  color: var(--calenderjs-text-primary);
+  border: 1px solid var(--calenderjs-border);
+}
+
+.btn-large {
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--calenderjs-accent);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--calenderjs-text-secondary);
+  margin-top: 0.25rem;
+}

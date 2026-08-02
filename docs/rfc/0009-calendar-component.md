@@ -1,6 +1,7 @@
 # RFC-0009: Calendar Component
 
-**状态**: Draft  
+**状态**: Implemented  
+**完成日期**: 2026-03-15  
 **创建日期**: 2024-12-30  
 **作者**: WSX Team  
 **关联**: RFC-0001 (Event DSL), RFC-0008 (API Redesign)

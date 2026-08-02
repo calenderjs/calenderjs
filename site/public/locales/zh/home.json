@@ -1,0 +1,8 @@
+{
+  "title": "CalenderJS",
+  "subtitle": "基于 Web Components 的日历组件与 Event DSL，用声明式语法定义事件类型、校验与多视图展示。",
+  "stats": {
+    "license": "MIT 协议",
+    "webComponents": "Web Components"
+  }
+}

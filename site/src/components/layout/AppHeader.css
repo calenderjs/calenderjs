@@ -1,0 +1,71 @@
+.header {
+  background-color: rgba(13, 17, 23, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--calenderjs-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+[data-theme="light"] .header {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-bottom-color: var(--calenderjs-border);
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.header-brand .brand-link {
+  text-decoration: none;
+  color: var(--calenderjs-text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.brand-title {
+  color: var(--calenderjs-text-primary);
+}
+
+.header-nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--calenderjs-text-secondary);
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.nav-link:hover {
+  color: var(--calenderjs-text-primary);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.nav-link-active {
+  color: var(--calenderjs-accent);
+  font-weight: 600;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.theme-toggle:hover {
+  opacity: 1;
+}

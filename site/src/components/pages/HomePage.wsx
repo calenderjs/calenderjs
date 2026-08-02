@@ -1,0 +1,44 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import styles from "./HomePage.css?inline";
+
+@autoRegister({ tagName: "home-page" })
+@i18n("home")
+export class HomePage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "home-page" });
+  }
+
+  render() {
+    return (
+      <div class="home-page">
+        <section class="hero">
+          <div class="hero-container">
+            <h1 class="hero-title">{this.t("title")}</h1>
+            <p class="hero-subtitle">{this.t("subtitle")}</p>
+            <div class="hero-actions">
+              <wsx-link to="/docs/guide/getting-started" class="btn btn-primary btn-large">
+                {this.t("quickStartCTA", { ns: "common" })}
+              </wsx-link>
+              <wsx-link to="/demos" class="btn btn-secondary">
+                {this.t("viewDemos", { ns: "common" })}
+              </wsx-link>
+            </div>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <div class="stat-value">MIT</div>
+                <div class="stat-label">{this.t("stats.license")}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">WC</div>
+                <div class="stat-label">{this.t("stats.webComponents")}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+}

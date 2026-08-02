@@ -1,0 +1,43 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import styles from "./FeaturesPage.css?inline";
+
+@autoRegister({ tagName: "features-page" })
+@i18n("features")
+export class FeaturesPage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "features-page" });
+  }
+
+  render() {
+    const features = [
+      { key: "calendar", icon: "📅" },
+      { key: "dsl", icon: "📝" },
+      { key: "views", icon: "📆" },
+      { key: "validation", icon: "✓" },
+    ];
+    return (
+      <div class="features-page">
+        <section class="features-hero">
+          <div class="features-hero-container">
+            <h1 class="features-hero-title">{this.t("hero.title")}</h1>
+            <p class="features-hero-description">{this.t("hero.description")}</p>
+          </div>
+        </section>
+        <section class="features-list">
+          <div class="features-list-container">
+            {features.map((f) => (
+              <div class="feature-card" key={f.key}>
+                <div class="feature-icon">{f.icon}</div>
+                <h2 class="feature-title">{this.t(`items.${f.key}.title`)}</h2>
+                <p class="feature-desc">{this.t(`items.${f.key}.description`)}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
+}

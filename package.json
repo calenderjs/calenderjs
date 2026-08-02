@@ -12,6 +12,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo typecheck",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,wsx,json,css,md}\"",
+    "validate:docs": "node scripts/validate-llm-docs.mjs",
     "clean": "turbo run clean && rm -rf .turbo node_modules/.cache",
     "prepare": "husky",
     "release": "qingniao"
@@ -34,7 +35,7 @@
   },
   "packageManager": "pnpm@10.27.0",
   "volta": {
-    "node": "22.12.0",
+    "node": "24.14.1",
     "pnpm": "10.27.0"
   }
 }

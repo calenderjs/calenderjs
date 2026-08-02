@@ -125,7 +125,7 @@ export default class WeekView extends WebComponent {
     onAttributeChanged(
         name: string,
         oldValue: string | null,
-        newValue: string | null
+        newValue: string | null,
     ) {
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
@@ -201,7 +201,7 @@ export default class WeekView extends WebComponent {
             new CustomEvent("date-click", {
                 detail: { date },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -213,7 +213,7 @@ export default class WeekView extends WebComponent {
             new CustomEvent("date-double-click", {
                 detail: { date },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -225,7 +225,7 @@ export default class WeekView extends WebComponent {
             new CustomEvent("event-click", {
                 detail: { event },
                 bubbles: true,
-            })
+            }),
         );
     };
 
@@ -239,7 +239,7 @@ export default class WeekView extends WebComponent {
                         // 确保日期对象的时间部分为 0，便于准确比较
                         const normalizedDate = new Date(date);
                         normalizedDate.setHours(0, 0, 0, 0);
-                        
+
                         // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
                         const isSelected =
                             this.selectedDate.getTime() !== 0 &&
@@ -247,15 +247,17 @@ export default class WeekView extends WebComponent {
                         // 使用规范化后的日期与 _today 比较
                         const isToday = isSameDay(normalizedDate, this._today);
                         const dayEvents = sortEventsByTime(
-                            getEventsForDate(this.events, normalizedDate)
+                            getEventsForDate(this.events, normalizedDate),
                         );
 
                         return (
                             <div
                                 class={`week-view-day-header ${
-                                    isSelected ? "selected" : ""
-                                } ${isToday ? "today" : ""}`}
-                                onClick={() => this.handleDateClick(normalizedDate)}
+                                    isToday ? "today" : ""
+                                }`}
+                                onClick={() =>
+                                    this.handleDateClick(normalizedDate)
+                                }
                             >
                                 <div class="week-view-day-name">
                                     {
@@ -300,9 +302,9 @@ export default class WeekView extends WebComponent {
                             // 确保日期对象的时间部分为 0，便于准确比较
                             const normalizedDate = new Date(date);
                             normalizedDate.setHours(0, 0, 0, 0);
-                            
+
                             const dayEvents = sortEventsByTime(
-                                getEventsForDate(this.events, normalizedDate)
+                                getEventsForDate(this.events, normalizedDate),
                             );
                             const dayStart = new Date(normalizedDate);
                             dayStart.setHours(0, 0, 0, 0);
@@ -312,7 +314,9 @@ export default class WeekView extends WebComponent {
                             return (
                                 <div
                                     class="week-view-day-column"
-                                    key={"day-column-" + normalizedDate.getTime()}
+                                    key={
+                                        "day-column-" + normalizedDate.getTime()
+                                    }
                                 >
                                     {this.hours.map((hour) => {
                                         return (
@@ -326,13 +330,13 @@ export default class WeekView extends WebComponent {
                                         const position = calculateEventPosition(
                                             event,
                                             dayStart,
-                                            dayEnd
+                                            dayEnd,
                                         );
 
                                         const eventColor =
                                             event.color || "#4285f4";
-                                        const eventDescription =
-                                            event.extra?.description as string | undefined;
+                                        const eventDescription = event.extra
+                                            ?.description as string | undefined;
 
                                         return (
                                             <div
@@ -348,11 +352,11 @@ export default class WeekView extends WebComponent {
                                             >
                                                 <div class="week-view-event-time">
                                                     {getTimeString(
-                                                        event.startTime
+                                                        event.startTime,
                                                     )}{" "}
                                                     -{" "}
                                                     {getTimeString(
-                                                        event.endTime
+                                                        event.endTime,
                                                     )}
                                                 </div>
                                                 <div class="week-view-event-title">

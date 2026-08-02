@@ -1,0 +1,49 @@
+# CalenderJS
+
+> WSX 日历组件 + Event DSL monorepo。AI 代理请先读 docs/llm-guide.md，再读 TASK_TRACKING.md 了解当前 Sprint。
+
+## Essential (read first)
+
+- [docs/llm-guide.md](docs/llm-guide.md): AI 代理主指南 — 任务路由、文件地图、约束、实现状态
+- [AGENTS.md](AGENTS.md): 开发规范、行为准则、常用命令
+- [TASK_TRACKING.md](TASK_TRACKING.md): 当前 Sprint 任务与待办文件路径
+- [ROADMAP.md](ROADMAP.md): RFC 状态、里程碑、架构决策
+
+## Architecture
+
+- [docs/rfc/0005-calendar-component.md](docs/rfc/0005-calendar-component.md): Calendar 组件设计（In Progress）
+- [docs/rfc/0002-event-dsl.md](docs/rfc/0002-event-dsl.md): Event DSL 语法与编译管线
+- [docs/rfc/0011-event-data-model-integration.md](docs/rfc/0011-event-data-model-integration.md): Event 数据模型与 DSL 集成（Draft）
+- [docs/rfc/0008-calendar-component-api-redesign.md](docs/rfc/0008-calendar-component-api-redesign.md): Calendar API（Implemented）
+
+## Source code entry points
+
+- [packages/calendar/src/Calendar.wsx](packages/calendar/src/Calendar.wsx): 主日历 Web Component `<wsx-calendar>`
+- [packages/calendar/src/views/](packages/calendar/src/views/): DayView / WeekView / MonthView
+- [packages/event-model/src/Event.ts](packages/event-model/src/Event.ts): Event 接口 SSOT
+- [packages/event-dsl/src/](packages/event-dsl/src/): DSL 解析器、编译器、生成器
+- [packages/event-runtime/src/](packages/event-runtime/src/): EventRuntime 运行时
+- [packages/react/src/](packages/react/src/): React 封装
+
+## Package docs
+
+- [packages/calendar/README.md](packages/calendar/README.md): 日历组件用法
+- [packages/react/README.md](packages/react/README.md): React API
+- [packages/event-dsl/README.md](packages/event-dsl/README.md): DSL 架构与验证分层
+- [packages/event-model/README.md](packages/event-model/README.md): Event 数据模型
+- [packages/core/README.md](packages/core/README.md): 核心模型（非日历组件）
+
+## Skills & conventions
+
+- [.cursor/skills/wsx-work/SKILL.md](.cursor/skills/wsx-work/SKILL.md): WSX 开发铁律与测试模式（编辑 .wsx 前必读）
+
+## Demos
+
+- [demos/react/](demos/react/): React + Vite 演示
+- [site/](site/): WSX 官网与文档站
+
+## Optional
+
+- [README.md](README.md): 人类可读项目概览
+- [docs/persona/](docs/persona/): AI 角色定义（Personas）
+- [docs/rfc/0003-multi-tenant-service.md](docs/rfc/0003-multi-tenant-service.md): 多租户服务（Future Plan，勿实现）
