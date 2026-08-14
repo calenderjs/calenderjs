@@ -18,8 +18,9 @@
     "@wsxjs/wsx-base-components": "^0.0.26",
     "@wsxjs/wsx-core": "^0.0.26",
     "@wsxjs/wsx-i18next": "^0.0.26",
-    "@wsxjs/wsx-router": "^0.0.26",
     "@wsxjs/wsx-press": "^0.0.26",
+    "@wsxjs/wsx-router": "^0.0.26",
+    "fs-extra": "^11.4.0",
     "i18next": "^23.7.0"
   },
   "devDependencies": {
