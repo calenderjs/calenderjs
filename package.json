@@ -15,16 +15,19 @@
     "validate:docs": "node scripts/validate-llm-docs.mjs",
     "clean": "turbo run clean && rm -rf .turbo node_modules/.cache",
     "prepare": "husky",
-    "release": "qingniao"
+    "release": "qingniao",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,wsx,json,css,md}\""
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.1",
     "@systembug/pangu": "^0.0.10",
-    "@systembug/qingniao": "^0.0.10",
+    "@systembug/qingniao": "^0.1.0",
     "@types/inquirer": "^9.0.9",
     "@types/node": "^20.19.27",
     "husky": "^9.1.7",
     "inquirer": "^9.3.8",
     "ora": "^8.2.0",
+    "prettier": "^3.9.6",
     "tsx": "^4.8.1",
     "turbo": "^2.3.3",
     "typescript": "^5.9.3"
