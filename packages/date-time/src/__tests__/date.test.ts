@@ -185,7 +185,8 @@ describe("date", () => {
         });
 
         it("应该支持字符串日期", () => {
-            const today = new Date().toISOString().split("T")[0];
+            // 本地日历日，不用 UTC ISO（晚间时区会跨日）
+            const today = formatDateKey(new Date());
             expect(isToday(today)).toBe(true);
         });
     });
