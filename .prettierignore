@@ -3,5 +3,7 @@ dist
 coverage
 .turbo
 site/public
+site/.wsx-press
 pnpm-lock.yaml
 *.tsbuildinfo
+*.wsx
