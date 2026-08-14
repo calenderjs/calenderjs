@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/react-event-editor",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "React Event DSL editor powered by Monaco and @calenderjs/monaco-event-dsl",
   "type": "module",
   "main": "./dist/index.cjs",
