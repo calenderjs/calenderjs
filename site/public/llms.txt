@@ -23,12 +23,16 @@
 - [packages/event-model/src/Event.ts](packages/event-model/src/Event.ts): Event 接口 SSOT
 - [packages/event-dsl/src/](packages/event-dsl/src/): DSL 解析器、编译器、生成器
 - [packages/event-runtime/src/](packages/event-runtime/src/): EventRuntime 运行时
-- [packages/react/src/](packages/react/src/): React 封装
+- [packages/react/src/](packages/react/src/): React 日历封装
+- [packages/react-event-editor/src/](packages/react-event-editor/src/): React Event DSL 编辑器
+- [packages/monaco-event-dsl/src/](packages/monaco-event-dsl/src/): Monaco Event DSL 语言插件
 
 ## Package docs
 
 - [packages/calendar/README.md](packages/calendar/README.md): 日历组件用法
-- [packages/react/README.md](packages/react/README.md): React API
+- [packages/react/README.md](packages/react/README.md): React 日历 API
+- [packages/react-event-editor/README.md](packages/react-event-editor/README.md): EventEditor API
+- [packages/monaco-event-dsl/README.md](packages/monaco-event-dsl/README.md): Monaco 语言插件
 - [packages/event-dsl/README.md](packages/event-dsl/README.md): DSL 架构与验证分层
 - [packages/event-model/README.md](packages/event-model/README.md): Event 数据模型
 - [packages/core/README.md](packages/core/README.md): 核心模型（非日历组件）
