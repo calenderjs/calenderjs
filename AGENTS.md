@@ -12,7 +12,7 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 - **Event DSL**：`@calenderjs/event-dsl`（PEG.js 文本 DSL）
 - **数据模型**：`@calenderjs/event-model`（Event 接口 SSOT）
 - **运行时**：`@calenderjs/event-runtime`（验证/渲染/行为）
-- **React**：`@calenderjs/react` + `demos/react/`
+- **React**：`@calenderjs/react`（日历）+ `@calenderjs/react-event-editor`（DSL 编辑器）+ `demos/react/`
 - **官网**：`site/`（WSX + i18n）
 
 当前里程碑：**M4 DSL 集成**（详见 [ROADMAP.md](./ROADMAP.md)、[TASK_TRACKING.md](./TASK_TRACKING.md)）
@@ -27,8 +27,9 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 | `@calenderjs/event-dsl` | DSL 解析、编译器、生成器（编译时） |
 | `@calenderjs/event-runtime` | EventRuntime（运行时） |
 | `@calenderjs/date-time` | 日期时间工具 |
-| `@calenderjs/react` | React 封装 |
-| `@calenderjs/monaco-event-dsl` | Monaco Editor DSL 集成 |
+| `@calenderjs/react` | React 日历封装 |
+| `@calenderjs/react-event-editor` | React Event DSL 编辑器（Monaco） |
+| `@calenderjs/monaco-event-dsl` | Monaco Editor DSL 语言插件 |
 
 ### 关键架构决策
 

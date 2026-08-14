@@ -15,6 +15,7 @@ export default defineConfig(({ command, mode }) => {
   // 在开发模式下，使用别名指向源码，实现热重载
   const devAliases: AliasOptions = isDev ? {
     '@calenderjs/react': path.resolve(rootDir, 'packages/react/src/index.ts'),
+    '@calenderjs/react-event-editor': path.resolve(rootDir, 'packages/react-event-editor/src/index.ts'),
     '@calenderjs/core': path.resolve(rootDir, 'packages/core/src/index.ts'),
     '@calenderjs/calendar': path.resolve(rootDir, 'packages/calendar/src/index.ts'),
     '@calenderjs/date-time': path.resolve(rootDir, 'packages/date-time/src/index.ts'),

@@ -59,9 +59,15 @@ importers:
       '@calenderjs/react':
         specifier: workspace:*
         version: link:../../packages/react
+      '@calenderjs/react-event-editor':
+        specifier: workspace:*
+        version: link:../../packages/react-event-editor
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      monaco-editor:
+        specifier: ^0.55.1
+        version: 0.55.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -329,15 +335,6 @@ importers:
       '@calenderjs/event-model':
         specifier: workspace:*
         version: link:../event-model
-      '@calenderjs/monaco-event-dsl':
-        specifier: workspace:*
-        version: link:../monaco-event-dsl
-      '@monaco-editor/react':
-        specifier: ^4.0.0
-        version: 4.7.0(monaco-editor@0.55.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      monaco-editor:
-        specifier: ^0.55.1
-        version: 0.55.1
     devDependencies:
       '@types/node':
         specifier: ^20.19.27
@@ -348,6 +345,49 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.7
         version: 18.3.7(@types/react@18.3.27)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.3.0
+        version: 7.3.1(@types/node@20.19.27)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@20.19.27)(rollup@4.55.1)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.27)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@20.19.27)(happy-dom@20.1.0)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
+
+  packages/react-event-editor:
+    dependencies:
+      '@calenderjs/monaco-event-dsl':
+        specifier: workspace:*
+        version: link:../monaco-event-dsl
+    devDependencies:
+      '@monaco-editor/react':
+        specifier: ^4.7.0
+        version: 4.7.0(monaco-editor@0.55.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/node':
+        specifier: ^20.19.27
+        version: 20.19.27
+      '@types/react':
+        specifier: ^18.3.27
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.3.7
+        version: 18.3.7(@types/react@18.3.27)
+      '@vitest/coverage-v8':
+        specifier: ^2.1.9
+        version: 2.1.9(vitest@2.1.9(@types/node@20.19.27)(happy-dom@20.1.0)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1))
+      monaco-editor:
+        specifier: ^0.55.1
+        version: 0.55.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -5365,7 +5405,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 20.19.27
+      '@types/node': 22.19.15
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -5376,7 +5416,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 20.19.27
+      '@types/node': 22.19.15
 
   '@typescript-eslint/eslint-plugin@8.52.0(@typescript-eslint/parser@8.52.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:

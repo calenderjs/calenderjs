@@ -5,10 +5,10 @@ React wrapper for `@calenderjs/calendar` Web Component.
 ## 安装
 
 ```bash
-pnpm add @calenderjs/react @calenderjs/calendar @monaco-editor/react
+pnpm add @calenderjs/react @calenderjs/calendar
 ```
 
-**注意**: `@monaco-editor/react` 是 peer dependency，如果使用 `EventEditor` 组件则需要安装。
+本包仅封装日历 Web Component（`Calendar`）与布局辅助（`ResizableSplitter`）。Event DSL 编辑器请用独立包 `@calenderjs/react-event-editor`。
 
 ## 使用方式
 
@@ -103,119 +103,6 @@ function App() {
       events={events}
     />
   );
-}
-```
-
-## EventEditor 组件
-
-`EventEditor` 是一个基于 Monaco Editor 的 Event DSL 专用编辑器组件，提供语法高亮、自动完成等功能。
-
-### 基础使用
-
-```tsx
-import { EventEditor } from '@calenderjs/react';
-import { Editor } from '@monaco-editor/react';
-import { useState } from 'react';
-
-function App() {
-  const [dsl, setDsl] = useState('type: meeting\nname: "团队会议"');
-  
-  return (
-    <EventEditor
-      EditorComponent={Editor}
-      value={dsl}
-      onChange={setDsl}
-      height="100%"
-      darkMode={false}
-    />
-  );
-}
-```
-
-**注意**: `EventEditor` 是一个标准 React 组件，需要用户自己导入 `Editor` 组件并传入 `EditorComponent` prop。
-
-### 与 Calendar 结合使用
-
-```tsx
-import { EventEditor, Calendar, ResizableSplitter } from '@calenderjs/react';
-import { Editor } from '@monaco-editor/react';
-import { useState } from 'react';
-
-function App() {
-  const [dsl, setDsl] = useState('type: meeting\nname: "会议"');
-  
-  return (
-    <ResizableSplitter
-      left={
-        <div style={{ padding: '20px' }}>
-          <h2>Event DSL 编辑器</h2>
-          <EventEditor
-            EditorComponent={Editor}
-            value={dsl}
-            onChange={setDsl}
-            height="calc(100% - 60px)"
-            darkMode={false}
-          />
-        </div>
-      }
-      right={
-        <div style={{ padding: '20px' }}>
-          <h2>日历</h2>
-          <Calendar view="month" />
-        </div>
-      }
-    />
-  );
-}
-```
-
-### EventEditor Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `EditorComponent` | `React.ComponentType<EditorProps>` | - | Monaco Editor 组件（必需，从 `@monaco-editor/react` 导入） |
-| `value` | `string` | `""` | Event DSL 代码内容 |
-| `onChange` | `(value: string \| undefined) => void` | - | 代码变化时的回调 |
-| `height` | `string \| number` | `"100%"` | 编辑器高度 |
-| `darkMode` | `boolean` | `false` | 是否使用暗色主题 |
-| `className` | `string` | `""` | 自定义 CSS 类名 |
-| `style` | `React.CSSProperties` | - | 自定义样式 |
-| `options` | `editor.IStandaloneEditorConstructionOptions` | - | Monaco Editor 选项（会与默认选项合并） |
-| `onMount` | `(editor, monaco) => void` | - | 编辑器挂载时的回调 |
-
-### 默认编辑器选项
-
-EventEditor 提供以下默认配置：
-
-- `minimap: { enabled: false }` - 禁用小地图
-- `fontSize: 14` - 字体大小 14px
-- `wordWrap: "on"` - 启用自动换行
-- `lineNumbers: "on"` - 显示行号
-- `scrollBeyondLastLine: false` - 不滚动到最后一行之后
-- `suggestOnTriggerCharacters: true` - 触发字符时显示建议
-- `quickSuggestions: true` - 快速建议
-- `tabSize: 2` - Tab 大小为 2 个空格
-- `autoIndent: "full"` - 完整自动缩进
-
-可以通过 `options` 属性覆盖这些默认值。
-
-### EventEditor CSS 变量
-
-组件使用 CSS 变量来支持主题定制，所有变量都使用 `--event-editor-` 前缀：
-
-```css
-:root {
-  /* 编辑器容器 */
-  --event-editor-bg-color: #fff;              /* 浅色模式背景色 */
-  --event-editor-bg-color-dark: #1e1e1e;       /* 暗色模式背景色 */
-}
-```
-
-### 暗色模式示例
-
-```css
-.dark-mode {
-  --event-editor-bg-color-dark: #1e1e1e;
 }
 ```
 

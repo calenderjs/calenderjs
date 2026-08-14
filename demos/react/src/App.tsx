@@ -1,4 +1,5 @@
-import { Calendar, EventEditor, ResizableSplitter } from "@calenderjs/react";
+import { Calendar, ResizableSplitter } from "@calenderjs/react";
+import { EventEditor } from "@calenderjs/react-event-editor";
 import type { Event } from "@calenderjs/event-model";
 import { EventDSLCompiler, parseEventDSL } from "@calenderjs/event-dsl";
 import { EventRuntime } from "@calenderjs/event-runtime";

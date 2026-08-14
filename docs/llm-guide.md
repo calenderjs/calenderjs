@@ -16,7 +16,9 @@
 | Change DSL syntax / parser | `docs/rfc/0002-event-dsl.md` | `packages/event-dsl/src/event-dsl.pegjs` |
 | Change DSL compiler output | `docs/rfc/0002-event-dsl.md` | `packages/event-dsl/src/compiler.ts` |
 | Runtime validate/render/behavior | `packages/event-dsl/README.md` | `packages/event-runtime/src/` |
-| React wrapper / demo | `packages/react/README.md` | `packages/react/src/`, `demos/react/` |
+| React calendar wrapper / demo | `packages/react/README.md` | `packages/react/src/`, `demos/react/` |
+| React Event DSL editor | `packages/react-event-editor/README.md` | `packages/react-event-editor/src/` |
+| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md` | `packages/monaco-event-dsl/src/` |
 | Date/time utilities | — | `packages/date-time/src/` |
 | Add RFC-level feature | `ROADMAP.md` | `docs/rfc/` (create/update RFC **before** code) |
 
@@ -99,7 +101,9 @@ packages/
   event-runtime/src/
     EventRuntime.ts           # validate(), render(), canPerform()
 
-  react/src/                  # React wrappers
+  react/src/                  # React calendar wrappers
+  react-event-editor/src/     # React Event DSL editor (Monaco)
+  monaco-event-dsl/src/       # Monaco language plugin (framework-agnostic)
   core/src/                   # Shared models, NOT calendar UI
   date-time/src/              # Date helpers
 
@@ -122,7 +126,9 @@ event-dsl (compile-time)     event-runtime (runtime)
     ↑                              ↑
 calendar ←─────────────────────────┘
     ↑
-react → demos/react
+react                          monaco-event-dsl
+    ↑                                ↑
+demos/react ←── react-event-editor ──┘
 ```
 
 **Rule**: `event-dsl` is dev/build-time; `event-runtime` is production runtime. Keep them separate for tree-shaking.

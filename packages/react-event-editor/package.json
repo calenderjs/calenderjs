@@ -1,7 +1,7 @@
 {
-  "name": "@calenderjs/react",
+  "name": "@calenderjs/react-event-editor",
   "version": "0.0.2",
-  "description": "React wrapper for @calenderjs/calendar Web Component",
+  "description": "React Event DSL editor powered by Monaco and @calenderjs/monaco-event-dsl",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -28,23 +28,28 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
-    "@calenderjs/calendar": "workspace:*",
-    "@calenderjs/core": "workspace:*",
-    "@calenderjs/event-model": "workspace:*"
+    "@calenderjs/monaco-event-dsl": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "@monaco-editor/react": "^4.0.0",
+    "monaco-editor": "^0.55.1"
   },
   "devDependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@types/node": "^20.19.27",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
+    "@vitest/coverage-v8": "^2.1.9",
+    "monaco-editor": "^0.55.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.9.3",

@@ -99,7 +99,9 @@ pnpm install
 
 - **Next.js 14**: React 框架
 - **Monaco Editor**: 代码编辑器（`@monaco-editor/react`）
-- **@calenderjs/react**: React 包装器
+- **@calenderjs/react**: React 日历包装器
+- **@calenderjs/react-event-editor**: Event DSL 编辑器
+- **@calenderjs/monaco-event-dsl**: Monaco 语言插件
 - **@calenderjs/calendar**: Calendar Web Component
 - **@calenderjs/event-dsl**: DSL 编译器和解析器
 - **@calenderjs/event-runtime**: 运行时验证和渲染引擎
@@ -163,7 +165,9 @@ PORT=3001 pnpm dev
 演示依赖以下 CalenderJS 包：
 
 - `@calenderjs/core`: 核心工具函数
-- `@calenderjs/react`: React 包装器
+- `@calenderjs/react`: React 日历包装器
+- `@calenderjs/react-event-editor`: Event DSL 编辑器
+- `@calenderjs/monaco-event-dsl`: Monaco 语言插件
 - `@calenderjs/calendar`: Calendar Web Component
 - `@calenderjs/event-dsl`: DSL 编译器
 - `@calenderjs/event-runtime`: 运行时引擎

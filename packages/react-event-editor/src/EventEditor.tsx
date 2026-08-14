@@ -1,9 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type CSSProperties, type ComponentType } from "react";
 import { registerEventDSL } from "@calenderjs/monaco-event-dsl";
 import type { editor } from "monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
+
+/** 暗色主题背景 CSS 变量名 */
+const EVENT_EDITOR_BG_DARK_VAR = "var(--event-editor-bg-color-dark, #1e1e1e)";
+/** 浅色主题背景 CSS 变量名 */
+const EVENT_EDITOR_BG_LIGHT_VAR = "var(--event-editor-bg-color, #fff)";
+/** Event DSL Monaco 语言 id */
+const EVENT_DSL_LANGUAGE_ID = "event-dsl";
+/** 浅色主题 id */
+const EVENT_DSL_THEME_LIGHT = "event-dsl-theme";
+/** 暗色主题 id */
+const EVENT_DSL_THEME_DARK = "event-dsl-theme-dark";
 
 export interface EventEditorProps {
     /** Event DSL 代码内容 */
@@ -17,7 +28,7 @@ export interface EventEditorProps {
     /** 自定义 CSS 类名 */
     className?: string;
     /** 自定义样式 */
-    style?: React.CSSProperties;
+    style?: CSSProperties;
     /** Monaco Editor 选项 */
     options?: editor.IStandaloneEditorConstructionOptions;
     /** 编辑器挂载时的回调 */
@@ -25,20 +36,19 @@ export interface EventEditorProps {
         editor: editor.IStandaloneCodeEditor,
         monaco: typeof import("monaco-editor")
     ) => void;
-    /** Monaco Editor 组件（由用户传入） */
-    EditorComponent: React.ComponentType<EditorProps>;
+    /** Monaco Editor 组件（由用户传入，避免本包硬绑 @monaco-editor/react 实现） */
+    EditorComponent: ComponentType<EditorProps>;
 }
 
 /**
  * EventEditor - Event DSL 编辑器组件
  *
  * 基于 Monaco Editor 的 Event DSL 专用编辑器，提供语法高亮、自动完成等功能。
- *
- * **注意**: 这是一个标准 React 组件，需要用户自己导入并传入 `EditorComponent`。
+ * 语言注册委托给 `@calenderjs/monaco-event-dsl`。
  *
  * @example
  * ```tsx
- * import { EventEditor } from '@calenderjs/react';
+ * import { EventEditor } from '@calenderjs/react-event-editor';
  * import { Editor } from '@monaco-editor/react';
  * import { useState } from 'react';
  *
@@ -68,19 +78,16 @@ export default function EventEditor({
     onMount,
     EditorComponent,
 }: EventEditorProps) {
-    // 处理编辑器挂载
+    // 挂载时向宿主 Monaco 实例注册 Event DSL 语言
     const handleMount = (
-        editor: editor.IStandaloneCodeEditor,
+        editorInstance: editor.IStandaloneCodeEditor,
         monaco: typeof import("monaco-editor")
     ) => {
-        // 注册 Event DSL 语言支持
-        registerEventDSL(monaco as any);
-
-        // 调用用户提供的 onMount 回调
-        onMount?.(editor, monaco);
+        registerEventDSL(monaco as Parameters<typeof registerEventDSL>[0]);
+        onMount?.(editorInstance, monaco);
     };
 
-    // 合并默认选项和用户选项
+    // 默认 Monaco 选项与用户覆盖合并
     const editorOptions = useMemo(
         () => ({
             minimap: { enabled: false },
@@ -97,24 +104,27 @@ export default function EventEditor({
         [options]
     );
 
+    const resolvedHeight =
+        typeof height === "number" ? `${height}px` : height;
+
     return (
         <div
             className={`event-editor ${className}`}
             style={{
                 ...style,
-                height: typeof height === "number" ? `${height}px` : height,
+                height: resolvedHeight,
                 width: "100%",
                 backgroundColor: darkMode
-                    ? "var(--event-editor-bg-color-dark, #1e1e1e)"
-                    : "var(--event-editor-bg-color, #fff)",
+                    ? EVENT_EDITOR_BG_DARK_VAR
+                    : EVENT_EDITOR_BG_LIGHT_VAR,
             }}
         >
             <EditorComponent
                 height="100%"
-                language="event-dsl"
+                language={EVENT_DSL_LANGUAGE_ID}
                 value={value}
                 onChange={onChange}
-                theme={darkMode ? "event-dsl-theme-dark" : "event-dsl-theme"}
+                theme={darkMode ? EVENT_DSL_THEME_DARK : EVENT_DSL_THEME_LIGHT}
                 onMount={handleMount}
                 options={editorOptions}
             />

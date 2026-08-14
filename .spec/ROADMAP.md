@@ -77,7 +77,8 @@
 | `@calenderjs/event-dsl` | Implemented | PEG.js 语法、解析器、编译器、生成器 |
 | `@calenderjs/event-runtime` | Implemented | EventRuntime：验证、渲染、权限 |
 | `@calenderjs/date-time` | Implemented | 日期时间工具函数 |
-| `@calenderjs/react` | Implemented | React 封装（Calendar、EventEditor） |
-| `@calenderjs/monaco-event-dsl` | Implemented | Monaco Editor DSL 集成 |
+| `@calenderjs/react` | Implemented | React 日历封装（Calendar、ResizableSplitter） |
+| `@calenderjs/react-event-editor` | Implemented | React Event DSL 编辑器（Monaco） |
+| `@calenderjs/monaco-event-dsl` | Implemented | Monaco Editor DSL 语言插件 |
 | `site/` | Implemented | WSX 官网（i18n、路由、文档） |
 | `demos/react/` | Implemented | React Demo（DSL 编辑器 + Calendar） |

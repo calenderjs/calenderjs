@@ -49,8 +49,10 @@ CalenderJS 提供：
 2. **Event DSL**（`@calenderjs/event-dsl`）：PEG.js 文本 DSL，定义事件类型与业务规则
 3. **Event 数据模型**（`@calenderjs/event-model`）：Event 接口 SSOT + JSON Schema 校验
 4. **Event 运行时**（`@calenderjs/event-runtime`）：验证、渲染增强、权限检查
-5. **React 集成**（`@calenderjs/react`）：Calendar、EventEditor、ResizableSplitter
-6. **演示与文档**：`demos/react/`（React Demo）、`site/`（官网与文档站）
+5. **React 集成**（`@calenderjs/react`）：Calendar、ResizableSplitter
+6. **Event 编辑器**（`@calenderjs/react-event-editor`）：Monaco Event DSL 编辑器
+7. **Monaco 语言插件**（`@calenderjs/monaco-event-dsl`）：Event DSL 语法高亮 / 补全
+8. **演示与文档**：`demos/react/`（React Demo）、`site/`（官网与文档站）
 
 **当前里程碑**：M4 DSL 集成（详见 [ROADMAP.md](./ROADMAP.md)）
 
@@ -65,8 +67,9 @@ calenderjs/
 │   ├── event-dsl/            # PEG.js DSL 解析、编译器、生成器
 │   ├── event-runtime/        # EventRuntime（验证/渲染/行为）
 │   ├── date-time/            # 日期时间工具
-│   ├── react/                # React 封装
-│   └── monaco-event-dsl/     # Monaco Editor DSL 集成
+│   ├── react/                # React 日历封装
+│   ├── react-event-editor/   # React Event DSL 编辑器
+│   └── monaco-event-dsl/     # Monaco Editor DSL 语言插件
 ├── demos/react/                # React + Vite 演示
 ├── site/                       # WSX 官网（i18n、路由、文档）
 ├── docs/
@@ -90,7 +93,9 @@ event-dsl (编译时)     event-runtime (运行时)
     ↑                        ↑
 calendar ←───────────────────┘
     ↑
-react → demos/react
+react                          monaco-event-dsl
+    ↑                                ↑
+demos/react ←── react-event-editor ──┘
 ```
 
 ## 快速开始
@@ -252,7 +257,9 @@ const compiled = compile(ast);
 ### 包文档
 
 - [@calenderjs/calendar](./packages/calendar/) — 日历 Web Component
-- [@calenderjs/react](./packages/react/README.md) — React 封装
+- [@calenderjs/react](./packages/react/README.md) — React 日历封装
+- [@calenderjs/react-event-editor](./packages/react-event-editor/README.md) — React Event DSL 编辑器
+- [@calenderjs/monaco-event-dsl](./packages/monaco-event-dsl/README.md) — Monaco DSL 语言插件
 - [@calenderjs/event-dsl](./packages/event-dsl/README.md) — Event DSL
 - [@calenderjs/event-model](./packages/event-model/README.md) — Event 数据模型
 - [@calenderjs/core](./packages/core/README.md) — 核心模型与工具
