@@ -4,6 +4,6 @@
 import type { editor, languages } from "monaco-editor";
 
 export interface MonacoInstance {
-    editor: typeof editor;
-    languages: typeof languages;
+  editor: typeof editor;
+  languages: typeof languages;
 }

@@ -11,6 +11,7 @@
 设计并实现 `<wsx-calendar>` 组件，一个基于 WSX 框架构建的事件日历组件。组件提供月视图、周视图和日视图三种显示模式，界面设计参考 Google 日历。组件只处理数据模型，不涉及任何 DSL 逻辑。
 
 **核心特性**：
+
 - 基于 WSX 框架构建（Web Components + JSX）
 - 纯数据驱动：只处理 `events` 和 `user` 数据模型
 - 支持月/周/日三种视图
@@ -18,11 +19,13 @@
 - 符合 Web Components 标准
 
 **设计原则**：
+
 - ✅ **组件只处理数据模型**：组件只关心 `events` 和 `user` 数据，不涉及 DSL
 - ✅ **数据驱动**：组件行为完全由传入的数据驱动
 - ✅ **保持简单**：不进行验证、不进行 DSL 处理，这些应该在外部完成
 
 **开源定位**：
+
 - **@calenderjs/calendar**：开源日历组件（MIT协议）
 - 依赖 **@calenderjs/core**（数据模型）
 - **不依赖** **@calenderjs/event-dsl**（组件不涉及 DSL）
@@ -52,12 +55,14 @@
 **WSX (Web Components Syntax Extension)** 是一个用于原生 Web Components 的 JSX 语法扩展，旨在简化 Web Components 的开发体验。
 
 **核心定位**：
+
 - ✅ **JSX 语法编译器**：将 JSX 语法编译为原生 DOM 操作
 - ✅ **TypeScript 集成**：完整的类型安全和 IntelliSense 支持
 - ✅ **零运行时开销**：构建时编译，运行时只执行原生 DOM 操作
 - ✅ **Web Components 标准**：完全基于浏览器原生 Web Components API
 
 **WSX 不是**：
+
 - ❌ 不是 React/Vue 的替代品或替代方案
 - ❌ 不是状态管理系统
 - ❌ 不是虚拟 DOM 实现
@@ -73,6 +78,7 @@ WSX 遵循"减法优于加法，增强优于替换"的设计哲学：
 4. **解决一个特定问题**：让 Web Component 开发变得愉快
 
 **WSX 等式**：
+
 ```
 JSX + Web Components = 现代语法 + 原生性能
 ```
@@ -107,6 +113,7 @@ export default class Calendar extends WebComponent {
 ```
 
 **关键特性**：
+
 - 使用 Shadow DOM 实现样式隔离
 - JSX 语法编译为原生 `document.createElement()` 调用
 - 自动 CSS 注入（如果存在同名的 `.css` 文件）
@@ -141,12 +148,14 @@ export class Calendar extends WebComponent {
 ```
 
 **重要要求**：
+
 - ⚠️ `@state` 装饰器的属性**必须有初始值**
 - ✅ ESLint 规则会在开发时检查（`wsx/state-requires-initial-value`）
 - ✅ Babel 插件会在构建时验证，缺少初始值会导致构建失败
 - ✅ 需要配置 `@wsxjs/wsx-vite-plugin` 才能使用 `@state` 装饰器
 
 **有效示例**：
+
 ```typescript
 @state private count = 0;              // ✅ 数字
 @state private name = "";              // ✅ 字符串
@@ -156,6 +165,7 @@ export class Calendar extends WebComponent {
 ```
 
 **无效示例**：
+
 ```typescript
 @state private count;                  // ❌ 缺少初始值
 @state private name;                   // ❌ 缺少初始值
@@ -166,15 +176,16 @@ export class Calendar extends WebComponent {
 `@autoRegister` 装饰器用于自动注册自定义元素，无需手动调用 `customElements.define()`。
 
 ```typescript
-import { autoRegister } from '@wsxjs/wsx-core';
+import { autoRegister } from "@wsxjs/wsx-core";
 
-@autoRegister({ tagName: 'wsx-calendar' })
+@autoRegister({ tagName: "wsx-calendar" })
 export default class Calendar extends WebComponent {
-    // 组件会自动注册为 <wsx-calendar> 自定义元素
+  // 组件会自动注册为 <wsx-calendar> 自定义元素
 }
 ```
 
 **使用方式**：
+
 - `@autoRegister()` - 自动从类名生成标签名（如 `Calendar` → `calendar`）
 - `@autoRegister({ tagName: 'wsx-calendar' })` - 指定自定义标签名
 
@@ -184,27 +195,27 @@ WSX 组件使用标准的 Web Components 生命周期，但提供了更友好的
 
 ```typescript
 export class Calendar extends WebComponent {
-    // 组件连接到 DOM 后调用
-    connectedCallback() {
-        super.connectedCallback?.();
-        // 初始化逻辑
-    }
+  // 组件连接到 DOM 后调用
+  connectedCallback() {
+    super.connectedCallback?.();
+    // 初始化逻辑
+  }
 
-    // 组件从 DOM 断开后调用
-    disconnectedCallback() {
-        super.disconnectedCallback?.();
-        // 清理资源
-    }
+  // 组件从 DOM 断开后调用
+  disconnectedCallback() {
+    super.disconnectedCallback?.();
+    // 清理资源
+  }
 
-    // 属性变化时调用
-    attributeChangedCallback(
-        name: string,
-        oldValue: string | null,
-        newValue: string | null
-    ) {
-        super.attributeChangedCallback?.(name, oldValue, newValue);
-        // 处理属性变化
-    }
+  // 属性变化时调用
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ) {
+    super.attributeChangedCallback?.(name, oldValue, newValue);
+    // 处理属性变化
+  }
 }
 ```
 
@@ -216,26 +227,30 @@ export class Calendar extends WebComponent {
 
 ```typescript
 export class Calendar extends WebComponent {
-    static get observedAttributes() {
-        return ['view', 'date', 'event-dsl'];
-    }
+  static get observedAttributes() {
+    return ["view", "date", "event-dsl"];
+  }
 
-    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-        super.attributeChangedCallback?.(name, oldValue, newValue);
-        
-        switch (name) {
-            case 'view':
-                if (newValue) {
-                    this.currentView = newValue as 'month' | 'week' | 'day';
-                }
-                break;
-            case 'date':
-                if (newValue) {
-                    this.currentDate = new Date(newValue);
-                }
-                break;
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ) {
+    super.attributeChangedCallback?.(name, oldValue, newValue);
+
+    switch (name) {
+      case "view":
+        if (newValue) {
+          this.currentView = newValue as "month" | "week" | "day";
         }
+        break;
+      case "date":
+        if (newValue) {
+          this.currentDate = new Date(newValue);
+        }
+        break;
     }
+  }
 }
 ```
 
@@ -249,7 +264,7 @@ render() {
         <div>
             {/* ✅ 正确：使用原生 onclick */}
             <button onclick={(e) => this.handleClick(e)}>Click me</button>
-            
+
             {/* ❌ 错误：不要使用 React 风格的 onClick */}
             {/* <button onClick={this.handleClick}>Click me</button> */}
         </div>
@@ -262,6 +277,7 @@ private handleClick = (event: MouseEvent) => {
 ```
 
 **关键区别**：
+
 - ✅ 使用 `onclick`（小写），不是 `onClick`
 - ✅ 事件处理器接收原生 `Event` 对象
 - ✅ 使用箭头函数或绑定方法
@@ -281,7 +297,7 @@ export class Calendar extends WebComponent {
                 {/* ✅ 正确：直接访问 */}
                 <p>Count: {this.count}</p>
                 <p>Name: {this.name}</p>
-                
+
                 {/* ❌ 错误：不要使用 this.state.xxx */}
                 {/* <p>Count: {this.state.count}</p> */}
             </div>
@@ -307,17 +323,18 @@ export class Calendar extends WebComponent {
 ```
 
 **重要配置**：
+
 - `experimentalDecorators: true` - 启用装饰器语法
 - `useDefineForClassFields: false` - 确保装饰器与类属性兼容
 
 #### Vite 配置
 
 ```typescript
-import { defineConfig } from 'vite';
-import { wsx } from '@wsxjs/wsx-vite-plugin';
+import { defineConfig } from "vite";
+import { wsx } from "@wsxjs/wsx-vite-plugin";
 
 export default defineConfig({
-    plugins: [wsx()]
+  plugins: [wsx()],
 });
 ```
 
@@ -326,35 +343,35 @@ export default defineConfig({
 #### ESLint 配置
 
 ```javascript
-import wsxPlugin from '@wsxjs/eslint-plugin-wsx';
+import wsxPlugin from "@wsxjs/eslint-plugin-wsx";
 
 export default [
-    {
-        files: ['**/*.{ts,tsx,js,jsx,wsx}'],
-        plugins: {
-            wsx: wsxPlugin
-        },
-        rules: {
-            'wsx/no-react-imports': 'error',
-            'wsx/render-method-required': 'error',
-            'wsx/state-requires-initial-value': 'error'  // ✅ 验证 @state 必须有初始值
-        }
-    }
+  {
+    files: ["**/*.{ts,tsx,js,jsx,wsx}"],
+    plugins: {
+      wsx: wsxPlugin,
+    },
+    rules: {
+      "wsx/no-react-imports": "error",
+      "wsx/render-method-required": "error",
+      "wsx/state-requires-initial-value": "error", // ✅ 验证 @state 必须有初始值
+    },
+  },
 ];
 ```
 
 ### WSX vs React 关键区别
 
-| 特性 | WSX | React |
-|------|-----|-------|
-| **事件绑定** | `onclick`（小写） | `onClick`（驼峰） |
-| **状态访问** | `this.xxx` | `this.state.xxx` 或 `useState` |
-| **状态管理** | `@state` 装饰器 | `useState` Hook 或 `this.state` |
-| **组件注册** | `@autoRegister` 装饰器 | 无需注册 |
-| **生命周期** | `connectedCallback` 等 | `componentDidMount` 等 |
-| **DOM 操作** | 原生 DOM API | Virtual DOM |
-| **运行时** | 零运行时开销 | React 运行时库 |
-| **框架依赖** | 无（原生 Web Components） | 需要 React 库 |
+| 特性         | WSX                       | React                           |
+| ------------ | ------------------------- | ------------------------------- |
+| **事件绑定** | `onclick`（小写）         | `onClick`（驼峰）               |
+| **状态访问** | `this.xxx`                | `this.state.xxx` 或 `useState`  |
+| **状态管理** | `@state` 装饰器           | `useState` Hook 或 `this.state` |
+| **组件注册** | `@autoRegister` 装饰器    | 无需注册                        |
+| **生命周期** | `connectedCallback` 等    | `componentDidMount` 等          |
+| **DOM 操作** | 原生 DOM API              | Virtual DOM                     |
+| **运行时**   | 零运行时开销              | React 运行时库                  |
+| **框架依赖** | 无（原生 Web Components） | 需要 React 库                   |
 
 ### 参考资料
 
@@ -381,13 +398,14 @@ export default [
 ```
 
 **支持的 Attributes**：
+
 - `view` - 初始视图（`month` | `week` | `day`），默认 `month`
 - `date` - 初始日期（ISO 8601 字符串），默认当前日期
 
 #### JavaScript Properties（复杂数据）
 
 ```typescript
-const calendar = document.querySelector('wsx-calendar') as Calendar;
+const calendar = document.querySelector("wsx-calendar") as Calendar;
 
 // 通过 properties 设置复杂数据（数据模型）
 calendar.events = events;
@@ -396,10 +414,12 @@ calendar.user = currentUser;
 ```
 
 **支持的 Properties**：
+
 - `events: Event[]` - 事件列表（数据模型）
 - `user: User | undefined` - 当前用户（用于权限验证）
 
 **设计原则**：
+
 - ✅ **组件只处理数据模型**：组件只处理 `events` 和 `user` 数据，不涉及任何 DSL
 - ✅ **数据驱动**：组件行为完全由传入的数据驱动
 - ✅ **保持简单**：不进行验证、不进行 DSL 处理，验证和 DSL 处理应该在外部完成
@@ -407,6 +427,7 @@ calendar.user = currentUser;
 #### 内部状态（@state）
 
 组件使用 `@state` 装饰器管理内部响应式状态：
+
 - `currentView: 'month' | 'week' | 'day'` - 当前视图
 - `currentDate: Date` - 当前日期
 - `showEventDialog: boolean` - 是否显示事件对话框
@@ -419,21 +440,30 @@ calendar.user = currentUser;
 组件使用 `CustomEvent` 进行组件通信，所有事件都冒泡（`bubbles: true`）。
 
 **支持的事件**：
+
 - `date-change` - 日期变化时触发
   ```typescript
-  detail: { date: Date }
+  detail: {
+    date: Date;
+  }
   ```
 - `view-change` - 视图切换时触发
   ```typescript
-  detail: { view: 'month' | 'week' | 'day' }
+  detail: {
+    view: "month" | "week" | "day";
+  }
   ```
 - `event-click` - 事件点击时触发
   ```typescript
-  detail: { event: Event }
+  detail: {
+    event: Event;
+  }
   ```
 - `event-create` - 事件创建时触发
   ```typescript
-  detail: { event: Event }
+  detail: {
+    event: Event;
+  }
   ```
 - `event-update` - 事件更新时触发
   ```typescript
@@ -441,12 +471,15 @@ calendar.user = currentUser;
   ```
 - `event-delete` - 事件删除时触发
   ```typescript
-  detail: { id: string }
+  detail: {
+    id: string;
+  }
   ```
 
 ### 公共方法
 
 **CRUD 操作**：
+
 - `createEvent(eventData: Partial<Event>): { success: boolean, event?: Event, errors?: string[] }`
 - `updateEvent(eventId: string, eventData: Partial<Event>): { success: boolean, event?: Event, errors?: string[] }`
 - `deleteEvent(eventId: string): { success: boolean, error?: string }`
@@ -518,6 +551,7 @@ export default class Calendar extends WebComponent {
 视图渲染逻辑直接内联在 `Calendar.wsx` 中，不使用独立的子组件，以保持代码简洁和性能。
 
 **视图类型**：
+
 - `renderMonthView()` - 月视图渲染
 - `renderWeekView()` - 周视图渲染
 - `renderDayView()` - 日视图渲染
@@ -554,43 +588,40 @@ private renderEvent(event: Event) {
 ### HTML 方式
 
 ```html
-<wsx-calendar
-    view="month"
-    date="2024-12-30"
-></wsx-calendar>
+<wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
 
 <script>
-    const calendar = document.querySelector('wsx-calendar');
-    
-// 通过 properties 设置复杂数据（数据模型）
-calendar.events = [
-    { id: '1', title: 'Meeting', startTime: new Date(), ... }
-];
-calendar.user = { id: '1', email: 'user@example.com', ... };
+      const calendar = document.querySelector('wsx-calendar');
 
-// 监听事件
-calendar.addEventListener('event-click', (e) => {
-    console.log('Event clicked:', e.detail.event);
-});
+  // 通过 properties 设置复杂数据（数据模型）
+  calendar.events = [
+      { id: '1', title: 'Meeting', startTime: new Date(), ... }
+  ];
+  calendar.user = { id: '1', email: 'user@example.com', ... };
+
+  // 监听事件
+  calendar.addEventListener('event-click', (e) => {
+      console.log('Event clicked:', e.detail.event);
+  });
 </script>
 ```
 
 ### JavaScript/TypeScript 方式
 
 ```typescript
-const calendar = document.createElement('wsx-calendar') as Calendar;
+const calendar = document.createElement("wsx-calendar") as Calendar;
 
 // 通过 attributes 设置简单配置
-calendar.setAttribute('view', 'month');
-calendar.setAttribute('date', '2024-12-30');
+calendar.setAttribute("view", "month");
+calendar.setAttribute("date", "2024-12-30");
 
 // 通过 properties 设置复杂数据（数据模型）
 calendar.events = events;
 calendar.user = currentUser;
 
 // 监听事件
-calendar.addEventListener('view-change', (e) => {
-    console.log('View changed:', e.detail.view);
+calendar.addEventListener("view-change", (e) => {
+  console.log("View changed:", e.detail.view);
 });
 
 document.body.appendChild(calendar);
@@ -600,12 +631,12 @@ document.body.appendChild(calendar);
 
 ```tsx
 <wsx-calendar
-    view="month"
-    date="2024-12-30"
-    events={events}         // 数据模型通过 property
-    user={user}             // 数据模型通过 property
-    onViewChange={(e) => console.log('View changed:', e.detail.view)}
-    onEventClick={(e) => console.log('Event clicked:', e.detail.event)}
+  view="month"
+  date="2024-12-30"
+  events={events} // 数据模型通过 property
+  user={user} // 数据模型通过 property
+  onViewChange={(e) => console.log("View changed:", e.detail.view)}
+  onEventClick={(e) => console.log("Event clicked:", e.detail.event)}
 />
 ```
 
@@ -733,11 +764,13 @@ document.body.appendChild(calendar);
 **状态**: ⏳ 进行中（85% 完成）
 
 **已完成**：
+
 - ✅ 阶段 1: 基础结构和视图（100%）
 - ✅ 阶段 2: CRUD 操作（100%）
 - ✅ 阶段 3.1: 单元测试（45 个测试用例，95% 覆盖率）
 
 **待完成**：
+
 - ⏳ 阶段 3.2: 拖拽功能
 - ⏳ 阶段 3.3: 动画效果
 - ⏳ 阶段 3.4: 性能优化
@@ -745,12 +778,12 @@ document.body.appendChild(calendar);
 
 ## 完成度统计
 
-| 阶段 | 完成度 | 状态 |
-|------|--------|------|
-| 阶段 1: 基础结构和视图 | 100% | ✅ 完成 |
-| 阶段 2: CRUD 操作 | 100% | ✅ 完成 |
-| 阶段 3: 测试和优化 | 25% | ⏳ 进行中 |
-| **总体** | **75%** | ⏳ 进行中 |
+| 阶段                   | 完成度  | 状态      |
+| ---------------------- | ------- | --------- |
+| 阶段 1: 基础结构和视图 | 100%    | ✅ 完成   |
+| 阶段 2: CRUD 操作      | 100%    | ✅ 完成   |
+| 阶段 3: 测试和优化     | 25%     | ⏳ 进行中 |
+| **总体**               | **75%** | ⏳ 进行中 |
 
 ## 文件结构
 
@@ -794,6 +827,7 @@ packages/calendar/
 ```
 
 **组件特点**：
+
 - ✅ 基于 WSX 框架构建（Web Components + JSX）
 - ✅ 使用 Event DSL 驱动渲染和验证
 - ✅ 支持月/周/日三种视图
@@ -805,18 +839,18 @@ packages/calendar/
 ### 组件测试
 
 ```typescript
-describe('Calendar Component', () => {
-    it('should render correctly', () => {
-        const calendar = document.createElement('wsx-calendar');
-        document.body.appendChild(calendar);
-        expect(calendar.shadowRoot?.querySelector('.calendar')).toBeTruthy();
-    });
+describe("Calendar Component", () => {
+  it("should render correctly", () => {
+    const calendar = document.createElement("wsx-calendar");
+    document.body.appendChild(calendar);
+    expect(calendar.shadowRoot?.querySelector(".calendar")).toBeTruthy();
+  });
 
-    it('should handle view change', () => {
-        const calendar = document.createElement('wsx-calendar');
-        calendar.setAttribute('view', 'week');
-        expect(calendar.currentView).toBe('week');
-    });
+  it("should handle view change", () => {
+    const calendar = document.createElement("wsx-calendar");
+    calendar.setAttribute("view", "week");
+    expect(calendar.currentView).toBe("week");
+  });
 });
 ```
 

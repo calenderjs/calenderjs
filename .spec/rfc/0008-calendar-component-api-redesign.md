@@ -17,26 +17,28 @@
 #### 1. 属性/状态管理混乱
 
 **问题**：
+
 ```typescript
 // 当前实现 - 混乱的状态管理
 export default class Calendar extends WebComponent {
-    // 普通属性（无法响应式）
-    eventDSL = undefined;
-    events = [];
-    user = undefined;
-    defaultView = "month";
-    currentDate = undefined;
+  // 普通属性（无法响应式）
+  eventDSL = undefined;
+  events = [];
+  user = undefined;
+  defaultView = "month";
+  currentDate = undefined;
 
-    // 响应式状态（使用 @state）
-    @state currentView = "month";
-    @state viewDate = new Date();
-    @state dslRuntime = undefined;
-    @state showEventDialog = false;
-    // ...
+  // 响应式状态（使用 @state）
+  @state currentView = "month";
+  @state viewDate = new Date();
+  @state dslRuntime = undefined;
+  @state showEventDialog = false;
+  // ...
 }
 ```
 
 **问题点**：
+
 - ❌ 普通属性和响应式状态混用，开发者不知道何时用哪个
 - ❌ `eventDSL`, `events`, `user` 等外部数据使用普通属性，无法响应变化
 - ❌ `defaultView`, `currentDate` 等初始值使用普通属性，但实际状态用 `@state`
@@ -45,22 +47,24 @@ export default class Calendar extends WebComponent {
 #### 2. 不符合 Web Component 标准
 
 **问题**：
+
 ```typescript
 // 当前实现 - 没有 observedAttributes
 export default class Calendar extends WebComponent {
-    eventDSL = undefined;  // 如何从 attribute 获取？
-    events = [];            // 如何从 attribute 获取？
-    
-    onAttributeChanged(name, oldValue, newValue) {
-        // 只处理了 event-dsl，其他属性呢？
-        if (name === "event-dsl" || name === "eventDSL") {
-            this.initializeDSL();
-        }
+  eventDSL = undefined; // 如何从 attribute 获取？
+  events = []; // 如何从 attribute 获取？
+
+  onAttributeChanged(name, oldValue, newValue) {
+    // 只处理了 event-dsl，其他属性呢？
+    if (name === "event-dsl" || name === "eventDSL") {
+      this.initializeDSL();
     }
+  }
 }
 ```
 
 **问题点**：
+
 - ❌ 没有 `static observedAttributes` 声明
 - ❌ 属性（attributes）和属性（properties）没有区分
 - ❌ 复杂对象（如 `events`, `user`）无法通过 attributes 传递，但没有提供 properties API
@@ -69,6 +73,7 @@ export default class Calendar extends WebComponent {
 #### 3. 事件绑定不一致
 
 **问题**：
+
 ```typescript
 // 当前实现 - 三种不同的事件绑定方式
 renderToolbar() {
@@ -89,6 +94,7 @@ attachEventListeners() {
 ```
 
 **问题点**：
+
 - ❌ 同时使用 `onclick`、`onClick`、`addEventListener` 三种方式
 - ❌ `attachEventListeners` 在 `connectedCallback` 中调用，但此时 DOM 可能还没渲染
 - ❌ 事件监听器在每次 `connectedCallback` 时重复添加，可能导致内存泄漏
@@ -97,6 +103,7 @@ attachEventListeners() {
 #### 4. 命名和概念混乱
 
 **问题**：
+
 - ❌ `viewDate` vs `currentDate` - 两个概念混淆
 - ❌ `defaultView` vs `currentView` - 初始值和当前值混淆
 - ❌ `eventDSL` - 应该叫 `dsl` 还是 `event-dsl`？
@@ -105,6 +112,7 @@ attachEventListeners() {
 #### 5. 代码重复和结构混乱
 
 **问题**：
+
 - ❌ 文件中有重复的代码块（1200-1986行）
 - ❌ `renderMonthView`, `renderWeekView`, `renderDayView` 逻辑重复
 - ❌ 视图组件（`MonthView.wsx`, `WeekView.wsx`, `DayView.wsx`）存在但未使用
@@ -155,28 +163,28 @@ attachEventListeners() {
 
 ```typescript
 export default class Calendar extends WebComponent {
-    // 通过 JavaScript properties 设置（数据模型）
-    private _events: Event[] = [];
-    private _user: User | undefined = undefined;
+  // 通过 JavaScript properties 设置（数据模型）
+  private _events: Event[] = [];
+  private _user: User | undefined = undefined;
 
-    // Properties getters/setters
-    get events(): Event[] {
-        return this._events;
-    }
+  // Properties getters/setters
+  get events(): Event[] {
+    return this._events;
+  }
 
-    set events(value: Event[]) {
-        this._events = value;
-        this.requestUpdate(); // 触发重新渲染
-    }
+  set events(value: Event[]) {
+    this._events = value;
+    this.requestUpdate(); // 触发重新渲染
+  }
 
-    get user(): User | undefined {
-        return this._user;
-    }
+  get user(): User | undefined {
+    return this._user;
+  }
 
-    set user(value: User | undefined) {
-        this._user = value;
-        this.requestUpdate();
-    }
+  set user(value: User | undefined) {
+    this._user = value;
+    this.requestUpdate();
+  }
 }
 ```
 
@@ -184,29 +192,33 @@ export default class Calendar extends WebComponent {
 
 ```typescript
 export default class Calendar extends WebComponent {
-    // 声明需要观察的 attributes
-    static get observedAttributes() {
-        return ['view', 'date'];
-    }
+  // 声明需要观察的 attributes
+  static get observedAttributes() {
+    return ["view", "date"];
+  }
 
-    // 从 attributes 获取初始值
-    get initialView(): 'month' | 'week' | 'day' {
-        return (this.getAttribute('view') as 'month' | 'week' | 'day') || 'month';
-    }
+  // 从 attributes 获取初始值
+  get initialView(): "month" | "week" | "day" {
+    return (this.getAttribute("view") as "month" | "week" | "day") || "month";
+  }
 
-    get initialDate(): Date {
-        const dateAttr = this.getAttribute('date');
-        return dateAttr ? new Date(dateAttr) : new Date();
-    }
+  get initialDate(): Date {
+    const dateAttr = this.getAttribute("date");
+    return dateAttr ? new Date(dateAttr) : new Date();
+  }
 
-    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-        if (name === 'view' && newValue !== oldValue) {
-            this.currentView = newValue as 'month' | 'week' | 'day';
-        }
-        if (name === 'date' && newValue !== oldValue) {
-            this.currentDate = new Date(newValue!);
-        }
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ) {
+    if (name === "view" && newValue !== oldValue) {
+      this.currentView = newValue as "month" | "week" | "day";
     }
+    if (name === "date" && newValue !== oldValue) {
+      this.currentDate = new Date(newValue!);
+    }
+  }
 }
 ```
 
@@ -214,31 +226,35 @@ export default class Calendar extends WebComponent {
 
 ```typescript
 export default class Calendar extends WebComponent {
-    // 内部响应式状态
-    @state currentView: 'month' | 'week' | 'day' = 'month';
-    @state currentDate: Date = new Date();
-    @state private showEventDialog: boolean = false;
-    @state private editingEvent: Event | undefined = undefined;
-    @state private showDeleteConfirm: boolean = false;
-    @state private deletingEvent: Event | undefined = undefined;
+  // 内部响应式状态
+  @state currentView: "month" | "week" | "day" = "month";
+  @state currentDate: Date = new Date();
+  @state private showEventDialog: boolean = false;
+  @state private editingEvent: Event | undefined = undefined;
+  @state private showDeleteConfirm: boolean = false;
+  @state private deletingEvent: Event | undefined = undefined;
 }
 ```
 
 ### 2. 统一的命名规范
 
 **外部配置（数据模型）**：
+
 - `events` - 事件列表（Property）
 - `user` - 当前用户（Property）
 
 **HTML Attributes**：
+
 - `view` - 初始视图（`month` | `week` | `day`）
 - `date` - 初始日期（ISO 8601 字符串）
 
 **内部状态**：
+
 - `currentView` - 当前视图（响应式）
 - `currentDate` - 当前日期（响应式）
 
 **重要原则**：
+
 - ✅ 组件只处理数据模型（`events`, `user`）
 - ✅ 组件不涉及任何 DSL 逻辑
 - ✅ 验证和 DSL 处理应该在外部完成
@@ -377,19 +393,19 @@ export default class Calendar extends WebComponent {
 // MonthView.wsx
 @autoRegister({ tagName: "wsx-month-view" })
 export default class MonthView extends WebComponent {
-    // Props (通过 attributes 或 properties 传入)
-    date: Date = new Date();
-    events: Event[] = [];
-    user?: User;
+  // Props (通过 attributes 或 properties 传入)
+  date: Date = new Date();
+  events: Event[] = [];
+  user?: User;
 
-    // Event callbacks (通过 properties 传入)
-    onDateClick?: (date: Date) => void;
-    onDateDoubleClick?: (date: Date) => void;
-    onEventClick?: (event: Event) => void;
+  // Event callbacks (通过 properties 传入)
+  onDateClick?: (date: Date) => void;
+  onDateDoubleClick?: (date: Date) => void;
+  onEventClick?: (event: Event) => void;
 
-    render() {
-        // 渲染月视图
-    }
+  render() {
+    // 渲染月视图
+  }
 }
 ```
 
@@ -398,43 +414,40 @@ export default class MonthView extends WebComponent {
 #### HTML 方式
 
 ```html
-<wsx-calendar
-    view="month"
-    date="2024-12-30"
-></wsx-calendar>
+<wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
 
 <script>
-    const calendar = document.querySelector('wsx-calendar');
-    
-    // 通过 properties 设置复杂数据
-    calendar.events = [
-        { id: '1', title: 'Meeting', startTime: new Date(), ... }
-    ];
-    calendar.user = { id: '1', email: 'user@example.com', ... };
-    
-    // 监听事件
-    calendar.addEventListener('event-click', (e) => {
-        console.log('Event clicked:', e.detail.event);
-    });
+  const calendar = document.querySelector('wsx-calendar');
+
+  // 通过 properties 设置复杂数据
+  calendar.events = [
+      { id: '1', title: 'Meeting', startTime: new Date(), ... }
+  ];
+  calendar.user = { id: '1', email: 'user@example.com', ... };
+
+  // 监听事件
+  calendar.addEventListener('event-click', (e) => {
+      console.log('Event clicked:', e.detail.event);
+  });
 </script>
 ```
 
 #### JavaScript/TypeScript 方式
 
 ```typescript
-const calendar = document.createElement('wsx-calendar') as Calendar;
+const calendar = document.createElement("wsx-calendar") as Calendar;
 
 // 通过 attributes 设置简单配置
-calendar.setAttribute('view', 'month');
-calendar.setAttribute('date', '2024-12-30');
+calendar.setAttribute("view", "month");
+calendar.setAttribute("date", "2024-12-30");
 
 // 通过 properties 设置复杂数据（数据模型）
 calendar.events = events;
 calendar.user = currentUser;
 
 // 监听事件
-calendar.addEventListener('view-change', (e) => {
-    console.log('View changed:', e.detail.view);
+calendar.addEventListener("view-change", (e) => {
+  console.log("View changed:", e.detail.view);
 });
 
 document.body.appendChild(calendar);
@@ -444,12 +457,12 @@ document.body.appendChild(calendar);
 
 ```tsx
 <wsx-calendar
-    view="month"
-    date="2024-12-30"
-    events={events}
-    user={user}
-    onViewChange={(e) => console.log('View changed:', e.detail.view)}
-    onEventClick={(e) => console.log('Event clicked:', e.detail.event)}
+  view="month"
+  date="2024-12-30"
+  events={events}
+  user={user}
+  onViewChange={(e) => console.log("View changed:", e.detail.view)}
+  onEventClick={(e) => console.log("Event clicked:", e.detail.event)}
 />
 ```
 
@@ -514,20 +527,20 @@ document.body.appendChild(calendar);
 #### 旧代码
 
 ```typescript
-const calendar = document.createElement('wsx-calendar');
+const calendar = document.createElement("wsx-calendar");
 calendar.eventDSL = dslString;
 calendar.events = events;
 calendar.user = user;
-calendar.defaultView = 'month';
-calendar.currentDate = new Date('2024-12-30');
+calendar.defaultView = "month";
+calendar.currentDate = new Date("2024-12-30");
 ```
 
 #### 新代码
 
 ```typescript
-const calendar = document.createElement('wsx-calendar');
-calendar.setAttribute('view', 'month');
-calendar.setAttribute('date', '2024-12-30');
+const calendar = document.createElement("wsx-calendar");
+calendar.setAttribute("view", "month");
+calendar.setAttribute("date", "2024-12-30");
 // 注意：不再有 DSL property，组件只处理数据模型
 calendar.events = events;
 calendar.user = user;

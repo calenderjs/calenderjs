@@ -8,19 +8,19 @@
 
 ## 1. Task routing
 
-| If you need to… | Read first | Edit |
-|-----------------|------------|------|
-| Fix/implement calendar views | `.cursor/skills/wsx-work/SKILL.md` | `packages/calendar/src/views/*.wsx` |
-| Change Calendar API / props | `docs/rfc/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx` |
-| Modify Event data shape | `docs/rfc/0011-event-data-model-integration.md` | `packages/event-model/src/Event.ts` |
-| Change DSL syntax / parser | `docs/rfc/0002-event-dsl.md` | `packages/event-dsl/src/event-dsl.pegjs` |
-| Change DSL compiler output | `docs/rfc/0002-event-dsl.md` | `packages/event-dsl/src/compiler.ts` |
-| Runtime validate/render/behavior | `packages/event-dsl/README.md` | `packages/event-runtime/src/` |
-| React calendar wrapper / demo | `packages/react/README.md` | `packages/react/src/`, `demos/react/` |
-| React Event DSL editor | `packages/react-event-editor/README.md` | `packages/react-event-editor/src/` |
-| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md` | `packages/monaco-event-dsl/src/` |
-| Date/time utilities | — | `packages/date-time/src/` |
-| Add RFC-level feature | `ROADMAP.md` | `docs/rfc/` (create/update RFC **before** code) |
+| If you need to…                  | Read first                                         | Edit                                            |
+| -------------------------------- | -------------------------------------------------- | ----------------------------------------------- |
+| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                 | `packages/calendar/src/views/*.wsx`             |
+| Change Calendar API / props      | `docs/rfc/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`            |
+| Modify Event data shape          | `docs/rfc/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`             |
+| Change DSL syntax / parser       | `docs/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`        |
+| Change DSL compiler output       | `docs/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/compiler.ts`            |
+| Runtime validate/render/behavior | `packages/event-dsl/README.md`                     | `packages/event-runtime/src/`                   |
+| React calendar wrapper / demo    | `packages/react/README.md`                         | `packages/react/src/`, `demos/react/`           |
+| React Event DSL editor           | `packages/react-event-editor/README.md`            | `packages/react-event-editor/src/`              |
+| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md`              | `packages/monaco-event-dsl/src/`                |
+| Date/time utilities              | —                                                  | `packages/date-time/src/`                       |
+| Add RFC-level feature            | `ROADMAP.md`                                       | `docs/rfc/` (create/update RFC **before** code) |
 
 ---
 
@@ -28,22 +28,22 @@
 
 Use these markers when reasoning about the codebase. **Do not assume PLANNED features exist.**
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Month/Week/Day views | **IMPLEMENTED** | `packages/calendar/src/views/` |
-| Today highlight | **IMPLEMENTED** | RFC-0013 |
-| Calendar API (observedAttributes, getter/setter) | **IMPLEMENTED** | RFC-0008 |
-| Pure data-driven rendering (`events` prop) | **IMPLEMENTED** | No runtime required |
-| React wrapper + demo | **IMPLEMENTED** | RFC-0004 |
-| Event DSL parse/compile | **IMPLEMENTED** | `packages/event-dsl/` |
-| EventRuntime (validate/render/canPerform) | **IMPLEMENTED** | Not yet wired into Calendar |
-| Calendar `eventRuntime` property | **IMPLEMENTED** | RFC-0005 M4 |
-| DSL-driven render via `displayEvents` | **IMPLEMENTED** | Uses `EventRuntime.render()` |
-| validate / canPerform / proposeEvent* | **IMPLEMENTED** | Calendar.wsx public methods |
-| `extra` → `data` rename | **IMPLEMENTED** | RFC-0011 — use `Event.data` |
-| EventDataGenerator | **PLANNED** | RFC-0011 |
-| Calendar plugin mechanism | **PLANNED** | RFC-0012 |
-| Multi-tenant backend service | **DO NOT IMPLEMENT** | RFC-0003 Future Plan |
+| Feature                                          | Status               | Notes                          |
+| ------------------------------------------------ | -------------------- | ------------------------------ |
+| Month/Week/Day views                             | **IMPLEMENTED**      | `packages/calendar/src/views/` |
+| Today highlight                                  | **IMPLEMENTED**      | RFC-0013                       |
+| Calendar API (observedAttributes, getter/setter) | **IMPLEMENTED**      | RFC-0008                       |
+| Pure data-driven rendering (`events` prop)       | **IMPLEMENTED**      | No runtime required            |
+| React wrapper + demo                             | **IMPLEMENTED**      | RFC-0004                       |
+| Event DSL parse/compile                          | **IMPLEMENTED**      | `packages/event-dsl/`          |
+| EventRuntime (validate/render/canPerform)        | **IMPLEMENTED**      | Not yet wired into Calendar    |
+| Calendar `eventRuntime` property                 | **IMPLEMENTED**      | RFC-0005 M4                    |
+| DSL-driven render via `displayEvents`            | **IMPLEMENTED**      | Uses `EventRuntime.render()`   |
+| validate / canPerform / proposeEvent*            | **IMPLEMENTED**      | Calendar.wsx public methods    |
+| `extra` → `data` rename                          | **IMPLEMENTED**      | RFC-0011 — use `Event.data`    |
+| EventDataGenerator                               | **PLANNED**          | RFC-0011                       |
+| Calendar plugin mechanism                        | **PLANNED**          | RFC-0012                       |
+| Multi-tenant backend service                     | **DO NOT IMPLEMENT** | RFC-0003 Future Plan           |
 
 ---
 
@@ -159,28 +159,28 @@ pnpm --filter @calenderjs/event-dsl build
 
 ## 7. Architecture decisions (2026-03-15)
 
-| Decision | Choice |
-|----------|--------|
-| Calendar ↔ DSL | DSL-driven; Calendar accepts `EventRuntime`; degrades without runtime |
-| Event vs Appointment | Appointment = business; Event = technical model |
-| DSL form | Text DSL → PEG.js → AST |
-| Extension field | `extra` now → `data` planned (RFC-0011) |
-| Compile vs runtime | `event-dsl` vs `event-runtime` separation |
+| Decision             | Choice                                                                |
+| -------------------- | --------------------------------------------------------------------- |
+| Calendar ↔ DSL       | DSL-driven; Calendar accepts `EventRuntime`; degrades without runtime |
+| Event vs Appointment | Appointment = business; Event = technical model                       |
+| DSL form             | Text DSL → PEG.js → AST                                               |
+| Extension field      | `extra` now → `data` planned (RFC-0011)                               |
+| Compile vs runtime   | `event-dsl` vs `event-runtime` separation                             |
 
 ---
 
 ## 8. Common mistakes (avoid)
 
-| Mistake | Correct |
-|---------|---------|
-| Import Calendar from `@calenderjs/core` | Import from `@calenderjs/calendar` |
-| Use Vue refs in `.wsx` | Use `@state` decorator |
-| Use `extra` field on Event | Use `data` |
-| Assume `eventRuntime` prop exists on Calendar | Not implemented yet — check TASK_TRACKING |
-| Run `npx vitest` | `pnpm --filter @calenderjs/calendar test` |
-| Implement RFC-0003 backend | Future plan — out of scope |
-| Skip `updateComplete` in WSX tests | `await element.updateComplete` before assert |
-| Hand-edit `generated/parser.js` | Edit `.pegjs` and rebuild |
+| Mistake                                       | Correct                                      |
+| --------------------------------------------- | -------------------------------------------- |
+| Import Calendar from `@calenderjs/core`       | Import from `@calenderjs/calendar`           |
+| Use Vue refs in `.wsx`                        | Use `@state` decorator                       |
+| Use `extra` field on Event                    | Use `data`                                   |
+| Assume `eventRuntime` prop exists on Calendar | Not implemented yet — check TASK_TRACKING    |
+| Run `npx vitest`                              | `pnpm --filter @calenderjs/calendar test`    |
+| Implement RFC-0003 backend                    | Future plan — out of scope                   |
+| Skip `updateComplete` in WSX tests            | `await element.updateComplete` before assert |
+| Hand-edit `generated/parser.js`               | Edit `.pegjs` and rebuild                    |
 
 ---
 
@@ -205,20 +205,20 @@ Runs automatically in **husky pre-commit**.
 
 ### Cursor integration
 
-| File | Scope | Purpose |
-|------|-------|---------|
-| `.cursor/rules/00-llm-onboarding.mdc` | always | Read order, invariants, task routing |
-| `.cursor/rules/wsx-calendar.mdc` | `packages/calendar/**` | WSX dev rules |
-| `.cursor/skills/wsx-work/SKILL.md` | on demand | Full WSX skill |
+| File                                  | Scope                  | Purpose                              |
+| ------------------------------------- | ---------------------- | ------------------------------------ |
+| `.cursor/rules/00-llm-onboarding.mdc` | always                 | Read order, invariants, task routing |
+| `.cursor/rules/wsx-calendar.mdc`      | `packages/calendar/**` | WSX dev rules                        |
+| `.cursor/skills/wsx-work/SKILL.md`    | on demand              | Full WSX skill                       |
 
 ---
 
 ## 11. Related docs
 
-| Doc | Audience | Content |
-|-----|----------|---------|
-| [llms.txt](../llms.txt) | AI (index) | Curated link index |
-| [AGENTS.md](../AGENTS.md) | AI | Rules, personas, commands |
-| [README.md](../README.md) | Human | Overview, examples |
-| [TASK_TRACKING.md](../TASK_TRACKING.md) | Both | Current sprint tasks |
-| [ROADMAP.md](../ROADMAP.md) | Both | Milestones, RFC status |
+| Doc                                     | Audience   | Content                   |
+| --------------------------------------- | ---------- | ------------------------- |
+| [llms.txt](../llms.txt)                 | AI (index) | Curated link index        |
+| [AGENTS.md](../AGENTS.md)               | AI         | Rules, personas, commands |
+| [README.md](../README.md)               | Human      | Overview, examples        |
+| [TASK_TRACKING.md](../TASK_TRACKING.md) | Both       | Current sprint tasks      |
+| [ROADMAP.md](../ROADMAP.md)             | Both       | Milestones, RFC status    |

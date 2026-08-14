@@ -10,28 +10,28 @@
 :root {
   /* 背景色 */
   --calender-bg-color: #fff;
-  
+
   /* 文本颜色 */
   --calender-text-color: #202124;
   --calender-text-secondary-color: #5f6368;
   --calender-primary-text-color: #fff;
-  
+
   /* 边框颜色 */
   --calender-border-color: #dadce0;
   --calender-border-light-color: #e8eaed;
   --calender-border-hover-color: #c4c7c5;
-  
+
   /* 主色调 */
   --calender-primary-color: #1a73e8;
   --calender-primary-hover-color: #1765cc;
-  
+
   /* 状态颜色 */
   --calender-today-bg-color: #e8f0fe;
   --calender-selected-bg-color: #e8f0fe;
   --calender-hover-bg-color: #f1f3f4;
   --calender-hover-bg-color-light: #f8f9fa;
   --calender-active-bg-color: #e8eaed;
-  
+
   /* 事件颜色 */
   --calender-event-text-color: #fff;
 }
@@ -41,7 +41,7 @@
 
 ```css
 :root {
-  --calender-font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  --calender-font-family: "Google Sans", Roboto, Arial, sans-serif;
   --calender-font-size: 14px;
   --calender-button-font-weight: 500;
   --calender-today-font-weight: 500;
@@ -61,17 +61,17 @@
   --calender-toolbar-date-font-size: 22px;
   --calender-toolbar-date-font-weight: 400;
   --calender-toolbar-date-min-width: 200px;
-  
+
   /* 按钮 */
   --calender-nav-button-size: 40px;
   --calender-button-padding: 8px 16px;
   --calender-icon-size: 24px;
-  
+
   /* 时间轴 */
   --calender-week-time-gutter-width: 60px;
   --calender-day-time-gutter-width: 60px;
   --calender-hour-cell-height: 48px;
-  
+
   /* 月视图 */
   --calender-month-cell-min-height: 100px;
   --calender-month-cell-padding: 4px;
@@ -81,7 +81,7 @@
   --calender-month-cell-date-font-size: 13px;
   --calender-month-cell-date-padding: 4px 8px;
   --calender-month-cell-date-margin-bottom: 4px;
-  
+
   /* 周视图 */
   --calender-week-header-padding: 12px 4px;
   --calender-week-header-gap: 2px;
@@ -93,12 +93,12 @@
   --calender-week-day-date-font-weight: 400;
   --calender-week-events-count-font-size: 11px;
   --calender-week-events-count-margin-top: 4px;
-  
+
   /* 日视图 */
   --calender-day-header-padding: 16px 24px;
   --calender-day-header-date-font-size: 22px;
   --calender-day-header-date-font-weight: 400;
-  
+
   /* 事件 */
   --calender-event-padding: 2px 6px;
   --calender-day-event-padding: 6px 10px;
@@ -126,12 +126,12 @@
   --calender-week-event-line-height: 1.3;
   --calender-day-event-line-height: 1.4;
   --calender-day-event-title-margin-bottom: 4px;
-  
+
   /* 时间标签 */
   --calender-time-label-font-size: 12px;
   --calender-time-label-padding-top: 4px;
   --calender-time-label-padding-right: 8px;
-  
+
   /* 其他 */
   --calender-month-more-font-size: 11px;
   --calender-month-more-padding: 2px 6px;
@@ -196,12 +196,12 @@
   --calender-text-color: #202124;
   --calender-primary-color: #1a73e8;
   --calender-today-bg-color: #e8f0fe;
-  
+
   /* 尺寸 */
   --calender-font-size: 14px;
   --calender-month-cell-min-height: 120px;
   --calender-hour-cell-height: 60px;
-  
+
   /* 过渡 */
   --calender-transition-duration: 0.3s;
 }

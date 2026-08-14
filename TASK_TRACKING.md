@@ -7,39 +7,39 @@
 
 ### 阶段 1: `extra` → `data` 全局重命名 (P1 前置) — **已完成**
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | 重命名 Event.extra → Event.data | Done | `packages/event-model/src/Event.ts` |
-| 2 | 更新 EVENT_BASE_SCHEMA 中的 extra → data | Done | `packages/event-model/src/validator.ts` |
-| 3 | 更新 EventValidator 中 validateExtra → validateData | Done | `packages/event-model/src/validator.ts` |
-| 4 | 更新 EventTypeDataModel.extraSchema → dataSchema | Done | `packages/event-model/src/EventTypeDataModel.ts` |
-| 5 | 更新 event-dsl 编译器输出 | Done | `packages/event-dsl/src/compiler.ts` |
-| 6 | 更新 event-runtime 字段访问路径 | Done | `packages/event-runtime/src/EventRuntime.ts` |
-| 7 | 更新 Calendar 组件（如有引用） | Done | `packages/calendar/src/views/` |
-| 8 | 更新 React demo | Done | `demos/react/` |
-| 9 | 运行全量测试确认无回归 | Done | `pnpm test` |
+| #   | 任务                                                | 状态 | 文件                                             |
+| --- | --------------------------------------------------- | ---- | ------------------------------------------------ |
+| 1   | 重命名 Event.extra → Event.data                     | Done | `packages/event-model/src/Event.ts`              |
+| 2   | 更新 EVENT_BASE_SCHEMA 中的 extra → data            | Done | `packages/event-model/src/validator.ts`          |
+| 3   | 更新 EventValidator 中 validateExtra → validateData | Done | `packages/event-model/src/validator.ts`          |
+| 4   | 更新 EventTypeDataModel.extraSchema → dataSchema    | Done | `packages/event-model/src/EventTypeDataModel.ts` |
+| 5   | 更新 event-dsl 编译器输出                           | Done | `packages/event-dsl/src/compiler.ts`             |
+| 6   | 更新 event-runtime 字段访问路径                     | Done | `packages/event-runtime/src/EventRuntime.ts`     |
+| 7   | 更新 Calendar 组件（如有引用）                      | Done | `packages/calendar/src/views/`                   |
+| 8   | 更新 React demo                                     | Done | `demos/react/`                                   |
+| 9   | 运行全量测试确认无回归                              | Done | `pnpm test`                                      |
 
 ### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4) — **已完成**
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | Calendar 添加 eventRuntime property (getter/setter) | Done | `packages/calendar/src/Calendar.wsx` |
-| 2 | 渲染集成：有 runtime 时 runtime.render() 增强 | Done | `displayEvents` + views |
-| 3 | 验证集成：创建/更新前 runtime.validate() | Done | `validateEventForCreate/Update` |
-| 4 | 行为集成：拖拽/编辑/删除前 runtime.canPerform() | Done | `canPerformAction` |
-| 5 | 错误事件：event-create-error, event-update-error | Done | `proposeEventCreate/Update` |
-| 6 | 添加 EventRuntime 集成测试 | Done | `EventRuntime.integration.test.ts` |
-| 7 | 更新 RFC-0005 状态 → Implemented | Pending | `docs/rfc/0005-calendar-component.md` |
+| #   | 任务                                                | 状态    | 文件                                  |
+| --- | --------------------------------------------------- | ------- | ------------------------------------- |
+| 1   | Calendar 添加 eventRuntime property (getter/setter) | Done    | `packages/calendar/src/Calendar.wsx`  |
+| 2   | 渲染集成：有 runtime 时 runtime.render() 增强       | Done    | `displayEvents` + views               |
+| 3   | 验证集成：创建/更新前 runtime.validate()            | Done    | `validateEventForCreate/Update`       |
+| 4   | 行为集成：拖拽/编辑/删除前 runtime.canPerform()     | Done    | `canPerformAction`                    |
+| 5   | 错误事件：event-create-error, event-update-error    | Done    | `proposeEventCreate/Update`           |
+| 6   | 添加 EventRuntime 集成测试                          | Done    | `EventRuntime.integration.test.ts`    |
+| 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `docs/rfc/0005-calendar-component.md` |
 
 ### 阶段 3: EventDataGenerator (RFC-0011) — **进行中**
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | 实现 EventDataGenerator 类 | Pending | `packages/event-dsl/src/generators/` |
-| 2 | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | — |
-| 3 | 添加测试 | Pending | — |
-| 4 | 导出到 event-dsl index.ts | Pending | `packages/event-dsl/src/index.ts` |
-| 5 | 更新 RFC-0011 状态 → Implemented | Pending | `docs/rfc/0011-*` |
+| #   | 任务                                     | 状态    | 文件                                 |
+| --- | ---------------------------------------- | ------- | ------------------------------------ |
+| 1   | 实现 EventDataGenerator 类               | Pending | `packages/event-dsl/src/generators/` |
+| 2   | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | —                                    |
+| 3   | 添加测试                                 | Pending | —                                    |
+| 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
+| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `docs/rfc/0011-*`                    |
 
 ---
 

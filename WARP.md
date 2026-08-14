@@ -36,7 +36,6 @@
 - C是斯巴达式语言，命名也应如此
 - 复杂性是万恶之源
 
-
 ### 技术栈
 
 #### 核心框架
@@ -72,7 +71,6 @@
 - **Event DSL**: 领域特定语言，用于定义事件类型和业务规则
 - **JSON Schema**: 用于 Event DSL 的验证规范
 - **自定义验证器**: 基于 JSON Schema 的运行时验证
-
 
 ### 核心理念
 
@@ -245,7 +243,7 @@
 4. **类型共享** - 通过 TypeScript 项目引用共享类型定义
 5. **测试隔离** - 每个包应有独立的测试套件
 
---------------------
+---
 
 # AI Agent Guide: WSXJS Component Development
 
@@ -260,35 +258,35 @@ import styles from "./Component.css?inline";
 
 @autoRegister({ tagName: "wsx-component-name" })
 export default class ComponentName extends WebComponent {
-    @state private count: number = 0;
+  @state private count: number = 0;
 
-    constructor() {
-        super({ styles, styleName: "wsx-component-name" });
-    }
+  constructor() {
+    super({ styles, styleName: "wsx-component-name" });
+  }
 
-    protected onConnected(): void {
-        super.onConnected(); // ✅ REQUIRED: Always call super lifecycle methods
-        
-        // Your initialization logic here
-    }
+  protected onConnected(): void {
+    super.onConnected(); // ✅ REQUIRED: Always call super lifecycle methods
 
-    protected onDisconnected(): void {
-        super.onDisconnected(); // ✅ REQUIRED: Always call super lifecycle methods
-        
-        // Your cleanup logic here
-    }
+    // Your initialization logic here
+  }
 
-    private handleClick = () => {
-        this.count++; // Automatically triggers rerender
-    };
+  protected onDisconnected(): void {
+    super.onDisconnected(); // ✅ REQUIRED: Always call super lifecycle methods
 
-    render() {
-        return (
-            <div class="container">
-                <button onClick={this.handleClick}>Count: {this.count}</button>
-            </div>
-        );
-    }
+    // Your cleanup logic here
+  }
+
+  private handleClick = () => {
+    this.count++; // Automatically triggers rerender
+  };
+
+  render() {
+    return (
+      <div class="container">
+        <button onClick={this.handleClick}>Count: {this.count}</button>
+      </div>
+    );
+  }
 }
 ```
 
@@ -306,12 +304,14 @@ export default class ComponentName extends WebComponent {
 ## WebComponent vs LightComponent
 
 ### WebComponent (Shadow DOM) - Use for:
+
 - ✅ Reusable UI components (buttons, inputs, cards, modals)
 - ✅ Need style isolation (automatic with Shadow DOM)
 - ✅ Component libraries
 - ✅ Leaf components (RFC-0006: Container-Light, Leaf-Shadow pattern)
 
 **Example**:
+
 ```tsx
 @autoRegister({ tagName: "wsx-button })
 export class Button extends WebComponent {
@@ -322,25 +322,27 @@ export class Button extends WebComponent {
 ```
 
 ### LightComponent (Light DOM) - Use for:
+
 - ✅ Third-party library integration (EditorJS, Chart.js, Maps)
 - ✅ Routing/layout components (`wsx-route`, `wsx-view`, `wsx-layout`)
 - ✅ Need global DOM access
 - ✅ Container components (RFC-0006: Container-Light, Leaf-Shadow pattern)
 
 **Example**:
+
 ```tsx
 @autoRegister({ tagName: "wsx-editor-wrapper" })
 export class EditorWrapper extends LightComponent {
-    constructor() {
-        super({ styles, styleName: "editor-wrapper" }); // Light DOM
-    }
-    
-    protected onConnected(): void {
-        super.onConnected(); // ✅ REQUIRED
-        
-        // Third-party library can access DOM normally
-        this.editor = new EditorJS({ holder: this.editorContainer });
-    }
+  constructor() {
+    super({ styles, styleName: "editor-wrapper" }); // Light DOM
+  }
+
+  protected onConnected(): void {
+    super.onConnected(); // ✅ REQUIRED
+
+    // Third-party library can access DOM normally
+    this.editor = new EditorJS({ holder: this.editorContainer });
+  }
 }
 ```
 
@@ -358,6 +360,7 @@ private increment() {
 ```
 
 **Key Points**:
+
 - ✅ `@state` automatically triggers rerender when state changes
 - ✅ Must provide initial value (ESLint and Babel enforce this)
 - ✅ Works with primitives, objects, and arrays
@@ -389,10 +392,10 @@ render() {
 // Sync with external state in lifecycle
 protected onConnected(): void {
     super.onConnected();
-    
+
     // Initialize from external source
     this.currentLanguage = i18nInstance.language || "en";
-    
+
     // Listen for external changes
     i18nInstance.on("languageChanged", (lang) => {
         this.currentLanguage = lang;  // Update reactive state
@@ -415,7 +418,7 @@ private selectLanguage = (languageCode: string): void => {
     this.currentLanguage = languageCode;
     this.isOpen = false;
     localStorage.setItem("wsx-language", languageCode);
-    
+
     // Async side effect (background)
     i18nInstance.changeLanguage(languageCode).catch(console.error);
 };
@@ -424,6 +427,7 @@ private selectLanguage = (languageCode: string): void => {
 ### State Initial Values (RFC-0013)
 
 **✅ Valid**:
+
 ```tsx
 @state private name = "";           // String
 @state private count = 0;           // Number
@@ -434,6 +438,7 @@ private selectLanguage = (languageCode: string): void => {
 ```
 
 **❌ Invalid** (ESLint/Babel will error):
+
 ```tsx
 @state private count;               // Missing initial value
 @state private user;                // Missing initial value
@@ -449,7 +454,7 @@ private selectLanguage = (languageCode: string): void => {
 ```tsx
 protected onConnected(): void {
     super.onConnected(); // ✅ REQUIRED - ESLint enforces this
-    
+
     // Your initialization logic
     this.setupEventListeners();
     this.initializeThirdPartyLibrary();
@@ -457,6 +462,7 @@ protected onConnected(): void {
 ```
 
 **Why it matters**:
+
 - Parent class/Mixin initialization logic runs
 - i18next decorator and other mixins initialize properly
 - Component state initializes correctly
@@ -466,7 +472,7 @@ protected onConnected(): void {
 ```tsx
 protected onDisconnected(): void {
     super.onDisconnected(); // ✅ REQUIRED
-    
+
     // Your cleanup logic
     this.cleanup();
     this.editor?.destroy();
@@ -478,7 +484,7 @@ protected onDisconnected(): void {
 ```tsx
 protected onRendered(): void {
     super.onRendered(); // ✅ REQUIRED if overridden
-    
+
     // DOM is ready, safe to access elements
     this.highlightCode();
     this.initializeChart();
@@ -490,7 +496,7 @@ protected onRendered(): void {
 ```tsx
 protected onAttributeChanged(name: string, oldValue: string, newValue: string): void {
     super.onAttributeChanged(name, oldValue, newValue); // ✅ REQUIRED if overridden
-    
+
     if (name === "disabled") {
         this.updateDisabledState(newValue === "true");
     }
@@ -515,6 +521,7 @@ render() {
 ```
 
 **Important** (RFC-0041):
+
 - ✅ Framework automatically calls ref callback with `null` when element is removed
 - ✅ Always check if ref is null before using: `if (this.buttonElement) { ... }`
 - ✅ Refs are cleared automatically on element removal
@@ -524,7 +531,7 @@ render() {
 ```tsx
 protected onDisconnected(): void {
     super.onDisconnected();
-    
+
     // Framework already cleared refs, but you can also manually clear
     this.buttonElement = undefined;
     this.dropdownElement = undefined;
@@ -534,6 +541,7 @@ protected onDisconnected(): void {
 ## DOM Caching and Updates (RFC-0037, RFC-0041)
 
 **Framework automatically handles**:
+
 - ✅ DOM element caching and reuse
 - Fine-grained updates (only changed elements update)
 - Element order preservation
@@ -541,6 +549,7 @@ protected onDisconnected(): void {
 - Ref callback cleanup
 
 **Developer responsibilities**:
+
 - ✅ Use consistent `key` props for list items
 - ✅ Use unique key prefixes for elements in different containers (RFC-0037)
 - ✅ Don't manually manipulate cached elements
@@ -558,12 +567,14 @@ protected onDisconnected(): void {
 // 5. Component-level counter (fallback)
 
 // ✅ Good: Use key for list items
-{items.map(item => (
-    <div key={item.id}>{item.name}</div>
-))}
+{
+  items.map((item) => <div key={item.id}>{item.name}</div>);
+}
 
 // ✅ Good: Stable keys for conditional rendering
-{isOpen && <div key="dropdown">Content</div>}
+{
+  isOpen && <div key="dropdown">Content</div>;
+}
 ```
 
 ### Cache Key Best Practices (RFC-0037)
@@ -603,6 +614,7 @@ protected onDisconnected(): void {
 ```
 
 **Why it matters**:
+
 - Framework uses cache keys to identify and reuse DOM elements
 - Duplicate keys in different containers cause elements to be moved incorrectly
 - Use semantic prefixes (`nav-`, `overflow-`, `main-`, `archived-`) to ensure uniqueness
@@ -614,10 +626,10 @@ import { defineConfig } from "vite";
 import { wsx } from "@wsxjs/vite-plugin";
 
 export default defineConfig({
-    build: {
-        cssCodeSplit: false, // ✅ REQUIRED for Shadow DOM
-    },
-    plugins: [wsx()], // ✅ REQUIRED - Auto-injects JSX pragma and handles .wsx files
+  build: {
+    cssCodeSplit: false, // ✅ REQUIRED for Shadow DOM
+  },
+  plugins: [wsx()], // ✅ REQUIRED - Auto-injects JSX pragma and handles .wsx files
 });
 ```
 
@@ -626,25 +638,36 @@ export default defineConfig({
 ### Container-Light, Leaf-Shadow Pattern
 
 **Container Components** (Light DOM):
+
 - Routing: `wsx-route`, `wsx-view`
 - Layout: `wsx-layout`, `wsx-section`
 - Third-party wrappers: `editor-wrapper`, `chart-container`
 
 **Leaf Components** (Shadow DOM):
+
 - UI controls: `wsx-button`, `wsx-input`, `wsx-dropdown`
 - Widgets: `wsx-modal`, `wsx-tooltip`, `wsx-card`
 
 **Example Structure**:
+
 ```tsx
-<wsx-route path="/dashboard">          {/* Container: Light DOM */}
-    <wsx-layout>                       {/* Container: Light DOM */}
-        <wsx-section class="header">  {/* Container: Light DOM */}
-            <wsx-button>Save</wsx-button>    {/* Leaf: Shadow DOM */}
-            <wsx-dropdown>                    {/* Leaf: Shadow DOM */}
-                <wsx-button>Edit</wsx-button> {/* Leaf: Shadow DOM */}
-            </wsx-dropdown>
-        </wsx-section>
-    </wsx-layout>
+<wsx-route path="/dashboard">
+  {" "}
+  {/* Container: Light DOM */}
+  <wsx-layout>
+    {" "}
+    {/* Container: Light DOM */}
+    <wsx-section class="header">
+      {" "}
+      {/* Container: Light DOM */}
+      <wsx-button>Save</wsx-button> {/* Leaf: Shadow DOM */}
+      <wsx-dropdown>
+        {" "}
+        {/* Leaf: Shadow DOM */}
+        <wsx-button>Edit</wsx-button> {/* Leaf: Shadow DOM */}
+      </wsx-dropdown>
+    </wsx-section>
+  </wsx-layout>
 </wsx-route>
 ```
 
@@ -783,20 +806,20 @@ components/
 import { MyComponent } from "./MyComponent";
 
 describe("MyComponent", () => {
-    let element: MyComponent;
-    
-    beforeEach(() => {
-        element = new MyComponent();
-        document.body.appendChild(element);
-    });
-    
-    afterEach(() => {
-        element.remove();
-    });
-    
-    test("renders correctly", () => {
-        expect(element.shadowRoot?.querySelector(".container")).toBeTruthy();
-    });
+  let element: MyComponent;
+
+  beforeEach(() => {
+    element = new MyComponent();
+    document.body.appendChild(element);
+  });
+
+  afterEach(() => {
+    element.remove();
+  });
+
+  test("renders correctly", () => {
+    expect(element.shadowRoot?.querySelector(".container")).toBeTruthy();
+  });
 });
 ```
 
@@ -1290,37 +1313,46 @@ n. [最终行动]
 任务文件模板
 
 # 上下文
+
 文件名：[任务文件名.md]
 创建于：[日期时间]
 创建者：[用户名/AI]
 关联协议：RIPER-5 + 多维 + 代理协议 + AI开发规范
 
 # 任务描述
+
 [用户提供的完整任务描述]
 
 # 项目概览
+
 [用户输入的项目详情或AI根据上下文自动推断的简要项目信息]
 
 以下部分由AI在协议执行期间维护
 
 # 分析（由研究模式填充）
+
 [代码调查结果、关键文件、依赖关系、约束等]
 
 # 建议的解决方案（由创新模式填充）
+
 ## 方案一：[方案名称]
+
 - 技术原理：[阐述底层技术和设计思想]
 - 实施步骤：[提供清晰、可操作的实施路径]
 - 风险分析：[评估潜在问题和解决策略]
 
 ## 方案二：[方案名称]
+
 - 技术原理：[阐述底层技术和设计思想]
 - 实施步骤：[提供清晰、可操作的实施路径]
 - 风险分析：[评估潜在问题和解决策略]
 
 ## 推荐方案
+
 [给出推荐方案和详细推荐理由]
 
 # 实施计划（由规划模式生成）
+
 [最终检查清单，包括详细步骤、文件路径、函数签名等]
 实施检查清单：
 
@@ -1328,9 +1360,13 @@ n. [最终行动]
 [具体行动2]
 …
 n. [最终行动]
+
 # 当前执行步骤（在执行模式开始步骤时更新）
+
 > 当前执行："[步骤编号和名称]"
+
 # 任务进度（在每个步骤完成后由执行模式追加）
+
 * [日期时间]
 * 步骤：[检查清单项编号和描述]
 * 修改：[文件和代码更改列表，包括报告的微小偏差修正]
@@ -1342,6 +1378,7 @@ n. [最终行动]
 * 步骤：...
 
 # 最终审查（由审查模式填充）
+
 [与最终计划的实施合规性评估摘要，是否发现未报告的偏差]
 
 自我检查清单
@@ -1397,15 +1434,12 @@ AI需主动提示预计耗时较长的任务，提前告知用户。
 
 高效使用Cursor的12条黄金法则
 
-
 1. 预设5-10条项目规则 让Cursor知道你的项目架构和约束条件，用/generate rules快速设定。 操作方法：使用/generate rules或手动设定5-10条规则（如技术栈、编码标准）。 关键要点：在.cursor/里存放设计文档，让AI理解整体架构。 例如：不想用var？就明确写“只用ES6语法”，别让 AI 乱来。
 2. 提示要像写迷你规格书 告诉Cursor用什么技术、怎么实现，要注意什么。模糊的提示=模糊的代码。 公式：技术栈 + 功能要求 + 限制条件 对比： • bad case：写个登录功能。 • good case：用React + TypeScript做OAuth2.0登录，不用第三方库，支持深色模式。
-3. 一次处理一个文件 把任务拆细，一个文件一个文件处理，省时省心。 流程：生成 → 测试 → 检查 → 下一个。 例子：做电商系统？先从“购物车组件”单独开发。
-4. 4. 先写测试，再写代码 写好测试锁定目标，让Cursor一直生成到所有测试通过。 TDD工作流：手写测试（比如Jest），让Cursor写代码直到测试全过。有错误就把报错扔回给AI。
+3. 一次处理一个文件 把任务拆细，一个文件一个文件处理，省时省心。 流程：生成 → 测试 → 检查 → 下一个。 例子：做电商系统？先从“购物车组件”单独开发。4. 4. 先写测试，再写代码 写好测试锁定目标，让Cursor一直生成到所有测试通过。 TDD工作流：手写测试（比如Jest），让Cursor写代码直到测试全过。有错误就把报错扔回给AI。
 5. 自己检查代码并修正 AI写错了你得认真检查，修正后告诉它“这才是对的”。 方法：改完后加@fixed标签教AI。 例子：AI漏了认证头？改好后说：“所有API必须加JWT认证”。
 6. 用@命令锁定范围 让Cursor专注正确的代码区域，不跑偏。 实用命令： • @src/components：限定改动范围。 • @git#main#：对比主分支。 • @file:utils.js：只改这个文件。
-7. 把文档放.cursor/文件夹 提供完整背景，AI就知道下一步该干什么。 做法：架构图放.cursor/docs，代码更新时同步更新文档。
-8. 8. 代码错了别废话，直接改 AI从你的改动中学习比解释快10倍。 真理：动手改 > 动嘴说 例子：改掉低效算法并注释“用快排别用冒泡”。
+7. 把文档放.cursor/文件夹 提供完整背景，AI就知道下一步该干什么。 做法：架构图放.cursor/docs，代码更新时同步更新文档。8. 8. 代码错了别废话，直接改 AI从你的改动中学习比解释快10倍。 真理：动手改 > 动嘴说 例子：改掉低效算法并注释“用快排别用冒泡”。
 9. 用聊天记录持续迭代 以前的提示可以回头用，不用重写。 小技巧： • 用/history找旧对话。 • 常用提示保存成模板。
 10. 选对模型干对事 不同情况用不同模型，才能发挥最佳效果。 • Gemini：算法精准度高。 • Claude：创意任务更强（UI、文案）。
 11. 新技术就贴文档 遇到陌生的技术栈，直接贴文档让Cursor解释。 示例： • @https://文档地址：详细解释useEffect依赖更新问题。
@@ -1435,16 +1469,17 @@ AI需主动提示预计耗时较长的任务，提前告知用户。
 
 - **构建工具**: Vite
 - **输出格式**: 双格式输出（CommonJS + ESM）
-- CommonJS: `.js` 文件
-- ESM: `.mjs` 文件
-- TypeScript 声明: `.d.ts` 文件
-- Source Maps: `.js.map` 文件
+  - CommonJS: `.js` 文件
+  - ESM: `.mjs` 文件
+  - TypeScript 声明: `.d.ts` 文件
+  - Source Maps: `.js.map` 文件
 
 #### 构建输出结构
 
 For example:
 
 **@wukong/compiler**:
+
 ```
 dist/
 ├── index.js # CommonJS format
@@ -1454,6 +1489,7 @@ dist/
 ```
 
 **@wukong/cli**:
+
 ```
 dist/
 ├── bin/
@@ -1471,18 +1507,18 @@ dist/
 
 ```json
 {
-"exports": {
-".": {
-"import": {
-"types": "./dist/index.d.ts",
-"default": "./dist/index.mjs"
-},
-"require": {
-"types": "./dist/index.d.ts",
-"default": "./dist/index.js"
-}
-}
-}
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  }
 }
 ```
 
@@ -1518,9 +1554,9 @@ pnpm build
 
 ```json
 {
-"dependencies": {
-"@wukong/compiler": "workspace:*"
-}
+  "dependencies": {
+    "@wukong/compiler": "workspace:*"
+  }
 }
 ```
 
@@ -1531,6 +1567,7 @@ pnpm build
 ### 🏆 黄金法则：100% 测试覆盖率 + 100% 测试通过率是强制要求
 
 **双重铁律：**
+
 1. **每一行代码都必须有 100% 的测试覆盖率。没有例外。没有借口。**
 2. **所有测试必须运行并且 100% 通过才能声明任何任务/步骤完成。**
 
@@ -1572,6 +1609,7 @@ statements: 100
 #### 排除项
 
 只有以下内容被排除在覆盖率之外：
+
 - `node_modules/`
 - `dist/` (构建输出)
 - `__tests__/` (测试文件本身)
@@ -1641,25 +1679,25 @@ packages/compiler/
 ### 测试结构示例
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { functionToTest } from '../../src/module/file';
+import { describe, it, expect } from "vitest";
+import { functionToTest } from "../../src/module/file";
 
-describe('ModuleName', () => {
-describe('functionToTest', () => {
-it('should handle normal case', () => {
-const result = functionToTest('input');
-expect(result).toBe('expected');
-});
+describe("ModuleName", () => {
+  describe("functionToTest", () => {
+    it("should handle normal case", () => {
+      const result = functionToTest("input");
+      expect(result).toBe("expected");
+    });
 
-it('should handle edge case', () => {
-const result = functionToTest('');
-expect(result).toBe('');
-});
+    it("should handle edge case", () => {
+      const result = functionToTest("");
+      expect(result).toBe("");
+    });
 
-it('should throw error on invalid input', () => {
-expect(() => functionToTest(null)).toThrow();
-});
-});
+    it("should throw error on invalid input", () => {
+      expect(() => functionToTest(null)).toThrow();
+    });
+  });
 });
 ```
 
@@ -1712,6 +1750,7 @@ expect(() => functionToTest(null)).toThrow();
 
 ```markdown
 **黄金法则 (Golden Rules)**:
+
 - **100% 测试覆盖率是强制要求**：所有代码必须达到 100% 的测试覆盖率（lines, functions, branches, statements）。没有测试的代码不允许提交。这是项目的铁律，没有例外。
 ```
 
@@ -1722,6 +1761,7 @@ expect(() => functionToTest(null)).toThrow();
 #### 4. 范围 (Scope)
 
 明确说明：
+
 - **In-Scope**: 本 RFC 包含的内容
 - **Out-of-Scope**: 本 RFC 不包含的内容
 
@@ -1742,37 +1782,39 @@ expect(() => functionToTest(null)).toThrow();
 1. **分阶段组织**: 实施计划必须分为多个阶段（阶段一、阶段二...）
 2. **每个阶段包含多个步骤**: 每个阶段必须包含多个具体的步骤（步骤 X.1, 步骤 X.2...）
 3. **步骤必须具体**: 每个步骤必须包含：
-- 明确的文件路径
-- 具体的函数/类名称
-- 详细的实现说明
-- 预期输出
+   - 明确的文件路径
+   - 具体的函数/类名称
+   - 详细的实现说明
+   - 预期输出
 
 ##### 每个步骤的测试要求
 
 **强制要求**: 每个实施步骤完成后，必须满足以下条件：
 
 1. **100% 测试覆盖率**:
-- 该步骤实现的所有代码必须达到 100% 覆盖率（lines, functions, branches, statements）
-- 测试必须在该步骤完成时编写并通过
+   - 该步骤实现的所有代码必须达到 100% 覆盖率（lines, functions, branches, statements）
+   - 测试必须在该步骤完成时编写并通过
 
 2. **测试必须运行**:
+
 - **强制要求**: 必须实际运行测试命令 `pnpm test` 或 `pnpm nx run-many --target=test --all`
-- 不允许跳过测试或使用任何绕过机制
-- 测试运行结果必须被验证
+  - 不允许跳过测试或使用任何绕过机制
+  - 测试运行结果必须被验证
 
 3. **100% 测试通过率**:
-- 运行 `pnpm test` 必须全部通过
+   - 运行 `pnpm test` 必须全部通过
+
 - **零失败、零错误**：不允许有任何失败的测试
-- 测试退出码必须为 0（成功）
+  - 测试退出码必须为 0（成功）
 
 4. **步骤完成标准（所有条件必须满足）**:
-- ✅ 代码实现完成
-- ✅ 测试编写完成（100% 覆盖率）
-- ✅ **测试已运行**（必须执行测试命令）
-- ✅ **所有测试 100% 通过**（零失败、零错误）
-- ✅ 覆盖率报告验证 100% 覆盖率
-- ✅ 代码审查通过（如适用）
-- ✅ **只有满足以上所有条件，才能声明步骤完成**
+   - ✅ 代码实现完成
+   - ✅ 测试编写完成（100% 覆盖率）
+   - ✅ **测试已运行**（必须执行测试命令）
+   - ✅ **所有测试 100% 通过**（零失败、零错误）
+   - ✅ 覆盖率报告验证 100% 覆盖率
+   - ✅ 代码审查通过（如适用）
+   - ✅ **只有满足以上所有条件，才能声明步骤完成**
 
 ##### 实施计划示例
 
@@ -1780,15 +1822,16 @@ expect(() => functionToTest(null)).toThrow();
 ### 实施计划 (Implementation Plan)
 
 1. **阶段一：基础扩展框架搭建 (在 Monorepo 内)**
-* **步骤 1.1**: 在 `packages/` 目录下，创建 `vscode-extension` 包。
-* ✅ 完成标准: 包创建完成，`package.json` 配置正确
-* ✅ 测试要求: 无（目录创建，无需测试）
-* **步骤 1.2**: 配置其 `package.json`，定义扩展名称 (`wukong-dsl`)、语言ID (`wukong-dsl`) 和文件关联 (`.dsl`)。
-* ✅ 完成标准: `package.json` 配置完成，符合 VSCode 扩展规范
-* ✅ 测试要求: 编写测试验证 `package.json` 结构正确性（100% 覆盖率）
-* **步骤 1.3**: 实现基础语法高亮。在 `packages/vscode-extension/syntaxes/` 目录下创建 `wukong.tmLanguage.json` 文件。
-* ✅ 完成标准: 语法文件创建完成，支持所有 DSL 关键字
-* ✅ 测试要求: 编写测试验证语法文件格式正确性（100% 覆盖率）
+
+- **步骤 1.1**: 在 `packages/` 目录下，创建 `vscode-extension` 包。
+  * ✅ 完成标准: 包创建完成，`package.json` 配置正确
+  * ✅ 测试要求: 无（目录创建，无需测试）
+- **步骤 1.2**: 配置其 `package.json`，定义扩展名称 (`wukong-dsl`)、语言ID (`wukong-dsl`) 和文件关联 (`.dsl`)。
+  * ✅ 完成标准: `package.json` 配置完成，符合 VSCode 扩展规范
+  * ✅ 测试要求: 编写测试验证 `package.json` 结构正确性（100% 覆盖率）
+- **步骤 1.3**: 实现基础语法高亮。在 `packages/vscode-extension/syntaxes/` 目录下创建 `wukong.tmLanguage.json` 文件。
+  * ✅ 完成标准: 语法文件创建完成，支持所有 DSL 关键字
+  * ✅ 测试要求: 编写测试验证语法文件格式正确性（100% 覆盖率）
 ```
 
 ### RFC 状态流转
@@ -1851,6 +1894,7 @@ expect(() => functionToTest(null)).toThrow();
 ```
 
 **颜色方案说明**：
+
 - `primaryColor`: #1e88e5 (蓝色) - 用于主要元素（Event Data Model）
 - `secondaryColor`: #ff9800 (橙色) - 用于次要元素（Event DSL）
 - `tertiaryColor`: #4caf50 (绿色) - 用于第三类元素（Calendar 组件）
@@ -1879,6 +1923,7 @@ graph LR
 #### Mermaid 语法验证
 
 **必须验证的语法**：
+
 1. 所有图表必须使用正确的 Mermaid 语法
 2. 节点 ID 必须唯一
 3. 箭头语法必须正确（`-->`, `-.->`, `==>` 等）
@@ -1886,12 +1931,14 @@ graph LR
 5. 样式语法必须正确
 
 **验证工具**：
+
 - 使用 Mermaid Live Editor (https://mermaid.live/) 验证语法
 - 在提交前检查图表是否能在暗色模式下正确显示
 
 #### 图表类型规范
 
 **支持的图表类型**：
+
 - `graph` / `graph LR` / `graph TB` - 流程图
 - `flowchart` - 流程图（新语法）
 - `stateDiagram-v2` - 状态图
@@ -1899,6 +1946,7 @@ graph LR
 - `classDiagram` - 类图
 
 **不推荐使用的图表类型**：
+
 - `gantt` - 甘特图（除非必要）
 - `pie` - 饼图（除非必要）
 

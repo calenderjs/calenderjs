@@ -19,13 +19,13 @@ pnpm add @calenderjs/core
 ## 使用示例
 
 ```typescript
-import type { User } from '@calenderjs/core';
-import { /* 工具函数 */ } from '@calenderjs/core';
+import type { User } from "@calenderjs/core";
+import {} from /* 工具函数 */ "@calenderjs/core";
 
 const user: User = {
-  id: '1',
-  email: 'user@example.com',
-  role: 'user',
+  id: "1",
+  email: "user@example.com",
+  role: "user",
 };
 ```
 
@@ -41,9 +41,9 @@ const user: User = {
 Calendar 组件通过 `@calenderjs/calendar` 导入：
 
 ```typescript
-import { Calendar } from '@calenderjs/calendar';
+import { Calendar } from "@calenderjs/calendar";
 // 或 React
-import { Calendar } from '@calenderjs/react';
+import { Calendar } from "@calenderjs/react";
 ```
 
 ## 相关包

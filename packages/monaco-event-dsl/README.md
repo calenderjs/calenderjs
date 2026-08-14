@@ -75,9 +75,9 @@ registerEventDSL(monaco);
 
 // 创建编辑器
 const editor = monaco.editor.create(document.getElementById("container"), {
-    value: 'type: meeting\nname: "团队会议"',
-    language: "event-dsl",
-    theme: "event-dsl-theme",
+  value: 'type: meeting\nname: "团队会议"',
+  language: "event-dsl",
+  theme: "event-dsl-theme",
 });
 ```
 
@@ -86,15 +86,18 @@ const editor = monaco.editor.create(document.getElementById("container"), {
 ### `registerEventDSL(monaco: MonacoInstance): void`
 
 注册 Event DSL 语言到 Monaco Editor。此函数会：
+
 1. 注册 `event-dsl` 语言 ID
 2. 配置语法高亮规则（Monarch Tokenizer）
 3. 注册自动完成提供者
 4. 定义浅色和暗色主题（`event-dsl-theme` 和 `event-dsl-theme-dark`）
 
 **参数：**
+
 - `monaco`: Monaco Editor 实例，包含 `editor` 和 `languages` 对象
 
-**注意：** 
+**注意：**
+
 - 此函数是幂等的，多次调用只会注册一次
 - 此包不包含 Monaco Editor 本身，需要单独安装 `monaco-editor`
 - 可以在任何使用 Monaco Editor 的项目中使用（React、Vue、原生 JS 等）
@@ -135,7 +138,7 @@ const editor = monaco.editor.create(document.getElementById("container"), {
 import type { MonacoInstance } from "@calenderjs/monaco-event-dsl";
 
 function setupEditor(monaco: MonacoInstance) {
-    registerEventDSL(monaco);
+  registerEventDSL(monaco);
 }
 ```
 

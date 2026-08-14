@@ -15,6 +15,7 @@
 2. **演示网站 `apps/demo-calenderjs-react`**：基于 React + Vite 的演示网站，展示如何使用 `@calenderjs/react` 包，提供组件使用示例、DSL 配置演示和交互式体验。
 
 **重要说明**：
+
 - **React 包**：创建一个独立的 React 包，暴露 Calendar 组件
 - **演示网站**：创建一个演示网站展示 React 包的使用方式
 - **消费 RFC-0001**：React 包和演示网站都使用 RFC-0001 定义的 `@calenderjs/calendar` 组件和 Event DSL
@@ -62,6 +63,7 @@ packages/react/
 ```
 
 **包依赖**：
+
 ```json
 {
   "name": "@calenderjs/react",
@@ -102,6 +104,7 @@ apps/demo-calenderjs-react/
 ```
 
 **演示网站依赖**：
+
 ```json
 {
   "name": "demo-calenderjs-react",
@@ -255,9 +258,9 @@ Calendar.displayName = 'Calendar';
 
 ```typescript
 // packages/react/src/hooks/useCalendar.ts
-import { useState, useCallback, useMemo } from 'react';
-import { Event, EventTypeAST, User } from '@calenderjs/core';
-import { parseEventDSL } from '@calenderjs/event-dsl';
+import { useState, useCallback, useMemo } from "react";
+import { Event, EventTypeAST, User } from "@calenderjs/core";
+import { parseEventDSL } from "@calenderjs/event-dsl";
 
 export function useCalendar(dslText: string, initialUser?: User) {
   const [events, setEvents] = useState<Event[]>([]);
@@ -268,26 +271,26 @@ export function useCalendar(dslText: string, initialUser?: User) {
     try {
       return parseEventDSL(dslText);
     } catch (error) {
-      console.error('Failed to parse DSL:', error);
+      console.error("Failed to parse DSL:", error);
       return null;
     }
   }, [dslText]);
 
   // 添加事件
   const addEvent = useCallback((event: Event) => {
-    setEvents(prev => [...prev, event]);
+    setEvents((prev) => [...prev, event]);
   }, []);
 
   // 更新事件
   const updateEvent = useCallback((id: string, updates: Partial<Event>) => {
-    setEvents(prev =>
-      prev.map(event => (event.id === id ? { ...event, ...updates } : event))
+    setEvents((prev) =>
+      prev.map((event) => (event.id === id ? { ...event, ...updates } : event)),
     );
   }, []);
 
   // 删除事件
   const deleteEvent = useCallback((id: string) => {
-    setEvents(prev => prev.filter(event => event.id !== id));
+    setEvents((prev) => prev.filter((event) => event.id !== id));
   }, []);
 
   return {
@@ -307,10 +310,10 @@ export function useCalendar(dslText: string, initialUser?: User) {
 
 ```typescript
 // packages/react/src/index.ts
-export { Calendar } from './Calendar';
-export type { CalendarProps, CalendarRef } from './Calendar';
-export { useCalendar } from './hooks/useCalendar';
-export * from '@calenderjs/core';
+export { Calendar } from "./Calendar";
+export type { CalendarProps, CalendarRef } from "./Calendar";
+export { useCalendar } from "./hooks/useCalendar";
+export * from "@calenderjs/core";
 ```
 
 ### 3. 演示网站功能
@@ -333,24 +336,30 @@ export * from '@calenderjs/core';
 
 ```typescript
 // packages/react/vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { resolve } from "path";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'CalenderJSReact',
-      formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
+      entry: resolve(__dirname, "src/index.ts"),
+      name: "CalenderJSReact",
+      formats: ["es", "cjs"],
+      fileName: (format) => `index.${format === "es" ? "js" : "cjs"}`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@calenderjs/calendar', '@calenderjs/event-dsl', '@calenderjs/core'],
+      external: [
+        "react",
+        "react-dom",
+        "@calenderjs/calendar",
+        "@calenderjs/event-dsl",
+        "@calenderjs/core",
+      ],
       output: {
         globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
+          react: "React",
+          "react-dom": "ReactDOM",
         },
       },
     },
@@ -363,19 +372,19 @@ export default defineConfig({
 
 ```typescript
 // apps/demo-calenderjs-react/vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    outDir: 'dist',
+    outDir: "dist",
   },
 });
 ```
@@ -392,8 +401,8 @@ export default defineConfig({
 #### 5.2 基础使用示例（BasicExample.tsx）
 
 ```tsx
-import { Calendar } from '@calenderjs/react';
-import { Event } from '@calenderjs/core';
+import { Calendar } from "@calenderjs/react";
+import { Event } from "@calenderjs/core";
 
 function BasicExample() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -406,13 +415,13 @@ function BasicExample() {
       onEventCreate={(event) => {
         const newEvent: Event = {
           id: Date.now().toString(),
-          type: 'meeting',
-          title: event.title || '新事件',
+          type: "meeting",
+          title: event.title || "新事件",
           startTime: event.startTime || new Date(),
           endTime: event.endTime || new Date(),
           data: event.data || {},
         };
-        setEvents(prev => [...prev, newEvent]);
+        setEvents((prev) => [...prev, newEvent]);
       }}
     />
   );
@@ -437,6 +446,7 @@ function BasicExample() {
 ### 阶段 1: React 组件包（3 天）
 
 **Day 1-2**：
+
 1. 创建 `packages/react` 包结构
 2. 实现 Calendar React 组件（包装 wsx-calendar）
 3. 实现 useCalendar Hook
@@ -444,6 +454,7 @@ function BasicExample() {
 5. 配置构建（Vite）
 
 **Day 3**：
+
 1. 编写单元测试
 2. 编写文档
 3. 发布包
@@ -451,12 +462,14 @@ function BasicExample() {
 ### 阶段 2: 演示网站（2 天）
 
 **Day 1**：
+
 1. 创建 `apps/demo-calenderjs-react` 项目
 2. 配置 Vite + React
 3. 配置 React Router
 4. 创建基础页面结构
 
 **Day 2**：
+
 1. 实现基础使用示例
 2. 实现 DSL 使用示例
 3. 实现高级功能示例
@@ -480,8 +493,8 @@ WSX 组件是基于 Web Components 标准的，可以在 React 中直接使用�
 
 ```tsx
 // React 组件中使用 WSX Calendar 组件
-import { useEffect, useRef } from 'react';
-import '@calenderjs/calendar'; // 注册 Web Component
+import { useEffect, useRef } from "react";
+import "@calenderjs/calendar"; // 注册 Web Component
 
 function CalendarPage() {
   const calendarRef = useRef<HTMLElement>(null);
@@ -489,15 +502,15 @@ function CalendarPage() {
   useEffect(() => {
     // 获取 Web Component 实例
     const calendar = calendarRef.current as any;
-    
+
     // 设置 DSL 配置
     calendar.eventDSL = meetingDSL;
-    
+
     // 设置事件数据
     calendar.events = events;
-    
+
     // 监听事件
-    calendar.addEventListener('event-create', handleEventCreate);
+    calendar.addEventListener("event-create", handleEventCreate);
   }, []);
 
   return (
@@ -517,22 +530,33 @@ function CalendarPage() {
 
 ```tsx
 // CalendarWrapper.tsx
-import { useEffect, useRef, forwardRef } from 'react';
-import '@calenderjs/calendar';
-import { Event, EventTypeAST, User } from '@calenderjs/core';
+import { useEffect, useRef, forwardRef } from "react";
+import "@calenderjs/calendar";
+import { Event, EventTypeAST, User } from "@calenderjs/core";
 
 interface CalendarWrapperProps {
   eventDSL: string | EventTypeAST | EventTypeAST[];
   events: Event[];
   user?: User;
-  defaultView?: 'month' | 'week' | 'day';
+  defaultView?: "month" | "week" | "day";
   onEventCreate?: (event: Partial<Event>) => void;
   onEventUpdate?: (id: string, event: Partial<Event>) => void;
   onEventDelete?: (id: string) => void;
 }
 
 export const CalendarWrapper = forwardRef<HTMLElement, CalendarWrapperProps>(
-  ({ eventDSL, events, user, defaultView, onEventCreate, onEventUpdate, onEventDelete }, ref) => {
+  (
+    {
+      eventDSL,
+      events,
+      user,
+      defaultView,
+      onEventCreate,
+      onEventUpdate,
+      onEventDelete,
+    },
+    ref,
+  ) => {
     const calendarRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
@@ -547,17 +571,17 @@ export const CalendarWrapper = forwardRef<HTMLElement, CalendarWrapperProps>(
 
       // 监听事件
       if (onEventCreate) {
-        calendar.addEventListener('event-create', (e: CustomEvent) => {
+        calendar.addEventListener("event-create", (e: CustomEvent) => {
           onEventCreate(e.detail);
         });
       }
       if (onEventUpdate) {
-        calendar.addEventListener('event-update', (e: CustomEvent) => {
+        calendar.addEventListener("event-update", (e: CustomEvent) => {
           onEventUpdate(e.detail.id, e.detail.event);
         });
       }
       if (onEventDelete) {
-        calendar.addEventListener('event-delete', (e: CustomEvent) => {
+        calendar.addEventListener("event-delete", (e: CustomEvent) => {
           onEventDelete(e.detail.id);
         });
       }
@@ -565,11 +589,19 @@ export const CalendarWrapper = forwardRef<HTMLElement, CalendarWrapperProps>(
       return () => {
         // 清理事件监听器
         if (onEventCreate) {
-          calendar.removeEventListener('event-create', onEventCreate);
+          calendar.removeEventListener("event-create", onEventCreate);
         }
         // ...
       };
-    }, [eventDSL, events, user, defaultView, onEventCreate, onEventUpdate, onEventDelete]);
+    }, [
+      eventDSL,
+      events,
+      user,
+      defaultView,
+      onEventCreate,
+      onEventUpdate,
+      onEventDelete,
+    ]);
 
     return (
       <wsx-calendar
@@ -580,7 +612,7 @@ export const CalendarWrapper = forwardRef<HTMLElement, CalendarWrapperProps>(
         default-view={defaultView}
       />
     );
-  }
+  },
 );
 ```
 
@@ -588,10 +620,10 @@ export const CalendarWrapper = forwardRef<HTMLElement, CalendarWrapperProps>(
 
 ```tsx
 // App.tsx
-import { useState } from 'react';
-import { CalendarWrapper } from './components/CalendarWrapper';
-import { Event } from '@calenderjs/core';
-import { parseEventDSL } from '@calenderjs/event-dsl';
+import { useState } from "react";
+import { CalendarWrapper } from "./components/CalendarWrapper";
+import { Event } from "@calenderjs/core";
+import { parseEventDSL } from "@calenderjs/event-dsl";
 
 const meetingDSL = `
 type: meeting
@@ -612,13 +644,13 @@ display:
 
 function App() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [user] = useState({ id: '1', email: 'user@example.com', role: 'user' });
+  const [user] = useState({ id: "1", email: "user@example.com", role: "user" });
 
   const handleEventCreate = (event: Partial<Event>) => {
     const newEvent: Event = {
       id: Date.now().toString(),
-      type: 'meeting',
-      title: event.title || '新事件',
+      type: "meeting",
+      title: event.title || "新事件",
       startTime: event.startTime || new Date(),
       endTime: event.endTime || new Date(),
       data: event.data || {},
@@ -655,4 +687,4 @@ function App() {
 
 ---
 
-*本 RFC 定义了一个 React 组件包 `@calenderjs/react` 和一个演示网站 `apps/demo-calenderjs-react`，用于为 React 开发者提供便捷的 Calendar 组件封装和使用示例。*
+_本 RFC 定义了一个 React 组件包 `@calenderjs/react` 和一个演示网站 `apps/demo-calenderjs-react`，用于为 React 开发者提供便捷的 Calendar 组件封装和使用示例。_

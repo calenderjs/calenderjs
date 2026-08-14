@@ -34,7 +34,7 @@ Event Data Model - Single Source of Truth (SSOT) for Event data structures.
 ### 1. Event 接口和类型
 
 ```typescript
-import { Event, EventMetadata } from '@calenderjs/event-model';
+import { Event, EventMetadata } from "@calenderjs/event-model";
 
 const event: Event = {
   id: "event-1",
@@ -44,15 +44,15 @@ const event: Event = {
   endTime: new Date("2025-01-15T11:00:00"),
   data: {
     attendees: ["user1@example.com"],
-    location: "会议室 A"
-  }
+    location: "会议室 A",
+  },
 };
 ```
 
 ### 2. Event JSON Schema
 
 ```typescript
-import { EVENT_BASE_SCHEMA } from '@calenderjs/event-model';
+import { EVENT_BASE_SCHEMA } from "@calenderjs/event-model";
 
 // EVENT_BASE_SCHEMA 定义了 Event 接口的 JSON Schema
 // 用于验证 Event 对象的基本结构
@@ -62,8 +62,8 @@ console.log(EVENT_BASE_SCHEMA);
 ### 3. Event 验证器
 
 ```typescript
-import { EventValidator, EVENT_BASE_SCHEMA } from '@calenderjs/event-model';
-import type { Event } from '@calenderjs/event-model';
+import { EventValidator, EVENT_BASE_SCHEMA } from "@calenderjs/event-model";
+import type { Event } from "@calenderjs/event-model";
 
 const validator = new EventValidator();
 
@@ -74,12 +74,12 @@ const event: Event = {
   title: "团队会议",
   startTime: new Date("2025-01-15T10:00:00"),
   endTime: new Date("2025-01-15T11:00:00"),
-  data: {}
+  data: {},
 };
 
 const result = validator.validateBase(event);
 if (!result.valid) {
-  console.error('验证失败:', result.errors);
+  console.error("验证失败:", result.errors);
 }
 ```
 
@@ -88,11 +88,11 @@ if (!result.valid) {
 ### 在 calendar 包中使用
 
 ```typescript
-import type { Event } from '@calenderjs/event-model';
+import type { Event } from "@calenderjs/event-model";
 
 export class Calendar {
   private events: Event[] = [];
-  
+
   addEvent(event: Event) {
     this.events.push(event);
   }
@@ -102,7 +102,7 @@ export class Calendar {
 ### 在 event-dsl 包中使用
 
 ```typescript
-import type { Event } from '@calenderjs/event-model';
+import type { Event } from "@calenderjs/event-model";
 
 export class EventRuntime {
   validate(event: Event): ValidationResult {

@@ -20,12 +20,12 @@ pnpm add @calenderjs/date-time
 
 ```typescript
 import {
-    getMonthStart,
-    getMonthEnd,
-    getWeekDates,
-    isSameDay,
-    formatDateKey,
-    getTimeString,
+  getMonthStart,
+  getMonthEnd,
+  getWeekDates,
+  isSameDay,
+  formatDateKey,
+  getTimeString,
 } from "@calenderjs/date-time";
 
 // 支持 Date 对象

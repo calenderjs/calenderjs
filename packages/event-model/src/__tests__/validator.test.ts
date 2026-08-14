@@ -464,7 +464,7 @@ describe("EventValidator", () => {
 
       const result = validator.validateBase(event);
       expect(result.valid).toBe(true);
-      
+
       // 验证 JSON 转换（通过 validateBase 内部调用 eventToJson）
       // 如果验证通过，说明转换正确
       expect(result.errors).toEqual([]);

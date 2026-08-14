@@ -25,12 +25,12 @@
 
 ## 术语约定
 
-| 术语 | 含义 |
-|------|------|
-| **Event** | 技术数据模型（`Event { id, type, title, startTime, endTime, data, ... }`） |
-| **Appointment / Holiday / Task** | 业务概念，都是 Event 的具体类型（`Event.type = "meeting"` 等） |
-| **EventRuntime** | DSL 编译后的运行时实例，提供 validate / render / canPerform |
-| **data** | `Event.data: Record<string, any>` — DSL fields 定义的业务数据容器 |
+| 术语                             | 含义                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------- |
+| **Event**                        | 技术数据模型（`Event { id, type, title, startTime, endTime, data, ... }`） |
+| **Appointment / Holiday / Task** | 业务概念，都是 Event 的具体类型（`Event.type = "meeting"` 等）             |
+| **EventRuntime**                 | DSL 编译后的运行时实例，提供 validate / render / canPerform                |
+| **data**                         | `Event.data: Record<string, any>` — DSL fields 定义的业务数据容器          |
 
 ## 动机
 
@@ -52,25 +52,25 @@ Calendar API 分三层，遵循 Web Components 标准（RFC-0008）：
 <wsx-calendar view="month" date="2026-03-15"></wsx-calendar>
 ```
 
-| Attribute | 类型 | 默认值 | 说明 |
-|-----------|------|--------|------|
-| `view` | `'month' \| 'week' \| 'day'` | `'month'` | 初始/当前视图 |
-| `date` | ISO 8601 字符串 | 当前日期 | 初始/当前显示日期 |
+| Attribute | 类型                         | 默认值    | 说明              |
+| --------- | ---------------------------- | --------- | ----------------- |
+| `view`    | `'month' \| 'week' \| 'day'` | `'month'` | 初始/当前视图     |
+| `date`    | ISO 8601 字符串              | 当前日期  | 初始/当前显示日期 |
 
 #### 2. JavaScript Properties（复杂数据）
 
 ```typescript
-const calendar = document.querySelector('wsx-calendar') as Calendar;
-calendar.events = events;              // Event[] - 事件数据
-calendar.user = currentUser;           // User - 当前用户
-calendar.eventRuntime = runtime;       // EventRuntime - DSL 运行时（可选）
+const calendar = document.querySelector("wsx-calendar") as Calendar;
+calendar.events = events; // Event[] - 事件数据
+calendar.user = currentUser; // User - 当前用户
+calendar.eventRuntime = runtime; // EventRuntime - DSL 运行时（可选）
 ```
 
-| Property | 类型 | 必需 | 说明 |
-|----------|------|------|------|
-| `events` | `Event[]` | 是 | 事件列表（数据模型） |
-| `user` | `User` | 否 | 当前用户（权限验证用） |
-| `eventRuntime` | `EventRuntime` | 否 | DSL 运行时（启用 DSL 驱动模式） |
+| Property       | 类型           | 必需 | 说明                            |
+| -------------- | -------------- | ---- | ------------------------------- |
+| `events`       | `Event[]`      | 是   | 事件列表（数据模型）            |
+| `user`         | `User`         | 否   | 当前用户（权限验证用）          |
+| `eventRuntime` | `EventRuntime` | 否   | DSL 运行时（启用 DSL 驱动模式） |
 
 **实现方式**：getter/setter 模式，setter 中处理 JSON string 和 object 两种输入。
 
@@ -89,14 +89,14 @@ calendar.eventRuntime = runtime;       // EventRuntime - DSL 运行时（可选�
 
 所有事件使用 `CustomEvent`，`bubbles: true` + `composed: true`（穿透 Shadow DOM）。
 
-| 事件名 | detail 类型 | 触发时机 |
-|--------|------------|---------|
-| `date-change` | `{ date: Date }` | 日期导航 |
-| `view-change` | `{ view: string }` | 视图切换 |
-| `event-click` | `{ event: Event }` | 点击事件块 |
-| `event-create` | `{ event: Event }` | 创建事件 |
-| `event-update` | `{ id: string, event: Event }` | 更新事件 |
-| `event-delete` | `{ id: string }` | 删除事件 |
+| 事件名         | detail 类型                    | 触发时机   |
+| -------------- | ------------------------------ | ---------- |
+| `date-change`  | `{ date: Date }`               | 日期导航   |
+| `view-change`  | `{ view: string }`             | 视图切换   |
+| `event-click`  | `{ event: Event }`             | 点击事件块 |
+| `event-create` | `{ event: Event }`             | 创建事件   |
+| `event-update` | `{ id: string, event: Event }` | 更新事件   |
+| `event-delete` | `{ id: string }`               | 删除事件   |
 
 ### 公共方法
 
@@ -113,32 +113,32 @@ deleteEvent(id: string): { success: boolean; error?: string }
 #### 模式 A：DSL 驱动（提供 EventRuntime）
 
 ```typescript
-import { EventDSLCompiler } from '@calenderjs/event-dsl';
-import { EventRuntime } from '@calenderjs/event-runtime';
+import { EventDSLCompiler } from "@calenderjs/event-dsl";
+import { EventRuntime } from "@calenderjs/event-runtime";
 
 const compiler = new EventDSLCompiler();
 const dataModel = compiler.compileDSL(meetingDSL);
 const runtime = new EventRuntime(dataModel.types[0]);
 
-const calendar = document.querySelector('wsx-calendar');
+const calendar = document.querySelector("wsx-calendar");
 calendar.events = events;
 calendar.user = currentUser;
-calendar.eventRuntime = runtime;   // 启用 DSL 驱动
+calendar.eventRuntime = runtime; // 启用 DSL 驱动
 ```
 
 DSL 驱动时，Calendar 的行为变化：
 
-| 能力 | 无 DSL | 有 DSL |
-|------|--------|--------|
+| 能力     | 无 DSL                                     | 有 DSL                                                          |
+| -------- | ------------------------------------------ | --------------------------------------------------------------- |
 | **渲染** | 使用 `event.title`、`event.color` 直接渲染 | 使用 `runtime.render()` 获取增强的 title/color/icon/description |
-| **验证** | 无验证（信任外部数据） | 使用 `runtime.validate()` 校验字段/时间约束/冲突 |
-| **行为** | 所有事件可编辑/拖拽/删除 | 使用 `runtime.canPerform()` 按 DSL behavior 规则和用户角色控制 |
+| **验证** | 无验证（信任外部数据）                     | 使用 `runtime.validate()` 校验字段/时间约束/冲突                |
+| **行为** | 所有事件可编辑/拖拽/删除                   | 使用 `runtime.canPerform()` 按 DSL behavior 规则和用户角色控制  |
 
 #### 模式 B：纯数据驱动（无 EventRuntime）
 
 ```typescript
-const calendar = document.querySelector('wsx-calendar');
-calendar.events = events;   // 直接使用 Event 核心字段渲染
+const calendar = document.querySelector("wsx-calendar");
+calendar.events = events; // 直接使用 Event 核心字段渲染
 ```
 
 ### Calendar 内部的 DSL 集成逻辑
@@ -201,20 +201,20 @@ Calendar 消费的核心数据结构（定义在 `@calenderjs/event-model`）：
 
 ```typescript
 interface Event {
-  id: string;                          // 唯一标识符
-  type: string;                        // DSL 类型标识（如 "meeting"、"vacation"）
-  title: string;                       // 显示标题
-  startTime: Date;                     // 开始时间
-  endTime: Date;                       // 结束时间
-  color?: string;                      // 显示颜色
-  icon?: string;                       // 显示图标
-  data?: Record<string, any>;          // DSL 业务字段容器
-  timeZone?: string;                   // 时区（IANA 标识符）
-  allDay?: boolean;                    // 全天事件
-  recurring?: RecurringRule;           // 重复规则
-  parentEventId?: string;              // 父事件ID（重复事件实例）
-  recurrenceId?: string;               // 重复实例ID
-  metadata?: EventMetadata;            // 创建/更新元数据
+  id: string; // 唯一标识符
+  type: string; // DSL 类型标识（如 "meeting"、"vacation"）
+  title: string; // 显示标题
+  startTime: Date; // 开始时间
+  endTime: Date; // 结束时间
+  color?: string; // 显示颜色
+  icon?: string; // 显示图标
+  data?: Record<string, any>; // DSL 业务字段容器
+  timeZone?: string; // 时区（IANA 标识符）
+  allDay?: boolean; // 全天事件
+  recurring?: RecurringRule; // 重复规则
+  parentEventId?: string; // 父事件ID（重复事件实例）
+  recurrenceId?: string; // 重复实例ID
+  metadata?: EventMetadata; // 创建/更新元数据
 }
 ```
 
@@ -296,7 +296,7 @@ interface RenderedEvent {
   color: string;
   icon?: string;
   allDay?: boolean;
-  [key: string]: any;    // 允许扩展渲染属性
+  [key: string]: any; // 允许扩展渲染属性
 }
 ```
 
@@ -334,9 +334,9 @@ Calendar 主组件
 
 纯函数，独立于组件实例，便于测试：
 
-| 文件 | 函数 | 用途 |
-|------|------|------|
-| `date-utils.ts` | `getMonthDates()`, `getWeekDates()`, `isSameDay()`, `isSameMonth()`, `getDayHours()` | 日期计算 |
+| 文件             | 函数                                                                                          | 用途           |
+| ---------------- | --------------------------------------------------------------------------------------------- | -------------- |
+| `date-utils.ts`  | `getMonthDates()`, `getWeekDates()`, `isSameDay()`, `isSameMonth()`, `getDayHours()`          | 日期计算       |
 | `event-utils.ts` | `groupEventsByDate()`, `getEventsForDate()`, `sortEventsByTime()`, `calculateEventPosition()` | 事件分组与定位 |
 
 ## 使用示例
@@ -346,9 +346,15 @@ Calendar 主组件
 ```html
 <wsx-calendar view="month" date="2026-03-15"></wsx-calendar>
 <script>
-  const calendar = document.querySelector('wsx-calendar');
+  const calendar = document.querySelector("wsx-calendar");
   calendar.events = [
-    { id: '1', type: 'meeting', title: '会议', startTime: new Date(), endTime: new Date() }
+    {
+      id: "1",
+      type: "meeting",
+      title: "会议",
+      startTime: new Date(),
+      endTime: new Date(),
+    },
   ];
 </script>
 ```
@@ -356,8 +362,8 @@ Calendar 主组件
 ### TypeScript + DSL 驱动
 
 ```typescript
-import { EventDSLCompiler } from '@calenderjs/event-dsl';
-import { EventRuntime } from '@calenderjs/event-runtime';
+import { EventDSLCompiler } from "@calenderjs/event-dsl";
+import { EventRuntime } from "@calenderjs/event-runtime";
 
 const meetingDSL = `
 type: meeting
@@ -380,21 +386,21 @@ const compiler = new EventDSLCompiler();
 const dataModel = compiler.compileDSL(meetingDSL);
 const runtime = new EventRuntime(dataModel.types[0]);
 
-const calendar = document.querySelector('wsx-calendar');
+const calendar = document.querySelector("wsx-calendar");
 calendar.events = events;
-calendar.user = { id: 'u1', role: 'admin' };
+calendar.user = { id: "u1", role: "admin" };
 calendar.eventRuntime = runtime;
 
-calendar.addEventListener('event-create', (e) => {
-  console.log('创建事件:', e.detail.event);
+calendar.addEventListener("event-create", (e) => {
+  console.log("创建事件:", e.detail.event);
 });
 ```
 
 ### React 集成
 
 ```tsx
-import '@calenderjs/calendar';
-import { useRef, useEffect } from 'react';
+import "@calenderjs/calendar";
+import { useRef, useEffect } from "react";
 
 function CalendarApp({ events, user, runtime }) {
   const ref = useRef<HTMLElement>(null);
@@ -460,23 +466,23 @@ packages/calendar/
 
 ## 实现状态
 
-| 模块 | 状态 | 说明 |
-|------|------|------|
-| 组件基础结构 | ✅ 完成 | WebComponent, @autoRegister, Shadow DOM |
-| 月/周/日视图渲染 | ✅ 完成 | 数据驱动渲染，无 DSL |
-| 工具栏 + 视图切换 + 日期导航 | ✅ 完成 | |
-| CRUD 操作 + 对话框 | ✅ 完成 | create/update/delete + CustomEvent |
-| API 标准化 (RFC-0008) | ✅ 完成 | observedAttributes, getter/setter, 事件统一 |
-| "today" 高亮 (RFC-0013) | ✅ 完成 | |
-| 工具函数 + 单元测试 | ✅ 完成 | 45 测试用例通过 |
-| **EventRuntime 集成** | ❌ 未实现 | Calendar 接受 eventRuntime property |
-| **DSL 驱动渲染** | ❌ 未实现 | runtime.render() 增强渲染 |
-| **DSL 驱动验证** | ❌ 未实现 | runtime.validate() 创建/更新前验证 |
-| **DSL 驱动行为** | ❌ 未实现 | runtime.canPerform() 权限检查 |
-| `extra` → `data` 重命名 | ❌ 待执行 | Event 接口字段重命名 |
-| 拖拽功能 | ❌ 未实现 | HTML5 Drag and Drop API |
-| 视图切换动画 | ❌ 未实现 | CSS transitions |
-| 虚拟滚动 | ❌ 未实现 | 大量事件性能优化 |
+| 模块                         | 状态      | 说明                                        |
+| ---------------------------- | --------- | ------------------------------------------- |
+| 组件基础结构                 | ✅ 完成   | WebComponent, @autoRegister, Shadow DOM     |
+| 月/周/日视图渲染             | ✅ 完成   | 数据驱动渲染，无 DSL                        |
+| 工具栏 + 视图切换 + 日期导航 | ✅ 完成   |                                             |
+| CRUD 操作 + 对话框           | ✅ 完成   | create/update/delete + CustomEvent          |
+| API 标准化 (RFC-0008)        | ✅ 完成   | observedAttributes, getter/setter, 事件统一 |
+| "today" 高亮 (RFC-0013)      | ✅ 完成   |                                             |
+| 工具函数 + 单元测试          | ✅ 完成   | 45 测试用例通过                             |
+| **EventRuntime 集成**        | ❌ 未实现 | Calendar 接受 eventRuntime property         |
+| **DSL 驱动渲染**             | ❌ 未实现 | runtime.render() 增强渲染                   |
+| **DSL 驱动验证**             | ❌ 未实现 | runtime.validate() 创建/更新前验证          |
+| **DSL 驱动行为**             | ❌ 未实现 | runtime.canPerform() 权限检查               |
+| `extra` → `data` 重命名      | ❌ 待执行 | Event 接口字段重命名                        |
+| 拖拽功能                     | ❌ 未实现 | HTML5 Drag and Drop API                     |
+| 视图切换动画                 | ❌ 未实现 | CSS transitions                             |
+| 虚拟滚动                     | ❌ 未实现 | 大量事件性能优化                            |
 
 ## 实施计划
 
@@ -511,12 +517,12 @@ packages/calendar/
 
 ## 性能目标
 
-| 指标 | 目标 |
-|------|------|
-| 1000 事件渲染 | < 100ms |
-| 视图切换 | < 50ms |
-| 事件交互响应 | < 16ms (60fps) |
-| 1000 事件内存 | < 50MB |
+| 指标          | 目标           |
+| ------------- | -------------- |
+| 1000 事件渲染 | < 100ms        |
+| 视图切换      | < 50ms         |
+| 事件交互响应  | < 16ms (60fps) |
+| 1000 事件内存 | < 50MB         |
 
 ## 向后兼容性
 
@@ -533,4 +539,4 @@ packages/calendar/
 
 ---
 
-*本 RFC 定义了 `<wsx-calendar>` 组件的完整架构：DSL 驱动的事件渲染、验证和行为控制，同时支持无 DSL 的纯数据驱动降级模式。*
+_本 RFC 定义了 `<wsx-calendar>` 组件的完整架构：DSL 驱动的事件渲染、验证和行为控制，同时支持无 DSL 的纯数据驱动降级模式。_

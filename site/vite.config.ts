@@ -42,19 +42,19 @@ export default defineConfig({
         ? {
             "@calenderjs/calendar": path.resolve(
               __dirname,
-              "../packages/calendar/src/index.ts"
+              "../packages/calendar/src/index.ts",
             ),
             "@calenderjs/event-dsl": path.resolve(
               __dirname,
-              "../packages/event-dsl/src/index.ts"
+              "../packages/event-dsl/src/index.ts",
             ),
             "@calenderjs/event-model": path.resolve(
               __dirname,
-              "../packages/event-model/src/index.ts"
+              "../packages/event-model/src/index.ts",
             ),
             "@calenderjs/event-runtime": path.resolve(
               __dirname,
-              "../packages/event-runtime/src/index.ts"
+              "../packages/event-runtime/src/index.ts",
             ),
           }
         : {}),

@@ -10,6 +10,7 @@
 设计并实现 CalenderJS 的完整文档体系和示例项目，为开发者提供清晰的使用指南、API 参考和可运行的示例代码。
 
 **目标**：
+
 - 提供完整的 API 文档
 - 提供详细的使用指南
 - 提供 DSL 语法文档
@@ -76,18 +77,21 @@ docs/
 #### 2.1 入门文档
 
 **installation.md**
+
 - 安装方法（npm/pnpm/yarn）
 - 依赖要求
 - 版本兼容性
 - 常见问题
 
 **quick-start.md**
+
 - 5 分钟快速开始
 - 最小示例代码
 - 运行第一个日历
 - 下一步学习路径
 
 **basic-usage.md**
+
 - 基础组件使用
 - 事件数据格式
 - 视图切换
@@ -96,6 +100,7 @@ docs/
 #### 2.2 指南文档
 
 **calendar-component.md**
+
 - 组件概述
 - 属性说明
 - 事件处理
@@ -103,6 +108,7 @@ docs/
 - 性能优化
 
 **event-dsl.md**
+
 - DSL 概述
 - 语法基础
 - 类型定义
@@ -110,6 +116,7 @@ docs/
 - 最佳实践
 
 **validation.md**
+
 - 验证规则详解
 - Between 规则
 - Comparison 规则
@@ -118,6 +125,7 @@ docs/
 - 逻辑表达式
 
 **rendering.md**
+
 - 渲染规则详解
 - 颜色配置
 - 图标配置
@@ -126,6 +134,7 @@ docs/
 - 条件渲染
 
 **behavior.md**
+
 - 行为规则详解
 - 可拖拽配置
 - 可调整大小配置
@@ -134,6 +143,7 @@ docs/
 - 权限控制
 
 **advanced.md**
+
 - 高级用法
 - 自定义验证
 - 自定义渲染
@@ -143,6 +153,7 @@ docs/
 #### 2.3 API 文档
 
 **核心接口**
+
 - Event 接口：字段说明、使用示例
 - User 接口：字段说明、使用示例
 - EventType 接口：字段说明、使用示例
@@ -150,12 +161,14 @@ docs/
 - RenderContext：上下文说明
 
 **Event DSL API**
+
 - parseEventDSL：解析函数
 - EventDSLRuntime：运行时类
 - AST 类型：类型定义
 - 错误处理：错误类型和处理
 
 **Calendar 组件 API**
+
 - Calendar 组件：组件说明
 - CalendarProps：属性接口
 - 事件回调：事件处理
@@ -164,6 +177,7 @@ docs/
 #### 2.4 DSL 文档
 
 **syntax.md**
+
 - 完整语法规范
 - 语法规则
 - 关键字说明
@@ -171,6 +185,7 @@ docs/
 - 示例代码
 
 **examples.md**
+
 - 会议类型示例
 - 任务类型示例
 - 节假日类型示例
@@ -178,6 +193,7 @@ docs/
 - 复杂场景示例
 
 **reference.md**
+
 - 语法参考表
 - 类型参考表
 - 规则参考表
@@ -189,18 +205,21 @@ docs/
 #### 3.1 基础示例
 
 **examples/basic/vanilla-js/**
+
 - 纯 JavaScript 使用示例
 - 最小化配置
 - 基础事件显示
 - 视图切换
 
 **examples/basic/react/**
+
 - React 使用示例
 - 使用 @calenderjs/react
 - 基础集成
 - 状态管理
 
 **examples/basic/vue/**
+
 - Vue 使用示例
 - Web Component 集成
 - 基础集成
@@ -208,24 +227,28 @@ docs/
 #### 3.2 高级示例
 
 **examples/advanced/custom-validation/**
+
 - 自定义验证规则
 - 复杂验证逻辑
 - 跨字段验证
 - 时间冲突检测
 
 **examples/advanced/custom-rendering/**
+
 - 自定义渲染规则
 - 条件渲染
 - 模板字符串
 - 动态样式
 
 **examples/advanced/multi-type/**
+
 - 多事件类型
 - 类型切换
 - 类型过滤
 - 类型分组
 
 **examples/advanced/permissions/**
+
 - 权限控制
 - 用户角色
 - 行为规则
@@ -234,18 +257,21 @@ docs/
 #### 3.3 集成示例
 
 **examples/integration/nextjs/**
+
 - Next.js 集成
 - Server Components
 - API Routes
 - 数据获取
 
 **examples/integration/remix/**
+
 - Remix 集成
 - Loaders
 - Actions
 - 数据同步
 
 **examples/integration/state-management/**
+
 - Redux 集成
 - Zustand 集成
 - Jotai 集成
@@ -273,16 +299,19 @@ docs/
 ### 阶段 1: 基础文档（3天）
 
 **Day 1**：
+
 - [ ] 项目 README
 - [ ] 安装指南
 - [ ] 快速开始
 
 **Day 2**：
+
 - [ ] Calendar 组件指南
 - [ ] Event DSL 指南
 - [ ] 基础 API 文档
 
 **Day 3**：
+
 - [ ] DSL 语法文档
 - [ ] DSL 示例
 - [ ] 基础示例项目
@@ -290,12 +319,14 @@ docs/
 ### 阶段 2: 完整文档（2天）
 
 **Day 4**：
+
 - [ ] 验证规则指南
 - [ ] 渲染规则指南
 - [ ] 行为规则指南
 - [ ] 高级用法指南
 
 **Day 5**：
+
 - [ ] 完整 API 文档
 - [ ] DSL 参考手册
 - [ ] 高级示例项目
@@ -303,22 +334,26 @@ docs/
 ### 阶段 3: 示例项目（2天）
 
 **Day 6**：
+
 - [ ] 基础示例（Vanilla JS, React, Vue）
 - [ ] 高级示例（自定义验证、渲染）
 
 **Day 7**：
+
 - [ ] 集成示例（Next.js, Remix, 状态管理）
 - [ ] 文档网站部署
 
 ## 技术栈
 
 ### 文档工具
+
 - **VitePress**：文档生成工具（推荐）
 - **TypeDoc**：API 文档生成
 - **Markdown**：文档格式
 - **CodeSandbox**：在线示例（可选）
 
 ### 示例项目
+
 - **React + Vite**：React 示例
 - **Vue + Vite**：Vue 示例
 - **Next.js**：Next.js 集成示例
@@ -327,6 +362,7 @@ docs/
 ## 质量标准
 
 ### 文档质量
+
 - ✅ 所有 API 都有文档
 - ✅ 所有示例代码可运行
 - ✅ 文档结构清晰
@@ -334,6 +370,7 @@ docs/
 - ✅ 包含常见问题解答
 
 ### 示例质量
+
 - ✅ 所有示例可运行
 - ✅ 代码注释完整
 - ✅ 遵循最佳实践

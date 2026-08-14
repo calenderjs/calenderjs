@@ -1,6 +1,6 @@
 /**
  * Event DSL AST 类型定义
- * 
+ *
  * 根据 RFC-0001 定义
  */
 
@@ -35,29 +35,25 @@ export interface FieldDefinition {
  * 字段类型
  */
 export type FieldType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'email'
-  | 'text'
-  | { type: 'list'; itemType: FieldType }
-  | { type: 'enum'; values: string[] };
+  | "string"
+  | "number"
+  | "boolean"
+  | "email"
+  | "text"
+  | { type: "list"; itemType: FieldType }
+  | { type: "enum"; values: string[] };
 
 /**
  * 验证规则
  */
 export type ValidationRule =
-  | BetweenRule
-  | ComparisonRule
-  | ConflictRule
-  | WhenRule
-  | LogicalRule;
+  BetweenRule | ComparisonRule | ConflictRule | WhenRule | LogicalRule;
 
 /**
  * Between 规则
  */
 export interface BetweenRule {
-  type: 'Between';
+  type: "Between";
   field: FieldAccess;
   min: any;
   max: any;
@@ -67,7 +63,7 @@ export interface BetweenRule {
  * Comparison 规则
  */
 export interface ComparisonRule {
-  type: 'Comparison';
+  type: "Comparison";
   operator: string;
   left: FieldAccess | Expression;
   right: any;
@@ -77,7 +73,7 @@ export interface ComparisonRule {
  * ModComparison 规则（用于 startTime.minute mod 15 is 0 等）
  */
 export interface ModComparisonRule {
-  type: 'ModComparison';
+  type: "ModComparison";
   left: FieldAccess;
   modValue: any;
   operator: string;
@@ -88,7 +84,7 @@ export interface ModComparisonRule {
  * In 规则（用于 dayOfWeek in [1,2,3,4,5] 等）
  */
 export interface InRule {
-  type: 'In';
+  type: "In";
   field: FieldAccess;
   values: any[];
 }
@@ -97,14 +93,14 @@ export interface InRule {
  * Conflict 规则
  */
 export interface ConflictRule {
-  type: 'NoConflict' | 'Conflict';
+  type: "NoConflict" | "Conflict";
 }
 
 /**
  * When 规则
  */
 export interface WhenRule {
-  type: 'When';
+  type: "When";
   condition: Expression;
   rules: ValidationRule[];
 }
@@ -113,8 +109,8 @@ export interface WhenRule {
  * 逻辑规则
  */
 export interface LogicalRule {
-  type: 'BinaryExpression' | 'UnaryExpression';
-  operator: 'and' | 'or' | 'not';
+  type: "BinaryExpression" | "UnaryExpression";
+  operator: "and" | "or" | "not";
   left?: Expression;
   right?: Expression;
   argument?: Expression;
@@ -124,20 +120,21 @@ export interface LogicalRule {
  * 字段访问
  */
 export interface FieldAccess {
-  type: 'FieldAccess';
+  type: "FieldAccess";
   path: string[];
 }
 
 /**
  * 表达式类型
  */
-export type Expression = FieldAccess | ComparisonRule | LogicalRule | InRule | ModComparisonRule | any;
+export type Expression =
+  FieldAccess | ComparisonRule | LogicalRule | InRule | ModComparisonRule | any;
 
 /**
  * 显示规则
  */
 export interface DisplayRule {
-  name: 'color' | 'icon' | 'title' | 'description';
+  name: "color" | "icon" | "title" | "description";
   value: string | ConditionalValue | TemplateValue;
 }
 
@@ -145,7 +142,7 @@ export interface DisplayRule {
  * 条件值
  */
 export interface ConditionalValue {
-  type: 'Conditional';
+  type: "Conditional";
   condition: Expression;
   consequent: any;
   alternate?: any;
@@ -155,7 +152,7 @@ export interface ConditionalValue {
  * 模板值
  */
 export interface TemplateValue {
-  type: 'Template';
+  type: "Template";
   parts: Array<string | FieldAccess>;
 }
 
@@ -163,7 +160,7 @@ export interface TemplateValue {
  * 行为规则
  */
 export interface BehaviorRule {
-  name: 'draggable' | 'resizable' | 'editable' | 'deletable';
+  name: "draggable" | "resizable" | "editable" | "deletable";
   value: boolean | Expression;
 }
 
@@ -179,12 +176,12 @@ export interface ConstraintRule {
  * 重复事件定义
  */
 export interface RecurringDefinition {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequency: "daily" | "weekly" | "monthly" | "yearly";
   interval: number;
-  endDate?: string;  // 日期字符串 YYYY-MM-DD
+  endDate?: string; // 日期字符串 YYYY-MM-DD
   count?: number;
   daysOfWeek?: number[];
   dayOfMonth?: number;
-  excludeDates?: string[];  // 日期字符串数组
+  excludeDates?: string[]; // 日期字符串数组
   timeZone?: string;
 }

@@ -2,19 +2,17 @@
  * JSON Schema 生成器测试
  */
 
-import { describe, it, expect } from 'vitest';
-import { generateJSONSchema } from '../json-schema';
-import type { EventTypeAST } from '../../ast/types';
+import { describe, it, expect } from "vitest";
+import { generateJSONSchema } from "../json-schema";
+import type { EventTypeAST } from "../../ast/types";
 
-describe('generateJSONSchema', () => {
-  describe('基础字段类型', () => {
-    it('应该生成 string 类型字段的 Schema', () => {
+describe("generateJSONSchema", () => {
+  describe("基础字段类型", () => {
+    it("应该生成 string 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'title', type: 'string', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "title", type: "string", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -23,18 +21,16 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.title).toEqual({
-        type: 'string',
+        type: "string",
       });
-      expect(schema.required).toContain('title');
+      expect(schema.required).toContain("title");
     });
 
-    it('应该生成 number 类型字段的 Schema', () => {
+    it("应该生成 number 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'count', type: 'number', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "count", type: "number", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -43,17 +39,15 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.count).toEqual({
-        type: 'number',
+        type: "number",
       });
     });
 
-    it('应该生成 boolean 类型字段的 Schema', () => {
+    it("应该生成 boolean 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'isActive', type: 'boolean', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "isActive", type: "boolean", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -62,17 +56,15 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.isActive).toEqual({
-        type: 'boolean',
+        type: "boolean",
       });
     });
 
-    it('应该生成 email 类型字段的 Schema', () => {
+    it("应该生成 email 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'email', type: 'email', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "email", type: "email", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -81,18 +73,16 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.email).toEqual({
-        type: 'string',
-        format: 'email',
+        type: "string",
+        format: "email",
       });
     });
 
-    it('应该生成 text 类型字段的 Schema', () => {
+    it("应该生成 text 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'description', type: 'text', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "description", type: "text", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -101,18 +91,22 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.description).toEqual({
-        type: 'string',
+        type: "string",
       });
     });
   });
 
-  describe('复杂字段类型', () => {
-    it('应该生成 list 类型字段的 Schema', () => {
+  describe("复杂字段类型", () => {
+    it("应该生成 list 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'attendees', type: { type: 'list', itemType: 'email' }, required: true },
+          {
+            name: "attendees",
+            type: { type: "list", itemType: "email" },
+            required: true,
+          },
         ],
         validate: [],
         display: [],
@@ -122,20 +116,24 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.attendees).toEqual({
-        type: 'array',
+        type: "array",
         items: {
-          type: 'string',
-          format: 'email',
+          type: "string",
+          format: "email",
         },
       });
     });
 
-    it('应该生成嵌套 list 类型字段的 Schema', () => {
+    it("应该生成嵌套 list 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'tags', type: { type: 'list', itemType: 'string' }, required: true },
+          {
+            name: "tags",
+            type: { type: "list", itemType: "string" },
+            required: true,
+          },
         ],
         validate: [],
         display: [],
@@ -145,19 +143,23 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.tags).toEqual({
-        type: 'array',
+        type: "array",
         items: {
-          type: 'string',
+          type: "string",
         },
       });
     });
 
-    it('应该生成 enum 类型字段的 Schema', () => {
+    it("应该生成 enum 类型字段的 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'priority', type: { type: 'enum', values: ['low', 'normal', 'high'] }, required: true },
+          {
+            name: "priority",
+            type: { type: "enum", values: ["low", "normal", "high"] },
+            required: true,
+          },
         ],
         validate: [],
         display: [],
@@ -167,20 +169,20 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.properties?.priority).toEqual({
-        type: 'string',
-        enum: ['low', 'normal', 'high'],
+        type: "string",
+        enum: ["low", "normal", "high"],
       });
     });
   });
 
-  describe('字段修饰符', () => {
-    it('应该支持 required 修饰符', () => {
+  describe("字段修饰符", () => {
+    it("应该支持 required 修饰符", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'title', type: 'string', required: true },
-          { name: 'description', type: 'string', required: false },
+          { name: "title", type: "string", required: true },
+          { name: "description", type: "string", required: false },
         ],
         validate: [],
         display: [],
@@ -189,16 +191,20 @@ describe('generateJSONSchema', () => {
 
       const schema = generateJSONSchema(ast);
 
-      expect(schema.required).toContain('title');
-      expect(schema.required).not.toContain('description');
+      expect(schema.required).toContain("title");
+      expect(schema.required).not.toContain("description");
     });
 
-    it('应该支持 default 修饰符', () => {
+    it("应该支持 default 修饰符", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'priority', type: { type: 'enum', values: ['low', 'normal', 'high'] }, default: 'normal' },
+          {
+            name: "priority",
+            type: { type: "enum", values: ["low", "normal", "high"] },
+            default: "normal",
+          },
         ],
         validate: [],
         display: [],
@@ -207,15 +213,19 @@ describe('generateJSONSchema', () => {
 
       const schema = generateJSONSchema(ast);
 
-      expect(schema.properties?.priority.default).toBe('normal');
+      expect(schema.properties?.priority.default).toBe("normal");
     });
 
-    it('应该支持 min 修饰符（数组）', () => {
+    it("应该支持 min 修饰符（数组）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'attendees', type: { type: 'list', itemType: 'email' }, min: 1 },
+          {
+            name: "attendees",
+            type: { type: "list", itemType: "email" },
+            min: 1,
+          },
         ],
         validate: [],
         display: [],
@@ -227,12 +237,16 @@ describe('generateJSONSchema', () => {
       expect(schema.properties?.attendees.minItems).toBe(1);
     });
 
-    it('应该支持 max 修饰符（数组）', () => {
+    it("应该支持 max 修饰符（数组）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'attendees', type: { type: 'list', itemType: 'email' }, max: 50 },
+          {
+            name: "attendees",
+            type: { type: "list", itemType: "email" },
+            max: 50,
+          },
         ],
         validate: [],
         display: [],
@@ -244,13 +258,11 @@ describe('generateJSONSchema', () => {
       expect(schema.properties?.attendees.maxItems).toBe(50);
     });
 
-    it('应该支持 min 修饰符（数字）', () => {
+    it("应该支持 min 修饰符（数字）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'count', type: 'number', min: 0 },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "count", type: "number", min: 0 }],
         validate: [],
         display: [],
         behavior: [],
@@ -261,13 +273,11 @@ describe('generateJSONSchema', () => {
       expect(schema.properties?.count.minimum).toBe(0);
     });
 
-    it('应该支持 max 修饰符（数字）', () => {
+    it("应该支持 max 修饰符（数字）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'count', type: 'number', max: 100 },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "count", type: "number", max: 100 }],
         validate: [],
         display: [],
         behavior: [],
@@ -278,13 +288,11 @@ describe('generateJSONSchema', () => {
       expect(schema.properties?.count.maximum).toBe(100);
     });
 
-    it('应该支持 min 修饰符（字符串）', () => {
+    it("应该支持 min 修饰符（字符串）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'title', type: 'string', min: 1 },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "title", type: "string", min: 1 }],
         validate: [],
         display: [],
         behavior: [],
@@ -295,13 +303,11 @@ describe('generateJSONSchema', () => {
       expect(schema.properties?.title.minLength).toBe(1);
     });
 
-    it('应该支持 max 修饰符（字符串）', () => {
+    it("应该支持 max 修饰符（字符串）", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'title', type: 'string', max: 100 },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "title", type: "string", max: 100 }],
         validate: [],
         display: [],
         behavior: [],
@@ -313,17 +319,27 @@ describe('generateJSONSchema', () => {
     });
   });
 
-  describe('完整示例', () => {
-    it('应该生成完整的 meeting 类型 Schema', () => {
+  describe("完整示例", () => {
+    it("应该生成完整的 meeting 类型 Schema", () => {
       const ast: EventTypeAST = {
-        type: 'meeting',
-        name: '会议',
-        description: '团队会议、客户会议等',
+        type: "meeting",
+        name: "会议",
+        description: "团队会议、客户会议等",
         fields: [
-          { name: 'title', type: 'string', required: true },
-          { name: 'attendees', type: { type: 'list', itemType: 'email' }, required: true, min: 1, max: 50 },
-          { name: 'location', type: 'string', required: false },
-          { name: 'priority', type: { type: 'enum', values: ['low', 'normal', 'high'] }, default: 'normal' },
+          { name: "title", type: "string", required: true },
+          {
+            name: "attendees",
+            type: { type: "list", itemType: "email" },
+            required: true,
+            min: 1,
+            max: 50,
+          },
+          { name: "location", type: "string", required: false },
+          {
+            name: "priority",
+            type: { type: "enum", values: ["low", "normal", "high"] },
+            default: "normal",
+          },
         ],
         validate: [],
         display: [],
@@ -333,43 +349,43 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema).toEqual({
-        $schema: 'http://json-schema.org/draft-07/schema#',
-        type: 'object',
-        title: '会议',
-        description: '团队会议、客户会议等',
+        $schema: "http://json-schema.org/draft-07/schema#",
+        type: "object",
+        title: "会议",
+        description: "团队会议、客户会议等",
         properties: {
           title: {
-            type: 'string',
+            type: "string",
           },
           attendees: {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
-              format: 'email',
+              type: "string",
+              format: "email",
             },
             minItems: 1,
             maxItems: 50,
           },
           location: {
-            type: 'string',
+            type: "string",
           },
           priority: {
-            type: 'string',
-            enum: ['low', 'normal', 'high'],
-            default: 'normal',
+            type: "string",
+            enum: ["low", "normal", "high"],
+            default: "normal",
           },
         },
-        required: ['title', 'attendees'],
+        required: ["title", "attendees"],
         additionalProperties: false,
       });
     });
   });
 
-  describe('选项', () => {
-    it('应该支持 includeSchema 选项', () => {
+  describe("选项", () => {
+    it("应该支持 includeSchema 选项", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [],
         validate: [],
         display: [],
@@ -379,14 +395,16 @@ describe('generateJSONSchema', () => {
       const schemaWithSchema = generateJSONSchema(ast, { includeSchema: true });
       expect(schemaWithSchema.$schema).toBeDefined();
 
-      const schemaWithoutSchema = generateJSONSchema(ast, { includeSchema: false });
+      const schemaWithoutSchema = generateJSONSchema(ast, {
+        includeSchema: false,
+      });
       expect(schemaWithoutSchema.$schema).toBeUndefined();
     });
 
-    it('应该支持 includeTitle 选项', () => {
+    it("应该支持 includeTitle 选项", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [],
         validate: [],
         display: [],
@@ -394,36 +412,42 @@ describe('generateJSONSchema', () => {
       };
 
       const schemaWithTitle = generateJSONSchema(ast, { includeTitle: true });
-      expect(schemaWithTitle.title).toBe('测试');
+      expect(schemaWithTitle.title).toBe("测试");
 
-      const schemaWithoutTitle = generateJSONSchema(ast, { includeTitle: false });
+      const schemaWithoutTitle = generateJSONSchema(ast, {
+        includeTitle: false,
+      });
       expect(schemaWithoutTitle.title).toBeUndefined();
     });
 
-    it('应该支持 includeDescription 选项', () => {
+    it("应该支持 includeDescription 选项", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        description: '测试描述',
+        type: "test",
+        name: "测试",
+        description: "测试描述",
         fields: [],
         validate: [],
         display: [],
         behavior: [],
       };
 
-      const schemaWithDescription = generateJSONSchema(ast, { includeDescription: true });
-      expect(schemaWithDescription.description).toBe('测试描述');
+      const schemaWithDescription = generateJSONSchema(ast, {
+        includeDescription: true,
+      });
+      expect(schemaWithDescription.description).toBe("测试描述");
 
-      const schemaWithoutDescription = generateJSONSchema(ast, { includeDescription: false });
+      const schemaWithoutDescription = generateJSONSchema(ast, {
+        includeDescription: false,
+      });
       expect(schemaWithoutDescription.description).toBeUndefined();
     });
   });
 
-  describe('边界情况', () => {
-    it('应该正确处理空字段列表', () => {
+  describe("边界情况", () => {
+    it("应该正确处理空字段列表", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [],
         validate: [],
         display: [],
@@ -436,13 +460,11 @@ describe('generateJSONSchema', () => {
       expect(schema.required).toBeUndefined();
     });
 
-    it('应该正确处理没有 description 的 AST', () => {
+    it("应该正确处理没有 description 的 AST", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
-        fields: [
-          { name: 'title', type: 'string', required: true },
-        ],
+        type: "test",
+        name: "测试",
+        fields: [{ name: "title", type: "string", required: true }],
         validate: [],
         display: [],
         behavior: [],
@@ -451,15 +473,15 @@ describe('generateJSONSchema', () => {
       const schema = generateJSONSchema(ast);
 
       expect(schema.description).toBeUndefined();
-      expect(schema.title).toBe('测试');
+      expect(schema.title).toBe("测试");
     });
 
-    it('should return string type for unknown field type', () => {
+    it("should return string type for unknown field type", () => {
       const ast: EventTypeAST = {
-        type: 'test',
-        name: '测试',
+        type: "test",
+        name: "测试",
         fields: [
-          { name: 'unknown', type: 'unknown' as any }, // 未知类型
+          { name: "unknown", type: "unknown" as any }, // 未知类型
         ],
         validate: [],
         display: [],
@@ -468,7 +490,7 @@ describe('generateJSONSchema', () => {
 
       const schema = generateJSONSchema(ast);
 
-      expect(schema.properties?.unknown?.type).toBe('string');
+      expect(schema.properties?.unknown?.type).toBe("string");
     });
   });
 });

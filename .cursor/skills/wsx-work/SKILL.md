@@ -19,11 +19,11 @@ description: Guides all work on WSX (Web Components Syntax Extension) in Calende
 
 ### 决策规则
 
-| 需求类型 | 使用 | 产物 |
-|----------|------|------|
-| 日历组件核心、视图、可复用 UI 组件 | **WSX** | `.wsx`，`@calenderjs/calendar` |
-| 在 Vue 应用里用日历、Vue 包装、路由/状态/业务 | **Vue** | `.vue`，通过 `<wsx-calendar>` 等使用 |
-| 在 React 应用里用日历 | **React** | `.tsx` 包装器，`@calenderjs/react` |
+| 需求类型                                      | 使用      | 产物                                 |
+| --------------------------------------------- | --------- | ------------------------------------ |
+| 日历组件核心、视图、可复用 UI 组件            | **WSX**   | `.wsx`，`@calenderjs/calendar`       |
+| 在 Vue 应用里用日历、Vue 包装、路由/状态/业务 | **Vue**   | `.vue`，通过 `<wsx-calendar>` 等使用 |
+| 在 React 应用里用日历                         | **React** | `.tsx` 包装器，`@calenderjs/react`   |
 
 **包职责**：`@calenderjs/calendar` = WSX 核心；`@calenderjs/react` / `@calenderjs/vue` = 集成层，依赖 calendar，不反之。
 
@@ -48,11 +48,11 @@ description: Guides all work on WSX (Web Components Syntax Extension) in Calende
 
 ```typescript
 async function waitForRender(): Promise<void> {
-    await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => {
-            Promise.resolve().then(() => resolve());
-        });
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      Promise.resolve().then(() => resolve());
     });
+  });
 }
 ```
 

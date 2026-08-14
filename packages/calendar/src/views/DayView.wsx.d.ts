@@ -7,9 +7,9 @@ import type { Event } from "@calenderjs/event-model";
 import type { User } from "@calenderjs/core";
 
 declare class DayView extends WebComponent {
-    viewDate: Date | string;
-    events: Event[] | string;
-    user?: User | string;
+  viewDate: Date | string;
+  events: Event[] | string;
+  user?: User | string;
 }
 
 export default DayView;

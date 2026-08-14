@@ -7,39 +7,39 @@
 
 ### 阶段 1: `extra` → `data` 全局重命名 (P1 前置)
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | 重命名 Event.extra → Event.data | Pending | `packages/event-model/src/Event.ts` |
-| 2 | 更新 EVENT_BASE_SCHEMA 中的 extra → data | Pending | `packages/event-model/src/validator.ts` |
-| 3 | 更新 EventValidator 中 validateExtra → validateData | Pending | `packages/event-model/src/validator.ts` |
-| 4 | 更新 EventTypeDataModel.extraSchema → dataSchema | Pending | `packages/event-model/src/EventTypeDataModel.ts` |
-| 5 | 更新 event-dsl 编译器输出 | Pending | `packages/event-dsl/src/compiler.ts` |
-| 6 | 更新 event-runtime 字段访问路径 | Pending | `packages/event-runtime/src/EventRuntime.ts` |
-| 7 | 更新 Calendar 组件（如有引用） | Pending | `packages/calendar/src/Calendar.wsx` |
-| 8 | 更新 React demo | Pending | `demos/react/` |
-| 9 | 运行全量测试确认无回归 | Pending | — |
+| #   | 任务                                                | 状态    | 文件                                             |
+| --- | --------------------------------------------------- | ------- | ------------------------------------------------ |
+| 1   | 重命名 Event.extra → Event.data                     | Pending | `packages/event-model/src/Event.ts`              |
+| 2   | 更新 EVENT_BASE_SCHEMA 中的 extra → data            | Pending | `packages/event-model/src/validator.ts`          |
+| 3   | 更新 EventValidator 中 validateExtra → validateData | Pending | `packages/event-model/src/validator.ts`          |
+| 4   | 更新 EventTypeDataModel.extraSchema → dataSchema    | Pending | `packages/event-model/src/EventTypeDataModel.ts` |
+| 5   | 更新 event-dsl 编译器输出                           | Pending | `packages/event-dsl/src/compiler.ts`             |
+| 6   | 更新 event-runtime 字段访问路径                     | Pending | `packages/event-runtime/src/EventRuntime.ts`     |
+| 7   | 更新 Calendar 组件（如有引用）                      | Pending | `packages/calendar/src/Calendar.wsx`             |
+| 8   | 更新 React demo                                     | Pending | `demos/react/`                                   |
+| 9   | 运行全量测试确认无回归                              | Pending | —                                                |
 
 ### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4)
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx` |
-| 2 | 渲染集成：有 runtime 时 runtime.render() 增强 | Pending | `packages/calendar/src/Calendar.wsx` |
-| 3 | 验证集成：创建/更新前 runtime.validate() | Pending | `packages/calendar/src/Calendar.wsx` |
-| 4 | 行为集成：拖拽/编辑/删除前 runtime.canPerform() | Pending | `packages/calendar/src/Calendar.wsx` |
-| 5 | 错误事件：event-create-error, event-update-error | Pending | `packages/calendar/src/Calendar.wsx` |
-| 6 | 添加 EventRuntime 集成测试 | Pending | `packages/calendar/src/__tests__/` |
-| 7 | 更新 RFC-0005 状态 → Implemented | Pending | `docs/rfc/0005-calendar-component.md` |
+| #   | 任务                                                | 状态    | 文件                                  |
+| --- | --------------------------------------------------- | ------- | ------------------------------------- |
+| 1   | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx`  |
+| 2   | 渲染集成：有 runtime 时 runtime.render() 增强       | Pending | `packages/calendar/src/Calendar.wsx`  |
+| 3   | 验证集成：创建/更新前 runtime.validate()            | Pending | `packages/calendar/src/Calendar.wsx`  |
+| 4   | 行为集成：拖拽/编辑/删除前 runtime.canPerform()     | Pending | `packages/calendar/src/Calendar.wsx`  |
+| 5   | 错误事件：event-create-error, event-update-error    | Pending | `packages/calendar/src/Calendar.wsx`  |
+| 6   | 添加 EventRuntime 集成测试                          | Pending | `packages/calendar/src/__tests__/`    |
+| 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `docs/rfc/0005-calendar-component.md` |
 
 ### 阶段 3: EventDataGenerator (RFC-0011)
 
-| # | 任务 | 状态 | 文件 |
-|---|------|------|------|
-| 1 | 实现 EventDataGenerator 类 | Pending | `packages/event-dsl/src/generators/` |
-| 2 | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | — |
-| 3 | 添加测试 | Pending | — |
-| 4 | 导出到 event-dsl index.ts | Pending | `packages/event-dsl/src/index.ts` |
-| 5 | 更新 RFC-0011 状态 → Implemented | Pending | `docs/rfc/0011-*` |
+| #   | 任务                                     | 状态    | 文件                                 |
+| --- | ---------------------------------------- | ------- | ------------------------------------ |
+| 1   | 实现 EventDataGenerator 类               | Pending | `packages/event-dsl/src/generators/` |
+| 2   | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | —                                    |
+| 3   | 添加测试                                 | Pending | —                                    |
+| 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
+| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `docs/rfc/0011-*`                    |
 
 ---
 

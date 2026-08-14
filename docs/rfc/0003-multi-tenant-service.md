@@ -82,8 +82,8 @@ apps/
 export interface Tenant {
   id: string;
   name: string;
-  subdomain?: string;              // 子域名（如：acme.calenderjs.com）
-  domain?: string;                 // 自定义域名
+  subdomain?: string; // 子域名（如：acme.calenderjs.com）
+  domain?: string; // 自定义域名
   createdAt: Date;
   updatedAt: Date;
   settings: TenantSettings;
@@ -100,19 +100,19 @@ export interface TenantSettings {
   };
   // 业务配置
   businessHours?: {
-    start: string;                  // 如 "09:00"
-    end: string;                    // 如 "18:00"
-    timezone: string;               // 时区
+    start: string; // 如 "09:00"
+    end: string; // 如 "18:00"
+    timezone: string; // 时区
   };
 }
 
 // 用户模型
 export interface User {
   id: string;
-  tenantId: string;                // 租户 ID
+  tenantId: string; // 租户 ID
   email: string;
   name: string;
-  role: 'owner' | 'admin' | 'employee';
+  role: "owner" | "admin" | "employee";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -120,9 +120,9 @@ export interface User {
 // 预约模型（扩展 RFC-0001）
 export interface Appointment {
   id: string;
-  tenantId: string;                 // 租户 ID
-  userId: string;                   // 创建者 ID
-  type?: string;                   // DSL 类型 ID
+  tenantId: string; // 租户 ID
+  userId: string; // 创建者 ID
+  type?: string; // DSL 类型 ID
   title: string;
   startTime: Date;
   endTime: Date;
@@ -154,20 +154,20 @@ export interface Appointment {
 
 ```typescript
 // lib/auth/middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getTenantFromRequest } from './tenant';
+import { NextRequest, NextResponse } from "next/server";
+import { getTenantFromRequest } from "./tenant";
 
 export async function tenantMiddleware(request: NextRequest) {
   // 从请求中提取租户信息
   const tenant = await getTenantFromRequest(request);
-  
+
   if (!tenant) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // 将租户信息添加到请求头
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-tenant-id', tenant.id);
+  requestHeaders.set("x-tenant-id", tenant.id);
 
   return NextResponse.next({
     request: {
@@ -178,12 +178,12 @@ export async function tenantMiddleware(request: NextRequest) {
 
 // 获取租户信息
 async function getTenantFromRequest(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<Tenant | null> {
   // 从子域名获取
-  const hostname = request.headers.get('host') || '';
-  const subdomain = hostname.split('.')[0];
-  
+  const hostname = request.headers.get("host") || "";
+  const subdomain = hostname.split(".")[0];
+
   // 从路径获取（如 /t/[tenantId]）
   const pathname = request.nextUrl.pathname;
   const tenantMatch = pathname.match(/^\/t\/([^/]+)/);
@@ -207,20 +207,20 @@ async function getTenantFromRequest(
 
 ```typescript
 // app/api/appointments/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getTenantId } from '@/lib/auth/session';
-import { getAppointments, createAppointment } from '@/lib/db/appointment';
-import { loadDSLRuntime } from '@/lib/dsl/loader';
+import { NextRequest, NextResponse } from "next/server";
+import { getTenantId } from "@/lib/auth/session";
+import { getAppointments, createAppointment } from "@/lib/db/appointment";
+import { loadDSLRuntime } from "@/lib/dsl/loader";
 
 export async function GET(request: NextRequest) {
   const tenantId = await getTenantId(request);
   if (!tenantId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
+  const startDate = searchParams.get("startDate");
+  const endDate = searchParams.get("endDate");
 
   const appointments = await getAppointments(tenantId, {
     startDate: startDate ? new Date(startDate) : undefined,
@@ -233,11 +233,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const tenantId = await getTenantId(request);
   if (!tenantId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await request.json();
-  
+
   // 验证预约数据（使用 DSL）
   const tenant = await getTenant(tenantId);
   if (tenant.settings.appointmentDSL && body.type) {
@@ -245,8 +245,8 @@ export async function POST(request: NextRequest) {
     const validation = dslRuntime.validate(body, body.type);
     if (!validation.valid) {
       return NextResponse.json(
-        { error: 'Validation failed', details: validation.errors },
-        { status: 400 }
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 },
       );
     }
   }
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // lib/sync/google.ts
-import { google } from 'googleapis';
+import { google } from "googleapis";
 
 export class GoogleCalendarSync {
   private oauth2Client: OAuth2Client;
@@ -271,7 +271,7 @@ export class GoogleCalendarSync {
     this.oauth2Client = new google.auth.OAuth2(
       credentials.clientId,
       credentials.clientSecret,
-      credentials.redirectUri
+      credentials.redirectUri,
     );
     this.oauth2Client.setCredentials({
       refresh_token: credentials.refreshToken,
@@ -282,7 +282,10 @@ export class GoogleCalendarSync {
    * 同步预约到 Google Calendar
    */
   async syncAppointment(appointment: Appointment): Promise<void> {
-    const calendar = google.calendar({ version: 'v3', auth: this.oauth2Client });
+    const calendar = google.calendar({
+      version: "v3",
+      auth: this.oauth2Client,
+    });
 
     // 如果已有同步信息，更新事件
     if (appointment.syncInfo?.googleCalendar?.eventId) {
@@ -294,7 +297,7 @@ export class GoogleCalendarSync {
     } else {
       // 创建新事件
       const event = await calendar.events.insert({
-        calendarId: 'primary',
+        calendarId: "primary",
         requestBody: this.appointmentToGoogleEvent(appointment),
       });
 
@@ -302,7 +305,7 @@ export class GoogleCalendarSync {
       await updateAppointmentSyncInfo(appointment.id, {
         googleCalendar: {
           eventId: event.data.id!,
-          calendarId: 'primary',
+          calendarId: "primary",
         },
       });
     }
@@ -312,14 +315,20 @@ export class GoogleCalendarSync {
    * 从 Google Calendar 同步事件
    */
   async syncFromGoogle(calendarId: string): Promise<Appointment[]> {
-    const calendar = google.calendar({ version: 'v3', auth: this.oauth2Client });
+    const calendar = google.calendar({
+      version: "v3",
+      auth: this.oauth2Client,
+    });
     const events = await calendar.events.list({
       calendarId,
       timeMin: new Date().toISOString(),
       maxResults: 100,
     });
 
-    return events.data.items?.map(event => this.googleEventToAppointment(event)) || [];
+    return (
+      events.data.items?.map((event) => this.googleEventToAppointment(event)) ||
+      []
+    );
   }
 
   private appointmentToGoogleEvent(appointment: Appointment): any {
@@ -328,13 +337,13 @@ export class GoogleCalendarSync {
       description: appointment.description,
       start: {
         dateTime: appointment.startTime.toISOString(),
-        timeZone: 'UTC',
+        timeZone: "UTC",
       },
       end: {
         dateTime: appointment.endTime.toISOString(),
-        timeZone: 'UTC',
+        timeZone: "UTC",
       },
-      attendees: appointment.attendees?.map(email => ({ email })),
+      attendees: appointment.attendees?.map((email) => ({ email })),
       location: appointment.location,
     };
   }
@@ -342,7 +351,7 @@ export class GoogleCalendarSync {
   private googleEventToAppointment(event: any): Appointment {
     return {
       id: event.id,
-      title: event.summary || '',
+      title: event.summary || "",
       description: event.description,
       startTime: new Date(event.start.dateTime || event.start.date),
       endTime: new Date(event.end.dateTime || event.end.date),
@@ -351,7 +360,7 @@ export class GoogleCalendarSync {
       syncInfo: {
         googleCalendar: {
           eventId: event.id,
-          calendarId: event.organizer?.email || 'primary',
+          calendarId: event.organizer?.email || "primary",
         },
       },
     };
@@ -363,7 +372,7 @@ export class GoogleCalendarSync {
 
 ```typescript
 // lib/sync/slack.ts
-import { WebClient } from '@slack/web-api';
+import { WebClient } from "@slack/web-api";
 
 export class SlackIntegration {
   private client: WebClient;
@@ -375,26 +384,29 @@ export class SlackIntegration {
   /**
    * 发送预约通知到 Slack
    */
-  async notifyAppointment(appointment: Appointment, channelId: string): Promise<void> {
+  async notifyAppointment(
+    appointment: Appointment,
+    channelId: string,
+  ): Promise<void> {
     await this.client.chat.postMessage({
       channel: channelId,
       text: `新的预约: ${appointment.title}`,
       blocks: [
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
+            type: "mrkdwn",
             text: `*${appointment.title}*\n${this.formatAppointment(appointment)}`,
           },
         },
         {
-          type: 'actions',
+          type: "actions",
           elements: [
             {
-              type: 'button',
+              type: "button",
               text: {
-                type: 'plain_text',
-                text: '查看详情',
+                type: "plain_text",
+                text: "查看详情",
               },
               url: `https://app.calenderjs.com/appointments/${appointment.id}`,
             },
@@ -407,13 +419,15 @@ export class SlackIntegration {
   /**
    * 创建 Slack 交互（如：快速创建预约）
    */
-  async createAppointmentFromSlack(payload: SlackInteractionPayload): Promise<Appointment> {
+  async createAppointmentFromSlack(
+    payload: SlackInteractionPayload,
+  ): Promise<Appointment> {
     // 解析 Slack 交互数据
     const appointmentData = this.parseSlackPayload(payload);
-    
+
     // 创建预约
     const appointment = await createAppointment(appointmentData);
-    
+
     // 发送确认消息
     await this.client.chat.postMessage({
       channel: payload.channel.id,
@@ -427,10 +441,10 @@ export class SlackIntegration {
     return [
       `时间: ${this.formatTimeRange(appointment.startTime, appointment.endTime)}`,
       appointment.location && `地点: ${appointment.location}`,
-      appointment.attendees && `参会人: ${appointment.attendees.join(', ')}`,
+      appointment.attendees && `参会人: ${appointment.attendees.join(", ")}`,
     ]
       .filter(Boolean)
-      .join('\n');
+      .join("\n");
   }
 }
 ```
@@ -570,6 +584,7 @@ export default function CalendarPage({ params }: { params: { tenantId: string } 
 ## 技术栈
 
 ### 前端
+
 - **@calenderjs/core**: 基于 RFC-0001 的组件库
 - **@calenderjs/event-dsl**: 基于 RFC-0002 的 DSL 系统
 - **Next.js 14**: App Router, Server Components
@@ -577,16 +592,19 @@ export default function CalendarPage({ params }: { params: { tenantId: string } 
 - **React**: UI 框架
 
 ### 后端
+
 - **Next.js API Routes**: API 服务
 - **Prisma / Drizzle**: ORM（数据库访问）
 - **PostgreSQL**: 数据库
 - **NextAuth.js**: 认证
 
 ### 第三方集成
+
 - **Google Calendar API**: 日历同步
 - **Slack API**: Slack 集成
 
 ### 工具
+
 - **pnpm**: 包管理
 - **Nx**: Monorepo 管理
 - **ESLint / Prettier**: 代码质量
@@ -640,4 +658,4 @@ export default function CalendarPage({ params }: { params: { tenantId: string } 
 
 ---
 
-*本 RFC 设计并实现多租户日历服务，使用 RFC-0001 的组件库和 RFC-0002 的 DSL 系统，提供完整的基于日历的预约管理解决方案。*
+_本 RFC 设计并实现多租户日历服务，使用 RFC-0001 的组件库和 RFC-0002 的 DSL 系统，提供完整的基于日历的预约管理解决方案。_

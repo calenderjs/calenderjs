@@ -1,6 +1,6 @@
 /**
  * JSON Schema 生成器
- * 
+ *
  * 从 Event DSL AST 生成 JSON Schema，用于验证 Event.data 字段
  *
  * 根据 RFC-0001 定义
@@ -8,8 +8,8 @@
  * **用途**：生成的 JSON Schema 用于 `EventValidator.validateData(event, dataSchema)`
  */
 
-import type { EventTypeAST, FieldDefinition, FieldType } from '../ast/types';
-import type { JSONSchema } from '@calenderjs/event-model';
+import type { EventTypeAST, FieldDefinition, FieldType } from "../ast/types";
+import type { JSONSchema } from "@calenderjs/event-model";
 
 /**
  * JSON Schema 生成器选项
@@ -25,14 +25,14 @@ export interface JSONSchemaGeneratorOptions {
 
 /**
  * 从 Event DSL AST 生成 JSON Schema
- * 
+ *
  * @param ast - Event DSL AST
  * @param options - 生成器选项
  * @returns JSON Schema（用于验证 Event.data 字段）
  */
 export function generateJSONSchema(
   ast: EventTypeAST,
-  options: JSONSchemaGeneratorOptions = {}
+  options: JSONSchemaGeneratorOptions = {},
 ): JSONSchema {
   const {
     includeSchema = true,
@@ -41,11 +41,11 @@ export function generateJSONSchema(
   } = options;
 
   const schema: JSONSchema = {
-    type: 'object',
+    type: "object",
   };
 
   if (includeSchema) {
-    schema.$schema = 'http://json-schema.org/draft-07/schema#';
+    schema.$schema = "http://json-schema.org/draft-07/schema#";
   }
 
   if (includeTitle) {
@@ -64,7 +64,7 @@ export function generateJSONSchema(
   const properties: Record<string, JSONSchema> = {};
   const required: string[] = [];
 
-  ast.fields.forEach(field => {
+  ast.fields.forEach((field) => {
     const fieldSchema = generateFieldSchema(field);
     properties[field.name] = fieldSchema;
 
@@ -87,7 +87,7 @@ export function generateJSONSchema(
 
 /**
  * 生成字段的 JSON Schema
- * 
+ *
  * @param field - 字段定义
  * @returns 字段的 JSON Schema
  */
@@ -105,21 +105,21 @@ function generateFieldSchema(field: FieldDefinition): JSONSchema {
 
   // 添加 min/max 约束
   if (field.min !== undefined) {
-    if (schema.type === 'array') {
+    if (schema.type === "array") {
       schema.minItems = field.min;
-    } else if (schema.type === 'number') {
+    } else if (schema.type === "number") {
       schema.minimum = field.min;
-    } else if (schema.type === 'string') {
+    } else if (schema.type === "string") {
       schema.minLength = field.min;
     }
   }
 
   if (field.max !== undefined) {
-    if (schema.type === 'array') {
+    if (schema.type === "array") {
       schema.maxItems = field.max;
-    } else if (schema.type === 'number') {
+    } else if (schema.type === "number") {
       schema.maximum = field.max;
-    } else if (schema.type === 'string') {
+    } else if (schema.type === "string") {
       schema.maxLength = field.max;
     }
   }
@@ -129,56 +129,56 @@ function generateFieldSchema(field: FieldDefinition): JSONSchema {
 
 /**
  * 生成基础类型 Schema
- * 
+ *
  * @param fieldType - 字段类型
  * @returns 基础类型 Schema
  */
 function generateBaseTypeSchema(fieldType: FieldType): JSONSchema {
   // 字符串类型
-  if (fieldType === 'string') {
-    return { type: 'string' };
+  if (fieldType === "string") {
+    return { type: "string" };
   }
 
   // 数字类型
-  if (fieldType === 'number') {
-    return { type: 'number' };
+  if (fieldType === "number") {
+    return { type: "number" };
   }
 
   // 布尔类型
-  if (fieldType === 'boolean') {
-    return { type: 'boolean' };
+  if (fieldType === "boolean") {
+    return { type: "boolean" };
   }
 
   // Email 类型
-  if (fieldType === 'email') {
+  if (fieldType === "email") {
     return {
-      type: 'string',
-      format: 'email',
+      type: "string",
+      format: "email",
     };
   }
 
   // 文本类型
-  if (fieldType === 'text') {
-    return { type: 'string' };
+  if (fieldType === "text") {
+    return { type: "string" };
   }
 
   // 列表类型
-  if (typeof fieldType === 'object' && fieldType.type === 'list') {
+  if (typeof fieldType === "object" && fieldType.type === "list") {
     const itemSchema = generateBaseTypeSchema(fieldType.itemType);
     return {
-      type: 'array',
+      type: "array",
       items: itemSchema,
     };
   }
 
   // 枚举类型
-  if (typeof fieldType === 'object' && fieldType.type === 'enum') {
+  if (typeof fieldType === "object" && fieldType.type === "enum") {
     return {
-      type: 'string',
+      type: "string",
       enum: fieldType.values,
     };
   }
 
   // 默认返回字符串类型
-  return { type: 'string' };
+  return { type: "string" };
 }

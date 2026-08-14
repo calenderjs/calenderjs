@@ -8,12 +8,12 @@
 
 > **Start here.** This section routes LLMs to the right docs before any code change.
 
-| Priority | File | Purpose |
-|----------|------|---------|
-| 1 | [docs/llm-guide.md](./docs/llm-guide.md) | Task routing, file map, invariants, implementation status |
-| 2 | [TASK_TRACKING.md](./TASK_TRACKING.md) | Current sprint — what is **pending** right now |
-| 3 | [AGENTS.md](./AGENTS.md) | Rules: pnpm only, RFC-driven, WSX conventions |
-| 4 | [llms.txt](./llms.txt) | Compact link index ([llms.txt spec](https://llmstxt.org/)) |
+| Priority | File                                     | Purpose                                                    |
+| -------- | ---------------------------------------- | ---------------------------------------------------------- |
+| 1        | [docs/llm-guide.md](./docs/llm-guide.md) | Task routing, file map, invariants, implementation status  |
+| 2        | [TASK_TRACKING.md](./TASK_TRACKING.md)   | Current sprint — what is **pending** right now             |
+| 3        | [AGENTS.md](./AGENTS.md)                 | Rules: pnpm only, RFC-driven, WSX conventions              |
+| 4        | [llms.txt](./llms.txt)                   | Compact link index ([llms.txt spec](https://llmstxt.org/)) |
 
 ### Quick facts (machine-readable)
 
@@ -31,12 +31,12 @@ wsx_skill:      .cursor/skills/wsx-work/SKILL.md
 
 ### Task → file routing
 
-| Task | Go to |
-|------|-------|
-| Edit calendar views | `packages/calendar/src/views/*.wsx` + wsx-work skill |
-| Change Event model | `packages/event-model/src/Event.ts` |
-| Change DSL grammar | `packages/event-dsl/src/event-dsl.pegjs` |
-| React integration | `packages/react/src/` |
+| Task                        | Go to                                                               |
+| --------------------------- | ------------------------------------------------------------------- |
+| Edit calendar views         | `packages/calendar/src/views/*.wsx` + wsx-work skill                |
+| Change Event model          | `packages/event-model/src/Event.ts`                                 |
+| Change DSL grammar          | `packages/event-dsl/src/event-dsl.pegjs`                            |
+| React integration           | `packages/react/src/`                                               |
 | Know what's done vs planned | [docs/llm-guide.md §2](./docs/llm-guide.md#2-implementation-status) |
 
 ---
@@ -143,27 +143,27 @@ pnpm --filter @calenderjs/event-dsl build
 
 ```html
 <script type="module">
-  import '@calenderjs/calendar';
+  import "@calenderjs/calendar";
 </script>
 
 <wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
 ```
 
 ```typescript
-import { Calendar } from '@calenderjs/calendar';
-import type { Event } from '@calenderjs/event-model';
+import { Calendar } from "@calenderjs/calendar";
+import type { Event } from "@calenderjs/event-model";
 
-const calendar = document.querySelector('wsx-calendar') as Calendar;
+const calendar = document.querySelector("wsx-calendar") as Calendar;
 
 const events: Event[] = [
   {
-    id: '1',
-    type: 'meeting',
-    title: '团队会议',
-    startTime: new Date('2024-12-30T10:00:00'),
-    endTime: new Date('2024-12-30T11:00:00'),
-    color: '#4285f4',
-    data: { location: '会议室 A' },
+    id: "1",
+    type: "meeting",
+    title: "团队会议",
+    startTime: new Date("2024-12-30T10:00:00"),
+    endTime: new Date("2024-12-30T11:00:00"),
+    color: "#4285f4",
+    data: { location: "会议室 A" },
   },
 ];
 
@@ -173,8 +173,8 @@ calendar.events = events;
 ### React
 
 ```tsx
-import { Calendar } from '@calenderjs/react';
-import type { Event } from '@calenderjs/event-model';
+import { Calendar } from "@calenderjs/react";
+import type { Event } from "@calenderjs/event-model";
 
 function App() {
   const events: Event[] = [/* ... */];
@@ -188,7 +188,7 @@ function App() {
 ### Event DSL
 
 ```typescript
-import { parse, compile } from '@calenderjs/event-dsl';
+import { parse, compile } from "@calenderjs/event-dsl";
 
 const ast = parse(`
   type meeting {
@@ -215,11 +215,11 @@ const compiled = compile(ast);
 
 ### Event DSL 架构
 
-| 层 | 包 | 职责 |
-|----|-----|------|
-| 编译时 | `@calenderjs/event-dsl` | PEG 解析 → AST → 编译器 → 类型/Schema 生成 |
-| 运行时 | `@calenderjs/event-runtime` | 验证、渲染增强、行为检查（`canPerform`） |
-| 数据模型 | `@calenderjs/event-model` | Event 接口 SSOT + JSON Schema 结构校验 |
+| 层       | 包                          | 职责                                       |
+| -------- | --------------------------- | ------------------------------------------ |
+| 编译时   | `@calenderjs/event-dsl`     | PEG 解析 → AST → 编译器 → 类型/Schema 生成 |
+| 运行时   | `@calenderjs/event-runtime` | 验证、渲染增强、行为检查（`canPerform`）   |
+| 数据模型 | `@calenderjs/event-model`   | Event 接口 SSOT + JSON Schema 结构校验     |
 
 ### Calendar 与 DSL
 
@@ -242,17 +242,17 @@ const compiled = compile(ast);
 
 ### RFC 文档
 
-| RFC | 标题 | 状态 |
-|-----|------|------|
-| [0002](./docs/rfc/0002-event-dsl.md) | Event DSL | Implemented（集成进行中） |
-| [0004](./docs/rfc/0004-react-demo-site.md) | React Package & Demo | Implemented |
-| [0005](./docs/rfc/0005-calendar-component.md) | Calendar Component | In Progress |
-| [0008](./docs/rfc/0008-calendar-component-api-redesign.md) | Calendar API 重新设计 | Implemented |
-| [0010](./docs/rfc/0010-week-view-layout-fix.md) | Week View 布局修复 | Implemented |
-| [0013](./docs/rfc/completed/0013-fix-today-handling.md) | 今天高亮修复 | Implemented |
-| [0011](./docs/rfc/0011-event-data-model-integration.md) | Event 数据模型与 DSL 集成 | Draft |
-| [0012](./docs/rfc/0012-calendar-plugin-mechanism.md) | Calendar 插件机制 | Draft |
-| [0003](./docs/rfc/0003-multi-tenant-service.md) | Multi-Tenant Service | Future Plan |
+| RFC                                                        | 标题                      | 状态                      |
+| ---------------------------------------------------------- | ------------------------- | ------------------------- |
+| [0002](./docs/rfc/0002-event-dsl.md)                       | Event DSL                 | Implemented（集成进行中） |
+| [0004](./docs/rfc/0004-react-demo-site.md)                 | React Package & Demo      | Implemented               |
+| [0005](./docs/rfc/0005-calendar-component.md)              | Calendar Component        | In Progress               |
+| [0008](./docs/rfc/0008-calendar-component-api-redesign.md) | Calendar API 重新设计     | Implemented               |
+| [0010](./docs/rfc/0010-week-view-layout-fix.md)            | Week View 布局修复        | Implemented               |
+| [0013](./docs/rfc/completed/0013-fix-today-handling.md)    | 今天高亮修复              | Implemented               |
+| [0011](./docs/rfc/0011-event-data-model-integration.md)    | Event 数据模型与 DSL 集成 | Draft                     |
+| [0012](./docs/rfc/0012-calendar-plugin-mechanism.md)       | Calendar 插件机制         | Draft                     |
+| [0003](./docs/rfc/0003-multi-tenant-service.md)            | Multi-Tenant Service      | Future Plan               |
 
 ### 包文档
 
@@ -266,15 +266,15 @@ const compiled = compile(ast);
 
 ## 技术栈
 
-| 类别 | 技术 |
-|------|------|
-| UI 组件 | WSX (`@wsxjs/wsx-core`) Web Components |
-| React 集成 | `@calenderjs/react` |
-| DSL 解析 | PEG.js (peggy) |
-| 数据校验 | AJV + JSON Schema |
-| 构建 | Vite + Turbo |
-| 包管理 | pnpm workspaces |
-| 测试 | Vitest + happy-dom |
+| 类别       | 技术                                   |
+| ---------- | -------------------------------------- |
+| UI 组件    | WSX (`@wsxjs/wsx-core`) Web Components |
+| React 集成 | `@calenderjs/react`                    |
+| DSL 解析   | PEG.js (peggy)                         |
+| 数据校验   | AJV + JSON Schema                      |
+| 构建       | Vite + Turbo                           |
+| 包管理     | pnpm workspaces                        |
+| 测试       | Vitest + happy-dom                     |
 
 ## 许可证
 

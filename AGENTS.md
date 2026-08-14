@@ -19,27 +19,27 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 
 ### 包一览
 
-| 包 | 说明 |
-|----|------|
-| `@calenderjs/core` | 核心模型、上下文、工具函数 |
-| `@calenderjs/calendar` | WSX 日历组件（月/周/日视图） |
-| `@calenderjs/event-model` | Event 接口 SSOT、JSON Schema 校验 |
-| `@calenderjs/event-dsl` | DSL 解析、编译器、生成器（编译时） |
-| `@calenderjs/event-runtime` | EventRuntime（运行时） |
-| `@calenderjs/date-time` | 日期时间工具 |
-| `@calenderjs/react` | React 日历封装 |
-| `@calenderjs/react-event-editor` | React Event DSL 编辑器（Monaco） |
-| `@calenderjs/monaco-event-dsl` | Monaco Editor DSL 语言插件 |
+| 包                               | 说明                               |
+| -------------------------------- | ---------------------------------- |
+| `@calenderjs/core`               | 核心模型、上下文、工具函数         |
+| `@calenderjs/calendar`           | WSX 日历组件（月/周/日视图）       |
+| `@calenderjs/event-model`        | Event 接口 SSOT、JSON Schema 校验  |
+| `@calenderjs/event-dsl`          | DSL 解析、编译器、生成器（编译时） |
+| `@calenderjs/event-runtime`      | EventRuntime（运行时）             |
+| `@calenderjs/date-time`          | 日期时间工具                       |
+| `@calenderjs/react`              | React 日历封装                     |
+| `@calenderjs/react-event-editor` | React Event DSL 编辑器（Monaco）   |
+| `@calenderjs/monaco-event-dsl`   | Monaco Editor DSL 语言插件         |
 
 ### 关键架构决策
 
-| 决策 | 选择 |
-|------|------|
-| Calendar 与 DSL | DSL 驱动；Calendar 接受 EventRuntime，无 runtime 时降级 |
-| Event vs Appointment | Appointment 是业务概念，Event 是技术模型 |
-| DSL 形态 | 文本 DSL（PEG.js → AST） |
-| 扩展字段 | `data`（RFC-0011） |
-| 编译/运行时 | `event-dsl`（编译时）与 `event-runtime`（运行时）分离 |
+| 决策                 | 选择                                                    |
+| -------------------- | ------------------------------------------------------- |
+| Calendar 与 DSL      | DSL 驱动；Calendar 接受 EventRuntime，无 runtime 时降级 |
+| Event vs Appointment | Appointment 是业务概念，Event 是技术模型                |
+| DSL 形态             | 文本 DSL（PEG.js → AST）                                |
+| 扩展字段             | `data`（RFC-0011）                                      |
+| 编译/运行时          | `event-dsl`（编译时）与 `event-runtime`（运行时）分离   |
 
 ---
 
@@ -127,17 +127,17 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 
 ### 常用命令
 
-| 任务 | 命令 |
-|------|------|
-| 运行所有测试 | `pnpm test` |
+| 任务                 | 命令                                      |
+| -------------------- | ----------------------------------------- |
+| 运行所有测试         | `pnpm test`                               |
 | 运行 calendar 包测试 | `pnpm --filter @calenderjs/calendar test` |
-| 构建所有包 | `pnpm build` |
-| 构建 calendar 包 | `pnpm build:calendar` |
-| 开发模式 | `pnpm dev` |
-| React 演示 | `pnpm dev:react` |
-| 代码检查 | `pnpm lint` |
-| 类型检查 | `pnpm typecheck` |
-| 校验 LLM 文档链接 | `pnpm validate:docs` |
+| 构建所有包           | `pnpm build`                              |
+| 构建 calendar 包     | `pnpm build:calendar`                     |
+| 开发模式             | `pnpm dev`                                |
+| React 演示           | `pnpm dev:react`                          |
+| 代码检查             | `pnpm lint`                               |
+| 类型检查             | `pnpm typecheck`                          |
+| 校验 LLM 文档链接    | `pnpm validate:docs`                      |
 
 ### Cursor 规则
 

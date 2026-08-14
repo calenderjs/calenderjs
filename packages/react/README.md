@@ -15,34 +15,31 @@ pnpm add @calenderjs/react @calenderjs/calendar
 ### 基础使用
 
 ```tsx
-import { Calendar } from '@calenderjs/react';
+import { Calendar } from "@calenderjs/react";
 
 function App() {
-  return (
-    <Calendar 
-      view="month" 
-      date="2024-12-30"
-    />
-  );
+  return <Calendar view="month" date="2024-12-30" />;
 }
 ```
 
 ### 使用事件回调
 
 ```tsx
-import { Calendar } from '@calenderjs/react';
+import { Calendar } from "@calenderjs/react";
 
 function App() {
   const handleDateChange = (e: CustomEvent<{ date: Date }>) => {
-    console.log('Date changed:', e.detail.date);
+    console.log("Date changed:", e.detail.date);
   };
 
-  const handleViewChange = (e: CustomEvent<{ view: 'month' | 'week' | 'day' }>) => {
-    console.log('View changed:', e.detail.view);
+  const handleViewChange = (
+    e: CustomEvent<{ view: "month" | "week" | "day" }>,
+  ) => {
+    console.log("View changed:", e.detail.view);
   };
 
   return (
-    <Calendar 
+    <Calendar
       view="month"
       date={new Date()}
       onDateChange={handleDateChange}
@@ -55,8 +52,8 @@ function App() {
 ### 使用 ref 控制组件
 
 ```tsx
-import { Calendar, CalendarRef } from '@calenderjs/react';
-import { useRef } from 'react';
+import { Calendar, CalendarRef } from "@calenderjs/react";
+import { useRef } from "react";
 
 function App() {
   const calendarRef = useRef<CalendarRef>(null);
@@ -65,14 +62,14 @@ function App() {
     calendarRef.current?.goToToday();
   };
 
-  const handleSetView = (view: 'month' | 'week' | 'day') => {
+  const handleSetView = (view: "month" | "week" | "day") => {
     calendarRef.current?.setView(view);
   };
 
   return (
     <div>
       <button onClick={handleGoToToday}>今天</button>
-      <button onClick={() => handleSetView('week')}>周视图</button>
+      <button onClick={() => handleSetView("week")}>周视图</button>
       <Calendar ref={calendarRef} />
     </div>
   );
@@ -82,27 +79,22 @@ function App() {
 ### 设置事件数据
 
 ```tsx
-import { Calendar } from '@calenderjs/react';
-import type { Event } from '@calenderjs/event-model';
+import { Calendar } from "@calenderjs/react";
+import type { Event } from "@calenderjs/event-model";
 
 function App() {
   const events: Event[] = [
     {
-      id: '1',
-      type: 'meeting',
-      title: '团队会议',
-      startTime: new Date('2024-12-30T10:00:00'),
-      endTime: new Date('2024-12-30T11:00:00'),
+      id: "1",
+      type: "meeting",
+      title: "团队会议",
+      startTime: new Date("2024-12-30T10:00:00"),
+      endTime: new Date("2024-12-30T11:00:00"),
       data: {},
     },
   ];
 
-  return (
-    <Calendar 
-      view="month"
-      events={events}
-    />
-  );
+  return <Calendar view="month" events={events} />;
 }
 ```
 
@@ -113,7 +105,7 @@ function App() {
 ### 基础使用
 
 ```tsx
-import { ResizableSplitter } from '@calenderjs/react';
+import { ResizableSplitter } from "@calenderjs/react";
 
 function App() {
   return (
@@ -131,19 +123,19 @@ function App() {
 ### 与 Calendar 结合使用
 
 ```tsx
-import { ResizableSplitter, Calendar } from '@calenderjs/react';
+import { ResizableSplitter, Calendar } from "@calenderjs/react";
 
 function App() {
   return (
     <ResizableSplitter
       left={
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: "20px" }}>
           <h2>编辑器</h2>
-          <textarea style={{ width: '100%', height: '100%' }} />
+          <textarea style={{ width: "100%", height: "100%" }} />
         </div>
       }
       right={
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: "20px" }}>
           <h2>日历</h2>
           <Calendar view="month" />
         </div>
@@ -160,36 +152,36 @@ function App() {
 
 ### Calendar Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `view` | `'month' \| 'week' \| 'day'` | `'month'` | 初始视图 |
-| `date` | `string \| Date` | 当前日期 | 初始日期 |
-| `events` | `Event[]` | `[]` | 事件列表（数据模型） |
-| `user` | `any` | `undefined` | 当前用户 |
-| `onDateChange` | `(e: CustomEvent<{ date: Date }>) => void` | - | 日期变化回调 |
-| `onViewChange` | `(e: CustomEvent<{ view: 'month' \| 'week' \| 'day' }>) => void` | - | 视图切换回调 |
-| `className` | `string` | - | CSS 类名 |
-| `style` | `React.CSSProperties` | - | 内联样式 |
+| 属性           | 类型                                                             | 默认值      | 说明                 |
+| -------------- | ---------------------------------------------------------------- | ----------- | -------------------- |
+| `view`         | `'month' \| 'week' \| 'day'`                                     | `'month'`   | 初始视图             |
+| `date`         | `string \| Date`                                                 | 当前日期    | 初始日期             |
+| `events`       | `Event[]`                                                        | `[]`        | 事件列表（数据模型） |
+| `user`         | `any`                                                            | `undefined` | 当前用户             |
+| `onDateChange` | `(e: CustomEvent<{ date: Date }>) => void`                       | -           | 日期变化回调         |
+| `onViewChange` | `(e: CustomEvent<{ view: 'month' \| 'week' \| 'day' }>) => void` | -           | 视图切换回调         |
+| `className`    | `string`                                                         | -           | CSS 类名             |
+| `style`        | `React.CSSProperties`                                            | -           | 内联样式             |
 
 ### CalendarRef
 
-| 方法 | 说明 |
-|------|------|
-| `getElement()` | 获取底层的 Web Component 实例 |
-| `setView(view)` | 设置当前视图 |
-| `setDate(date)` | 设置当前日期 |
-| `goToToday()` | 跳转到今天 |
+| 方法            | 说明                          |
+| --------------- | ----------------------------- |
+| `getElement()`  | 获取底层的 Web Component 实例 |
+| `setView(view)` | 设置当前视图                  |
+| `setDate(date)` | 设置当前日期                  |
+| `goToToday()`   | 跳转到今天                    |
 
 ### ResizableSplitter Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `left` | `React.ReactNode` | - | 左侧面板内容（必需） |
-| `right` | `React.ReactNode` | - | 右侧面板内容（必需） |
-| `initialLeftWidth` | `number` | `40` | 初始左侧面板宽度（百分比，0-100） |
-| `minLeftWidth` | `number` | `20` | 左侧面板最小宽度（百分比） |
-| `maxLeftWidth` | `number` | `80` | 左侧面板最大宽度（百分比） |
-| `className` | `string` | `""` | 自定义 CSS 类名 |
+| 属性               | 类型              | 默认值 | 说明                              |
+| ------------------ | ----------------- | ------ | --------------------------------- |
+| `left`             | `React.ReactNode` | -      | 左侧面板内容（必需）              |
+| `right`            | `React.ReactNode` | -      | 右侧面板内容（必需）              |
+| `initialLeftWidth` | `number`          | `40`   | 初始左侧面板宽度（百分比，0-100） |
+| `minLeftWidth`     | `number`          | `20`   | 左侧面板最小宽度（百分比）        |
+| `maxLeftWidth`     | `number`          | `80`   | 左侧面板最大宽度（百分比）        |
+| `className`        | `string`          | `""`   | 自定义 CSS 类名                   |
 
 ## CSS 变量自定义
 
@@ -205,24 +197,24 @@ Calendar 组件支持大量 CSS 变量来自定义外观。主要变量包括：
   --calender-bg-color: #fff;
   --calender-text-color: #202124;
   --calender-primary-color: #1a73e8;
-  
+
   /* 状态颜色 */
   --calender-today-bg-color: #e8f0fe;
   --calender-selected-bg-color: #e8f0fe;
   --calender-hover-bg-color: #f1f3f4;
-  
+
   /* 边框 */
   --calender-border-color: #dadce0;
   --calender-border-radius: 4px;
-  
+
   /* 字体 */
-  --calender-font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  --calender-font-family: "Google Sans", Roboto, Arial, sans-serif;
   --calender-font-size: 14px;
-  
+
   /* 尺寸 */
   --calender-month-cell-min-height: 100px;
   --calender-hour-cell-height: 48px;
-  
+
   /* 过渡 */
   --calender-transition-duration: 0.2s;
 }
@@ -237,21 +229,21 @@ Calendar 组件支持大量 CSS 变量来自定义外观。主要变量包括：
 ```css
 :root {
   /* 分割器主体 */
-  --resizable-splitter-width: 4px;              /* 分割器宽度 */
-  --resizable-splitter-bg-color: #ddd;           /* 分割器背景色 */
-  --resizable-splitter-hover-bg-color: #bbb;    /* 分割器悬停背景色 */
+  --resizable-splitter-width: 4px; /* 分割器宽度 */
+  --resizable-splitter-bg-color: #ddd; /* 分割器背景色 */
+  --resizable-splitter-hover-bg-color: #bbb; /* 分割器悬停背景色 */
   --resizable-splitter-transition: background-color 0.2s; /* 过渡效果 */
 
   /* 分割器手柄 */
-  --resizable-splitter-handle-width: 20px;       /* 手柄宽度 */
-  --resizable-splitter-handle-height: 40px;      /* 手柄高度 */
+  --resizable-splitter-handle-width: 20px; /* 手柄宽度 */
+  --resizable-splitter-handle-height: 40px; /* 手柄高度 */
   --resizable-splitter-handle-border-radius: 4px; /* 手柄圆角 */
-  --resizable-splitter-handle-bg-color: rgba(0,0,0,0.1); /* 手柄背景色 */
+  --resizable-splitter-handle-bg-color: rgba(0, 0, 0, 0.1); /* 手柄背景色 */
 
   /* 分割器圆点 */
-  --resizable-splitter-dot-size: 3px;            /* 圆点大小 */
-  --resizable-splitter-dot-color: #999;         /* 圆点颜色 */
-  --resizable-splitter-dot-gap: 2px;            /* 圆点间距 */
+  --resizable-splitter-dot-size: 3px; /* 圆点大小 */
+  --resizable-splitter-dot-color: #999; /* 圆点颜色 */
+  --resizable-splitter-dot-gap: 2px; /* 圆点间距 */
 }
 ```
 
@@ -266,11 +258,11 @@ Calendar 组件支持大量 CSS 变量来自定义外观。主要变量包括：
   --calender-primary-color: #4285f4;
   --calender-today-bg-color: #1a3a5a;
   --calender-hover-bg-color: #2a2a2a;
-  
+
   /* ResizableSplitter 暗色模式 */
   --resizable-splitter-bg-color: #333;
   --resizable-splitter-hover-bg-color: #555;
-  --resizable-splitter-handle-bg-color: rgba(255,255,255,0.1);
+  --resizable-splitter-handle-bg-color: rgba(255, 255, 255, 0.1);
   --resizable-splitter-dot-color: #ccc;
 }
 ```

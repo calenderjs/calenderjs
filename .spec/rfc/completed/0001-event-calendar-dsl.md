@@ -13,6 +13,7 @@
 **核心创新**：Event DSL 是一种声明式的、领域友好的配置语言，专为事件日历领域设计，使得非程序员也能理解和配置事件类型。
 
 **时间敏感活动支持**（核心功能）：
+
 - ✅ 时区支持（IANA 时区标识符，如 "Asia/Shanghai"）
 - ✅ 重复事件（daily/weekly/monthly/yearly，支持排除日期）
 - ✅ 全天事件支持（allDay 字段）
@@ -23,6 +24,7 @@
 - ✅ 时间冲突检测（no conflict with other events）
 
 **开源定位**：
+
 - **Event DSL**：开源配置语言（MIT协议）
 - **@calenderjs/event-dsl**：DSL 解析器和运行时引擎（MIT协议）
 - **商业应用**：Appointment Service 等业务服务可以基于此 DSL 构建（付费SaaS）
@@ -38,14 +40,17 @@
 **为什么不用 JavaScript/JSON 配置？**
 
 1. **可读性差**：
+
    ```javascript
    // JavaScript配置 - 复杂难懂
    customValidation: (event, context) => {
-     return event.extra.attendees.length >= 1 &&
-            event.extra.attendees.length <= 50 &&
-            event.startTime.getHours() >= 9 &&
-            event.startTime.getHours() <= 18;
-   }
+     return (
+       event.extra.attendees.length >= 1 &&
+       event.extra.attendees.length <= 50 &&
+       event.startTime.getHours() >= 9 &&
+       event.startTime.getHours() <= 18
+     );
+   };
    ```
 
 2. **无法序列化**：JavaScript函数无法存储为JSON，无法通过API传输
@@ -78,6 +83,7 @@ validate:
 **核心价值**：Event DSL 提供了一个声明式的方式来扩展 Event 数据模型，支持不同类型的事件（meeting, appointment, holiday, task 等），而无需修改核心 Event 接口。
 
 **扩展原理**：
+
 1. **Event 接口是固定的**：所有事件类型共享相同的基础结构（id, type, title, startTime, endTime, color, icon, extra, metadata）
 2. **通过 `type` 字段区分**：不同事件类型通过 `Event.type` 字段区分（如 "meeting", "appointment", "holiday"）
 3. **通过 `extra` 字段扩展**：每个事件类型特有的数据存储在 `Event.extra` 字段中
@@ -94,25 +100,25 @@ graph TB
         B["编写 DSL<br/>定义 appointment 类型"]
         C["编写 DSL<br/>定义 holiday 类型"]
     end
-    
+
     subgraph "2. 编译 DSL"
         D["EventDSLCompiler<br/>编译 DSL"]
         E["生成 extraSchema<br/>meeting Schema"]
         F["生成 extraSchema<br/>appointment Schema"]
         G["生成 extraSchema<br/>holiday Schema"]
     end
-    
+
     subgraph "3. 创建 Event 对象"
         H["Event type: meeting<br/>extra: attendees, location"]
         I["Event type: appointment<br/>extra: doctor, department"]
         J["Event type: holiday<br/>extra: country, isOfficial"]
     end
-    
+
     subgraph "4. 验证 Event"
         K["EventValidator<br/>validateBase"]
         L["EventValidator<br/>validateExtra"]
     end
-    
+
     A --> D
     B --> D
     C --> D
@@ -129,7 +135,7 @@ graph TB
     L -->|使用对应的 extraSchema| E
     L -->|使用对应的 extraSchema| F
     L -->|使用对应的 extraSchema| G
-    
+
     style A fill:#ff9800,stroke:#f57c00,color:#fff
     style B fill:#ff9800,stroke:#f57c00,color:#fff
     style C fill:#ff9800,stroke:#f57c00,color:#fff
@@ -179,19 +185,20 @@ display:
 ```typescript
 const meetingEvent: Event = {
   id: "event-1",
-  type: "meeting",  // ← 事件类型标识符
+  type: "meeting", // ← 事件类型标识符
   title: "团队会议",
   startTime: new Date("2025-01-15T10:00:00"),
   endTime: new Date("2025-01-15T11:00:00"),
   color: "#4285f4",
-  extra: {  // ← meeting 类型特有的数据
+  extra: {
+    // ← meeting 类型特有的数据
     title: "团队会议",
     attendees: ["user1@example.com", "user2@example.com"],
     location: "会议室 A",
     priority: "normal",
     organizer: "admin@example.com",
-    agenda: "讨论项目进度"
-  }
+    agenda: "讨论项目进度",
+  },
 };
 ```
 
@@ -223,18 +230,19 @@ display:
 ```typescript
 const appointmentEvent: Event = {
   id: "event-2",
-  type: "appointment",  // ← 不同的事件类型
+  type: "appointment", // ← 不同的事件类型
   title: "Dr. Smith - 张三",
   startTime: new Date("2025-01-15T14:00:00"),
   endTime: new Date("2025-01-15T15:00:00"),
   color: "#fbbc04",
-  extra: {  // ← appointment 类型特有的数据（不同的结构）
+  extra: {
+    // ← appointment 类型特有的数据（不同的结构）
     doctor: "Dr. Smith",
     department: "内科",
     patientName: "张三",
     notes: "带病历",
-    insurance: false
-  }
+    insurance: false,
+  },
 };
 ```
 
@@ -271,19 +279,20 @@ display:
 ```typescript
 const holidayEvent: Event = {
   id: "event-3",
-  type: "holiday",  // ← 不同的事件类型
+  type: "holiday", // ← 不同的事件类型
   title: "春节",
   startTime: new Date("2025-01-29T00:00:00"),
   endTime: new Date("2025-02-04T23:59:59"),
   color: "#ea4335",
   icon: "🎉",
   allDay: true,
-  extra: {  // ← holiday 类型特有的数据（完全不同的结构）
+  extra: {
+    // ← holiday 类型特有的数据（完全不同的结构）
     name: "春节",
     country: "CN",
     isOfficial: true,
-    description: "法定节假日"
-  }
+    description: "法定节假日",
+  },
 };
 ```
 
@@ -353,7 +362,7 @@ graph TB
         C["AST"]
         D["EventDSLCompiler"]
     end
-    
+
     subgraph "Data Model 层（核心连接点）"
         E["Data Model<br/>Event 对象<br/>包含规则和数据"]
         E1["规则/元数据<br/>- Event.extra JSON Schema<br/>- 业务规则<br/>- 验证器/渲染器"]
@@ -361,17 +370,17 @@ graph TB
         E --> E1
         E --> E2
     end
-    
+
     subgraph "Runtime 层"
         F["EventDSLRuntime<br/>执行 Data Model"]
     end
-    
+
     subgraph "Calendar 层"
         G["Calendar 组件<br/>基于 Data Model 渲染"]
         H["插件系统"]
         I["详情卡片渲染"]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -380,7 +389,7 @@ graph TB
     E -->|渲染| G
     G --> H
     H --> I
-    
+
     style A fill:#ff9800,stroke:#f57c00,color:#fff
     style B fill:#ff9800,stroke:#f57c00,color:#fff
     style C fill:#ff9800,stroke:#f57c00,color:#fff
@@ -395,6 +404,7 @@ graph TB
 ```
 
 **关键关系**：
+
 1. **DSL 生成 Data Model**：DSL → EventDSLCompiler → Data Model
 2. **Runtime 执行 Data Model**：EventDSLRuntime 使用 Data Model 中的规则进行验证
 3. **Calendar 基于 Data Model 渲染**：Calendar 组件直接使用 Data Model 中的数据渲染
@@ -418,16 +428,19 @@ Data Model 是自解释的，是连接所有组件的关键粘合剂：
   2. **Event.extra JSON Schema**（从 DSL fields 生成，**包含在 Data Model 中**）：用于运行时验证 Event.extra 结构
 
 **关键架构原则**：
+
 1. **DSL 编译成 Data Model**：
    - DSL 文本 → 解析器 → AST
    - AST → EventDSLCompiler → 编译成 Data Model
-  - Data Model 包含：
-    - **Event.extra JSON Schema**（从 DSL fields 生成，用于运行时验证 Event.extra 结构）
-    - 业务规则（从 DSL validate 部分生成，用于验证业务逻辑）
-    - 验证器/渲染器函数
-  - **两个 JSON Schema（独立存在）**：
-    1. **Event Data Model JSON Schema**（固定，在 `@calenderjs/event-model` 包中定义，**不包含在 Data Model 中**）：用于验证 Data Model（Event 对象）本身的结构
-    2. **Event.extra JSON Schema**（从 DSL fields 生成，**包含在 Data Model 中**）：用于运行时验证 Event.extra 结构
+
+- Data Model 包含：
+  - **Event.extra JSON Schema**（从 DSL fields 生成，用于运行时验证 Event.extra 结构）
+  - 业务规则（从 DSL validate 部分生成，用于验证业务逻辑）
+  - 验证器/渲染器函数
+- **两个 JSON Schema（独立存在）**：
+  1. **Event Data Model JSON Schema**（固定，在 `@calenderjs/event-model` 包中定义，**不包含在 Data Model 中**）：用于验证 Data Model（Event 对象）本身的结构
+  2. **Event.extra JSON Schema**（从 DSL fields 生成，**包含在 Data Model 中**）：用于运行时验证 Event.extra 结构
+
 2. **两个 JSON Schema 的用途和位置**：
    - **Event Data Model JSON Schema**（固定，在 `@calenderjs/event-model` 包中定义，`EVENT_BASE_SCHEMA`）：
      - **位置**：`@calenderjs/event-model` 包中，**不包含在 Data Model 中**
@@ -452,6 +465,7 @@ Data Model 是自解释的，是连接所有组件的关键粘合剂：
 ### DSL 设计理念
 
 **核心原则**：
+
 1. **领域特定**：只包含事件日历领域需要的概念
 2. **声明式**：描述"是什么"，而不是"怎么做"
 3. **自然语言风格**：读起来像自然语言，而不是代码
@@ -459,6 +473,7 @@ Data Model 是自解释的，是连接所有组件的关键粘合剂：
 5. **时间敏感**：完整支持时区、重复事件、时间验证等时间相关特性
 
 **不包含的功能**（保持简洁）：
+
 - ❌ 循环（for/while）
 - ❌ 函数定义
 - ❌ 变量赋值
@@ -492,7 +507,7 @@ validate:
   startTime before endTime
   duration >= minDuration
   duration <= maxDuration
-  
+
   # 业务验证
   attendees.count between 1 and 50
   startTime.hour between 9 and 18
@@ -773,7 +788,7 @@ validate:
   # 基础时间验证
   startTime before endTime
   duration between 15 minutes and 8 hours
-  
+
   # 业务验证
   attendees.count between 1 and 50
   startTime.hour between 9 and 18
@@ -1280,79 +1295,75 @@ export interface FieldDefinition {
 }
 
 export type FieldType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'email'
-  | 'text'
-  | { type: 'list'; itemType: FieldType }
-  | { type: 'enum'; values: string[] };
+  | "string"
+  | "number"
+  | "boolean"
+  | "email"
+  | "text"
+  | { type: "list"; itemType: FieldType }
+  | { type: "enum"; values: string[] };
 
 export type ValidationRule =
-  | BetweenRule
-  | ComparisonRule
-  | ConflictRule
-  | WhenRule
-  | LogicalRule;
+  BetweenRule | ComparisonRule | ConflictRule | WhenRule | LogicalRule;
 
 export interface BetweenRule {
-  type: 'Between';
+  type: "Between";
   field: FieldAccess;
   min: any;
   max: any;
 }
 
 export interface ComparisonRule {
-  type: 'Comparison';
+  type: "Comparison";
   operator: string;
   left: FieldAccess;
   right: any;
 }
 
 export interface ConflictRule {
-  type: 'NoConflict' | 'Conflict';
+  type: "NoConflict" | "Conflict";
 }
 
 export interface WhenRule {
-  type: 'When';
+  type: "When";
   condition: Expression;
   rules: ValidationRule[];
 }
 
 export interface LogicalRule {
-  type: 'BinaryExpression' | 'UnaryExpression';
-  operator: 'and' | 'or' | 'not';
+  type: "BinaryExpression" | "UnaryExpression";
+  operator: "and" | "or" | "not";
   left?: Expression;
   right?: Expression;
   argument?: Expression;
 }
 
 export interface FieldAccess {
-  type: 'FieldAccess';
+  type: "FieldAccess";
   path: string[];
 }
 
 export type Expression = any; // 可以是各种表达式类型
 
 export interface DisplayRule {
-  name: 'color' | 'icon' | 'title' | 'description';
+  name: "color" | "icon" | "title" | "description";
   value: string | ConditionalValue | TemplateValue;
 }
 
 export interface ConditionalValue {
-  type: 'Conditional';
+  type: "Conditional";
   condition: Expression;
   consequent: any;
   alternate?: any;
 }
 
 export interface TemplateValue {
-  type: 'Template';
+  type: "Template";
   parts: Array<string | FieldAccess>;
 }
 
 export interface BehaviorRule {
-  name: 'draggable' | 'resizable' | 'editable' | 'deletable';
+  name: "draggable" | "resizable" | "editable" | "deletable";
   value: boolean | Expression;
 }
 
@@ -1394,24 +1405,24 @@ graph TB
     subgraph "Data Model 层（核心连接点）"
         DM["Data Model<br/>Event 对象<br/>包含规则和数据"]
     end
-    
+
     subgraph "DSL 层"
         DSLPkg["@calenderjs/event-dsl<br/>生成 Data Model"]
     end
-    
+
     subgraph "Runtime 层"
         RTPkg["@calenderjs/event-runtime<br/>执行 Data Model"]
     end
-    
+
     subgraph "Calendar 层"
         CALPkg["@calenderjs/calendar<br/>基于 Data Model 渲染"]
     end
-    
+
     subgraph "基础层"
         EMPkg["@calenderjs/event-model<br/>Event 接口定义"]
         COREPkg["@calenderjs/core<br/>通用接口"]
     end
-    
+
     DSLPkg -->|生成| DM
     DM -->|执行| RTPkg
     DM -->|渲染| CALPkg
@@ -1419,7 +1430,7 @@ graph TB
     COREPkg --> DSLPkg
     COREPkg --> RTPkg
     COREPkg --> CALPkg
-    
+
     style DM fill:#1e88e5,stroke:#1565c0,color:#fff,stroke-width:4px
     style DSLPkg fill:#ff9800,stroke:#f57c00,color:#fff
     style RTPkg fill:#4caf50,stroke:#388e3c,color:#fff
@@ -1429,6 +1440,7 @@ graph TB
 ```
 
 **说明**：
+
 - **Data Model 是核心连接点**：Data Model = Event 对象（包含规则和数据），是自解释的，连接所有组件
 - **DSL 生成 Data Model**：`@calenderjs/event-dsl` 编译 DSL → Data Model
 - **Runtime 执行 Data Model**：`@calenderjs/event-runtime` 使用 Data Model 中的规则进行验证
@@ -1442,6 +1454,7 @@ graph TB
 **重要架构变更**：Event 接口定义已迁移到 `@calenderjs/event-model` 包，作为 SSOT（单一数据源）。
 
 `@calenderjs/event-model` 定义所有包共享的核心接口和数据模型：
+
 - Event 接口定义（`Event.ts`）
 - Event JSON Schema（`validator.ts` 中的 `EVENT_BASE_SCHEMA`）
 - Event 验证器（`EventValidator` 类）
@@ -1479,8 +1492,8 @@ graph TB
 **验证流程示例**：
 
 ```typescript
-import { EventValidator } from '@calenderjs/event-model';
-import { EventDSLCompiler } from '@calenderjs/event-dsl';
+import { EventValidator } from "@calenderjs/event-model";
+import { EventDSLCompiler } from "@calenderjs/event-dsl";
 
 // 1. 编译 DSL 生成 extra Schema
 const compiler = new EventDSLCompiler();
@@ -1492,35 +1505,35 @@ const validator = new EventValidator();
 
 // 3. 验证 Event 对象
 const event: Event = {
-  id: 'event-1',
-  type: 'meeting',
-  title: '团队会议',
-  startTime: new Date('2025-01-15T10:00:00'),
-  endTime: new Date('2025-01-15T11:00:00'),
+  id: "event-1",
+  type: "meeting",
+  title: "团队会议",
+  startTime: new Date("2025-01-15T10:00:00"),
+  endTime: new Date("2025-01-15T11:00:00"),
   extra: {
-    attendees: ['user1@example.com', 'user2@example.com'],
-    location: '会议室 A',
+    attendees: ["user1@example.com", "user2@example.com"],
+    location: "会议室 A",
   },
 };
 
 // 第一部分：验证 Event 数据模型（使用预定义的 EVENT_BASE_SCHEMA）
 const baseResult = validator.validateBase(event);
 if (!baseResult.valid) {
-  console.error('基础结构验证失败:', baseResult.errors);
+  console.error("基础结构验证失败:", baseResult.errors);
   return;
 }
 
 // 第二部分：验证 Event.extra 字段（使用从 DSL 生成的 extraSchema）
 const extraResult = validator.validateExtra(event, extraSchema);
 if (!extraResult.valid) {
-  console.error('extra 字段验证失败:', extraResult.errors);
+  console.error("extra 字段验证失败:", extraResult.errors);
   return;
 }
 
 // 或者使用便捷方法（自动执行两部分验证）
 const fullResult = validator.validate(event, extraSchema);
 if (!fullResult.valid) {
-  console.error('验证失败:', fullResult.errors);
+  console.error("验证失败:", fullResult.errors);
 }
 ```
 
@@ -1543,11 +1556,11 @@ if (!fullResult.valid) {
 ```typescript
 /**
  * 事件核心接口（时间敏感活动）
- * 
+ *
  * 定义在 @calenderjs/event-model 包中
- * 
+ *
  * Event 是日历系统中的核心数据模型，表示一个**时间敏感的活动**。
- * 
+ *
  * **重要设计原则**：
  * 1. **Calendar 只关心 Event** - Calendar 组件处理的是 Event（时间敏感的活动）
  * 2. **Event 必须有时间** - Event 必须有 startTime 和 endTime
@@ -1558,71 +1571,71 @@ if (!fullResult.valid) {
 export interface Event {
   /** 唯一标识符 */
   id: string;
-  
-  /** 
+
+  /**
    * 事件类型标识符
    * 例如: "meeting", "appointment", "holiday", "task", "reminder" 等
    */
   type: string;
-  
+
   /** 事件标题（Calendar 显示用） */
   title: string;
-  
+
   /** 开始时间（必需 - Event 必须有时间） */
   startTime: Date;
-  
+
   /** 结束时间（必需 - Event 必须有时间） */
   endTime: Date;
-  
-  /** 
+
+  /**
    * 时区（IANA 时区标识符，如 "Asia/Shanghai"）
    * 用于跨时区事件处理和夏令时转换
    */
   timeZone?: string;
-  
-  /** 
+
+  /**
    * 是否全天事件
    * 全天事件不受时区影响，通常从 00:00 到 23:59
    */
   allDay?: boolean;
-  
-  /** 
+
+  /**
    * 重复规则
    * 定义事件的重复模式（daily/weekly/monthly/yearly）
    */
   recurring?: RecurringRule;
-  
-  /** 
+
+  /**
    * 父事件 ID（如果是重复事件的实例）
    * 指向原始重复事件定义
    */
   parentEventId?: string;
-  
-  /** 
+
+  /**
    * 重复实例 ID（用于标识重复序列中的特定实例）
    * 用于唯一标识重复事件序列中的某个实例
    */
   recurrenceId?: string;
-  
-  /** 
+
+  /**
    * Calendar 显示属性（可选）
    * 用于控制 Calendar 中事件的显示样式
    */
   color?: string;
   icon?: string;
-  
-  /** 
+
+  /**
    * 扩展属性（可选）
    * 用于存储事件详情卡片需要的数据
    * 这些数据由 Event DSL 定义，用于显示事件详情
-   * 
+   *
    * 例如：
    * - `type: "meeting"` → `extra: { attendees, location, agenda }`
    * - `type: "appointment"` → `extra: { doctor, department, notes }`
    * - `type: "holiday"` → `extra: { country, isOfficial, description }`
    */
   extra?: Record<string, any>;
-  
+
   /** 事件元数据（可选） */
   metadata?: EventMetadata;
 }
@@ -1632,7 +1645,7 @@ export interface Event {
  */
 export interface RecurringRule {
   /** 频率 */
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequency: "daily" | "weekly" | "monthly" | "yearly";
   /** 间隔（如每 2 周） */
   interval: number;
   /** 结束日期 */
@@ -1673,7 +1686,7 @@ export interface User {
   [key: string]: any;
 }
 
-export type UserRole = 'admin' | 'user' | 'guest' | string;
+export type UserRole = "admin" | "user" | "guest" | string;
 ```
 
 #### Context 接口
@@ -1684,7 +1697,7 @@ export type UserRole = 'admin' | 'user' | 'guest' | string;
  */
 export interface ValidationContext {
   user?: User;
-  events: Event[];  // 用于冲突检测
+  events: Event[]; // 用于冲突检测
   now: Date;
   [key: string]: any;
 }
@@ -1694,7 +1707,7 @@ export interface ValidationContext {
  */
 export interface RenderContext {
   user?: User;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   locale?: string;
   [key: string]: any;
 }
@@ -1710,7 +1723,7 @@ export interface EventTypeDefinition {
   type: string;
   name: string;
   description?: string;
-  schema: JSONSchema;        // 用于运行时验证
+  schema: JSONSchema; // 用于运行时验证
   validate?: (event: Event, context: ValidationContext) => ValidationResult;
   render?: (event: Event, context: RenderContext) => RenderedEvent;
   canPerform?: (action: string, event: Event, user: User) => boolean;
@@ -1718,7 +1731,7 @@ export interface EventTypeDefinition {
 
 export interface JSONSchema {
   $schema?: string;
-  type: 'object' | 'array' | 'string' | 'number' | 'boolean';
+  type: "object" | "array" | "string" | "number" | "boolean";
   properties?: Record<string, any>;
   required?: string[];
   additionalProperties?: boolean;
@@ -1775,6 +1788,7 @@ packages/event-runtime/
 ```
 
 **职责**：
+
 - 接收编译后的 Data Model（来自 DSL 编译）
 - 使用 Data Model 中的业务规则验证 Event 数据
 - 不依赖 DSL 包，只依赖 Data Model 包
@@ -1847,41 +1861,42 @@ export class EventDSLRuntime {
 
 #### DSL → JSON Schema 映射
 
-| DSL 类型 | JSON Schema |
-|---------|-------------|
-| `string` | `{"type": "string"}` |
-| `number` | `{"type": "number"}` |
-| `boolean` | `{"type": "boolean"}` |
-| `email` | `{"type": "string", "format": "email"}` |
-| `text` | `{"type": "string"}` |
-| `list of T` | `{"type": "array", "items": {...}}` |
+| DSL 类型      | JSON Schema                                 |
+| ------------- | ------------------------------------------- |
+| `string`      | `{"type": "string"}`                        |
+| `number`      | `{"type": "number"}`                        |
+| `boolean`     | `{"type": "boolean"}`                       |
+| `email`       | `{"type": "string", "format": "email"}`     |
+| `text`        | `{"type": "string"}`                        |
+| `list of T`   | `{"type": "array", "items": {...}}`         |
 | `enum(a,b,c)` | `{"type": "string", "enum": ["a","b","c"]}` |
 
 #### DSL → TypeScript 映射
 
-| DSL 类型 | TypeScript |
-|---------|-----------|
-| `string` | `string` |
-| `number` | `number` |
-| `boolean` | `boolean` |
-| `email` | `string` (注释: email format) |
-| `text` | `string` |
-| `list of T` | `T[]` |
-| `enum(a,b,c)` | `'a' \| 'b' \| 'c'` |
+| DSL 类型      | TypeScript                    |
+| ------------- | ----------------------------- |
+| `string`      | `string`                      |
+| `number`      | `number`                      |
+| `boolean`     | `boolean`                     |
+| `email`       | `string` (注释: email format) |
+| `text`        | `string`                      |
+| `list of T`   | `T[]`                         |
+| `enum(a,b,c)` | `'a' \| 'b' \| 'c'`           |
 
 #### 字段修饰符映射
 
-| DSL 修饰符 | JSON Schema | TypeScript |
-|-----------|-------------|-----------|
-| `required` | `"required": ["fieldName"]` | `fieldName: Type` (非可选) |
-| 无 required | 不在 required 数组 | `fieldName?: Type` (可选) |
-| `default: value` | `"default": value` | `/** @default value */` |
-| `min: n` | `"minItems": n` 或 `"minimum": n` | `/** @min n */` |
-| `max: n` | `"maxItems": n` 或 `"maximum": n` | `/** @max n */` |
+| DSL 修饰符       | JSON Schema                       | TypeScript                 |
+| ---------------- | --------------------------------- | -------------------------- |
+| `required`       | `"required": ["fieldName"]`       | `fieldName: Type` (非可选) |
+| 无 required      | 不在 required 数组                | `fieldName?: Type` (可选)  |
+| `default: value` | `"default": value`                | `/** @default value */`    |
+| `min: n`         | `"minItems": n` 或 `"minimum": n` | `/** @min n */`            |
+| `max: n`         | `"maxItems": n` 或 `"maximum": n` | `/** @max n */`            |
 
 ### 生成示例对比
 
 **输入 DSL**：
+
 ```dsl
 type: meeting
 name: 会议
@@ -1893,6 +1908,7 @@ fields:
 ```
 
 **输出 AST (JSON)**：
+
 ```json
 {
   "type": "meeting",
@@ -1916,6 +1932,7 @@ fields:
 ```
 
 **输出 JSON Schema**：
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -1940,6 +1957,7 @@ fields:
 ```
 
 **输出 TypeScript**：
+
 ```typescript
 export interface MeetingEventData {
   title: string;
@@ -1948,10 +1966,10 @@ export interface MeetingEventData {
    * @minItems 1
    * @maxItems 50
    */
-  attendees: string[];  // email format
+  attendees: string[]; // email format
 
   /** @default "normal" */
-  priority?: 'low' | 'normal' | 'high';
+  priority?: "low" | "normal" | "high";
 }
 ```
 
@@ -1982,7 +2000,7 @@ AST (JSON格式)
  */
 export class EventDSLRuntime {
   constructor(private dataModel: CompiledType) {}
-  
+
   /**
    * 验证事件数据
    * 使用编译后的业务规则（dataModel.validationRules）
@@ -2028,8 +2046,8 @@ export class EventDSLRuntime {
    */
   render(event: Event, context: RenderContext): RenderedEvent {
     const result: RenderedEvent = {
-      title: '',
-      color: '#4285f4',
+      title: "",
+      color: "#4285f4",
     };
 
     for (const rule of this.ast.display) {
@@ -2044,10 +2062,10 @@ export class EventDSLRuntime {
    * 检查行为权限
    */
   canPerform(action: string, event: Event, user: User): boolean {
-    const behaviorRule = this.ast.behavior.find(r => r.name === action);
+    const behaviorRule = this.ast.behavior.find((r) => r.name === action);
     if (!behaviorRule) return true;
 
-    if (typeof behaviorRule.value === 'boolean') {
+    if (typeof behaviorRule.value === "boolean") {
       return behaviorRule.value;
     }
 
@@ -2055,15 +2073,27 @@ export class EventDSLRuntime {
   }
 
   // 私有方法：评估各种规则...
-  private evaluateValidationRule(rule: ValidationRule, event: Event, context: any): { valid: boolean; message?: string } {
+  private evaluateValidationRule(
+    rule: ValidationRule,
+    event: Event,
+    context: any,
+  ): { valid: boolean; message?: string } {
     // 实现细节...
   }
 
-  private evaluateDisplayRule(rule: DisplayRule, event: Event, context: any): any {
+  private evaluateDisplayRule(
+    rule: DisplayRule,
+    event: Event,
+    context: any,
+  ): any {
     // 实现细节...
   }
 
-  private evaluateExpression(expr: Expression, event: Event, context: any): any {
+  private evaluateExpression(
+    expr: Expression,
+    event: Event,
+    context: any,
+  ): any {
     // 实现细节...
   }
 }
@@ -2072,9 +2102,9 @@ export class EventDSLRuntime {
 ### 使用示例
 
 ```typescript
-import { parseEventDSL, EventDSLCompiler } from '@calenderjs/event-dsl';
-import { EventDSLRuntime } from '@calenderjs/event-runtime'; // 新包
-import { EventValidator } from '@calenderjs/event-model';
+import { parseEventDSL, EventDSLCompiler } from "@calenderjs/event-dsl";
+import { EventDSLRuntime } from "@calenderjs/event-runtime"; // 新包
+import { EventValidator } from "@calenderjs/event-model";
 
 // 1. 解析 DSL 文本
 const dslText = `
@@ -2097,46 +2127,46 @@ display:
 const ast = parseEventDSL(dslText);
 
 // 2. 编译 DSL 成 Data Model
-import { EventDSLCompiler } from '@calenderjs/event-dsl';
+import { EventDSLCompiler } from "@calenderjs/event-dsl";
 const compiler = new EventDSLCompiler();
 const compiledDSL = compiler.compile({ types: [ast] });
 const dataModel = compiledDSL.types[0]; // 获取编译后的 Data Model
 
 // 3. 创建 Event 对象
 const event = {
-  id: '1',
-  type: 'meeting',
-  title: '团队会议',
-  startTime: new Date('2024-12-30T10:00:00'),
-  endTime: new Date('2024-12-30T11:00:00'),
-  color: '#4285f4',
+  id: "1",
+  type: "meeting",
+  title: "团队会议",
+  startTime: new Date("2024-12-30T10:00:00"),
+  endTime: new Date("2024-12-30T11:00:00"),
+  color: "#4285f4",
   extra: {
-    attendees: ['user1@example.com', 'user2@example.com'],
+    attendees: ["user1@example.com", "user2@example.com"],
   },
 };
 
 // 4. 验证 Event 对象（两部分验证架构）
-import { EventValidator } from '@calenderjs/event-model';
+import { EventValidator } from "@calenderjs/event-model";
 const eventValidator = new EventValidator();
 
 // 第一部分：验证 Event 数据模型（使用预定义的 EVENT_BASE_SCHEMA）
 const baseResult = eventValidator.validateBase(event);
 if (!baseResult.valid) {
-  console.error('基础结构验证失败:', baseResult.errors);
+  console.error("基础结构验证失败:", baseResult.errors);
   return;
 }
 
 // 第二部分：验证 Event.extra 字段（使用从 DSL 生成的 extraSchema）
 const extraResult = eventValidator.validateExtra(event, dataModel.extraSchema);
 if (!extraResult.valid) {
-  console.error('extra 字段验证失败:', extraResult.errors);
+  console.error("extra 字段验证失败:", extraResult.errors);
   return;
 }
 
 // 或者使用便捷方法（自动执行两部分验证）
 const fullResult = eventValidator.validate(event, dataModel.extraSchema);
 if (!fullResult.valid) {
-  console.error('验证失败:', fullResult.errors);
+  console.error("验证失败:", fullResult.errors);
   return;
 }
 
@@ -2154,9 +2184,9 @@ console.log(rendered);
 // { title: '团队会议', color: '#4285f4' }
 
 // 8. 检查行为权限
-const canDrag = runtime.canPerform('draggable', event, {
-  email: 'admin@example.com',
-  role: 'admin',
+const canDrag = runtime.canPerform("draggable", event, {
+  email: "admin@example.com",
+  role: "admin",
 });
 console.log(canDrag);
 // true
@@ -2439,6 +2469,7 @@ console.log(canDrag);
   - [ ] 性能测试（大量重复事件）
 
 **预期产出**:
+
 - ✅ Event 接口完整支持时区、重复事件、全天事件
 - ✅ DSL 语法完整支持时间敏感活动特性
 - ✅ 运行时引擎支持所有时间验证规则
@@ -2652,6 +2683,7 @@ console.log(canDrag);
   - [ ] 确保向后兼容性测试通过
 
 **预期产出**:
+
 - ✅ 完整的重复事件支持（解析 + 运行时）
 - ✅ JSON Schema 生成器（AST → schema.json）
 - ✅ TypeScript 生成器（AST → types.ts）
@@ -2717,15 +2749,16 @@ console.log(canDrag);
 
 ## 完成度统计
 
-| 阶段 | 完成度 | 状态 |
-|------|--------|------|
-| 阶段 1: DSL 核心 | 100% | ✅ 完成 |
-| **阶段 1.5: 时间敏感活动支持** | **100%** | **✅ 完成** |
-| **阶段 1.6: 数据模型生成和编译器统一** | **100%** | **✅ 完成** |
-| 阶段 2: 工具和生态 | 0% | ❌ 未开始（可选） |
-| **总体** | **75%** | ✅ 核心功能完成 |
+| 阶段                                   | 完成度   | 状态              |
+| -------------------------------------- | -------- | ----------------- |
+| 阶段 1: DSL 核心                       | 100%     | ✅ 完成           |
+| **阶段 1.5: 时间敏感活动支持**         | **100%** | **✅ 完成**       |
+| **阶段 1.6: 数据模型生成和编译器统一** | **100%** | **✅ 完成**       |
+| 阶段 2: 工具和生态                     | 0%       | ❌ 未开始（可选） |
+| **总体**                               | **75%**  | ✅ 核心功能完成   |
 
-**注意**: 
+**注意**:
+
 - 阶段 1.5（时间敏感活动支持）为高优先级，包含时区、重复事件、全天事件等核心功能
 - 阶段 1.6（数据模型生成和编译器统一）为高优先级，包含：
   - JSON Schema 生成器（阻塞验证架构第二部分）
@@ -2906,6 +2939,7 @@ calenderjs/
 ```
 
 **特点**：
+
 - ✅ 零运行时依赖
 - ✅ 仅包含接口定义
 - ✅ 体积极小（< 10KB）
@@ -2929,6 +2963,7 @@ calenderjs/
 ```
 
 **特点**：
+
 - ✅ Peggy 生成纯 JavaScript 解析器
 - ✅ 无需在运行时加载 Peggy
 - ✅ 解析器体积小（约 50KB gzipped）
@@ -2939,24 +2974,24 @@ calenderjs/
 ### DSL 解析测试
 
 ```typescript
-describe('Event DSL Parser', () => {
-  it('should parse simple event type', () => {
+describe("Event DSL Parser", () => {
+  it("should parse simple event type", () => {
     const dsl = `
       type: meeting
       name: 会议
     `;
     const ast = parseEventDSL(dsl);
-    expect(ast.type).toBe('meeting');
-    expect(ast.name).toBe('会议');
+    expect(ast.type).toBe("meeting");
+    expect(ast.name).toBe("会议");
   });
 
-  it('should parse validation rules', () => {
+  it("should parse validation rules", () => {
     const dsl = `
       validate:
         attendees.count between 1 and 50
     `;
     const ast = parseEventDSL(dsl);
-    expect(ast.validate[0].type).toBe('Between');
+    expect(ast.validate[0].type).toBe("Between");
   });
 });
 ```
@@ -2964,8 +2999,8 @@ describe('Event DSL Parser', () => {
 ### DSL 运行时测试
 
 ```typescript
-describe('Event DSL Runtime', () => {
-  it('should validate event correctly', () => {
+describe("Event DSL Runtime", () => {
+  it("should validate event correctly", () => {
     const runtime = new EventDSLRuntime(ast);
     const result = runtime.validate(event, context);
     expect(result.valid).toBe(true);
@@ -3056,22 +3091,23 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **DSL 语法文件**: `packages/event-dsl/src/event-dsl.pegjs`  
 **AST 类型文件**: `packages/event-dsl/src/ast/types.ts`
 
-| DSL 语法规则 | AST 类型 | 状态 | 说明 |
-|------------|---------|------|------|
-| `TypeSection` → `type: Identifier` | `EventTypeAST.type: string` | ✅ 一致 | 事件类型标识符 |
-| `NameSection` → `name: String` | `EventTypeAST.name: string` | ✅ 一致 | 事件类型名称 |
-| `DescriptionSection` → `description: String` | `EventTypeAST.description?: string` | ✅ 一致 | 可选描述 |
-| `FieldsSection` → `fields: FieldDefinition+` | `EventTypeAST.fields: FieldDefinition[]` | ✅ 一致 | 字段定义数组 |
-| `FieldDefinition` → `name: Identifier, type: FieldType, modifiers: FieldModifier*` | `FieldDefinition { name, type, required?, default?, min?, max? }` | ✅ 一致 | 字段定义结构 |
-| `FieldType` → `string \| number \| boolean \| email \| text \| list of T \| enum(...)` | `FieldType = 'string' \| 'number' \| 'boolean' \| 'email' \| 'text' \| { type: 'list', itemType } \| { type: 'enum', values }` | ✅ 一致 | 字段类型映射 |
-| `FieldModifier` → `required \| default: value \| min: n \| max: n` | `required?: boolean, default?: any, min?: number, max?: number` | ✅ 一致 | 字段修饰符 |
-| `ValidateSection` → `validate: ValidationRule+` | `EventTypeAST.validate: ValidationRule[]` | ✅ 一致 | 验证规则数组 |
-| `ValidationRule` → `WhenExpression \| ComparisonExpression` | `ValidationRule = BetweenRule \| ComparisonRule \| ConflictRule \| WhenRule \| LogicalRule` | ✅ 一致 | 验证规则类型 |
-| `DisplaySection` → `display: DisplayRule+` | `EventTypeAST.display: DisplayRule[]` | ✅ 一致 | 显示规则数组 |
-| `BehaviorSection` → `behavior: BehaviorRule+` | `EventTypeAST.behavior: BehaviorRule[]` | ✅ 一致 | 行为规则数组 |
-| `ConstraintsSection` → `constraints: ConstraintRule+` | `EventTypeAST.constraints?: ConstraintRule[]` | ✅ 一致 | 约束规则（可选） |
+| DSL 语法规则                                                                           | AST 类型                                                                                                                       | 状态    | 说明             |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- |
+| `TypeSection` → `type: Identifier`                                                     | `EventTypeAST.type: string`                                                                                                    | ✅ 一致 | 事件类型标识符   |
+| `NameSection` → `name: String`                                                         | `EventTypeAST.name: string`                                                                                                    | ✅ 一致 | 事件类型名称     |
+| `DescriptionSection` → `description: String`                                           | `EventTypeAST.description?: string`                                                                                            | ✅ 一致 | 可选描述         |
+| `FieldsSection` → `fields: FieldDefinition+`                                           | `EventTypeAST.fields: FieldDefinition[]`                                                                                       | ✅ 一致 | 字段定义数组     |
+| `FieldDefinition` → `name: Identifier, type: FieldType, modifiers: FieldModifier*`     | `FieldDefinition { name, type, required?, default?, min?, max? }`                                                              | ✅ 一致 | 字段定义结构     |
+| `FieldType` → `string \| number \| boolean \| email \| text \| list of T \| enum(...)` | `FieldType = 'string' \| 'number' \| 'boolean' \| 'email' \| 'text' \| { type: 'list', itemType } \| { type: 'enum', values }` | ✅ 一致 | 字段类型映射     |
+| `FieldModifier` → `required \| default: value \| min: n \| max: n`                     | `required?: boolean, default?: any, min?: number, max?: number`                                                                | ✅ 一致 | 字段修饰符       |
+| `ValidateSection` → `validate: ValidationRule+`                                        | `EventTypeAST.validate: ValidationRule[]`                                                                                      | ✅ 一致 | 验证规则数组     |
+| `ValidationRule` → `WhenExpression \| ComparisonExpression`                            | `ValidationRule = BetweenRule \| ComparisonRule \| ConflictRule \| WhenRule \| LogicalRule`                                    | ✅ 一致 | 验证规则类型     |
+| `DisplaySection` → `display: DisplayRule+`                                             | `EventTypeAST.display: DisplayRule[]`                                                                                          | ✅ 一致 | 显示规则数组     |
+| `BehaviorSection` → `behavior: BehaviorRule+`                                          | `EventTypeAST.behavior: BehaviorRule[]`                                                                                        | ✅ 一致 | 行为规则数组     |
+| `ConstraintsSection` → `constraints: ConstraintRule+`                                  | `EventTypeAST.constraints?: ConstraintRule[]`                                                                                  | ✅ 一致 | 约束规则（可选） |
 
 **问题发现**:
+
 - ❌ **缺少 RecurringSection**: DSL 语法中未定义 `recurring:` 部分（RFC 中已定义，但 Peggy 语法未实现）
 - ❌ **缺少 mod 操作符**: DSL 语法中未定义 `mod` 操作符（RFC 中已使用）
 
@@ -3080,16 +3116,17 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **AST 类型文件**: `packages/event-dsl/src/ast/types.ts`  
 **Event 接口文件**: `packages/event-model/src/Event.ts`
 
-| AST 字段 | Event 接口字段 | 映射关系 | 状态 |
-|---------|--------------|---------|------|
-| `EventTypeAST.fields` | `Event.extra?: Record<string, any>` | DSL fields → Event.extra 对象 | ✅ 一致 |
-| `FieldDefinition.name` | `Event.extra[key]` | 字段名 → extra 对象的键 | ✅ 一致 |
-| `FieldDefinition.type` | `Event.extra[key]` 的类型 | 字段类型 → extra 值的类型 | ✅ 一致 |
-| `FieldDefinition.required` | JSON Schema `required` 数组 | 必填字段 → Schema required | ✅ 一致 |
-| `FieldDefinition.default` | JSON Schema `default` | 默认值 → Schema default | ✅ 一致 |
-| `FieldDefinition.min/max` | JSON Schema `minItems/minimum/maxItems/maximum` | 约束 → Schema 约束 | ✅ 一致 |
+| AST 字段                   | Event 接口字段                                  | 映射关系                      | 状态    |
+| -------------------------- | ----------------------------------------------- | ----------------------------- | ------- |
+| `EventTypeAST.fields`      | `Event.extra?: Record<string, any>`             | DSL fields → Event.extra 对象 | ✅ 一致 |
+| `FieldDefinition.name`     | `Event.extra[key]`                              | 字段名 → extra 对象的键       | ✅ 一致 |
+| `FieldDefinition.type`     | `Event.extra[key]` 的类型                       | 字段类型 → extra 值的类型     | ✅ 一致 |
+| `FieldDefinition.required` | JSON Schema `required` 数组                     | 必填字段 → Schema required    | ✅ 一致 |
+| `FieldDefinition.default`  | JSON Schema `default`                           | 默认值 → Schema default       | ✅ 一致 |
+| `FieldDefinition.min/max`  | JSON Schema `minItems/minimum/maxItems/maximum` | 约束 → Schema 约束            | ✅ 一致 |
 
 **关键映射**:
+
 - DSL `fields:` → 生成 `Event.extra` 的 JSON Schema
 - DSL `validate:` → 业务规则（运行时验证，不存储在 Event 中）
 - DSL `display:` → 渲染规则（运行时使用，不存储在 Event 中）
@@ -3100,19 +3137,20 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **Event 接口文件**: `packages/event-model/src/Event.ts`  
 **JSON Schema 文件**: `packages/event-model/src/validator.ts`
 
-| Event 接口字段 | EVENT_BASE_SCHEMA | 状态 | 说明 |
-|--------------|------------------|------|------|
-| `id: string` | `required: ["id"]`, `properties.id: { type: "string" }` | ✅ 一致 | 必需字段 |
-| `type: string` | `required: ["type"]`, `properties.type: { type: "string" }` | ✅ 一致 | 必需字段 |
-| `title: string` | `required: ["title"]`, `properties.title: { type: "string" }` | ✅ 一致 | 必需字段 |
-| `startTime: Date` | `required: ["startTime"]`, `properties.startTime: { type: "string", format: "date-time" }` | ✅ 一致 | Date → ISO 8601 字符串 |
-| `endTime: Date` | `required: ["endTime"]`, `properties.endTime: { type: "string", format: "date-time" }` | ✅ 一致 | Date → ISO 8601 字符串 |
-| `color?: string` | `properties.color: { type: "string" }` (可选) | ✅ 一致 | 可选字段 |
-| `icon?: string` | `properties.icon: { type: "string" }` (可选) | ✅ 一致 | 可选字段 |
-| `extra?: Record<string, any>` | `properties.extra: { type: "object", additionalProperties: true }` (可选) | ✅ 一致 | 可选对象，允许任意属性 |
-| `metadata?: EventMetadata` | `properties.metadata: { type: "object", properties: {...} }` (可选) | ✅ 一致 | 可选对象，固定结构 |
+| Event 接口字段                | EVENT_BASE_SCHEMA                                                                          | 状态    | 说明                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | ------- | ---------------------- |
+| `id: string`                  | `required: ["id"]`, `properties.id: { type: "string" }`                                    | ✅ 一致 | 必需字段               |
+| `type: string`                | `required: ["type"]`, `properties.type: { type: "string" }`                                | ✅ 一致 | 必需字段               |
+| `title: string`               | `required: ["title"]`, `properties.title: { type: "string" }`                              | ✅ 一致 | 必需字段               |
+| `startTime: Date`             | `required: ["startTime"]`, `properties.startTime: { type: "string", format: "date-time" }` | ✅ 一致 | Date → ISO 8601 字符串 |
+| `endTime: Date`               | `required: ["endTime"]`, `properties.endTime: { type: "string", format: "date-time" }`     | ✅ 一致 | Date → ISO 8601 字符串 |
+| `color?: string`              | `properties.color: { type: "string" }` (可选)                                              | ✅ 一致 | 可选字段               |
+| `icon?: string`               | `properties.icon: { type: "string" }` (可选)                                               | ✅ 一致 | 可选字段               |
+| `extra?: Record<string, any>` | `properties.extra: { type: "object", additionalProperties: true }` (可选)                  | ✅ 一致 | 可选对象，允许任意属性 |
+| `metadata?: EventMetadata`    | `properties.metadata: { type: "object", properties: {...} }` (可选)                        | ✅ 一致 | 可选对象，固定结构     |
 
 **验证流程一致性**:
+
 - ✅ `EventValidator.validateBase()` 使用 `EVENT_BASE_SCHEMA` 验证 Event 基础结构
 - ✅ `EventValidator.validateExtra()` 先验证基础结构，再验证 extra 字段（使用从 DSL 生成的 Schema）
 
@@ -3121,23 +3159,24 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **DSL fields 定义**: `packages/event-dsl/src/ast/types.ts` (FieldDefinition)  
 **目标**: 生成用于 `EventValidator.validateExtra()` 的 JSON Schema
 
-| DSL FieldType | JSON Schema 类型 | 状态 | 实现位置 |
-|--------------|-----------------|------|---------|
-| `'string'` | `{ type: "string" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `'number'` | `{ type: "number" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `'boolean'` | `{ type: "boolean" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `'email'` | `{ type: "string", format: "email" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `'text'` | `{ type: "string" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `{ type: 'list', itemType: T }` | `{ type: "array", items: {...} }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `{ type: 'enum', values: [...] }` | `{ type: "string", enum: [...] }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `required: true` | 添加到 `required: ["fieldName"]` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `default: value` | `{ default: value }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `min: n` (数组) | `{ minItems: n }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `max: n` (数组) | `{ maxItems: n }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `min: n` (数字) | `{ minimum: n }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
-| `max: n` (数字) | `{ maximum: n }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| DSL FieldType                     | JSON Schema 类型                      | 状态      | 实现位置                             |
+| --------------------------------- | ------------------------------------- | --------- | ------------------------------------ |
+| `'string'`                        | `{ type: "string" }`                  | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `'number'`                        | `{ type: "number" }`                  | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `'boolean'`                       | `{ type: "boolean" }`                 | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `'email'`                         | `{ type: "string", format: "email" }` | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `'text'`                          | `{ type: "string" }`                  | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `{ type: 'list', itemType: T }`   | `{ type: "array", items: {...} }`     | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `{ type: 'enum', values: [...] }` | `{ type: "string", enum: [...] }`     | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `required: true`                  | 添加到 `required: ["fieldName"]`      | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `default: value`                  | `{ default: value }`                  | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `min: n` (数组)                   | `{ minItems: n }`                     | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `max: n` (数组)                   | `{ maxItems: n }`                     | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `min: n` (数字)                   | `{ minimum: n }`                      | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
+| `max: n` (数字)                   | `{ maximum: n }`                      | ⚠️ 未实现 | 需要创建 `generators/json-schema.ts` |
 
 **问题发现**:
+
 - ❌ **JSON Schema 生成器未实现**: `packages/event-dsl/src/generators/json-schema.ts` 不存在
 - ❌ **编译器未集成生成器**: `EventDSLCompiler.compile()` 未生成 `extraSchema`
 - ⚠️ **CompiledType 接口已定义**: `extraSchema?: JSONSchema` 字段已存在，但未填充
@@ -3147,15 +3186,16 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **编译器文件**: `packages/event-dsl/src/compiler.ts`  
 **架构设计**: RFC-0001 中的"包架构与数据模型"章节
 
-| 架构设计要求 | 编译器实现 | 状态 | 说明 |
-|------------|----------|------|------|
-| DSL → EventDSLCompiler → Data Model | `EventDSLCompiler.compile()` 存在 | ✅ 已实现 | 编译器类已创建 |
-| Data Model 包含 `extraSchema` | `CompiledType.extraSchema?: JSONSchema` 已定义，但未生成 | ❌ 未实现 | 需要集成 JSON Schema 生成器 |
-| Data Model 包含 `validationRules` | `CompiledType.validationRules?: any[]` 已定义，但未填充 | ❌ 未实现 | 需要从 AST.validate 生成 |
-| 编译器生成验证器函数 | `CompiledType.validator: ValidatorFunction` 已实现 | ✅ 已实现 | 但使用的是旧类型系统 |
-| 编译器生成渲染器函数 | `CompiledType.renderer: RendererFunction` 已实现 | ✅ 已实现 | 但使用的是旧类型系统 |
+| 架构设计要求                        | 编译器实现                                               | 状态      | 说明                        |
+| ----------------------------------- | -------------------------------------------------------- | --------- | --------------------------- |
+| DSL → EventDSLCompiler → Data Model | `EventDSLCompiler.compile()` 存在                        | ✅ 已实现 | 编译器类已创建              |
+| Data Model 包含 `extraSchema`       | `CompiledType.extraSchema?: JSONSchema` 已定义，但未生成 | ❌ 未实现 | 需要集成 JSON Schema 生成器 |
+| Data Model 包含 `validationRules`   | `CompiledType.validationRules?: any[]` 已定义，但未填充  | ❌ 未实现 | 需要从 AST.validate 生成    |
+| 编译器生成验证器函数                | `CompiledType.validator: ValidatorFunction` 已实现       | ✅ 已实现 | 但使用的是旧类型系统        |
+| 编译器生成渲染器函数                | `CompiledType.renderer: RendererFunction` 已实现         | ✅ 已实现 | 但使用的是旧类型系统        |
 
 **问题发现**:
+
 - ❌ **类型系统不一致**: 编译器使用 `EventDSL`/`EventTypeDefinition`（旧类型），而不是 `EventTypeAST`（新类型）
 - ❌ **缺少 AST → CompiledType 转换**: 需要实现从 `EventTypeAST` 到 `CompiledType` 的转换
 - ❌ **缺少 JSON Schema 生成**: 需要实现从 `EventTypeAST.fields` 生成 `extraSchema`
@@ -3165,17 +3205,18 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 **运行时文件**: `packages/event-dsl/src/runtime/EventDSLRuntime.ts`  
 **AST 类型文件**: `packages/event-dsl/src/ast/types.ts`
 
-| 运行时方法 | AST 类型使用 | 状态 | 说明 |
-|----------|------------|------|------|
-| `validate()` 使用 `ast.validate` | `EventTypeAST.validate: ValidationRule[]` | ✅ 一致 | 运行时使用 AST 验证规则 |
-| `render()` 使用 `ast.display` | `EventTypeAST.display: DisplayRule[]` | ✅ 一致 | 运行时使用 AST 显示规则 |
-| `canPerform()` 使用 `ast.behavior` | `EventTypeAST.behavior: BehaviorRule[]` | ✅ 一致 | 运行时使用 AST 行为规则 |
-| `evaluateValidationRule()` 处理 `BetweenRule` | `BetweenRule { type: 'Between', field, min, max }` | ✅ 一致 | 规则类型匹配 |
-| `evaluateValidationRule()` 处理 `ComparisonRule` | `ComparisonRule { type: 'Comparison', operator, left, right }` | ✅ 一致 | 规则类型匹配 |
-| `evaluateValidationRule()` 处理 `WhenRule` | `WhenRule { type: 'When', condition, rules }` | ✅ 一致 | 规则类型匹配 |
-| `evaluateValidationRule()` 处理 `LogicalRule` | `LogicalRule { type: 'BinaryExpression' \| 'UnaryExpression', operator, left?, right?, argument? }` | ✅ 一致 | 规则类型匹配 |
+| 运行时方法                                       | AST 类型使用                                                                                        | 状态    | 说明                    |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------- | ------- | ----------------------- |
+| `validate()` 使用 `ast.validate`                 | `EventTypeAST.validate: ValidationRule[]`                                                           | ✅ 一致 | 运行时使用 AST 验证规则 |
+| `render()` 使用 `ast.display`                    | `EventTypeAST.display: DisplayRule[]`                                                               | ✅ 一致 | 运行时使用 AST 显示规则 |
+| `canPerform()` 使用 `ast.behavior`               | `EventTypeAST.behavior: BehaviorRule[]`                                                             | ✅ 一致 | 运行时使用 AST 行为规则 |
+| `evaluateValidationRule()` 处理 `BetweenRule`    | `BetweenRule { type: 'Between', field, min, max }`                                                  | ✅ 一致 | 规则类型匹配            |
+| `evaluateValidationRule()` 处理 `ComparisonRule` | `ComparisonRule { type: 'Comparison', operator, left, right }`                                      | ✅ 一致 | 规则类型匹配            |
+| `evaluateValidationRule()` 处理 `WhenRule`       | `WhenRule { type: 'When', condition, rules }`                                                       | ✅ 一致 | 规则类型匹配            |
+| `evaluateValidationRule()` 处理 `LogicalRule`    | `LogicalRule { type: 'BinaryExpression' \| 'UnaryExpression', operator, left?, right?, argument? }` | ✅ 一致 | 规则类型匹配            |
 
 **架构一致性**:
+
 - ✅ 运行时直接使用 AST（`EventTypeAST`），符合设计
 - ✅ 运行时不依赖编译器生成的 Data Model（当前实现）
 - ⚠️ **架构不一致**: RFC 要求运行时使用编译后的 Data Model，但当前实现直接使用 AST
@@ -3242,7 +3283,7 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
 ## 变更历史
 
 - 2024-12-30: 初始创建
-- 2026-01-01: 
+- 2026-01-01:
   - 整合时间敏感活动审查报告（原 RFC-0001-Review）
   - 更新 Event 接口定义：
     - 使用 `extra` 字段替代 `data` 字段（与 RFC-0011 一致）

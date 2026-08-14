@@ -1,6 +1,6 @@
 /**
  * 视图组件导出
- * 
+ *
  * 这些组件通过 @autoRegister 自动注册为 Web Components：
  * - <wsx-day-view>
  * - <wsx-month-view>

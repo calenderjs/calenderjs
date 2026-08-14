@@ -61,17 +61,17 @@ graph TB
         B[EVENT_BASE_SCHEMA<br/>validator.ts]
         C[EventValidator<br/>validator.ts]
     end
-    
+
     subgraph "Event DSL (Generator)"
         D[DSL 定义]
         E[EventDataGenerator]
     end
-    
+
     subgraph "Calendar Component"
         F[Calendar 组件]
         G[插件系统]
     end
-    
+
     D --> E
     E --> A
     A --> B
@@ -79,7 +79,7 @@ graph TB
     A --> F
     F --> G
     G --> H[详情卡片渲染]
-    
+
     style A fill:#1e88e5,stroke:#1565c0,color:#fff
     style B fill:#1e88e5,stroke:#1565c0,color:#fff
     style C fill:#1e88e5,stroke:#1565c0,color:#fff
@@ -91,6 +91,7 @@ graph TB
 ## 动机
 
 当前状态：
+
 - ✅ UI 组件（Calendar、WeekView、DayView、MonthView）已实现，可以显示日历网格
 - ✅ Event 数据模型包已创建（`@calenderjs/event-model`）作为 SSOT
 - ✅ Event 核心接口已定义（`packages/event-model/src/Event.ts`）
@@ -102,6 +103,7 @@ graph TB
 - ❌ 日历组件中显示事件的功能尚未实现
 
 需要解决的问题：
+
 1. 如何从 Event DSL 定义生成符合 Event Data Model 的 Event 数据？
 2. 如何确保生成的 Event 数据符合 Event Data Model 的结构？
 3. 如何在日历组件中渲染事件？
@@ -160,26 +162,28 @@ interface Event {
   title: string;
   startTime: Date;
   endTime: Date;
-  
+
   // Calendar 显示属性（可选）
   color?: string;
   icon?: string;
-  
+
   // 扩展属性（可选，用于详情卡片）
   extra?: Record<string, any>;
-  
+
   // 元数据（可选）
   metadata?: EventMetadata;
 }
 ```
 
 **数据契约的作用**：
+
 - 定义 Calendar 组件消费 Event 数据的标准接口
 - 确保所有 Event 数据都符合统一的结构
 - 支持插件系统根据 `Event.type` 渲染不同的详情卡片
 - 提供运行时验证（通过 JSON Schema）
 
 **数据契约的位置**：
+
 - Event 接口：`packages/event-model/src/Event.ts`
 - JSON Schema：`packages/event-model/src/validator.ts` 中的 `EVENT_BASE_SCHEMA`
 - 验证器：`packages/event-model/src/validator.ts` 中的 `EventValidator`
@@ -194,17 +198,17 @@ graph TB
         B[EVENT_BASE_SCHEMA<br/>JSON Schema]
         C[EventValidator<br/>Runtime Validator]
     end
-    
+
     subgraph "数据生成"
         D[Event DSL]
         E[EventDataGenerator]
     end
-    
+
     subgraph "数据消费"
         F[Calendar 组件]
         G[插件系统]
     end
-    
+
     A -.定义.-> B
     B -.验证.-> C
     D --> E
@@ -212,7 +216,7 @@ graph TB
     C -->|验证| A
     A -->|消费| F
     F -->|使用| G
-    
+
     style A fill:#1e88e5,stroke:#1565c0,color:#fff
     style B fill:#1e88e5,stroke:#1565c0,color:#fff
     style C fill:#1e88e5,stroke:#1565c0,color:#fff
@@ -315,20 +319,21 @@ interface Event {
   title: string;
   startTime: Date;
   endTime: Date;
-  
+
   // Calendar 显示属性（可选）
   color?: string;
   icon?: string;
-  
+
   // 扩展属性（可选，用于详情卡片）
   extra?: Record<string, any>;
-  
+
   // 元数据（可选）
   metadata?: EventMetadata;
 }
 ```
 
 **数据契约的作用**：
+
 - 定义 Calendar 组件消费 Event 数据的标准接口
 - 确保所有 Event 数据都符合统一的结构
 - 支持插件系统根据 `Event.type` 渲染不同的详情卡片
@@ -346,6 +351,7 @@ interface Event {
    - **导出**：`export * from "./validator"`
 
 **重要架构原则**：
+
 - Event Data Model 的 JSON Schema（`EVENT_BASE_SCHEMA`）在 `@calenderjs/event-model` 中定义
 - DSL **不生成** JSON Schema，只生成符合 Event Data Model 的 Event 数据
 - DSL 使用 Event Data Model 的 JSON Schema（`EVENT_BASE_SCHEMA`）进行验证
@@ -416,16 +422,16 @@ interface Event {
   id: string;
   type: string;
   title: string;
-  startTime: Date;  // 必需 - Event 必须有时间
-  endTime: Date;    // 必需 - Event 必须有时间
-  
+  startTime: Date; // 必需 - Event 必须有时间
+  endTime: Date; // 必需 - Event 必须有时间
+
   // Calendar 显示属性（可选）
   color?: string;
   icon?: string;
-  
+
   // 扩展属性（可选，用于详情卡片）
   extra?: Record<string, any>;
-  
+
   // 元数据（可选）
   metadata?: EventMetadata;
 }
@@ -445,8 +451,8 @@ const meetingEvent: Event = {
   extra: {
     attendees: ["user1@example.com", "user2@example.com"],
     location: "会议室 A",
-    agenda: "讨论项目进度"
-  }
+    agenda: "讨论项目进度",
+  },
 };
 
 // appointment 类型的 Event（扩展的 Event）
@@ -460,8 +466,8 @@ const appointmentEvent: Event = {
   extra: {
     doctor: "Dr. Smith",
     department: "内科",
-    notes: "带病历"
-  }
+    notes: "带病历",
+  },
 };
 
 // holiday 类型的 Event（扩展的 Event）
@@ -475,8 +481,8 @@ const holidayEvent: Event = {
   extra: {
     country: "CN",
     isOfficial: true,
-    description: "法定节假日"
-  }
+    description: "法定节假日",
+  },
 };
 
 // task 类型的 Event
@@ -490,12 +496,13 @@ const taskEvent: Event = {
   extra: {
     assignee: "user1@example.com",
     status: "in-progress",
-    priority: "high"
-  }
+    priority: "high",
+  },
 };
 ```
 
 **重要**：
+
 - Appointment 和 Holiday 都是 Event 的扩展类型
 - 它们都是 Event，只是 `type` 不同，`extra` 的内容不同
 - 在 Calendar 中显示时，根据 `type` 显示不同的详情卡片
@@ -524,19 +531,19 @@ graph LR
         B[EventTypeDefinition.fields]
         C[EventTypeDefinition.display]
     end
-    
+
     subgraph "Event 对象"
         D[Event.type]
         E[Event.extra]
         F[Event.color<br/>Event.icon]
     end
-    
+
     subgraph "Calendar 显示"
         G[Calendar 组件]
         H[插件系统]
         I[详情卡片]
     end
-    
+
     A --> D
     B --> E
     C --> F
@@ -544,7 +551,7 @@ graph LR
     E --> H
     F --> G
     H --> I
-    
+
     style A fill:#ff9800,stroke:#f57c00,color:#fff
     style B fill:#ff9800,stroke:#f57c00,color:#fff
     style C fill:#ff9800,stroke:#f57c00,color:#fff
@@ -559,6 +566,7 @@ graph LR
 ### 2. Event 数据生成工具
 
 **架构说明**：
+
 - Event Data Model 是 SSOT，定义了 Event 接口结构
 - DSL 是生成工具，用于生成符合 Event Data Model 的数据
 - `EventDataGenerator` 从 DSL 定义生成 Event 对象
@@ -577,6 +585,7 @@ Event DSL 中的所有类型和类已统一使用 "Event" 前缀，与架构设�
 - ✅ `Event` 接口 - 在 @calenderjs/event-model 中定义（SSOT）
 
 **架构原则**：
+
 - DSL 生成 Event 对象，而不是 Appointment 对象
 - Appointment 只是 Event 的一个扩展类型（`type: "appointment"`）
 - 所有 DSL 相关类型和类都使用 "Event" 前缀，保持命名一致性
@@ -591,22 +600,23 @@ export class EventDataGenerator {
    */
   generateEvent(
     dslType: EventTypeDefinition,
-    overrides?: Partial<Event>
+    overrides?: Partial<Event>,
   ): Event {
     // 根据字段定义生成 data 字段的默认值
     const data: Record<string, any> = {};
-    dslType.fields.forEach(field => {
+    dslType.fields.forEach((field) => {
       data[field.name] = this.generateFieldValue(field);
     });
-    
+
     // 生成默认时间（当前时间 + 1小时）
     const now = new Date();
     const defaultStartTime = overrides?.startTime || now;
-    const defaultEndTime = overrides?.endTime || new Date(now.getTime() + 60 * 60 * 1000);
-    
+    const defaultEndTime =
+      overrides?.endTime || new Date(now.getTime() + 60 * 60 * 1000);
+
     // 生成标题（使用模板或默认值）
     const title = this.generateTitle(dslType, data, overrides?.title);
-    
+
     return {
       id: overrides?.id || this.generateId(),
       type: dslType.id,
@@ -617,7 +627,7 @@ export class EventDataGenerator {
       metadata: overrides?.metadata || this.generateMetadata(),
     };
   }
-  
+
   /**
    * 生成字段默认值
    */
@@ -625,23 +635,23 @@ export class EventDataGenerator {
     if (field.default !== undefined) {
       return field.default;
     }
-    
+
     switch (field.type) {
-      case 'string':
-        return '';
-      case 'number':
+      case "string":
+        return "";
+      case "number":
         return 0;
-      case 'boolean':
+      case "boolean":
         return false;
-      case 'date':
+      case "date":
         return new Date().toISOString();
-      case 'time':
-        return '00:00';
-      case 'enum':
-        return field.enum?.[0] || '';
-      case 'array':
+      case "time":
+        return "00:00";
+      case "enum":
+        return field.enum?.[0] || "";
+      case "array":
         return [];
-      case 'object':
+      case "object":
         return {};
       default:
         return null;
@@ -653,31 +663,41 @@ export class EventDataGenerator {
 #### 2.2 使用示例
 
 ```typescript
-import { EventDataGenerator } from '@calenderjs/event-dsl';
-import type { EventTypeDefinition } from '@calenderjs/event-dsl';
+import { EventDataGenerator } from "@calenderjs/event-dsl";
+import type { EventTypeDefinition } from "@calenderjs/event-dsl";
 
 const meetingType: EventTypeDefinition = {
-  id: 'meeting',
-  name: '会议',
+  id: "meeting",
+  name: "会议",
   fields: [
-    { name: 'attendees', type: 'array', items: { type: 'string' }, required: true },
-    { name: 'location', type: 'string' },
-    { name: 'priority', type: 'enum', enum: ['low', 'normal', 'high'], default: 'normal' }
+    {
+      name: "attendees",
+      type: "array",
+      items: { type: "string" },
+      required: true,
+    },
+    { name: "location", type: "string" },
+    {
+      name: "priority",
+      type: "enum",
+      enum: ["low", "normal", "high"],
+      default: "normal",
+    },
   ],
   display: {
-    color: '#4285f4',
-    titleTemplate: '${title}'
+    color: "#4285f4",
+    titleTemplate: "${title}",
   },
   behavior: {
-    defaultDuration: 60
-  }
+    defaultDuration: 60,
+  },
 };
 
 const generator = new EventDataGenerator();
 const event = generator.generateEvent(meetingType, {
-  title: '团队会议',
-  startTime: new Date('2026-01-15T10:00:00'),
-  endTime: new Date('2026-01-15T11:00:00')
+  title: "团队会议",
+  startTime: new Date("2026-01-15T10:00:00"),
+  endTime: new Date("2026-01-15T11:00:00"),
 });
 
 // 生成的 Event 对象符合 Event Data Model
@@ -746,20 +766,20 @@ private calculateEventPosition(event: Event): {
   const startMinute = event.startTime.getMinutes();
   const endHour = event.endTime.getHours();
   const endMinute = event.endTime.getMinutes();
-  
+
   const slotHeight = 48; // 每个小时的高度（像素）
   const slotDuration = 60; // 每个时段的时长（分钟）
-  
+
   const top = calculateAppointmentTop(event, slotHeight, slotDuration);
   const height = calculateAppointmentHeight(event, slotHeight, slotDuration);
-  
+
   // 计算事件在星期几（0=周日，1=周一...）
   const dayOfWeek = event.startTime.getDay();
   const dayIndex = (dayOfWeek === 0 ? 7 : dayOfWeek) - 1; // 转换为周一=0
-  
+
   const left = (dayIndex * 100) / 7; // 百分比
   const width = 100 / 7; // 百分比
-  
+
   return { top, height, left, width };
 }
 
@@ -767,10 +787,10 @@ private calculateEventPosition(event: Event): {
 private renderEvent(event: Event) {
   const position = this.calculateEventPosition(event);
   const dslType = this.getDSLType(event.type);
-  const rendered = dslType 
+  const rendered = dslType
     ? this.dslRuntime.render(event, event.type)
     : { title: event.title, color: '#4285f4' };
-  
+
   return (
     <div
       class="week-view-event"
@@ -800,14 +820,15 @@ private renderEvent(event: Event) {
 ### 4. 事件数据验证
 
 **验证架构**：
+
 - Event Data Model 定义了 Event 接口结构
 - `@calenderjs/event-model` 提供 `EventValidator` 用于验证 Event 数据是否符合 Event Data Model
 - DSL 验证器用于验证业务规则（如字段值、跨字段验证等）
 
 ```typescript
 // 使用 Event Data Model 的验证器
-import { EventValidator } from '@calenderjs/event-model';
-import { EventDSLRuntime } from '@calenderjs/event-dsl';
+import { EventValidator } from "@calenderjs/event-model";
+import { EventDSLRuntime } from "@calenderjs/event-dsl";
 
 const eventValidator = new EventValidator();
 const dslRuntime = new EventDSLRuntime(ast);
@@ -838,6 +859,7 @@ return { valid: true, errors: [] };
 ### 阶段一：Event 数据模型规范定义
 
 **步骤 1.1**: 更新 Event 接口文档
+
 - 文件：`packages/event-model/src/Event.ts`
 - 添加详细的注释说明 Event.data 字段与 DSL 的关系
 - ✅ 完成标准：注释完整，类型定义清晰
@@ -845,11 +867,13 @@ return { valid: true, errors: [] };
 - ✅ 状态：已完成
 
 **步骤 1.2**: 创建 Event 数据模型规范文档
+
 - 文件：`docs/event-data-model.md`
 - 详细说明 Event 接口与 DSL 的映射关系
 - ✅ 完成标准：文档完整，示例清晰
 
 **步骤 1.3**: 实现 JSON Schema 验证功能
+
 - 文件：`packages/event-model/src/validators/EventValidator.ts`
 - 使用 ajv 实现 Event 数据验证
 - 实现 EventValidator 类，支持基本结构验证和 JSON Schema 验证
@@ -860,6 +884,7 @@ return { valid: true, errors: [] };
 ### 阶段二：Event 数据生成工具
 
 **步骤 2.1**: 创建 EventDataGenerator 类
+
 - 文件：`packages/event-dsl/src/generators/EventDataGenerator.ts`
 - 实现从 DSL 生成符合 Event Data Model 的 Event 对象
 - ✅ 完成标准：可以生成符合 Event 接口的 Event 对象
@@ -867,6 +892,7 @@ return { valid: true, errors: [] };
 - ✅ 状态：已完成
 
 **步骤 2.2**: 移除 JSON Schema 生成逻辑
+
 - 文件：`packages/event-dsl/src/compiler.ts`
 - 移除 `generateJSONSchema` 和 `fieldToJSONSchema` 方法
 - 更新 `CompiledType` 接口，移除 `schema` 字段
@@ -875,6 +901,7 @@ return { valid: true, errors: [] };
 - ✅ 状态：已完成
 
 **步骤 2.3**: 导出生成器
+
 - 文件：`packages/event-dsl/src/index.ts`
 - 导出 EventDataGenerator
 - ✅ 完成标准：导出正确，类型定义完整
@@ -884,18 +911,21 @@ return { valid: true, errors: [] };
 ### 阶段三：日历组件事件渲染
 
 **步骤 3.1**: 在 WeekView 中添加事件渲染
+
 - 文件：`packages/calendar/src/views/WeekView.wsx`
 - 实现事件位置计算和渲染
 - ✅ 完成标准：事件可以正确显示在周视图中
 - ✅ 测试要求：100% 覆盖率，所有测试通过
 
 **步骤 3.2**: 在 DayView 中添加事件渲染
+
 - 文件：`packages/calendar/src/views/DayView.wsx`
 - 实现事件位置计算和渲染
 - ✅ 完成标准：事件可以正确显示在日视图中
 - ✅ 测试要求：100% 覆盖率，所有测试通过
 
 **步骤 3.3**: 在 MonthView 中添加事件渲染
+
 - 文件：`packages/calendar/src/views/MonthView.wsx`
 - 实现事件显示（小点或标签）
 - ✅ 完成标准：事件可以正确显示在月视图中
@@ -904,12 +934,14 @@ return { valid: true, errors: [] };
 ### 阶段四：事件数据验证
 
 **步骤 4.1**: 创建 EventValidator 类
+
 - 文件：`packages/event-dsl/src/validators/event-validator.ts`
 - 实现 Event 数据验证功能
 - ✅ 完成标准：可以验证 Event 数据是否符合 DSL 定义
 - ✅ 测试要求：100% 覆盖率，所有测试通过
 
 **步骤 4.2**: 集成到日历组件
+
 - 文件：`packages/calendar/src/Calendar.wsx`
 - 在事件数据传入时进行验证
 - ✅ 完成标准：事件数据验证功能正常工作

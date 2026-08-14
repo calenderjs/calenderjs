@@ -1,11 +1,11 @@
 /**
  * ValidationContext 接口
- * 
+ *
  * 根据 RFC-0001 定义的验证上下文
  */
 
-import type { Event } from '@calenderjs/event-model';
-import { User } from '../models/User';
+import type { Event } from "@calenderjs/event-model";
+import { User } from "../models/User";
 
 /**
  * 验证上下文

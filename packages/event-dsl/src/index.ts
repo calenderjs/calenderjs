@@ -42,24 +42,24 @@ export * from "./parser";
 
 // 导出类型（避免与 ast 中的类型冲突）
 export type {
-    EventDSL,
-    EventTypeDefinition,
-    EventRule,
-    EventValidator,
-    DisplayConfig,
-    FieldValidationRule,
+  EventDSL,
+  EventTypeDefinition,
+  EventRule,
+  EventValidator,
+  DisplayConfig,
+  FieldValidationRule,
 } from "./types";
 
 // 重新导出运行时类型和 Data Model（从 @calenderjs/event-model）
 export type {
-    EventTypeDataModel,
-    EventDSLDataModel,
-    EventValidatorDataModel,
-    ValidationResult,
-    RenderedEvent,
-    ValidatorFunction,
-    RendererFunction,
-    BehaviorConfig,
+  EventTypeDataModel,
+  EventDSLDataModel,
+  EventValidatorDataModel,
+  ValidationResult,
+  RenderedEvent,
+  ValidatorFunction,
+  RendererFunction,
+  BehaviorConfig,
 } from "@calenderjs/event-model";
 
 // ============================================

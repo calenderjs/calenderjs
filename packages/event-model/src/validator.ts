@@ -1,8 +1,8 @@
 /**
  * Event JSON Schema 验证器
- * 
+ *
  * 使用 JSON Schema 验证 Event 数据模型
- * 
+ *
  * 根据 RFC-0011 定义
  */
 
@@ -27,7 +27,7 @@ export interface ValidationResult {
 
 /**
  * Event 基础 JSON Schema
- * 
+ *
  * 定义 Event 接口的 JSON Schema，用于验证 Event 对象的基本结构
  */
 export const EVENT_BASE_SCHEMA = {
@@ -85,7 +85,8 @@ export const EVENT_BASE_SCHEMA = {
         frequency: {
           type: "string",
           enum: ["daily", "weekly", "monthly", "yearly"],
-          description: "频率：daily（每天）、weekly（每周）、monthly（每月）、yearly（每年）",
+          description:
+            "频率：daily（每天）、weekly（每周）、monthly（每月）、yearly（每年）",
         },
         interval: {
           type: "number",
@@ -167,7 +168,7 @@ export const EVENT_BASE_SCHEMA = {
 
 /**
  * Event 验证器类
- * 
+ *
  * 提供 Event 数据模型的 JSON Schema 验证功能
  */
 export class EventValidator {
@@ -183,7 +184,10 @@ export class EventValidator {
 
     // 添加格式支持（date-time, email 等）
     // 注意：addFormats 需要在 Ajv 实例创建后调用
-    addFormats(this.ajv, { mode: "fast", formats: ["date-time", "email", "time"] });
+    addFormats(this.ajv, {
+      mode: "fast",
+      formats: ["date-time", "email", "time"],
+    });
 
     // 编译基础 Event Schema
     this.baseValidate = this.ajv.compile(EVENT_BASE_SCHEMA);
@@ -191,7 +195,7 @@ export class EventValidator {
 
   /**
    * 验证 Event 对象是否符合基础 Event Schema
-   * 
+   *
    * @param event - 要验证的 Event 对象
    * @returns 验证结果
    */
@@ -207,10 +211,11 @@ export class EventValidator {
     }
 
     // 收集错误消息
-    const errors = this.baseValidate.errors?.map((error: ErrorObject) => {
-      const path = (error.instancePath || error.schemaPath || "").toString();
-      return `${path}: ${error.message || "验证失败"}`;
-    }) || [];
+    const errors =
+      this.baseValidate.errors?.map((error: ErrorObject) => {
+        const path = (error.instancePath || error.schemaPath || "").toString();
+        return `${path}: ${error.message || "验证失败"}`;
+      }) || [];
 
     return {
       valid: false,
@@ -252,10 +257,11 @@ export class EventValidator {
     }
 
     // 收集错误消息
-    const errors = validateDataFields.errors?.map((error: ErrorObject) => {
-      const path = (error.instancePath || error.schemaPath || "").toString();
-      return `data${path}: ${error.message || "验证失败"}`;
-    }) || [];
+    const errors =
+      validateDataFields.errors?.map((error: ErrorObject) => {
+        const path = (error.instancePath || error.schemaPath || "").toString();
+        return `data${path}: ${error.message || "验证失败"}`;
+      }) || [];
 
     return {
       valid: false,
@@ -283,7 +289,7 @@ export class EventValidator {
 
   /**
    * 将 Event 对象转换为 JSON（Date 对象转换为 ISO 字符串）
-   * 
+   *
    * @param event - Event 对象
    * @returns JSON 对象
    */
@@ -292,12 +298,14 @@ export class EventValidator {
       id: event.id,
       type: event.type,
       title: event.title,
-      startTime: event.startTime instanceof Date
-        ? event.startTime.toISOString()
-        : event.startTime,
-      endTime: event.endTime instanceof Date
-        ? event.endTime.toISOString()
-        : event.endTime,
+      startTime:
+        event.startTime instanceof Date
+          ? event.startTime.toISOString()
+          : event.startTime,
+      endTime:
+        event.endTime instanceof Date
+          ? event.endTime.toISOString()
+          : event.endTime,
     };
 
     if (event.color) {
@@ -341,7 +349,7 @@ export class EventValidator {
         }),
         ...(event.recurring.excludeDates && {
           excludeDates: event.recurring.excludeDates.map((date) =>
-            date instanceof Date ? date.toISOString() : date
+            date instanceof Date ? date.toISOString() : date,
           ),
         }),
         ...(event.recurring.timeZone && {
@@ -380,7 +388,7 @@ export class EventValidator {
 
   /**
    * 验证时间逻辑（开始时间必须早于结束时间）
-   * 
+   *
    * @param event - Event 对象
    * @returns 验证结果
    */

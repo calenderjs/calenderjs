@@ -56,10 +56,10 @@ class={`month-view-cell ... ${shouldHighlightToday ? "today" : ""}`}
 2.  **修复**: 更新 `packages/calendar/src/views/MonthView.wsx`。
 3.  **移除选中状态**: 修改 `MonthView`, `WeekView`, `DayView` 移除 `isSelected` 判断及相关 CSS 类。
 4.  **验证**:
-    -   运行复现单元测试，确认修复前失败，修复后通过。
-    -   运行现有测试。
-    -   **视觉验证**: 启动日历演示并在浏览器中验证行为。
+    - 运行复现单元测试，确认修复前失败，修复后通过。
+    - 运行现有测试。
+    - **视觉验证**: 启动日历演示并在浏览器中验证行为。
 
 ## 替代方案
 
--   **仅 CSS 修复**: 我们可以使用 CSS 优先级使 `.other-month.today` 看起来不同。然而，在逻辑中简单地隐藏 "今天" 状态更健壮，并能防止意外的样式冲突。
+- **仅 CSS 修复**: 我们可以使用 CSS 优先级使 `.other-month.today` 看起来不同。然而，在逻辑中简单地隐藏 "今天" 状态更健壮，并能防止意外的样式冲突。

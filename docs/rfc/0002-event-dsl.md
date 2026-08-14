@@ -18,14 +18,14 @@
 
 ## 术语约定
 
-| 术语 | 含义 |
-|------|------|
-| **Event** | 技术数据模型（`@calenderjs/event-model` 中定义的接口） |
+| 术语                             | 含义                                                           |
+| -------------------------------- | -------------------------------------------------------------- |
+| **Event**                        | 技术数据模型（`@calenderjs/event-model` 中定义的接口）         |
 | **Appointment / Holiday / Task** | 业务概念，都是 Event 的具体类型（`Event.type = "meeting"` 等） |
-| **Event DSL** | 用于声明式定义事件类型的领域特定语言 |
-| **EventTypeAST** | DSL 文本解析后的抽象语法树 |
-| **EventTypeDataModel** | AST 编译后的运行时数据模型 |
-| **EventRuntime** | 使用 DataModel 执行验证/渲染/权限检查的运行时实例 |
+| **Event DSL**                    | 用于声明式定义事件类型的领域特定语言                           |
+| **EventTypeAST**                 | DSL 文本解析后的抽象语法树                                     |
+| **EventTypeDataModel**           | AST 编译后的运行时数据模型                                     |
+| **EventRuntime**                 | 使用 DataModel 执行验证/渲染/权限检查的运行时实例              |
 
 ## 动机
 
@@ -57,11 +57,11 @@ EventRuntime(dataModel)     ← @calenderjs/event-runtime (生产时)
 
 ### 包职责
 
-| 包 | 角色 | 运行时依赖 |
-|----|------|-----------|
-| `@calenderjs/event-model` | Event 接口（SSOT）、JSON Schema、基础验证 | 是（ajv） |
-| `@calenderjs/event-dsl` | DSL 解析器、编译器、代码生成器 | 否（仅开发/构建时） |
-| `@calenderjs/event-runtime` | EventRuntime（验证、渲染、权限） | 是 |
+| 包                          | 角色                                      | 运行时依赖          |
+| --------------------------- | ----------------------------------------- | ------------------- |
+| `@calenderjs/event-model`   | Event 接口（SSOT）、JSON Schema、基础验证 | 是（ajv）           |
+| `@calenderjs/event-dsl`     | DSL 解析器、编译器、代码生成器            | 否（仅开发/构建时） |
+| `@calenderjs/event-runtime` | EventRuntime（验证、渲染、权限）          | 是                  |
 
 ```
 event-dsl ──depends──→ event-model ←──depends── event-runtime
@@ -138,43 +138,43 @@ recurring:
 
 ### Section 说明
 
-| Section | 作用 | 必需 |
-|---------|------|------|
-| `type` | 事件类型标识符（映射到 `Event.type`） | 是 |
-| `name` | 类型显示名称 | 是 |
-| `description` | 类型描述 | 否 |
-| `fields` | 字段定义（映射到 `Event.data` 中的键） | 是 |
-| `validate` | 验证规则（运行时校验） | 否 |
-| `display` | 显示配置（颜色、图标、标题/描述模板） | 否 |
-| `behavior` | 行为规则（可编辑、可拖拽、权限控制） | 否 |
-| `constraints` | 时间约束（时区、精度、提前量、跨天等） | 否 |
-| `recurring` | 重复规则（频率、间隔、排除日期等） | 否 |
+| Section       | 作用                                   | 必需 |
+| ------------- | -------------------------------------- | ---- |
+| `type`        | 事件类型标识符（映射到 `Event.type`）  | 是   |
+| `name`        | 类型显示名称                           | 是   |
+| `description` | 类型描述                               | 否   |
+| `fields`      | 字段定义（映射到 `Event.data` 中的键） | 是   |
+| `validate`    | 验证规则（运行时校验）                 | 否   |
+| `display`     | 显示配置（颜色、图标、标题/描述模板）  | 否   |
+| `behavior`    | 行为规则（可编辑、可拖拽、权限控制）   | 否   |
+| `constraints` | 时间约束（时区、精度、提前量、跨天等） | 否   |
+| `recurring`   | 重复规则（频率、间隔、排除日期等）     | 否   |
 
 ### 字段类型
 
-| 类型 | 语法 | Event.data 中的值 |
-|------|------|------------------|
-| `string` | `- name: string` | `string` |
-| `number` | `- count: number` | `number` |
-| `boolean` | `- active: boolean` | `boolean` |
-| `email` | `- contact: email` | `string`（格式校验） |
-| `text` | `- notes: text` | `string`（长文本） |
-| `list of T` | `- tags: list of string` | `T[]` |
-| `enum(...)` | `- status: enum(a, b, c)` | `string`（受限值） |
+| 类型        | 语法                      | Event.data 中的值    |
+| ----------- | ------------------------- | -------------------- |
+| `string`    | `- name: string`          | `string`             |
+| `number`    | `- count: number`         | `number`             |
+| `boolean`   | `- active: boolean`       | `boolean`            |
+| `email`     | `- contact: email`        | `string`（格式校验） |
+| `text`      | `- notes: text`           | `string`（长文本）   |
+| `list of T` | `- tags: list of string`  | `T[]`                |
+| `enum(...)` | `- status: enum(a, b, c)` | `string`（受限值）   |
 
 **字段修饰符**：`, required`、`, default: "value"`、`, min: n`、`, max: n`
 
 ### 验证表达式
 
-| 语法 | 含义 |
-|------|------|
-| `field between min and max` | 范围检查 |
-| `field >= value` / `field <= value` | 比较运算 |
-| `field in ["a", "b", "c"]` | 枚举检查 |
-| `no conflict with other events` | 时间冲突检测 |
-| `when condition: rules` | 条件验证 |
-| `not expr` | 逻辑否定 |
-| `expr and expr` / `expr or expr` | 逻辑组合 |
+| 语法                                | 含义         |
+| ----------------------------------- | ------------ |
+| `field between min and max`         | 范围检查     |
+| `field >= value` / `field <= value` | 比较运算     |
+| `field in ["a", "b", "c"]`          | 枚举检查     |
+| `no conflict with other events`     | 时间冲突检测 |
+| `when condition: rules`             | 条件验证     |
+| `not expr`                          | 逻辑否定     |
+| `expr and expr` / `expr or expr`    | 逻辑组合     |
 
 ### 显示规则
 
@@ -209,9 +209,13 @@ interface FieldDefinition {
 }
 
 type FieldType =
-  | 'string' | 'number' | 'boolean' | 'email' | 'text'
-  | { type: 'list'; itemType: FieldType }
-  | { type: 'enum'; values: string[] };
+  | "string"
+  | "number"
+  | "boolean"
+  | "email"
+  | "text"
+  | { type: "list"; itemType: FieldType }
+  | { type: "enum"; values: string[] };
 ```
 
 完整 AST 类型见 `packages/event-dsl/src/ast/types.ts`。
@@ -226,7 +230,7 @@ type FieldType =
 interface EventTypeDataModel {
   id: string;
   name: string;
-  extraSchema: JSONSchema;           // 由 fields 生成，校验 Event.data 结构
+  extraSchema: JSONSchema; // 由 fields 生成，校验 Event.data 结构
   validationRules: ValidationRule[];
   displayRules: DisplayRule[];
   behaviorRules: BehaviorRule[];
@@ -256,7 +260,8 @@ interface EventDSLDataModel {
     "attendees": {
       "type": "array",
       "items": { "type": "string", "format": "email" },
-      "minItems": 1, "maxItems": 50
+      "minItems": 1,
+      "maxItems": 50
     },
     "location": { "type": "string" },
     "priority": {
@@ -278,7 +283,7 @@ interface EventDSLDataModel {
 export interface MeetingData {
   attendees: string[];
   location?: string;
-  priority?: 'low' | 'normal' | 'high';
+  priority?: "low" | "normal" | "high";
   agenda?: string;
 }
 ```
@@ -289,30 +294,31 @@ DSL 定义的字段存储在 `Event.data` 中（类型 `Record<string, any>`）�
 
 ### 映射关系
 
-| DSL Section | Event 字段 | 说明 |
-|-------------|-----------|------|
-| `type` | `Event.type` | 事件类型标识符 |
-| `fields` | `Event.data` | 业务字段数据容器 |
-| `display.color` | `Event.color`（运行时渲染后） | 显示颜色 |
-| `display.icon` | `Event.icon`（运行时渲染后） | 显示图标 |
-| `display.title` | 覆盖 `Event.title`（运行时渲染后） | 显示标题 |
+| DSL Section     | Event 字段                         | 说明             |
+| --------------- | ---------------------------------- | ---------------- |
+| `type`          | `Event.type`                       | 事件类型标识符   |
+| `fields`        | `Event.data`                       | 业务字段数据容器 |
+| `display.color` | `Event.color`（运行时渲染后）      | 显示颜色         |
+| `display.icon`  | `Event.icon`（运行时渲染后）       | 显示图标         |
+| `display.title` | 覆盖 `Event.title`（运行时渲染后） | 显示标题         |
 
 ### Event 示例
 
 ```typescript
 const meetingEvent: Event = {
   id: "evt-001",
-  type: "meeting",                    // ← DSL type
+  type: "meeting", // ← DSL type
   title: "团队会议",
   startTime: new Date("2026-01-15T10:00:00"),
   endTime: new Date("2026-01-15T11:00:00"),
   color: "#4285f4",
-  data: {                              // ← DSL fields 存放于此
+  data: {
+    // ← DSL fields 存放于此
     attendees: ["alice@co.com", "bob@co.com"],
     location: "会议室 A",
     priority: "high",
-    agenda: "讨论 Q1 计划"
-  }
+    agenda: "讨论 Q1 计划",
+  },
 };
 ```
 
@@ -330,8 +336,8 @@ canPerform(action, event, user) → boolean
 ```
 
 ```typescript
-import { EventDSLCompiler } from '@calenderjs/event-dsl';
-import { EventRuntime } from '@calenderjs/event-runtime';
+import { EventDSLCompiler } from "@calenderjs/event-dsl";
+import { EventRuntime } from "@calenderjs/event-runtime";
 
 const compiler = new EventDSLCompiler();
 const dataModel = compiler.compileDSL(dslText);
@@ -346,7 +352,7 @@ const rendered = runtime.render(event, { user });
 // → { title: "团队会议", color: "#ea4335", description: "2 attendees", icon: "meeting" }
 
 // 权限
-const canEdit = runtime.canPerform('edit', event, user);
+const canEdit = runtime.canPerform("edit", event, user);
 // → true/false（基于 behavior 规则和用户角色）
 ```
 
@@ -354,14 +360,14 @@ const canEdit = runtime.canPerform('edit', event, user);
 
 EventRuntime 通过以下路径解析验证表达式中的字段：
 
-| 路径 | 解析为 |
-|------|--------|
-| `title` | `event.title` |
-| `startTime.hour` | `event.startTime.getHours()` |
+| 路径              | 解析为                        |
+| ----------------- | ----------------------------- |
+| `title`           | `event.title`                 |
+| `startTime.hour`  | `event.startTime.getHours()`  |
 | `attendees.count` | `event.data.attendees.length` |
-| `priority` | `event.data.priority` |
-| `user.role` | `context.user.role` |
-| `duration` | `endTime - startTime`（分钟） |
+| `priority`        | `event.data.priority`         |
+| `user.role`       | `context.user.role`           |
+| `duration`        | `endTime - startTime`（分钟） |
 
 ## 包结构
 
@@ -398,17 +404,17 @@ packages/event-model/                  ← SSOT：Event 接口 + 基础验证
 
 ## 实现状态
 
-| 模块 | 状态 | 说明 |
-|------|------|------|
-| PEG.js 语法 + 解析器 | ✅ 完成 | 支持全部 sections 和语法 |
-| AST 类型定义 | ✅ 完成 | EventTypeAST + 子类型 |
-| EventDSLCompiler | ✅ 完成 | DSL → DataModel |
-| JSON Schema 生成 | ✅ 完成 | fields → Draft-07 Schema |
-| TypeScript 生成 | ✅ 完成 | fields → TS interface |
-| EventRuntime | ✅ 完成 | validate / render / canPerform |
-| EventDataGenerator | ❌ 未实现 | 从 DSL 生成 Event 数据实例（见 RFC-0011） |
-| Calendar 集成 | ❌ 未实现 | Calendar 接受 EventRuntime（见 RFC-0005） |
-| `extra` → `data` 重命名 | ❌ 待执行 | 全局字段重命名 |
+| 模块                    | 状态      | 说明                                      |
+| ----------------------- | --------- | ----------------------------------------- |
+| PEG.js 语法 + 解析器    | ✅ 完成   | 支持全部 sections 和语法                  |
+| AST 类型定义            | ✅ 完成   | EventTypeAST + 子类型                     |
+| EventDSLCompiler        | ✅ 完成   | DSL → DataModel                           |
+| JSON Schema 生成        | ✅ 完成   | fields → Draft-07 Schema                  |
+| TypeScript 生成         | ✅ 完成   | fields → TS interface                     |
+| EventRuntime            | ✅ 完成   | validate / render / canPerform            |
+| EventDataGenerator      | ❌ 未实现 | 从 DSL 生成 Event 数据实例（见 RFC-0011） |
+| Calendar 集成           | ❌ 未实现 | Calendar 接受 EventRuntime（见 RFC-0005） |
+| `extra` → `data` 重命名 | ❌ 待执行 | 全局字段重命名                            |
 
 ## 未解决问题
 
@@ -419,4 +425,4 @@ packages/event-model/                  ← SSOT：Event 接口 + 基础验证
 
 ---
 
-*本 RFC 定义了 Event DSL 的语法、编译管线和运行时架构。DSL 允许业务服务通过声明式文本定义事件类型，编译后供 Calendar 组件进行 DSL 驱动的渲染、验证和权限控制。*
+_本 RFC 定义了 Event DSL 的语法、编译管线和运行时架构。DSL 允许业务服务通过声明式文本定义事件类型，编译后供 Calendar 组件进行 DSL 驱动的渲染、验证和权限控制。_

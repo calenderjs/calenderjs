@@ -1,203 +1,204 @@
 /* Day View Styles - Google Calendar Inspired */
 
 :host {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
 
 .day-view {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    background: var(--calender-bg-color, #fff);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--calender-bg-color, #fff);
 }
 
 .day-view-header {
-    padding: var(--calender-day-header-padding, 16px 24px);
-    border-bottom: 1px solid var(--calender-border-color, #dadce0);
-    background: var(--calender-bg-color, #fff);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  padding: var(--calender-day-header-padding, 16px 24px);
+  border-bottom: 1px solid var(--calender-border-color, #dadce0);
+  background: var(--calender-bg-color, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .day-view-date {
-    font-size: var(--calender-day-header-date-font-size, 22px);
-    font-weight: var(--calender-day-header-date-font-weight, 400);
-    color: var(--calender-text-color, #202124);
-    display: flex;
-    align-items: center;
+  font-size: var(--calender-day-header-date-font-size, 22px);
+  font-weight: var(--calender-day-header-date-font-weight, 400);
+  color: var(--calender-text-color, #202124);
+  display: flex;
+  align-items: center;
 }
 
 .day-view-date.today {
-    color: var(--calender-primary-color, #1a73e8);
-    font-weight: var(--calender-day-header-date-font-weight-today, 500);
+  color: var(--calender-primary-color, #1a73e8);
+  font-weight: var(--calender-day-header-date-font-weight-today, 500);
 }
 
 .day-view-date.today::after {
-    content: "今天";
-    font-size: 12px;
-    background-color: var(--calender-primary-color, #1a73e8);
-    color: #fff;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
-    font-weight: 500;
-    line-height: 1.2;
+  content: "今天";
+  font-size: 12px;
+  background-color: var(--calender-primary-color, #1a73e8);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .day-view-body {
-    display: grid;
-    grid-template-columns: var(--calender-day-time-gutter-width, 60px) 1fr;
-    flex: 1;
-    overflow: auto;
-    position: relative;
+  display: grid;
+  grid-template-columns: var(--calender-day-time-gutter-width, 60px) 1fr;
+  flex: 1;
+  overflow: auto;
+  position: relative;
 }
 
 .day-view-time-column {
-    border-right: 1px solid var(--calender-border-color, #dadce0);
-    position: sticky;
-    left: 0;
-    background: var(--calender-bg-color, #fff);
-    z-index: 5;
-    grid-column: 1;
-    width: var(--calender-day-time-gutter-width, 60px);
-    min-width: var(--calender-day-time-gutter-width, 60px);
+  border-right: 1px solid var(--calender-border-color, #dadce0);
+  position: sticky;
+  left: 0;
+  background: var(--calender-bg-color, #fff);
+  z-index: 5;
+  grid-column: 1;
+  width: var(--calender-day-time-gutter-width, 60px);
+  min-width: var(--calender-day-time-gutter-width, 60px);
 }
 
 .day-view-events-column {
-    position: relative;
-    grid-column: 2;
+  position: relative;
+  grid-column: 2;
 }
 
 .day-view-hour-label {
-    height: var(--calender-hour-cell-height, 48px);
-    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
-    padding: 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    font-size: var(--calender-time-label-font-size, 12px);
-    color: var(--calender-text-secondary-color, #70757a);
-    position: relative;
-    box-sizing: border-box;
-    padding-right: var(--calender-time-label-padding-right, 8px);
-    padding-top: var(--calender-time-label-padding-top, 4px);
+  height: var(--calender-hour-cell-height, 48px);
+  border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  font-size: var(--calender-time-label-font-size, 12px);
+  color: var(--calender-text-secondary-color, #70757a);
+  position: relative;
+  box-sizing: border-box;
+  padding-right: var(--calender-time-label-padding-right, 8px);
+  padding-top: var(--calender-time-label-padding-top, 4px);
 }
 
 .day-view-hour::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--calender-border-light-color, #e8eaed);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--calender-border-light-color, #e8eaed);
 }
 
 /* 保留旧的类名以兼容 */
 .day-view-time-slot {
-    height: var(--calender-hour-cell-height, 48px);
-    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
-    padding: 0 var(--calender-time-label-padding-right, 8px);
-    display: flex;
-    align-items: flex-start;
-    font-size: var(--calender-time-label-font-size, 12px);
-    color: var(--calender-text-secondary-color, #70757a);
-    position: relative;
+  height: var(--calender-hour-cell-height, 48px);
+  border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
+  padding: 0 var(--calender-time-label-padding-right, 8px);
+  display: flex;
+  align-items: flex-start;
+  font-size: var(--calender-time-label-font-size, 12px);
+  color: var(--calender-text-secondary-color, #70757a);
+  position: relative;
 }
 
 .day-view-time-slot::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--calender-border-light-color, #e8eaed);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--calender-border-light-color, #e8eaed);
 }
 
 .day-view-main-column {
-    position: relative;
+  position: relative;
 }
 
 .day-view-hour-cell {
-    height: var(--calender-hour-cell-height, 48px);
-    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
-    cursor: pointer;
-    transition: background-color var(--calender-transition-duration-fast, 0.15s);
-    position: relative;
-    box-sizing: border-box;
+  height: var(--calender-hour-cell-height, 48px);
+  border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
+  cursor: pointer;
+  transition: background-color var(--calender-transition-duration-fast, 0.15s);
+  position: relative;
+  box-sizing: border-box;
 }
 
 .day-view-hour-cell:hover {
-    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
+  background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .day-view-hour-cell.selected {
-    background-color: var(--calender-selected-bg-color, #e8f0fe);
+  background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 /* 保留旧的类名以兼容 */
 .day-view-time-slot-cell {
-    height: var(--calender-hour-cell-height, 48px);
-    border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
-    cursor: pointer;
-    transition: background-color var(--calender-transition-duration-fast, 0.15s);
-    position: relative;
+  height: var(--calender-hour-cell-height, 48px);
+  border-bottom: 1px solid var(--calender-border-light-color, #e8eaed);
+  cursor: pointer;
+  transition: background-color var(--calender-transition-duration-fast, 0.15s);
+  position: relative;
 }
 
 .day-view-time-slot-cell:hover {
-    background-color: var(--calender-hover-bg-color-light, #f8f9fa);
+  background-color: var(--calender-hover-bg-color-light, #f8f9fa);
 }
 
 .day-view-time-slot-cell.selected {
-    background-color: var(--calender-selected-bg-color, #e8f0fe);
+  background-color: var(--calender-selected-bg-color, #e8f0fe);
 }
 
 .day-view-event {
-    position: absolute;
-    left: var(--calender-day-event-margin, 2px);
-    right: var(--calender-day-event-margin, 2px);
-    padding: var(--calender-day-event-padding, 6px 10px);
-    border-radius: var(--calender-event-border-radius, 3px);
-    font-size: var(--calender-day-event-font-size, 13px);
-    color: var(--calender-event-text-color, #fff);
-    cursor: pointer;
-    overflow: hidden;
-    z-index: 2;
-    box-shadow: var(--calender-event-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.1));
-    transition: box-shadow var(--calender-transition-duration, 0.2s),
-        z-index var(--calender-transition-duration, 0.2s);
-    line-height: var(--calender-day-event-line-height, 1.4);
+  position: absolute;
+  left: var(--calender-day-event-margin, 2px);
+  right: var(--calender-day-event-margin, 2px);
+  padding: var(--calender-day-event-padding, 6px 10px);
+  border-radius: var(--calender-event-border-radius, 3px);
+  font-size: var(--calender-day-event-font-size, 13px);
+  color: var(--calender-event-text-color, #fff);
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow: var(--calender-event-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.1));
+  transition:
+    box-shadow var(--calender-transition-duration, 0.2s),
+    z-index var(--calender-transition-duration, 0.2s);
+  line-height: var(--calender-day-event-line-height, 1.4);
 }
 
 .day-view-event:hover {
-    box-shadow: var(
-        --calender-event-hover-box-shadow,
-        0 2px 4px rgba(0, 0, 0, 0.15)
-    );
-    z-index: 3;
+  box-shadow: var(
+    --calender-event-hover-box-shadow,
+    0 2px 4px rgba(0, 0, 0, 0.15)
+  );
+  z-index: 3;
 }
 
 .day-view-event-title {
-    font-weight: var(--calender-event-title-font-weight, 500);
-    margin-bottom: var(--calender-day-event-title-margin-bottom, 4px);
+  font-weight: var(--calender-event-title-font-weight, 500);
+  margin-bottom: var(--calender-day-event-title-margin-bottom, 4px);
 }
 
 .day-view-event-time {
-    font-size: var(--calender-event-time-font-size, 12px);
-    opacity: var(--calender-event-time-opacity, 0.9);
+  font-size: var(--calender-event-time-font-size, 12px);
+  opacity: var(--calender-event-time-opacity, 0.9);
 }
 
 .day-view-event-description {
-    font-size: var(--calender-event-description-font-size, 12px);
-    opacity: var(--calender-event-description-opacity, 0.85);
-    margin-top: var(--calender-event-description-margin-top, 4px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-size: var(--calender-event-description-font-size, 12px);
+  opacity: var(--calender-event-description-opacity, 0.85);
+  margin-top: var(--calender-event-description-margin-top, 4px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

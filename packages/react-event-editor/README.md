@@ -15,9 +15,9 @@ pnpm add @calenderjs/react-event-editor @calenderjs/monaco-event-dsl monaco-edit
 ## 使用
 
 ```tsx
-import { EventEditor } from '@calenderjs/react-event-editor';
-import { Editor } from '@monaco-editor/react';
-import { useState } from 'react';
+import { EventEditor } from "@calenderjs/react-event-editor";
+import { Editor } from "@monaco-editor/react";
+import { useState } from "react";
 
 function App() {
   const [dsl, setDsl] = useState('type: meeting\nname: "团队会议"');
@@ -39,16 +39,14 @@ function App() {
 ## 与 Calendar 组合
 
 ```tsx
-import { Calendar, ResizableSplitter } from '@calenderjs/react';
-import { EventEditor } from '@calenderjs/react-event-editor';
-import { Editor } from '@monaco-editor/react';
+import { Calendar, ResizableSplitter } from "@calenderjs/react";
+import { EventEditor } from "@calenderjs/react-event-editor";
+import { Editor } from "@monaco-editor/react";
 
 function App() {
   return (
     <ResizableSplitter
-      left={
-        <EventEditor EditorComponent={Editor} value={''} height="100%" />
-      }
+      left={<EventEditor EditorComponent={Editor} value={""} height="100%" />}
       right={<Calendar view="month" />}
     />
   );
@@ -57,17 +55,17 @@ function App() {
 
 ## Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `EditorComponent` | `React.ComponentType<EditorProps>` | - | Monaco Editor 组件（必需） |
-| `value` | `string` | `""` | Event DSL 代码内容 |
-| `onChange` | `(value: string \| undefined) => void` | - | 代码变化回调 |
-| `height` | `string \| number` | `"100%"` | 编辑器高度 |
-| `darkMode` | `boolean` | `false` | 暗色主题 |
-| `className` | `string` | `""` | CSS 类名 |
-| `style` | `React.CSSProperties` | - | 内联样式 |
-| `options` | `editor.IStandaloneEditorConstructionOptions` | - | Monaco 选项（与默认合并） |
-| `onMount` | `(editor, monaco) => void` | - | 挂载回调 |
+| 属性              | 类型                                          | 默认值   | 说明                       |
+| ----------------- | --------------------------------------------- | -------- | -------------------------- |
+| `EditorComponent` | `React.ComponentType<EditorProps>`            | -        | Monaco Editor 组件（必需） |
+| `value`           | `string`                                      | `""`     | Event DSL 代码内容         |
+| `onChange`        | `(value: string \| undefined) => void`        | -        | 代码变化回调               |
+| `height`          | `string \| number`                            | `"100%"` | 编辑器高度                 |
+| `darkMode`        | `boolean`                                     | `false`  | 暗色主题                   |
+| `className`       | `string`                                      | `""`     | CSS 类名                   |
+| `style`           | `React.CSSProperties`                         | -        | 内联样式                   |
+| `options`         | `editor.IStandaloneEditorConstructionOptions` | -        | Monaco 选项（与默认合并）  |
+| `onMount`         | `(editor, monaco) => void`                    | -        | 挂载回调                   |
 
 ## 默认 Monaco 选项
 
