@@ -1,6 +1,6 @@
 {
   "name": "@calenderjs/site",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CalenderJS 官网与文档站（WSX）",
   "private": true,
   "type": "module",
