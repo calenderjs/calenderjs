@@ -17,18 +17,13 @@ export default defineConfig({
       fileName: (format) => `index.${format === "es" ? "mjs" : "cjs"}`,
     },
     rollupOptions: {
-      external: [
-        "react",
-        "react-dom",
-        "@calenderjs/calendar",
-        "@calenderjs/core",
-      ],
+      // React 与 workspace 包一律 external — 库禁止内联宿主框架/兄弟包
+      external: [/^react(\/.*)?$/, /^react-dom(\/.*)?$/, /^@calenderjs\//],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           "@calenderjs/calendar": "CalenderJSCalendar",
-          "@calenderjs/core": "CalenderJSCore",
         },
       },
     },

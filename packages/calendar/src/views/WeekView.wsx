@@ -15,7 +15,11 @@ import {
     toStateIsoOrUnselected,
     UNSELECTED_DATE_ISO,
 } from "../utils/state-date";
+import { upgradeProperties } from "../utils/upgrade-property";
 import styles from "./WeekView.css?inline";
+
+/** 需要在 customElements 升级时补写的公开属性 */
+const UPGRADABLE_PROPS = ["viewDate", "events", "selectedDate", "user"] as const;
 
 /**
  * 周视图组件
@@ -115,6 +119,8 @@ export default class WeekView extends WebComponent {
     // ========== 生命周期 ==========
     onConnected() {
         super.onConnected?.();
+        // 框架可能在升级前就赋值，需重新过 setter
+        upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
     }
 

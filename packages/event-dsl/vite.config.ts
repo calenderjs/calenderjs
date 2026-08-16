@@ -28,7 +28,8 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: ["@calenderjs/core"],
+      // workspace 依赖一律 external
+      external: [/^@calenderjs\//],
       output: {
         exports: "named",
       },

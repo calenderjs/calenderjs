@@ -12,7 +12,8 @@ export default defineConfig({
       fileName: (format) => `index.${format === "es" ? "mjs" : "cjs"}`,
     },
     rollupOptions: {
-      external: ["monaco-editor"],
+      // monaco 由宿主提供（peer），含子路径
+      external: [/^monaco-editor(\/.*)?$/],
       output: {
         globals: {
           "monaco-editor": "monaco",

@@ -30,11 +30,8 @@ export default defineConfig(() => {
         },
       },
       rollupOptions: {
-        external: [
-          "@calenderjs/core",
-          "@calenderjs/event-dsl",
-          "@wsxjs/wsx-core",
-        ],
+        // workspace / peer 一律 external，禁止把 date-time、event-runtime 等打进 calendar
+        external: [/^@calenderjs\//, /^@wsxjs\//],
         input: {
           index: resolve(__dirname, "src/index.ts"),
         },
@@ -42,7 +39,10 @@ export default defineConfig(() => {
           exports: "named",
           globals: {
             "@calenderjs/core": "CalenderJSCore",
+            "@calenderjs/date-time": "CalenderJSDateTime",
             "@calenderjs/event-dsl": "CalenderJSEventDSL",
+            "@calenderjs/event-model": "CalenderJSEventModel",
+            "@calenderjs/event-runtime": "CalenderJSEventRuntime",
             "@wsxjs/wsx-core": "WSXCore",
           },
         },

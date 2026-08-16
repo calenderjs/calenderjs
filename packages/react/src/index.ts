@@ -5,7 +5,7 @@
  */
 
 export { Calendar } from "./Calendar";
-export type { CalendarProps } from "./Calendar";
+export type { CalendarProps, CalendarRef } from "./Calendar";
 
 export { default as ResizableSplitter } from "./components/ResizableSplitter";
 export type { ResizableSplitterProps } from "./components/ResizableSplitter";

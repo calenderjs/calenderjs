@@ -22,6 +22,7 @@ import React, {
   useState,
 } from "react";
 import type { Event } from "@calenderjs/event-model";
+import type { User } from "@calenderjs/core";
 
 // 延迟加载 Web Component，只在客户端注册
 // 避免在服务器端执行（HTMLElement 不存在）
@@ -45,7 +46,7 @@ declare global {
         HTMLElement
       > & {
         events?: Event[];
-        user?: any;
+        user?: User;
       };
     }
   }
@@ -73,7 +74,7 @@ export interface CalendarProps {
   /**
    * 当前用户
    */
-  user?: any;
+  user?: User;
 
   /**
    * 日期变化时的回调
@@ -155,7 +156,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
           view?: "month" | "week" | "day";
           date?: Date | string;
           events?: Event[];
-          user?: any;
+          user?: User;
         })
       | null
     >(null);

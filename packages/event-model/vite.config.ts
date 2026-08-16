@@ -23,7 +23,8 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: [],
+      // ajv 是独立运行时依赖，禁止打进包
+      external: [/^ajv(\/.*)?$/, /^ajv-formats(\/.*)?$/],
       output: {
         exports: "named",
       },

@@ -23,7 +23,7 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: ["@calenderjs/core", "@calenderjs/event-model"],
+      external: [/^@calenderjs\//],
       output: {
         exports: "named",
       },

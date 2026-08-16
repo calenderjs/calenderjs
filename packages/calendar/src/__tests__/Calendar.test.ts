@@ -160,26 +160,37 @@ describe("Calendar 组件", () => {
   });
 
   describe("属性绑定", () => {
-    it.skip("应该正确绑定 events 属性", async () => {
+    it("应该正确绑定 events 属性", async () => {
       const events = [createTestEvent(), createTestEvent({ id: "event-2" })];
       calendar = document.createElement("wsx-calendar") as Calendar;
       calendar.events = events;
       container.appendChild(calendar);
       await waitForComponentInit(calendar);
 
-      expect(calendar.events).toBe(events);
       expect(calendar.events.length).toBe(2);
+      expect(calendar.events.map((e) => e.id)).toEqual(["event-1", "event-2"]);
     });
 
-    it.skip("应该正确绑定 user 属性", async () => {
+    it("应该正确绑定 user 属性", async () => {
       const user = createTestUser();
       calendar = document.createElement("wsx-calendar") as Calendar;
       calendar.user = user;
       container.appendChild(calendar);
       await waitForComponentInit(calendar);
 
-      expect(calendar.user).toBe(user);
       expect(calendar.user.email).toBe("test@example.com");
+    });
+
+    it("应该支持 view / date property（框架包装器使用）", async () => {
+      const testDate = new Date("2024-01-15T00:00:00.000Z");
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      calendar.view = "week";
+      calendar.date = testDate;
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      expect(calendar.view).toBe("week");
+      expect(calendar.date.getTime()).toBe(testDate.getTime());
     });
 
     it("应该正确绑定 defaultView 属性", async () => {
@@ -199,6 +210,50 @@ describe("Calendar 组件", () => {
       await waitForComponentInit(calendar);
 
       // @state 存 ISO，getter 每次还原新 Date，比时间戳而非引用
+      expect(calendar.currentDate.getTime()).toBe(testDate.getTime());
+    });
+  });
+
+  describe("customElements 升级前赋值（React 等框架）", () => {
+    /**
+     * 框架在 customElements 升级前给元素赋值，会留下自有数据属性遮蔽原型访问器。
+     * 连接时组件必须重新把这些值过一遍 setter。
+     */
+    function assignBeforeUpgrade(
+      element: HTMLElement,
+      prop: string,
+      value: unknown,
+    ) {
+      Object.defineProperty(element, prop, {
+        value,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
+    }
+
+    it("应该在连接时补写升级前设置的 events", async () => {
+      const events = [createTestEvent(), createTestEvent({ id: "event-2" })];
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      assignBeforeUpgrade(calendar, "events", events);
+
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      expect(calendar.events.length).toBe(2);
+      expect(calendar.displayEvents.length).toBe(2);
+    });
+
+    it("应该在连接时补写升级前设置的 view 与 date", async () => {
+      const testDate = new Date("2024-03-20T00:00:00.000Z");
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      assignBeforeUpgrade(calendar, "view", "day");
+      assignBeforeUpgrade(calendar, "date", testDate);
+
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      expect(calendar.currentView).toBe("day");
       expect(calendar.currentDate.getTime()).toBe(testDate.getTime());
     });
   });

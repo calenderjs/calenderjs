@@ -19,13 +19,13 @@ export default defineConfig({
       fileName: (format) => `index.${format === "es" ? "mjs" : "cjs"}`,
     },
     rollupOptions: {
+      // React / Monaco 全外部化 — 库产物禁止内联，避免宿主多副本与 React 19 炸
       external: [
-        "react",
-        "react-dom",
-        "react/jsx-runtime",
+        /^react(\/.*)?$/,
+        /^react-dom(\/.*)?$/,
+        /^@monaco-editor\/react(\/.*)?$/,
+        /^monaco-editor(\/.*)?$/,
         "@calenderjs/monaco-event-dsl",
-        "@monaco-editor/react",
-        "monaco-editor",
       ],
       output: {
         globals: {

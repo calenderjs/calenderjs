@@ -29,7 +29,8 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: [],
+      // date-time / event-model 是独立包，禁止内联
+      external: [/^@calenderjs\//],
       output: {
         exports: "named",
       },

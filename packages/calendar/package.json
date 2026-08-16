@@ -37,8 +37,7 @@
     "@calenderjs/date-time": "workspace:*",
     "@calenderjs/event-dsl": "workspace:*",
     "@calenderjs/event-model": "workspace:*",
-    "@calenderjs/event-runtime": "workspace:*",
-    "@wsxjs/wsx-core": "^0.2.0"
+    "@calenderjs/event-runtime": "workspace:*"
   },
   "peerDependencies": {
     "@wsxjs/wsx-core": "^0.2.0"
@@ -48,6 +47,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20.19.27",
     "@wsxjs/eslint-plugin-wsx": "^0.2.0",
+    "@wsxjs/wsx-core": "^0.2.0",
     "@wsxjs/wsx-vite-plugin": "^0.2.0",
     "eslint": "^9.39.2",
     "happy-dom": "^20.0.11",

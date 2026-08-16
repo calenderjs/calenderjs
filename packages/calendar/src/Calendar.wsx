@@ -26,6 +26,7 @@ import {
     normalizeEventsForState,
     toStateIso,
 } from "./utils/state-date";
+import { upgradeProperties } from "./utils/upgrade-property";
 // 导入视图组件以确保它们被注册
 import "./views/DayView.wsx";
 import "./views/MonthView.wsx";
@@ -39,6 +40,19 @@ import "./views/WeekView.wsx";
  * <wsx-calendar view="month" date="2024-12-30"></wsx-calendar>
  * ```
  */
+/** 需要在 customElements 升级时补写的公开属性 */
+const UPGRADABLE_PROPS = [
+    "view",
+    "date",
+    "defaultView",
+    "events",
+    "user",
+    "eventDSL",
+    "eventRuntime",
+] as const;
+
+const VALID_VIEWS = ["month", "week", "day"] as const;
+
 @autoRegister({ tagName: "wsx-calendar" })
 export default class Calendar extends WebComponent {
     // ========== 观察的属性（Web Components 标准 - 对外使用） ==========
@@ -74,6 +88,28 @@ export default class Calendar extends WebComponent {
     }
     set defaultView(value: "month" | "week" | "day") {
         this.currentView = value;
+    }
+
+    /** 与 observedAttributes 的 "view" 对应的 property（框架包装器使用） */
+    get view(): "month" | "week" | "day" {
+        return this.currentView;
+    }
+    set view(value: "month" | "week" | "day") {
+        if (VALID_VIEWS.includes(value)) {
+            this.currentView = value;
+        }
+    }
+
+    /** 与 observedAttributes 的 "date" 对应的 property（框架包装器使用） */
+    get date(): Date {
+        return this.currentDate;
+    }
+    set date(value: Date | string) {
+        try {
+            this.currentDate = value;
+        } catch {
+            console.error("Invalid date value:", value);
+        }
     }
 
     get eventDSL(): string | EventTypeAST | EventTypeAST[] | null {
@@ -148,6 +184,8 @@ export default class Calendar extends WebComponent {
     // ========== Web Components 生命周期 ==========
     onConnected() {
         super.onConnected?.();
+        // 框架（React 等）可能在升级前就赋值，需重新过 setter
+        upgradeProperties(this, UPGRADABLE_PROPS);
         this.setupEventListeners();
     }
 
