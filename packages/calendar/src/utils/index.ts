@@ -4,3 +4,4 @@
 
 export * from "./event-utils";
 export * from "./event-runtime-integration";
+export * from "./state-date";

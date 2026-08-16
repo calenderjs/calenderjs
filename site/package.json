@@ -15,17 +15,17 @@
     "@calenderjs/event-dsl": "workspace:*",
     "@calenderjs/event-model": "workspace:*",
     "@calenderjs/event-runtime": "workspace:*",
-    "@wsxjs/wsx-base-components": "^0.0.26",
-    "@wsxjs/wsx-core": "^0.0.26",
-    "@wsxjs/wsx-i18next": "^0.0.26",
-    "@wsxjs/wsx-press": "^0.0.26",
-    "@wsxjs/wsx-router": "^0.0.26",
+    "@wsxjs/wsx-base-components": "^0.2.0",
+    "@wsxjs/wsx-core": "^0.2.0",
+    "@wsxjs/wsx-i18next": "^0.2.0",
+    "@wsxjs/wsx-press": "^0.2.0",
+    "@wsxjs/wsx-router": "^0.2.0",
     "fs-extra": "^11.4.0",
     "i18next": "^23.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.12.0",
-    "@wsxjs/wsx-vite-plugin": "^0.0.26",
+    "@wsxjs/wsx-vite-plugin": "^0.2.0",
     "typescript": "^5.9.3",
     "unocss": "^66.0.0",
     "vite": "^5.0.0"

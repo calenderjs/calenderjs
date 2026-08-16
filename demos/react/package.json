@@ -33,7 +33,7 @@
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.51.0",
-    "@wsxjs/wsx-vite-plugin": "^0.0.28",
+    "@wsxjs/wsx-vite-plugin": "^0.2.0",
     "vite": "^7.3.0"
   }
 }

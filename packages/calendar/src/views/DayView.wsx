@@ -8,6 +8,11 @@ import {
     sortEventsByTime,
     calculateEventPosition,
 } from "../utils/event-utils";
+import {
+    fromStateIso,
+    normalizeEventsForState,
+    toStateIso,
+} from "../utils/state-date";
 import styles from "./DayView.css?inline";
 
 /**
@@ -21,7 +26,8 @@ export default class DayView extends WebComponent {
     }
 
     // ========== 内部状态 ==========
-    @state private _viewDate: Date = new Date();
+    // 日期存 ISO：避免 WSX reactive Proxy 破坏 Date
+    @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
     @state private _user: User = {
         id: "1",
@@ -33,16 +39,13 @@ export default class DayView extends WebComponent {
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
-        return this._viewDate;
+        return fromStateIso(this._viewDateIso);
     }
     set viewDate(value: Date | string) {
-        if (value instanceof Date) {
-            this._viewDate = value;
-        } else if (typeof value === "string") {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                this._viewDate = date;
-            }
+        try {
+            this._viewDateIso = toStateIso(value);
+        } catch {
+            // 忽略无效日期
         }
     }
 
@@ -51,10 +54,13 @@ export default class DayView extends WebComponent {
     }
     set events(value: Event[] | string) {
         if (Array.isArray(value)) {
-            this._events = value;
+            this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
             try {
-                this._events = JSON.parse(value);
+                const parsed = JSON.parse(value) as Event[];
+                this._events = Array.isArray(parsed)
+                    ? (normalizeEventsForState(parsed) as Event[])
+                    : [];
             } catch (e) {
                 console.error("Invalid events JSON:", value);
                 this._events = [];

@@ -9,6 +9,13 @@ import {
     formatDateKey,
 } from "@calenderjs/date-time";
 import { groupEventsByDate, sortEventsByTime } from "../utils/event-utils";
+import {
+    fromStateIso,
+    normalizeEventsForState,
+    toStateIso,
+    toStateIsoOrUnselected,
+    UNSELECTED_DATE_ISO,
+} from "../utils/state-date";
 import styles from "./MonthView.css?inline";
 
 /**
@@ -22,10 +29,10 @@ export default class MonthView extends WebComponent {
     }
 
     // ========== 内部状态 ==========
-    @state private _viewDate: Date = new Date();
+    // 日期存 ISO：避免 WSX reactive Proxy 破坏 Date
+    @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
-    // selectedDate 使用一个无效日期作为"未选择"的标记
-    @state private _selectedDate: Date = new Date(0);
+    @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -36,17 +43,13 @@ export default class MonthView extends WebComponent {
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
-        return this._viewDate;
+        return fromStateIso(this._viewDateIso);
     }
     set viewDate(value: Date | string) {
-        if (value instanceof Date) {
-            // 创建新的 Date 对象以确保 @state 能检测到变化
-            this._viewDate = new Date(value);
-        } else if (typeof value === "string") {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                this._viewDate = date;
-            }
+        try {
+            this._viewDateIso = toStateIso(value);
+        } catch {
+            // 忽略无效日期
         }
     }
 
@@ -55,10 +58,13 @@ export default class MonthView extends WebComponent {
     }
     set events(value: Event[] | string) {
         if (Array.isArray(value)) {
-            this._events = value;
+            this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
             try {
-                this._events = JSON.parse(value);
+                const parsed = JSON.parse(value) as Event[];
+                this._events = Array.isArray(parsed)
+                    ? (normalizeEventsForState(parsed) as Event[])
+                    : [];
             } catch (e) {
                 console.error("Invalid events JSON:", value);
                 this._events = [];
@@ -69,21 +75,10 @@ export default class MonthView extends WebComponent {
     }
 
     get selectedDate(): Date {
-        return this._selectedDate;
+        return fromStateIso(this._selectedDateIso);
     }
     set selectedDate(value: Date | string | undefined) {
-        if (value instanceof Date) {
-            this._selectedDate = value;
-        } else if (typeof value === "string") {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                this._selectedDate = date;
-            } else {
-                this._selectedDate = new Date(0);
-            }
-        } else if (value === undefined || value === null) {
-            this._selectedDate = new Date(0);
-        }
+        this._selectedDateIso = toStateIsoOrUnselected(value);
     }
 
     get user(): User {
@@ -186,17 +181,15 @@ export default class MonthView extends WebComponent {
 
     // ========== Getters ==========
     private get monthDates() {
-        // 确保 viewDate 始终是有效的 Date 对象
-        if (
-            !this._viewDate ||
-            !(this._viewDate instanceof Date) ||
-            isNaN(this._viewDate.getTime())
-        ) {
-            this._viewDate = new Date();
+        // getter 始终返回普通 Date；无效 ISO 时回退到今天
+        let viewDate = this.viewDate;
+        if (Number.isNaN(viewDate.getTime())) {
+            this._viewDateIso = toStateIso(new Date());
+            viewDate = this.viewDate;
         }
         try {
             // 使用 firstDayOfWeek = 0（周日）以匹配 weekDays 数组的顺序 ["日", "一", "二", "三", "四", "五", "六"]
-            return getMonthDates(this._viewDate, 0);
+            return getMonthDates(viewDate, 0);
         } catch (e) {
             console.error("Error getting month dates:", e);
             return [];
@@ -297,16 +290,15 @@ export default class MonthView extends WebComponent {
                         const dayEvents = sortEventsByTime(
                             this.eventsByDate.get(dateKey) || [],
                         );
-                        const isCurrentMonth =
-                            this._viewDate &&
-                            this._viewDate instanceof Date &&
-                            !isNaN(this._viewDate.getTime())
-                                ? isSameMonth(normalizedDate, this._viewDate)
-                                : false;
+                        const isCurrentMonth = !Number.isNaN(
+                            this.viewDate.getTime(),
+                        )
+                            ? isSameMonth(normalizedDate, this.viewDate)
+                            : false;
                         // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
                         const isSelected =
-                            this._selectedDate.getTime() !== 0 &&
-                            isSameDay(normalizedDate, this._selectedDate);
+                            this.selectedDate.getTime() !== 0 &&
+                            isSameDay(normalizedDate, this.selectedDate);
                         // 使用规范化后的日期与 _today 比较
                         const isToday = isSameDay(normalizedDate, this._today);
 

@@ -6,20 +6,31 @@
 
 /**
  * 将输入转换为 Date 对象
+ *
+ * 注意：WSX @state 的 reactive Proxy(Date) 会让 getTime 等品牌方法抛错；
+ * 日历侧应存 ISO 字符串。此处对 Proxy Date 给出明确错误，避免静默成 object。
  */
 function toDate(date: Date | string): Date {
-  if (date instanceof Date) {
-    if (isNaN(date.getTime())) {
-      throw new Error(`Invalid date: ${date}`);
-    }
-    return date;
-  }
   if (typeof date === "string") {
     const d = new Date(date);
     if (isNaN(d.getTime())) {
       throw new Error(`Invalid date: ${date}`);
     }
     return d;
+  }
+  if (date instanceof Date) {
+    let time: number;
+    try {
+      time = date.getTime();
+    } catch {
+      throw new Error(
+        "Invalid date: reactive Proxy Date is not supported; use ISO string",
+      );
+    }
+    if (isNaN(time)) {
+      throw new Error(`Invalid date: ${date}`);
+    }
+    return date;
   }
   throw new Error(
     `Invalid date type: expected Date or string, got ${typeof date}`,

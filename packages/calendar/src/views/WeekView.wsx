@@ -8,6 +8,13 @@ import {
     sortEventsByTime,
     calculateEventPosition,
 } from "../utils/event-utils";
+import {
+    fromStateIso,
+    normalizeEventsForState,
+    toStateIso,
+    toStateIsoOrUnselected,
+    UNSELECTED_DATE_ISO,
+} from "../utils/state-date";
 import styles from "./WeekView.css?inline";
 
 /**
@@ -21,10 +28,10 @@ export default class WeekView extends WebComponent {
     }
 
     // ========== 内部状态 ==========
-    @state private _viewDate: Date = new Date();
+    // 日期存 ISO：避免 WSX reactive Proxy 破坏 Date
+    @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
-    // selectedDate 使用一个无效日期作为"未选择"的标记
-    @state private _selectedDate: Date = new Date(0);
+    @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -35,16 +42,13 @@ export default class WeekView extends WebComponent {
 
     // ========== Property 访问器（WSX 组件之间使用） ==========
     get viewDate(): Date {
-        return this._viewDate;
+        return fromStateIso(this._viewDateIso);
     }
     set viewDate(value: Date | string) {
-        if (value instanceof Date) {
-            this._viewDate = value;
-        } else if (typeof value === "string") {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                this._viewDate = date;
-            }
+        try {
+            this._viewDateIso = toStateIso(value);
+        } catch {
+            // 忽略无效日期
         }
     }
 
@@ -53,10 +57,13 @@ export default class WeekView extends WebComponent {
     }
     set events(value: Event[] | string) {
         if (Array.isArray(value)) {
-            this._events = value;
+            this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
             try {
-                this._events = JSON.parse(value);
+                const parsed = JSON.parse(value) as Event[];
+                this._events = Array.isArray(parsed)
+                    ? (normalizeEventsForState(parsed) as Event[])
+                    : [];
             } catch (e) {
                 console.error("Invalid events JSON:", value);
                 this._events = [];
@@ -67,21 +74,10 @@ export default class WeekView extends WebComponent {
     }
 
     get selectedDate(): Date {
-        return this._selectedDate;
+        return fromStateIso(this._selectedDateIso);
     }
     set selectedDate(value: Date | string | undefined) {
-        if (value instanceof Date) {
-            this._selectedDate = value;
-        } else if (typeof value === "string") {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                this._selectedDate = date;
-            } else {
-                this._selectedDate = new Date(0);
-            }
-        } else if (value === undefined || value === null) {
-            this._selectedDate = new Date(0);
-        }
+        this._selectedDateIso = toStateIsoOrUnselected(value);
     }
 
     get user(): User {

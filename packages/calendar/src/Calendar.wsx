@@ -21,6 +21,11 @@ import {
     getDisplayEvents,
     validateEventWithRuntime,
 } from "./utils/event-runtime-integration";
+import {
+    fromStateIso,
+    normalizeEventsForState,
+    toStateIso,
+} from "./utils/state-date";
 // 导入视图组件以确保它们被注册
 import "./views/DayView.wsx";
 import "./views/MonthView.wsx";
@@ -42,8 +47,9 @@ export default class Calendar extends WebComponent {
     }
 
     // ========== 内部状态（@state 装饰器） ==========
+    // 日期存 ISO：WSX reactive Proxy 会破坏 Date 品牌方法
     @state currentView: "month" | "week" | "day" = "month";
-    @state currentDate: Date = new Date();
+    @state private _currentDateIso: string = new Date().toISOString();
     @state private _events: CalendarEvent[] = [];
     @state private _user: User = {
         id: "1",
@@ -56,6 +62,13 @@ export default class Calendar extends WebComponent {
     private _runtimeByType: Map<string, EventRuntime> | null = null;
 
     // ========== 属性访问器（支持 property 和 attribute 两种设置方式） ==========
+    get currentDate(): Date {
+        return fromStateIso(this._currentDateIso);
+    }
+    set currentDate(value: Date | string) {
+        this._currentDateIso = toStateIso(value);
+    }
+
     get defaultView(): "month" | "week" | "day" {
         return this.currentView;
     }
@@ -94,10 +107,13 @@ export default class Calendar extends WebComponent {
     }
     set events(value: CalendarEvent[] | string) {
         if (Array.isArray(value)) {
-            this._events = value;
+            this._events = normalizeEventsForState(value) as CalendarEvent[];
         } else if (typeof value === "string") {
             try {
-                this._events = JSON.parse(value);
+                const parsed = JSON.parse(value) as CalendarEvent[];
+                this._events = Array.isArray(parsed)
+                    ? (normalizeEventsForState(parsed) as CalendarEvent[])
+                    : [];
             } catch (e) {
                 console.error("Invalid events JSON:", value);
                 this._events = [];

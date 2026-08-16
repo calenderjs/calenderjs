@@ -198,7 +198,8 @@ describe("Calendar 组件", () => {
       container.appendChild(calendar);
       await waitForComponentInit(calendar);
 
-      expect(calendar.currentDate).toBe(testDate);
+      // @state 存 ISO，getter 每次还原新 Date，比时间戳而非引用
+      expect(calendar.currentDate.getTime()).toBe(testDate.getTime());
     });
   });
 
