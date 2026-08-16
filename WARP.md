@@ -139,7 +139,7 @@
 
 ## RFC 工作跟踪
 
-我使用 RFC 来跟踪工作和进度。阅读 `docs/rfc/README.md` 了解如何管理 RFC。
+我使用 RFC 来跟踪工作和进度。阅读 `.spec/rfc/` 了解如何管理 RFC。
 
 # 三、编程规范
 
@@ -1724,7 +1724,7 @@ describe("ModuleName", () => {
 
 ### RFC 文件命名与编号
 
-- **格式**: `docs/rfc/NNNN-<short-name>.md`
+- **格式**: `.spec/rfc/NNNN-<short-name>.md`
 - **编号**: 4 位数字，从 `0001` 开始递增
 - **示例**: `0001-state-machine-dsl.md`, `0002-dsl-ide-integration.md`
 

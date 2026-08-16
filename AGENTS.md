@@ -15,7 +15,7 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 - **React**：`@calenderjs/react`（日历）+ `@calenderjs/react-event-editor`（DSL 编辑器）+ `demos/react/`
 - **官网**：`site/`（WSX + i18n）
 
-当前里程碑：**M4 DSL 集成**（详见 [ROADMAP.md](./ROADMAP.md)、[TASK_TRACKING.md](./TASK_TRACKING.md)）
+当前里程碑：**M4 DSL 集成**（详见 [.spec/ROADMAP.md](./.spec/ROADMAP.md)、[.spec/TASK_TRACKING.md](./.spec/TASK_TRACKING.md)）
 
 ### 包一览
 
@@ -106,7 +106,7 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
    - Monorepo 任务通过 Turbo 或 `pnpm --filter` 执行
 
 2. **RFC 驱动开发**
-   - 非琐碎变更**必须**先在 `docs/rfc/` 创建或更新 RFC
+   - 非琐碎变更**必须**先在 `.spec/rfc/` 创建或更新 RFC
    - 严禁无 RFC 支持的重大重构或功能移除
    - RFC 必须反映当前决策状态
 
@@ -151,7 +151,7 @@ AI 代理自动加载 `.cursor/rules/`：
 - 测试框架：**vitest**（通过 pnpm 脚本调用，不要直接用 npx）
 - Monorepo 工具：**Turbo + pnpm workspaces**
 - 运行时版本：Node >= 20.19.0 或 >= 22.12.0，pnpm 10.27.0（Volta 管理）
-- RFC 文档位于 `docs/rfc/`，实现前必须经过审批流程
+- RFC 文档位于 `.spec/rfc/`，实现前必须经过审批流程
 - 日历组件标签：`<wsx-calendar>`，主包 `@calenderjs/calendar`（非 `@calenderjs/core`）
 
 ---

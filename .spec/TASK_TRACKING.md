@@ -21,15 +21,15 @@
 
 ### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4)
 
-| #   | 任务                                                | 状态    | 文件                                  |
-| --- | --------------------------------------------------- | ------- | ------------------------------------- |
-| 1   | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx`  |
-| 2   | 渲染集成：有 runtime 时 runtime.render() 增强       | Pending | `packages/calendar/src/Calendar.wsx`  |
-| 3   | 验证集成：创建/更新前 runtime.validate()            | Pending | `packages/calendar/src/Calendar.wsx`  |
-| 4   | 行为集成：拖拽/编辑/删除前 runtime.canPerform()     | Pending | `packages/calendar/src/Calendar.wsx`  |
-| 5   | 错误事件：event-create-error, event-update-error    | Pending | `packages/calendar/src/Calendar.wsx`  |
-| 6   | 添加 EventRuntime 集成测试                          | Pending | `packages/calendar/src/__tests__/`    |
-| 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `docs/rfc/0005-calendar-component.md` |
+| #   | 任务                                                | 状态    | 文件                                   |
+| --- | --------------------------------------------------- | ------- | -------------------------------------- |
+| 1   | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx`   |
+| 2   | 渲染集成：有 runtime 时 runtime.render() 增强       | Pending | `packages/calendar/src/Calendar.wsx`   |
+| 3   | 验证集成：创建/更新前 runtime.validate()            | Pending | `packages/calendar/src/Calendar.wsx`   |
+| 4   | 行为集成：拖拽/编辑/删除前 runtime.canPerform()     | Pending | `packages/calendar/src/Calendar.wsx`   |
+| 5   | 错误事件：event-create-error, event-update-error    | Pending | `packages/calendar/src/Calendar.wsx`   |
+| 6   | 添加 EventRuntime 集成测试                          | Pending | `packages/calendar/src/__tests__/`     |
+| 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `.spec/rfc/0005-calendar-component.md` |
 
 ### 阶段 3: EventDataGenerator (RFC-0011)
 
@@ -39,11 +39,29 @@
 | 2   | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | —                                    |
 | 3   | 添加测试                                 | Pending | —                                    |
 | 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
-| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `docs/rfc/0011-*`                    |
+| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `.spec/rfc/0011-*`                   |
+
+### 阶段 4: EventRuntime 时间字段时区语义 (RFC-0014) — **已完成**
+
+| #   | 任务                                       | 状态 | 文件                                         |
+| --- | ------------------------------------------ | ---- | -------------------------------------------- |
+| 1   | 定义 event/recurring/UTC 时区优先级        | Done | `.spec/rfc/0014-*`                           |
+| 2   | 实现时区感知的纯函数时间字段解析           | Done | `packages/event-runtime/src/time-field.ts`   |
+| 3   | EventRuntime 接入统一解析                  | Done | `packages/event-runtime/src/EventRuntime.ts` |
+| 4   | React demo 显式设置浏览器本地 IANA 时区    | Done | `demos/react/src/App.tsx`                    |
+| 5   | 添加 UTC、IANA、重复事件和无效时区回归测试 | Done | `packages/event-runtime/src/__tests__/`      |
+| 6   | 全量验证并更新 RFC 状态                    | Done | —                                            |
 
 ---
 
 ## 已完成
+
+### 2026-08-16: EventRuntime 时间字段时区语义 (RFC-0014)
+
+- [x] `event.timeZone` → `recurring.timeZone` → UTC 优先级
+- [x] startTime/endTime 字段使用 IANA 时区解析
+- [x] React demo 显式声明浏览器本地时区
+- [x] 无效时区安全失败及全量回归测试
 
 ### 2026-03-15: RFC 重写与架构澄清
 

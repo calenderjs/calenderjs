@@ -49,6 +49,7 @@ import type {
 } from "@calenderjs/event-model";
 import type { Event } from "@calenderjs/event-model";
 import type { ValidationContext, RenderContext, User } from "@calenderjs/core";
+import { readTimeField, resolveEventTimeZone } from "./time-field";
 
 /**
  * Event 运行时引擎
@@ -918,40 +919,8 @@ export class EventRuntime {
         // 处理时间字段的属性访问（如 startTime.hour, startTime.date 等）
         if (path.length === 2) {
           const property = path[1];
-          const date =
-            timeField instanceof Date ? timeField : new Date(timeField);
-
-          switch (property) {
-            case "hour":
-              // 使用 UTC 小时（事件时间通常使用 UTC）
-              return date.getUTCHours();
-            case "minute":
-              // 使用 UTC 分钟
-              return date.getUTCMinutes();
-            case "second":
-              // 使用 UTC 秒
-              return date.getUTCSeconds();
-            case "day":
-              // 使用 UTC 日期
-              return date.getUTCDate();
-            case "month":
-              // 使用 UTC 月份（0-based to 1-based）
-              return date.getUTCMonth() + 1;
-            case "year":
-              // 使用 UTC 年份
-              return date.getUTCFullYear();
-            case "date":
-              // 返回日期字符串 YYYY-MM-DD（使用 UTC）
-              return date.toISOString().split("T")[0];
-            case "dayOfWeek":
-              // 返回星期几（0=周日，1=周一...，使用 UTC）
-              return date.getUTCDay();
-            case "timeZone":
-              // 返回时区信息（从 event.timeZone 或 recurring.timeZone）
-              return event.timeZone || event.recurring?.timeZone || undefined;
-            default:
-              return undefined;
-          }
+          const timeZone = resolveEventTimeZone(event);
+          return readTimeField(timeField, property, timeZone);
         }
 
         // 不支持更深层的嵌套（如 startTime.date.year）

@@ -167,8 +167,8 @@ describe("端到端测试：DSL → Data Model → Event 验证 → 显示", () 
       id: "event-2",
       type: "appointment",
       title: "预约",
-      startTime: new Date("2024-12-30T14:00:00Z"),
-      endTime: new Date("2024-12-30T15:00:00Z"),
+      startTime: new Date("2024-12-30T06:00:00Z"),
+      endTime: new Date("2024-12-30T07:00:00Z"),
       timeZone: "Asia/Shanghai",
       data: {
         patient: "张三",

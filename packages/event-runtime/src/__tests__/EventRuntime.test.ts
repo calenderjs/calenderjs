@@ -2975,6 +2975,116 @@ describe("EventRuntime", () => {
       expect(result.valid).toBe(true);
     });
 
+    it("应该按 event.timeZone 验证 startTime.hour", () => {
+      const astWithZonedHour: EventTypeAST = {
+        type: "meeting",
+        name: "会议",
+        fields: [],
+        validate: [
+          {
+            type: "Comparison",
+            operator: "equals",
+            left: {
+              type: "FieldAccess",
+              path: ["startTime", "hour"],
+            },
+            right: 18,
+          },
+        ],
+        display: [],
+        behavior: [],
+      };
+      const runtime = new EventRuntime(compileAST(astWithZonedHour));
+      const event: Event = {
+        id: "zoned-hour",
+        type: "meeting",
+        title: "上海会议",
+        startTime: new Date("2024-12-30T10:00:00.000Z"),
+        endTime: new Date("2024-12-30T11:00:00.000Z"),
+        timeZone: "Asia/Shanghai",
+        data: {},
+      };
+
+      const result = runtime.validate(event, { events: [] });
+
+      expect(result.valid).toBe(true);
+    });
+
+    it("应该按 recurring.timeZone 验证时间字段", () => {
+      const astWithRecurringZone: EventTypeAST = {
+        type: "meeting",
+        name: "重复会议",
+        fields: [],
+        validate: [
+          {
+            type: "Comparison",
+            operator: "equals",
+            left: {
+              type: "FieldAccess",
+              path: ["startTime", "hour"],
+            },
+            right: 5,
+          },
+        ],
+        display: [],
+        behavior: [],
+      };
+      const runtime = new EventRuntime(compileAST(astWithRecurringZone));
+      const event: Event = {
+        id: "recurring-zone",
+        type: "meeting",
+        title: "纽约重复会议",
+        startTime: new Date("2024-12-30T10:00:00.000Z"),
+        endTime: new Date("2024-12-30T11:00:00.000Z"),
+        recurring: {
+          frequency: "weekly",
+          interval: 1,
+          daysOfWeek: [1],
+          count: 1,
+          timeZone: "America/New_York",
+        },
+        data: {},
+      };
+
+      const result = runtime.validate(event, { events: [] });
+
+      expect(result.valid).toBe(true);
+    });
+
+    it("无效 IANA 时区应该使规则失败而不是抛出异常", () => {
+      const astWithInvalidZone: EventTypeAST = {
+        type: "meeting",
+        name: "会议",
+        fields: [],
+        validate: [
+          {
+            type: "Comparison",
+            operator: "equals",
+            left: {
+              type: "FieldAccess",
+              path: ["startTime", "hour"],
+            },
+            right: 10,
+          },
+        ],
+        display: [],
+        behavior: [],
+      };
+      const runtime = new EventRuntime(compileAST(astWithInvalidZone));
+      const event: Event = {
+        id: "invalid-zone",
+        type: "meeting",
+        title: "无效时区会议",
+        startTime: new Date("2024-12-30T10:00:00.000Z"),
+        endTime: new Date("2024-12-30T11:00:00.000Z"),
+        timeZone: "Invalid/TimeZone",
+        data: {},
+      };
+
+      expect(() => runtime.validate(event, { events: [] })).not.toThrow();
+      expect(runtime.validate(event, { events: [] }).valid).toBe(false);
+    });
+
     it("应该支持 startTime.month 和 startTime.year 访问", () => {
       const astWithMonthYear: EventTypeAST = {
         type: "meeting",
@@ -4729,8 +4839,8 @@ describe("EventRuntime", () => {
           id: "1",
           type: "appointment",
           title: "Appointment",
-          startTime: new Date("2024-12-30T10:00:00Z"),
-          endTime: new Date("2024-12-30T11:00:00Z"),
+          startTime: new Date("2024-12-30T02:00:00Z"),
+          endTime: new Date("2024-12-30T03:00:00Z"),
           timeZone: "Asia/Shanghai",
           data: {
             patient: "John Doe",

@@ -8,8 +8,8 @@ alwaysApply: true
 Before non-trivial work, read in order:
 
 1. `docs/llm-guide.md` — task routing, file map, implementation status
-2. `TASK_TRACKING.md` — current sprint (what is pending)
-3. Relevant RFC in `docs/rfc/`
+2. `.spec/TASK_TRACKING.md` — current sprint (what is pending)
+3. Relevant RFC in `.spec/rfc/`
 4. `AGENTS.md` — pnpm-only, RFC-driven rules
 
 Index: `llms.txt` at repo root.

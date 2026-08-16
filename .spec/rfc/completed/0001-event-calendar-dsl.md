@@ -3298,4 +3298,4 @@ const MAX_DSL_SIZE = 100 * 1024; // 100KB
   - ✅ EVENT_BASE_SCHEMA 时间敏感字段支持已完成
   - ✅ RecurringSection 和 mod 操作符已实现
   - ✅ 文档与代码实现高度一致
-  - RFC 状态更新为 Completed，移动到 `docs/rfc/completed/` 文件夹
+  - RFC 状态更新为 Completed，移动到 `.spec/rfc/completed/` 文件夹

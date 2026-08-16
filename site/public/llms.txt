@@ -1,20 +1,21 @@
 # CalenderJS
 
-> WSX 日历组件 + Event DSL monorepo。AI 代理请先读 docs/llm-guide.md，再读 TASK_TRACKING.md 了解当前 Sprint。
+> WSX 日历组件 + Event DSL monorepo。AI 代理请先读 docs/llm-guide.md，再读 .spec/TASK_TRACKING.md 了解当前 Sprint。
 
 ## Essential (read first)
 
 - [docs/llm-guide.md](docs/llm-guide.md): AI 代理主指南 — 任务路由、文件地图、约束、实现状态
 - [AGENTS.md](AGENTS.md): 开发规范、行为准则、常用命令
-- [TASK_TRACKING.md](TASK_TRACKING.md): 当前 Sprint 任务与待办文件路径
-- [ROADMAP.md](ROADMAP.md): RFC 状态、里程碑、架构决策
+- [.spec/TASK_TRACKING.md](.spec/TASK_TRACKING.md): 当前 Sprint 任务与待办文件路径
+- [.spec/ROADMAP.md](.spec/ROADMAP.md): RFC 状态、里程碑、架构决策
 
 ## Architecture
 
-- [docs/rfc/0005-calendar-component.md](docs/rfc/0005-calendar-component.md): Calendar 组件设计（In Progress）
-- [docs/rfc/0002-event-dsl.md](docs/rfc/0002-event-dsl.md): Event DSL 语法与编译管线
-- [docs/rfc/0011-event-data-model-integration.md](docs/rfc/0011-event-data-model-integration.md): Event 数据模型与 DSL 集成（Draft）
-- [docs/rfc/0008-calendar-component-api-redesign.md](docs/rfc/0008-calendar-component-api-redesign.md): Calendar API（Implemented）
+- [.spec/rfc/0005-calendar-component.md](.spec/rfc/0005-calendar-component.md): Calendar 组件设计（In Progress）
+- [.spec/rfc/0002-event-dsl.md](.spec/rfc/0002-event-dsl.md): Event DSL 语法与编译管线
+- [.spec/rfc/0011-event-data-model-integration.md](.spec/rfc/0011-event-data-model-integration.md): Event 数据模型与 DSL 集成（Draft）
+- [.spec/rfc/0008-calendar-component-api-redesign.md](.spec/rfc/0008-calendar-component-api-redesign.md): Calendar API（Implemented）
+- [.spec/rfc/0014-event-runtime-timezone-field-semantics.md](.spec/rfc/0014-event-runtime-timezone-field-semantics.md): EventRuntime 时间字段时区语义（Implemented）
 
 ## Source code entry points
 
@@ -50,4 +51,4 @@
 
 - [README.md](README.md): 人类可读项目概览
 - [docs/persona/](docs/persona/): AI 角色定义（Personas）
-- [docs/rfc/0003-multi-tenant-service.md](docs/rfc/0003-multi-tenant-service.md): 多租户服务（Future Plan，勿实现）
+- [.spec/rfc/0003-multi-tenant-service.md](.spec/rfc/0003-multi-tenant-service.md): 多租户服务（Future Plan，勿实现）

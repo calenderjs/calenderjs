@@ -3,12 +3,7 @@
  * Validates LLM documentation links and syncs llms.txt to site/public.
  * Run: pnpm validate:docs
  */
-import {
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-} from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -18,8 +13,8 @@ const REQUIRED_FILES = [
   "llms.txt",
   "docs/llm-guide.md",
   "AGENTS.md",
-  "TASK_TRACKING.md",
-  "ROADMAP.md",
+  ".spec/TASK_TRACKING.md",
+  ".spec/ROADMAP.md",
   ".cursor/rules/00-llm-onboarding.mdc",
 ];
 

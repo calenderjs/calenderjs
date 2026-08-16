@@ -15,6 +15,7 @@
 | 0008 | Calendar API 重新设计             | **Implemented**                             | —      | 属性/状态分层、observedAttributes、getter/setter                                     |
 | 0011 | Event 数据模型与 DSL 集成         | Draft                                       | **P1** | `extra`→`data` 重命名、EventDataGenerator、架构澄清                                  |
 | 0012 | Calendar 插件机制                 | Draft                                       | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                             |
+| 0014 | EventRuntime 时间字段时区语义     | **Implemented**                             | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                                 |
 | 0006 | Documentation & Examples          | Draft                                       | **P3** | site 已有基础框架，文档内容待补全                                                    |
 | 0007 | VS Code Extension & Online Editor | Draft                                       | **P4** | 未来特性                                                                             |
 | 0003 | Multi-Tenant Service              | Future Plan                                 | **P5** | 后端服务，暂不启动                                                                   |
@@ -53,6 +54,7 @@
 - [ ] RFC-0005 M4: Calendar 接受 EventRuntime property
 - [ ] DSL 驱动渲染/验证/行为
 - [ ] EventDataGenerator 实现
+- [x] RFC-0014: 修复 EventRuntime 时间字段时区语义
 
 ### M5: 插件生态
 

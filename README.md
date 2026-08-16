@@ -8,12 +8,12 @@
 
 > **Start here.** This section routes LLMs to the right docs before any code change.
 
-| Priority | File                                     | Purpose                                                    |
-| -------- | ---------------------------------------- | ---------------------------------------------------------- |
-| 1        | [docs/llm-guide.md](./docs/llm-guide.md) | Task routing, file map, invariants, implementation status  |
-| 2        | [TASK_TRACKING.md](./TASK_TRACKING.md)   | Current sprint — what is **pending** right now             |
-| 3        | [AGENTS.md](./AGENTS.md)                 | Rules: pnpm only, RFC-driven, WSX conventions              |
-| 4        | [llms.txt](./llms.txt)                   | Compact link index ([llms.txt spec](https://llmstxt.org/)) |
+| Priority | File                                               | Purpose                                                    |
+| -------- | -------------------------------------------------- | ---------------------------------------------------------- |
+| 1        | [docs/llm-guide.md](./docs/llm-guide.md)           | Task routing, file map, invariants, implementation status  |
+| 2        | [.spec/TASK_TRACKING.md](./.spec/TASK_TRACKING.md) | Current sprint — what is **pending** right now             |
+| 3        | [AGENTS.md](./AGENTS.md)                           | Rules: pnpm only, RFC-driven, WSX conventions              |
+| 4        | [llms.txt](./llms.txt)                             | Compact link index ([llms.txt spec](https://llmstxt.org/)) |
 
 ### Quick facts (machine-readable)
 
@@ -54,7 +54,7 @@ CalenderJS 提供：
 7. **Monaco 语言插件**（`@calenderjs/monaco-event-dsl`）：Event DSL 语法高亮 / 补全
 8. **演示与文档**：`demos/react/`（React Demo）、`site/`（官网与文档站）
 
-**当前里程碑**：M4 DSL 集成（详见 [ROADMAP.md](./ROADMAP.md)）
+**当前里程碑**：M4 DSL 集成（详见 [.spec/ROADMAP.md](./.spec/ROADMAP.md)）
 
 ## 项目结构
 
@@ -72,14 +72,15 @@ calenderjs/
 │   └── monaco-event-dsl/     # Monaco Editor DSL 语言插件
 ├── demos/react/                # React + Vite 演示
 ├── site/                       # WSX 官网（i18n、路由、文档）
+├── .spec/
+│   ├── ROADMAP.md              # 路线图与 RFC 状态
+│   ├── TASK_TRACKING.md        # 当前 Sprint 任务
+│   └── rfc/                    # RFC 驱动开发文档（SSOT）
 ├── docs/
 │   ├── llm-guide.md            # AI 代理主指南
-│   ├── rfc/                    # RFC 驱动开发文档
 │   ├── persona/                # AI 角色定义
 │   └── examples/               # 示例代码
-├── llms.txt                    # AI 链接索引
-├── ROADMAP.md                  # 路线图与 RFC 状态
-└── TASK_TRACKING.md            # 当前 Sprint 任务
+└── llms.txt                    # AI 链接索引
 ```
 
 ### 包依赖关系
@@ -237,22 +238,23 @@ const compiled = compile(ast);
 
 ### 路线图与任务
 
-- [ROADMAP.md](./ROADMAP.md) — RFC 状态、里程碑、架构决策
-- [TASK_TRACKING.md](./TASK_TRACKING.md) — 当前 Sprint 任务
+- [.spec/ROADMAP.md](./.spec/ROADMAP.md) — RFC 状态、里程碑、架构决策
+- [.spec/TASK_TRACKING.md](./.spec/TASK_TRACKING.md) — 当前 Sprint 任务
 
 ### RFC 文档
 
-| RFC                                                        | 标题                      | 状态                      |
-| ---------------------------------------------------------- | ------------------------- | ------------------------- |
-| [0002](./docs/rfc/0002-event-dsl.md)                       | Event DSL                 | Implemented（集成进行中） |
-| [0004](./docs/rfc/0004-react-demo-site.md)                 | React Package & Demo      | Implemented               |
-| [0005](./docs/rfc/0005-calendar-component.md)              | Calendar Component        | In Progress               |
-| [0008](./docs/rfc/0008-calendar-component-api-redesign.md) | Calendar API 重新设计     | Implemented               |
-| [0010](./docs/rfc/0010-week-view-layout-fix.md)            | Week View 布局修复        | Implemented               |
-| [0013](./docs/rfc/completed/0013-fix-today-handling.md)    | 今天高亮修复              | Implemented               |
-| [0011](./docs/rfc/0011-event-data-model-integration.md)    | Event 数据模型与 DSL 集成 | Draft                     |
-| [0012](./docs/rfc/0012-calendar-plugin-mechanism.md)       | Calendar 插件机制         | Draft                     |
-| [0003](./docs/rfc/0003-multi-tenant-service.md)            | Multi-Tenant Service      | Future Plan               |
+| RFC                                                                | 标题                      | 状态                      |
+| ------------------------------------------------------------------ | ------------------------- | ------------------------- |
+| [0002](./.spec/rfc/0002-event-dsl.md)                              | Event DSL                 | Implemented（集成进行中） |
+| [0004](./.spec/rfc/0004-react-demo-site.md)                        | React Package & Demo      | Implemented               |
+| [0005](./.spec/rfc/0005-calendar-component.md)                     | Calendar Component        | In Progress               |
+| [0008](./.spec/rfc/0008-calendar-component-api-redesign.md)        | Calendar API 重新设计     | Implemented               |
+| [0010](./.spec/rfc/0010-week-view-layout-fix.md)                   | Week View 布局修复        | Implemented               |
+| [0013](./.spec/rfc/completed/0013-fix-today-handling.md)           | 今天高亮修复              | Implemented               |
+| [0011](./.spec/rfc/0011-event-data-model-integration.md)           | Event 数据模型与 DSL 集成 | Draft                     |
+| [0012](./.spec/rfc/0012-calendar-plugin-mechanism.md)              | Calendar 插件机制         | Draft                     |
+| [0014](./.spec/rfc/0014-event-runtime-timezone-field-semantics.md) | EventRuntime 时间字段时区 | Implemented               |
+| [0003](./.spec/rfc/0003-multi-tenant-service.md)                   | Multi-Tenant Service      | Future Plan               |
 
 ### 包文档
 

@@ -7,6 +7,8 @@ import { EventValidator } from "@calenderjs/event-model";
 import { useState, useEffect, useMemo } from "react";
 import { Editor } from "@monaco-editor/react";
 
+const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 // 默认 DSL 示例
 const DEFAULT_DSL = `type: meeting
 name: "团队会议"
@@ -38,6 +40,7 @@ const DEFAULT_EVENTS: Event[] = [
     title: "团队会议",
     startTime: new Date(new Date().setHours(10, 0, 0, 0)),
     endTime: new Date(new Date().setHours(11, 0, 0, 0)),
+    timeZone: LOCAL_TIME_ZONE,
     data: {
       attendees: ["user1@example.com", "user2@example.com"],
       location: "会议室 A",
@@ -49,6 +52,7 @@ const DEFAULT_EVENTS: Event[] = [
     title: "客户演示",
     startTime: new Date(new Date().setHours(14, 0, 0, 0)),
     endTime: new Date(new Date().setHours(15, 30, 0, 0)),
+    timeZone: LOCAL_TIME_ZONE,
     data: {
       attendees: ["client@example.com"],
       location: "线上会议",

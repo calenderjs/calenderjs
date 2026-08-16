@@ -360,14 +360,14 @@ const canEdit = runtime.canPerform("edit", event, user);
 
 EventRuntime 通过以下路径解析验证表达式中的字段：
 
-| 路径              | 解析为                        |
-| ----------------- | ----------------------------- |
-| `title`           | `event.title`                 |
-| `startTime.hour`  | `event.startTime.getHours()`  |
-| `attendees.count` | `event.data.attendees.length` |
-| `priority`        | `event.data.priority`         |
-| `user.role`       | `context.user.role`           |
-| `duration`        | `endTime - startTime`（分钟） |
+| 路径              | 解析为                                                                           |
+| ----------------- | -------------------------------------------------------------------------------- |
+| `title`           | `event.title`                                                                    |
+| `startTime.hour`  | 按 [RFC-0014](0014-event-runtime-timezone-field-semantics.md) 的事件时区语义解析 |
+| `attendees.count` | `event.data.attendees.length`                                                    |
+| `priority`        | `event.data.priority`                                                            |
+| `user.role`       | `context.user.role`                                                              |
+| `duration`        | `endTime - startTime`（分钟）                                                    |
 
 ## 包结构
 

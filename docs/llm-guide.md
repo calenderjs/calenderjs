@@ -2,25 +2,25 @@
 
 > **Purpose**: Machine-oriented repo map. Read this before making changes.
 > **Human overview**: [README.md](../README.md)
-> **Current sprint**: [TASK_TRACKING.md](../TASK_TRACKING.md)
+> **Current sprint**: [.spec/TASK_TRACKING.md](../.spec/TASK_TRACKING.md)
 
 ---
 
 ## 1. Task routing
 
-| If you need to…                  | Read first                                         | Edit                                            |
-| -------------------------------- | -------------------------------------------------- | ----------------------------------------------- |
-| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                 | `packages/calendar/src/views/*.wsx`             |
-| Change Calendar API / props      | `docs/rfc/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`            |
-| Modify Event data shape          | `docs/rfc/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`             |
-| Change DSL syntax / parser       | `docs/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`        |
-| Change DSL compiler output       | `docs/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/compiler.ts`            |
-| Runtime validate/render/behavior | `packages/event-dsl/README.md`                     | `packages/event-runtime/src/`                   |
-| React calendar wrapper / demo    | `packages/react/README.md`                         | `packages/react/src/`, `demos/react/`           |
-| React Event DSL editor           | `packages/react-event-editor/README.md`            | `packages/react-event-editor/src/`              |
-| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md`              | `packages/monaco-event-dsl/src/`                |
-| Date/time utilities              | —                                                  | `packages/date-time/src/`                       |
-| Add RFC-level feature            | `ROADMAP.md`                                       | `docs/rfc/` (create/update RFC **before** code) |
+| If you need to…                  | Read first                                          | Edit                                             |
+| -------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
+| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                  | `packages/calendar/src/views/*.wsx`              |
+| Change Calendar API / props      | `.spec/rfc/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`             |
+| Modify Event data shape          | `.spec/rfc/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`              |
+| Change DSL syntax / parser       | `.spec/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`         |
+| Change DSL compiler output       | `.spec/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/compiler.ts`             |
+| Runtime validate/render/behavior | `packages/event-dsl/README.md`                      | `packages/event-runtime/src/`                    |
+| React calendar wrapper / demo    | `packages/react/README.md`                          | `packages/react/src/`, `demos/react/`            |
+| React Event DSL editor           | `packages/react-event-editor/README.md`             | `packages/react-event-editor/src/`               |
+| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md`               | `packages/monaco-event-dsl/src/`                 |
+| Date/time utilities              | —                                                   | `packages/date-time/src/`                        |
+| Add RFC-level feature            | `.spec/ROADMAP.md`                                  | `.spec/rfc/` (create/update RFC **before** code) |
 
 ---
 
@@ -65,7 +65,7 @@ MONOREPO_TOOL        = turbo + pnpm workspaces
 1. **Calendar lives in `@calenderjs/calendar`**, not `@calenderjs/core`. Core = models, contexts, utils only.
 2. **Event is the technical model**; Appointment is a business concept defined via DSL.
 3. **WSX and Vue/React must not mix** inside `.wsx` files. See `.cursor/skills/wsx-work/SKILL.md`.
-4. **Non-trivial changes require RFC** in `docs/rfc/` before implementation.
+4. **Non-trivial changes require RFC** in `.spec/rfc/` before implementation.
 5. **Use `pnpm`**, not `npx`. Check `package.json` scripts first.
 6. **Field name is `data`** — stores DSL-defined business fields on Event.
 7. **WSX tests are async** — always `await element.updateComplete` before assertions.
@@ -109,7 +109,9 @@ packages/
 
 demos/react/                  # React demo app
 site/                         # WSX docs site (i18n)
-docs/rfc/                     # RFC specs
+.spec/rfc/                    # RFC specs (SSOT)
+.spec/ROADMAP.md               # Milestones / RFC status
+.spec/TASK_TRACKING.md         # Current sprint
 docs/llm-guide.md             # This file
 ```
 
@@ -186,11 +188,11 @@ pnpm --filter @calenderjs/event-dsl build
 
 ## 9. RFC workflow
 
-1. Check [ROADMAP.md](../ROADMAP.md) for RFC status
-2. Read relevant RFC in `docs/rfc/`
+1. Check [.spec/ROADMAP.md](../.spec/ROADMAP.md) for RFC status
+2. Read relevant RFC in `.spec/rfc/`
 3. For new features: write/update RFC **before** code
-4. Update [TASK_TRACKING.md](../TASK_TRACKING.md) when completing sprint items
-5. Move completed RFCs to `docs/rfc/completed/` when appropriate
+4. Update [.spec/TASK_TRACKING.md](../.spec/TASK_TRACKING.md) when completing sprint items
+5. Move completed RFCs to `.spec/rfc/completed/` when appropriate
 
 ---
 
@@ -215,10 +217,10 @@ Runs automatically in **husky pre-commit**.
 
 ## 11. Related docs
 
-| Doc                                     | Audience   | Content                   |
-| --------------------------------------- | ---------- | ------------------------- |
-| [llms.txt](../llms.txt)                 | AI (index) | Curated link index        |
-| [AGENTS.md](../AGENTS.md)               | AI         | Rules, personas, commands |
-| [README.md](../README.md)               | Human      | Overview, examples        |
-| [TASK_TRACKING.md](../TASK_TRACKING.md) | Both       | Current sprint tasks      |
-| [ROADMAP.md](../ROADMAP.md)             | Both       | Milestones, RFC status    |
+| Doc                                                 | Audience   | Content                   |
+| --------------------------------------------------- | ---------- | ------------------------- |
+| [llms.txt](../llms.txt)                             | AI (index) | Curated link index        |
+| [AGENTS.md](../AGENTS.md)                           | AI         | Rules, personas, commands |
+| [README.md](../README.md)                           | Human      | Overview, examples        |
+| [.spec/TASK_TRACKING.md](../.spec/TASK_TRACKING.md) | Both       | Current sprint tasks      |
+| [.spec/ROADMAP.md](../.spec/ROADMAP.md)             | Both       | Milestones, RFC status    |
