@@ -8,6 +8,8 @@ import { existsSync, cpSync } from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const SITE_DEV_PORT = 5195;
+
 /** 构建后复制 .wsx-press 到 dist */
 function copyWsxPressPlugin(): Plugin {
   return {
@@ -61,7 +63,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5179,
+    port: SITE_DEV_PORT,
+    strictPort: true,
     open: true,
   },
   build: {

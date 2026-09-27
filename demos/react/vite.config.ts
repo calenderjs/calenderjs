@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { wsx } from "@wsxjs/wsx-vite-plugin";
 
+const DEMO_DEV_PORT = 5194;
+
 export default defineConfig(({ command, mode }) => {
   const isDev = command === "serve" || mode === "development";
   const rootDir = path.resolve(__dirname, "../..");
@@ -72,7 +74,8 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     server: {
-      port: 3000,
+      port: DEMO_DEV_PORT,
+      strictPort: true,
       open: true,
     },
     build: {

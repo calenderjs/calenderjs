@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const DEMO_E2E_PORT = 4177;
+const DEMO_E2E_ORIGIN = `http://127.0.0.1:${DEMO_E2E_PORT}`;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -25,7 +28,7 @@ export default defineConfig({
     }],
   ],
   use: {
-    baseURL: "http://127.0.0.1:4178",
+    baseURL: DEMO_E2E_ORIGIN,
     locale: "zh-CN",
     timezoneId: "America/Los_Angeles",
     viewport: { width: 1440, height: 1000 },
@@ -38,8 +41,8 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
-    command: "pnpm preview --outDir dist-e2e --host 127.0.0.1 --port 4178 --strictPort",
-    url: "http://127.0.0.1:4178",
+    command: `pnpm preview --outDir dist-e2e --host 127.0.0.1 --port ${DEMO_E2E_PORT} --strictPort`,
+    url: DEMO_E2E_ORIGIN,
     reuseExistingServer: false,
     timeout: 30_000,
   },

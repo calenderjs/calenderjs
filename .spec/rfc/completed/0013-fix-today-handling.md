@@ -62,7 +62,7 @@ class={`month-view-cell ... ${shouldHighlightToday ? "today" : ""}`}
 
 ### Demo 视觉验证步骤
 
-1.  **启动演示**: 在项目根目录执行 `pnpm run build:calendar` 后执行 `pnpm run dev:react`，浏览器打开 **http://localhost:3000/**。
+1.  **启动演示**: 在项目根目录执行 `pnpm run build:calendar` 后执行 `pnpm run dev:react`，浏览器打开 **http://localhost:5194/**。
 2.  **月视图**: 确认右侧为日历，视图为「月」。
 3.  **切到非当前月**: 点击日历头部的「下月」或「上月」，进入非当前月份（例如今天 2 月，则切到 3 月或 1 月）。
 4.  **检查「今天」**: 在月历中会看到上/下月的灰色小格（other-month）。若某格数字与「今天」的日期相同（例如今天 22 号，则找灰色格里的 22）：

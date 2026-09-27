@@ -4,23 +4,27 @@
   display: block;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .week-view {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   width: 100%;
+  overflow: auto;
   background: var(--calender-bg-color, #fff);
 }
 
-.week-view-header {
+/* 表头和时段网格共用这一套列宽。滚动条在 .week-view 上，避免只压缩下面的列。 */
+.week-view-header,
+.week-view-body {
   display: grid;
   grid-template-columns: var(--calender-week-time-gutter-width, 60px) repeat(
       7,
-      1fr
+      minmax(0, 1fr)
     );
+}
+
+.week-view-header {
   border-bottom: 1px solid var(--calender-border-color, #dadce0);
   background: var(--calender-bg-color, #fff);
   position: sticky;
@@ -35,6 +39,7 @@
 }
 
 .week-view-day-header {
+  box-sizing: border-box;
   padding: var(--calender-week-header-padding, 12px 4px);
   text-align: center;
   border-right: 1px solid var(--calender-border-color, #dadce0);
@@ -106,24 +111,20 @@
 }
 
 .week-view-body {
-  display: flex;
-  flex-direction: row; /* 明确指定从左到右 */
-  flex: 1;
-  overflow: auto;
   position: relative;
 }
 
-/* 时间轴（左侧） */
+/* 时间轴（左侧）。只有时段区的轴在横向滚动时钉住，表头轴跟着表头走。 */
 .week-view-time-gutter {
-  width: var(--calender-week-time-gutter-width, 60px);
-  min-width: var(--calender-week-time-gutter-width, 60px);
+  box-sizing: border-box;
   border-right: 1px solid var(--calender-border-color, #dadce0);
   background: var(--calender-bg-color, #fff);
+}
+
+.week-view-body > .week-view-time-gutter {
   position: sticky;
   left: 0;
   z-index: 5;
-  order: 0; /* 明确指定为第一个 */
-  flex-shrink: 0; /* 防止被压缩 */
 }
 
 .week-view-time-label {
@@ -137,16 +138,14 @@
   box-sizing: border-box;
 }
 
-/* 日期列容器 */
+/* 日期列直接参与 .week-view-body 的网格，和表头同一套轨道 */
 .week-view-columns {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  flex: 1;
-  order: 1; /* 明确指定为第二个 */
+  display: contents;
 }
 
 /* 单个日期列 */
 .week-view-day-column {
+  box-sizing: border-box;
   border-right: 1px solid var(--calender-border-color, #dadce0);
   position: relative;
   min-width: 0;

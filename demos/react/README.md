@@ -69,8 +69,8 @@ pnpm install
 
 启动后，访问：
 
-- **主页**: http://localhost:3000
-- **DSL 编辑器演示**: http://localhost:3000（主页已集成 DSL 编辑器）
+- **主页**: http://localhost:5194
+- **DSL 编辑器演示**: http://localhost:5194（主页已集成 DSL 编辑器）
 
 ## 演示功能
 
@@ -143,12 +143,7 @@ pnpm build
 
 ### 5. 端口占用
 
-如果端口 3000 被占用：
-
-```bash
-# 使用其他端口
-PORT=3001 pnpm dev
-```
+开发服务器固定监听 http://localhost:5194。该端口被占用时先结束占用进程，再重新启动。
 
 ## 开发说明
 

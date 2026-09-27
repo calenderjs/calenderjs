@@ -1,6 +1,6 @@
 # CalenderJS Roadmap
 
-> **最后更新**: 2026-09-20
+> **最后更新**: 2026-09-26
 
 ## RFC 状态总览
 
@@ -11,6 +11,7 @@
 | 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |
 | 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md) | **Superseded** | — | 由 RFC-0005 取代；归档 `completed/0009-*` |
 | 0010 | [Week View 布局修复](rfc/completed/0010-week-view-layout-fix.md) | **Implemented** | — | Google Calendar 风格布局 |
+| 0016 | [周视图表头与时段列对齐](rfc/completed/0016-week-view-column-alignment.md) | **Implemented** | — | 滚动条不再只压缩时段网格；与 0010 的 key 错位无关 |
 | 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md) | **Implemented** | — | MonthView/DayView/WeekView |
 | 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md) | **Implemented** | — | 属性/状态分层、observedAttributes、getter/setter |
 | 0011 | [Event 数据模型与 DSL 集成](rfc/0011-event-data-model-integration.md) | Draft | **P1** | `data` 已落地；剩余 **EventDataGenerator**（跟 0002 关单后） |
