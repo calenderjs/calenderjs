@@ -5,9 +5,14 @@ node_modules/
 
 # Testing
 coverage/
+playwright-report/
+test-results/
+monocart-report/
+.playwright-mcp/
 
 # Production
 dist/
+dist-e2e/
 build/
 .next/
 out/
