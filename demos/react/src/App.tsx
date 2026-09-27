@@ -83,9 +83,7 @@ export default function App() {
       const dataModel = compiler.compileFromAST([ast]);
       return dataModel.types[0];
     } catch (error) {
-      setCompilationError(
-        error instanceof Error ? error.message : String(error),
-      );
+      setCompilationError((error as Error).message);
       return null;
     }
   }, [dslText]);
@@ -178,7 +176,8 @@ export default function App() {
   };
 
   const handleEventClick = (e: CustomEvent<{ event: Event }>) => {
-    console.log("Event clicked:", e.detail.event);
+    // 打印 id，避免 Proxy 在控制台显示为 Proxy(Object) 导致验收无法断言。
+    console.log("Event clicked:", e.detail.event.id);
   };
 
   // 暗色模式样式变量
@@ -283,16 +282,6 @@ export default function App() {
             fontWeight: "500",
             transition: "background-color 0.2s",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkMode
-              ? "#5a5a5a"
-              : "#357ae8";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkMode
-              ? "#4a4a4a"
-              : "#4285f4";
-          }}
         >
           {isDarkMode ? "☀️ 浅色模式" : "🌙 暗色模式"}
         </button>
@@ -343,7 +332,7 @@ export default function App() {
                 <EventEditor
                   EditorComponent={Editor}
                   value={dslText}
-                  onChange={(value) => setDslText(value || "")}
+                  onChange={(value = "") => setDslText(value)}
                   height="100%"
                   darkMode={isDarkMode}
                 />

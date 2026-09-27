@@ -1,6 +1,6 @@
 # RFC-0008: Calendar Component API 重新设计
 
-**状态**: Implemented  
+**Status:** Implemented
 **创建日期**: 2024-12-30  
 **完成日期**: 2026-03-15  
 **作者**: WSX Team  

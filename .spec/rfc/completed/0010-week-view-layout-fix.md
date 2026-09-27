@@ -1,6 +1,6 @@
 # RFC-0010: 周视图布局修复 - Google Calendar 风格
 
-**状态**: 已实现
+**Status:** Implemented
 **创建日期**: 2026-01-01
 **作者**: Linus Torvalds (AI Agent)
 

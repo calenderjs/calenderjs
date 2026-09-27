@@ -1,24 +1,25 @@
 # CalenderJS Roadmap
 
-> **最后更新**: 2026-03-15
+> **最后更新**: 2026-09-20
 
 ## RFC 状态总览
 
-| RFC  | 标题                              | 状态                                        | 优先级 | 备注                                                                                 |
-| ---- | --------------------------------- | ------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
-| 0002 | Event DSL                         | **Implemented** (核心) / In Progress (集成) | —      | PEG.js 语法、编译器、生成器已实现；`extra`→`data` 重命名和 EventDataGenerator 待完成 |
-| 0005 | Calendar Component                | **In Progress**                             | **P1** | 基础渲染已完成；DSL 驱动集成（EventRuntime）待实现                                   |
-| 0004 | React Package & Demo              | **Implemented**                             | —      | @calenderjs/react + demos/react                                                      |
-| 0009 | Calendar Component (数据驱动)     | **Superseded by 0005**                      | —      | 纯数据驱动设计已落地，0005 在此基础上增加 DSL 驱动                                   |
-| 0010 | Week View 布局修复                | **Implemented**                             | —      | Google Calendar 风格布局                                                             |
-| 0013 | 修复今天高亮显示                  | **Implemented**                             | —      | MonthView/DayView/WeekView                                                           |
-| 0008 | Calendar API 重新设计             | **Implemented**                             | —      | 属性/状态分层、observedAttributes、getter/setter                                     |
-| 0011 | Event 数据模型与 DSL 集成         | Draft                                       | **P1** | `extra`→`data` 重命名、EventDataGenerator、架构澄清                                  |
-| 0012 | Calendar 插件机制                 | Draft                                       | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                             |
-| 0014 | EventRuntime 时间字段时区语义     | **Implemented**                             | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                                 |
-| 0006 | Documentation & Examples          | Draft                                       | **P3** | site 已有基础框架，文档内容待补全                                                    |
-| 0007 | VS Code Extension & Online Editor | Draft                                       | **P4** | 未来特性                                                                             |
-| 0003 | Multi-Tenant Service              | Future Plan                                 | **P5** | 后端服务，暂不启动                                                                   |
+| RFC  | 标题 | 状态 | 优先级 | 备注 |
+| ---- | ---- | ---- | ------ | ---- |
+| 0002 | [Event DSL](rfc/completed/0002-event-dsl.md) | **Implemented** | — | standalone 已归档；Calendar/Generator 债分别归 0005/0011 |
+| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | **In Progress** | **P1** | 基础渲染完成；跟 0002 之后做 EventRuntime 接线验收 |
+| 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |
+| 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md) | **Superseded** | — | 由 RFC-0005 取代；归档 `completed/0009-*` |
+| 0010 | [Week View 布局修复](rfc/completed/0010-week-view-layout-fix.md) | **Implemented** | — | Google Calendar 风格布局 |
+| 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md) | **Implemented** | — | MonthView/DayView/WeekView |
+| 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md) | **Implemented** | — | 属性/状态分层、observedAttributes、getter/setter |
+| 0011 | [Event 数据模型与 DSL 集成](rfc/0011-event-data-model-integration.md) | Draft | **P1** | `data` 已落地；剩余 **EventDataGenerator**（跟 0002 关单后） |
+| 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md) | Draft | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器 |
+| 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md) | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC |
+| 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md) | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁 |
+| 0006 | [Documentation & Examples](rfc/0006-documentation-and-examples.md) | Draft | **P3** | site 已有基础框架，文档内容待补全 |
+| 0007 | [VS Code Extension & Online Editor](rfc/0007-vscode-extension-and-online-editor.md) | Draft | **P4** | 未来特性 |
+| 0003 | [Multi-Tenant Service](../../site/.spec/rfc/0003-multi-tenant-service.md) | Future Plan | **P5** | **规格已迁至兄弟仓** `../site/.spec/rfc/`；本仓无正文；勿在本仓/`./site` 实现 |
 
 ## 关键架构决策（2026-03-15 确认）
 
@@ -30,6 +31,7 @@
 | 扩展数据字段               | **`data`**（替代 `extra`）                   | Event.data 存放 DSL 定义的业务字段，语义更准确                        |
 | event-dsl vs event-runtime | **编译时 vs 运行时分离**                     | event-dsl 是开发时工具，event-runtime 是生产依赖，tree-shaking 友好   |
 | 过时 RFC 处理              | **重写更新**                                 | RFC-0002/0005 已重写对齐当前架构                                      |
+| 0002 角色                  | **standalone（非 umbrella）**                | 一号一 concern；集成债由 0005/0011/0012 各自收口，不回灌 0002         |
 
 ## 里程碑
 
@@ -50,11 +52,21 @@
 
 ### M4: DSL 集成 (Current - P1)
 
-- [ ] `extra` → `data` 全局重命名（RFC-0011 前置）
-- [ ] RFC-0005 M4: Calendar 接受 EventRuntime property
-- [ ] DSL 驱动渲染/验证/行为
-- [ ] EventDataGenerator 实现
-- [x] RFC-0014: 修复 EventRuntime 时间字段时区语义
+**执行序：先关 0002，再跟 peer 收口（非 umbrella）。**
+
+1. **关 RFC-0002** — **已完成**
+   - [x] Acceptance 收窄到：语法 / 编译管线 / Schema·TS 生成 / EventRuntime 契约 / 包测绿
+   - [x] 剥除错挂的 Calendar 集成、EventDataGenerator、`extra`→`data`（归 0005/0011）
+   - [x] `specify archive 0002` → `rfc/completed/0002-event-dsl.md`
+2. **已完成（见证）**
+   - [x] RFC-0014: EventRuntime 时间字段时区语义
+   - [x] RFC-0015: React Demo 浏览器端到端验收
+   - [x] `extra` → `data` 代码落地（TASK 对账 → Done；正式关单在 0011）
+3. **跟 0002 之后完成（当前主线）**
+   - [ ] RFC-0011: EventDataGenerator + data 契约对账关单
+   - [ ] RFC-0005: Calendar EventRuntime 剩余接线验收 → Implemented
+4. **不挡 M4 主线**
+   - [ ] RFC-0012: 插件机制（M5）
 
 ### M5: 插件生态
 
@@ -67,7 +79,7 @@
 
 ### M7: 服务化 (Future)
 
-- [ ] RFC-0003: 多租户日历服务
+- [ ] RFC-0003: 多租户日历服务（规格在 `../site/.spec/rfc/0003-*`，非本仓）
 
 ## 已实现的包
 

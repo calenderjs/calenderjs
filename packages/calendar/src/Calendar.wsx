@@ -196,22 +196,22 @@ export default class Calendar extends WebComponent {
 
     // ========== 事件监听器 ==========
     private setupEventListeners() {
-        // 监听子组件的事件（事件会冒泡）
-        this.addEventListener("date-click", this.handleChildDateClick);
-        this.addEventListener(
+        // 子事件在 ShadowRoot 汇合；公开事件从宿主派发，避免同名递归。
+        this.shadowRoot?.addEventListener("date-click", this.handleChildDateClick);
+        this.shadowRoot?.addEventListener(
             "date-double-click",
             this.handleChildDateDoubleClick
         );
-        this.addEventListener("event-click", this.handleChildEventClick);
+        this.shadowRoot?.addEventListener("event-click", this.handleChildEventClick);
     }
 
     private removeEventListeners() {
-        this.removeEventListener("date-click", this.handleChildDateClick);
-        this.removeEventListener(
+        this.shadowRoot?.removeEventListener("date-click", this.handleChildDateClick);
+        this.shadowRoot?.removeEventListener(
             "date-double-click",
             this.handleChildDateDoubleClick
         );
-        this.removeEventListener("event-click", this.handleChildEventClick);
+        this.shadowRoot?.removeEventListener("event-click", this.handleChildEventClick);
     }
 
     private handleChildDateClick = (e: globalThis.Event) => {
@@ -232,9 +232,11 @@ export default class Calendar extends WebComponent {
 
     private handleChildEventClick = (e: globalThis.Event) => {
         const customEvent = e as CustomEvent<{ event: CalendarEvent }>;
+        // 展开 @state Proxy，保证宿主拿到可序列化的普通事件对象。
+        const event = { ...customEvent.detail.event };
         this.dispatchEvent(
             new CustomEvent("event-click", {
-                detail: { event: customEvent.detail.event },
+                detail: { event },
                 bubbles: true,
             })
         );

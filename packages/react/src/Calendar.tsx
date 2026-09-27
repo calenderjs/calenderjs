@@ -190,9 +190,9 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       },
     }));
 
-    // 处理属性变化
+    // 处理属性变化。isClient 必须入依赖：占位阶段 ref 为空，客户端元素出现后需补写初始 props。
     useEffect(() => {
-      if (!calendarRef.current) return;
+      if (!isClient || !calendarRef.current) return;
 
       const element = calendarRef.current as any;
 
@@ -212,11 +212,11 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       if (user !== undefined) {
         element.user = user;
       }
-    }, [view, date, events, user]);
+    }, [isClient, view, date, events, user]);
 
-    // 绑定事件监听器
+    // 绑定事件监听器。同 props：客户端 wsx-calendar 出现后再挂载，避免冷启动漏绑。
     useEffect(() => {
-      if (!calendarRef.current) return;
+      if (!isClient || !calendarRef.current) return;
 
       const element = calendarRef.current;
 
@@ -247,7 +247,13 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         element.removeEventListener("event-click", handleEventClick);
         element.removeEventListener("date-double-click", handleDateDoubleClick);
       };
-    }, [onDateChange, onViewChange, onEventClick, onDateDoubleClick]);
+    }, [
+      isClient,
+      onDateChange,
+      onViewChange,
+      onEventClick,
+      onDateDoubleClick,
+    ]);
 
     // 服务器端渲染时返回占位符
     if (!isClient) {

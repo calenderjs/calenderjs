@@ -243,18 +243,19 @@ const compiled = compile(ast);
 
 ### RFC 文档
 
-| RFC                                                                | 标题                      | 状态                      |
-| ------------------------------------------------------------------ | ------------------------- | ------------------------- |
-| [0002](./.spec/rfc/0002-event-dsl.md)                              | Event DSL                 | Implemented（集成进行中） |
-| [0004](./.spec/rfc/0004-react-demo-site.md)                        | React Package & Demo      | Implemented               |
-| [0005](./.spec/rfc/0005-calendar-component.md)                     | Calendar Component        | In Progress               |
-| [0008](./.spec/rfc/0008-calendar-component-api-redesign.md)        | Calendar API 重新设计     | Implemented               |
-| [0010](./.spec/rfc/0010-week-view-layout-fix.md)                   | Week View 布局修复        | Implemented               |
-| [0013](./.spec/rfc/completed/0013-fix-today-handling.md)           | 今天高亮修复              | Implemented               |
-| [0011](./.spec/rfc/0011-event-data-model-integration.md)           | Event 数据模型与 DSL 集成 | Draft                     |
-| [0012](./.spec/rfc/0012-calendar-plugin-mechanism.md)              | Calendar 插件机制         | Draft                     |
-| [0014](./.spec/rfc/0014-event-runtime-timezone-field-semantics.md) | EventRuntime 时间字段时区 | Implemented               |
-| [0003](./.spec/rfc/0003-multi-tenant-service.md)                   | Multi-Tenant Service      | Future Plan               |
+| RFC                                                                          | 标题                      | 状态                      |
+| ---------------------------------------------------------------------------- | ------------------------- | ------------------------- |
+| [0002](./.spec/rfc/completed/0002-event-dsl.md)                               | Event DSL                 | Implemented（已归档） |
+| [0004](./.spec/rfc/completed/0004-react-demo-site.md)                        | React Package & Demo      | Implemented               |
+| [0005](./.spec/rfc/0005-calendar-component.md)                               | Calendar Component        | In Progress               |
+| [0008](./.spec/rfc/completed/0008-calendar-component-api-redesign.md)        | Calendar API 重新设计     | Implemented               |
+| [0010](./.spec/rfc/completed/0010-week-view-layout-fix.md)                   | Week View 布局修复        | Implemented               |
+| [0013](./.spec/rfc/completed/0013-fix-today-handling.md)                     | 今天高亮修复              | Implemented               |
+| [0011](./.spec/rfc/0011-event-data-model-integration.md)                     | Event 数据模型与 DSL 集成 | Draft                     |
+| [0012](./.spec/rfc/0012-calendar-plugin-mechanism.md)                        | Calendar 插件机制         | Draft                     |
+| [0014](./.spec/rfc/completed/0014-event-runtime-timezone-field-semantics.md) | EventRuntime 时间字段时区 | Implemented               |
+| [0015](./.spec/rfc/completed/0015-react-demo-e2e.md)                         | React Demo 浏览器 E2E     | Implemented               |
+| [0003](../site/.spec/rfc/0003-multi-tenant-service.md)                       | Multi-Tenant Service      | Future（规格在 `../site`） |
 
 ### 包文档
 

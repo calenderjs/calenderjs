@@ -11,10 +11,10 @@
 | If you need to…                  | Read first                                          | Edit                                             |
 | -------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
 | Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                  | `packages/calendar/src/views/*.wsx`              |
-| Change Calendar API / props      | `.spec/rfc/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`             |
+| Change Calendar API / props      | `.spec/rfc/completed/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx` |
 | Modify Event data shape          | `.spec/rfc/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`              |
-| Change DSL syntax / parser       | `.spec/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`         |
-| Change DSL compiler output       | `.spec/rfc/0002-event-dsl.md`                       | `packages/event-dsl/src/compiler.ts`             |
+| Change DSL syntax / parser       | `.spec/rfc/completed/0002-event-dsl.md`              | `packages/event-dsl/src/event-dsl.pegjs`         |
+| Change DSL compiler output       | `.spec/rfc/completed/0002-event-dsl.md`              | `packages/event-dsl/src/compiler.ts`             |
 | Runtime validate/render/behavior | `packages/event-dsl/README.md`                      | `packages/event-runtime/src/`                    |
 | React calendar wrapper / demo    | `packages/react/README.md`                          | `packages/react/src/`, `demos/react/`            |
 | React Event DSL editor           | `packages/react-event-editor/README.md`             | `packages/react-event-editor/src/`               |
@@ -43,7 +43,7 @@ Use these markers when reasoning about the codebase. **Do not assume PLANNED fea
 | `extra` → `data` rename                          | **IMPLEMENTED**      | RFC-0011 — use `Event.data`    |
 | EventDataGenerator                               | **PLANNED**          | RFC-0011                       |
 | Calendar plugin mechanism                        | **PLANNED**          | RFC-0012                       |
-| Multi-tenant backend service                     | **DO NOT IMPLEMENT** | RFC-0003 Future Plan           |
+| Multi-tenant SaaS (spec in sibling `../site/.spec/rfc`) | **DO NOT IMPLEMENT** | RFC-0003 正文已迁出本仓 |
 
 ---
 
@@ -108,7 +108,8 @@ packages/
   date-time/src/              # Date helpers
 
 demos/react/                  # React demo app
-site/                         # WSX docs site (i18n)
+site/                         # WSX docs/marketing site (i18n) — NOT RFC-0003
+                              # RFC-0003 spec+app: sibling ../site/.spec/rfc/
 .spec/rfc/                    # RFC specs (SSOT)
 .spec/ROADMAP.md               # Milestones / RFC status
 .spec/TASK_TRACKING.md         # Current sprint
@@ -180,7 +181,7 @@ pnpm --filter @calenderjs/event-dsl build
 | Use `extra` field on Event                    | Use `data`                                   |
 | Assume `eventRuntime` prop exists on Calendar | Not implemented yet — check TASK_TRACKING    |
 | Run `npx vitest`                              | `pnpm --filter @calenderjs/calendar test`    |
-| Implement RFC-0003 backend                    | Future plan — out of scope                   |
+| Implement RFC-0003 in this monorepo / `./site` | Spec lives in `../site/.spec/rfc/` only      |
 | Skip `updateComplete` in WSX tests            | `await element.updateComplete` before assert |
 | Hand-edit `generated/parser.js`               | Edit `.pegjs` and rebuild                    |
 

@@ -1,25 +1,46 @@
 # CalenderJS Task Tracking
 
 > **当前里程碑**: M4 - DSL 集成  
-> **最后更新**: 2026-03-15
+> **最后更新**: 2026-09-20  
+> **执行序**: RFC-0002 已关 → 当前跟 0011 / 0005（见 ROADMAP M4）
 
-## 当前 Sprint: DSL 集成
+## 当前 Sprint: 跟 0002 之后 — 0011 → 0005
 
-### 阶段 1: `extra` → `data` 全局重命名 (P1 前置)
+### 阶段 0: 关 RFC-0002 Event DSL — **已完成**
 
-| #   | 任务                                                | 状态    | 文件                                             |
-| --- | --------------------------------------------------- | ------- | ------------------------------------------------ |
-| 1   | 重命名 Event.extra → Event.data                     | Pending | `packages/event-model/src/Event.ts`              |
-| 2   | 更新 EVENT_BASE_SCHEMA 中的 extra → data            | Pending | `packages/event-model/src/validator.ts`          |
-| 3   | 更新 EventValidator 中 validateExtra → validateData | Pending | `packages/event-model/src/validator.ts`          |
-| 4   | 更新 EventTypeDataModel.extraSchema → dataSchema    | Pending | `packages/event-model/src/EventTypeDataModel.ts` |
-| 5   | 更新 event-dsl 编译器输出                           | Pending | `packages/event-dsl/src/compiler.ts`             |
-| 6   | 更新 event-runtime 字段访问路径                     | Pending | `packages/event-runtime/src/EventRuntime.ts`     |
-| 7   | 更新 Calendar 组件（如有引用）                      | Pending | `packages/calendar/src/Calendar.wsx`             |
-| 8   | 更新 React demo                                     | Pending | `demos/react/`                                   |
-| 9   | 运行全量测试确认无回归                              | Pending | —                                                |
+| # | 任务 | 状态 | 文件 |
+| --- | --- | --- | --- |
+| 1 | Acceptance 收窄：仅语法/编译/Schema·TS/EventRuntime 契约/包测 | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 2 | 实现状态表剥除 Calendar / EventDataGenerator / `extra`→`data`（改指向 0005/0011） | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 3 | 补 `**Status:**` + `## Summary`（specify validate） | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 4 | `specify archive 0002` | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 5 | ROADMAP / TASK / sync-check 对齐 | Done | `.spec/` |
 
-### 阶段 2: Calendar EventRuntime 集成 (RFC-0005 M4)
+### 阶段 1: `extra` → `data` 对账 (RFC-0011 前置，代码已落地)
+
+| #   | 任务                                                | 状态 | 文件                                             |
+| --- | --------------------------------------------------- | ---- | ------------------------------------------------ |
+| 1   | 重命名 Event.extra → Event.data                     | Done | `packages/event-model/src/Event.ts`              |
+| 2   | 更新 EVENT_BASE_SCHEMA 中的 extra → data            | Done | `packages/event-model/src/validator.ts`          |
+| 3   | 更新 EventValidator 中 validateExtra → validateData | Done | `packages/event-model/src/validator.ts`          |
+| 4   | 更新 EventTypeDataModel.extraSchema → dataSchema    | Done | `packages/event-model/src/EventTypeDataModel.ts` |
+| 5   | 更新 event-dsl 编译器输出                           | Done | `packages/event-dsl/src/compiler.ts`             |
+| 6   | 更新 event-runtime 字段访问路径                     | Done | `packages/event-runtime/src/EventRuntime.ts`     |
+| 7   | 更新 Calendar 组件（如有引用）                      | Done | `packages/calendar/src/Calendar.wsx`             |
+| 8   | 更新 React demo                                     | Done | `demos/react/`                                   |
+| 9   | 运行全量测试确认无回归                              | Done | —                                                |
+
+### 阶段 2: EventDataGenerator (RFC-0011) — **跟 0002 之后**
+
+| #   | 任务                                     | 状态    | 文件                                 |
+| --- | ---------------------------------------- | ------- | ------------------------------------ |
+| 1   | 实现 EventDataGenerator 类               | Pending | `packages/event-dsl/src/generators/` |
+| 2   | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | —                                    |
+| 3   | 添加测试                                 | Pending | —                                    |
+| 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
+| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `.spec/rfc/0011-*`                   |
+
+### 阶段 3: Calendar EventRuntime 集成 (RFC-0005 M4) — **跟 0002 之后**
 
 | #   | 任务                                                | 状态    | 文件                                   |
 | --- | --------------------------------------------------- | ------- | -------------------------------------- |
@@ -31,30 +52,47 @@
 | 6   | 添加 EventRuntime 集成测试                          | Pending | `packages/calendar/src/__tests__/`     |
 | 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `.spec/rfc/0005-calendar-component.md` |
 
-### 阶段 3: EventDataGenerator (RFC-0011)
-
-| #   | 任务                                     | 状态    | 文件                                 |
-| --- | ---------------------------------------- | ------- | ------------------------------------ |
-| 1   | 实现 EventDataGenerator 类               | Pending | `packages/event-dsl/src/generators/` |
-| 2   | 从 DSL 定义生成符合 Event 接口的数据实例 | Pending | —                                    |
-| 3   | 添加测试                                 | Pending | —                                    |
-| 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
-| 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `.spec/rfc/0011-*`                   |
+> 注：阶段 3 多项代码可能已部分落地；关 0002 后做真缺口审计再改状态，禁止凭感觉勾 Done。
 
 ### 阶段 4: EventRuntime 时间字段时区语义 (RFC-0014) — **已完成**
 
 | #   | 任务                                       | 状态 | 文件                                         |
 | --- | ------------------------------------------ | ---- | -------------------------------------------- |
-| 1   | 定义 event/recurring/UTC 时区优先级        | Done | `.spec/rfc/0014-*`                           |
+| 1   | 定义 event/recurring/UTC 时区优先级        | Done | `.spec/rfc/completed/0014-*`                 |
 | 2   | 实现时区感知的纯函数时间字段解析           | Done | `packages/event-runtime/src/time-field.ts`   |
 | 3   | EventRuntime 接入统一解析                  | Done | `packages/event-runtime/src/EventRuntime.ts` |
 | 4   | React demo 显式设置浏览器本地 IANA 时区    | Done | `demos/react/src/App.tsx`                    |
 | 5   | 添加 UTC、IANA、重复事件和无效时区回归测试 | Done | `packages/event-runtime/src/__tests__/`      |
 | 6   | 全量验证并更新 RFC 状态                    | Done | —                                            |
 
+### RFC-0015: React Demo 浏览器端到端验收 — **已完成**
+
+| # | 任务 | 状态 | 文件 |
+| --- | --- | --- | --- |
+| 1 | RFC 与覆盖口径 | Done | `.spec/rfc/completed/0015-react-demo-e2e.md` |
+| 2 | Playwright、浏览器与 pnpm 入口 | Done | `demos/react/playwright.config.ts` |
+| 3 | E01–E13 真实浏览器验收 | Done | `demos/react/e2e/` |
+| 4 | 回归驱动的最小产品修复 | Done | `demos/react/src/`, `packages/calendar/src/` |
+| 5 | 覆盖报告与门槛 | Done | `demos/react/e2e/check-coverage.mjs` |
+| 6 | 全量验收、文档与归档 | Done | `.spec/rfc/completed/0015-*` |
+
 ---
 
 ## 已完成
+
+### 2026-09-20: 先关 0002，再跟 peer
+
+- [x] ROADMAP M4 重排：关 0002 → 0011 Generator → 0005 接线
+- [x] 明确 0002 非 umbrella；集成债不回灌
+- [x] RFC-0002 Acceptance 收窄 + 归档 `completed/0002-*`
+- [x] TASK 阶段 0 Done；阶段 1 `data` 对账标 Done；主线切到 0011/0005
+
+### 2026-09-20: RFC-0015 E2E 脚手架与 E01–E13 矩阵
+
+- [x] Playwright + Chromium/Firefox/WebKit；`pnpm test:e2e` 入口
+- [x] E01–E13 真实浏览器验收；场景覆盖 39/39
+- [x] Monaco setValue、Proxy 展开、主题选择器等最小回归修复
+- [x] demo src 代码覆盖门禁 + 全量验收 + RFC 归档
 
 ### 2026-08-16: EventRuntime 时间字段时区语义 (RFC-0014)
 
@@ -72,6 +110,7 @@
 - [x] 删除旧文件：`0002-appointment-dsl.md`, `0005-calendar-appointment-management.md`
 - [x] 更新 ROADMAP.md：新增"关键架构决策"章节，调整里程碑
 - [x] RFC-0009 标记为 Superseded by RFC-0005
+- [x] RFC-0009 归档至 `.spec/rfc/completed/0009-calendar-component.md`
 
 ### RFC-0008: Calendar API 重新设计 (Implemented)
 
@@ -98,4 +137,4 @@
 1. **RFC-0012**: Calendar 插件机制 → 依赖 0005 DSL 集成
 2. **RFC-0006**: 文档补全 → site 框架已有，内容待写
 3. **RFC-0007**: VS Code 扩展 → Future
-4. **RFC-0003**: 多租户服务 → Future Plan
+4. **RFC-0003**: 多租户服务 → 规格在兄弟仓 `../site/.spec/rfc/`（本仓已移除正文）；Future / 勿实现

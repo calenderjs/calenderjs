@@ -53,4 +53,4 @@ el.events = [
 ## 相关 RFC
 
 - [RFC-0005](../../.spec/rfc/0005-calendar-component.md) — Calendar Component
-- [RFC-0008](../../.spec/rfc/0008-calendar-component-api-redesign.md) — API 设计
+- [RFC-0008](../../.spec/rfc/completed/0008-calendar-component-api-redesign.md) — API 设计

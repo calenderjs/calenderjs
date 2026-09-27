@@ -9,6 +9,8 @@
     "build": "turbo run build && pnpm verify:bundles",
     "build:calendar": "turbo run build --filter=@calenderjs/calendar",
     "test": "turbo run test",
+    "test:e2e": "turbo run build --filter=@calenderjs/demos-react && pnpm --filter @calenderjs/demos-react build:e2e && E2E_REQUIRE_COMPLETE=1 pnpm --filter @calenderjs/demos-react test:e2e",
+    "test:e2e:install": "pnpm --filter @calenderjs/demos-react exec playwright install chromium firefox webkit",
     "lint": "turbo run lint",
     "typecheck": "turbo typecheck",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",

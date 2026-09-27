@@ -1,10 +1,15 @@
 # RFC-0002: Event DSL
 
-**状态**: Implemented (核心) / In Progress (集成)  
+**Status:** Implemented  
+**状态**: Implemented（standalone；非 umbrella）  
 **创建日期**: 2024-12-19  
-**最后更新**: 2026-03-15  
+**最后更新**: 2026-09-20  
 **作者**: WSX Team  
-**关联 RFC**: RFC-0005, RFC-0009, RFC-0011, RFC-0012
+**关联 RFC**: RFC-0005, RFC-0009, RFC-0011, RFC-0012, RFC-0014
+
+## Summary
+
+设计并实现 Event DSL（领域特定语言）：文本语法、PEG 解析、编译管线（DataModel / JSON Schema / TypeScript）、以及 EventRuntime 契约（validate / render / canPerform）。本 RFC **不**覆盖 Calendar 接线（RFC-0005）、EventDataGenerator（RFC-0011）、插件机制（RFC-0012）。
 
 ## 摘要
 
@@ -15,6 +20,7 @@
 - **文本 DSL**：拥有独立的语法（由 PEG.js/Peggy 解析），非 TypeScript 配置对象
 - **编译时/运行时分离**：`@calenderjs/event-dsl` 是开发/编译时工具，`@calenderjs/event-runtime` 是生产依赖
 - **Event 是技术模型，Appointment 是业务概念**：DSL 定义业务类型（如 meeting、vacation），编译后生成符合 `Event` 接口的数据
+- **standalone**：一号一 concern；集成债归 peer RFC，不把 0002 当 umbrella
 
 ## 术语约定
 
@@ -360,14 +366,14 @@ const canEdit = runtime.canPerform("edit", event, user);
 
 EventRuntime 通过以下路径解析验证表达式中的字段：
 
-| 路径              | 解析为                                                                           |
-| ----------------- | -------------------------------------------------------------------------------- |
-| `title`           | `event.title`                                                                    |
-| `startTime.hour`  | 按 [RFC-0014](0014-event-runtime-timezone-field-semantics.md) 的事件时区语义解析 |
-| `attendees.count` | `event.data.attendees.length`                                                    |
-| `priority`        | `event.data.priority`                                                            |
-| `user.role`       | `context.user.role`                                                              |
-| `duration`        | `endTime - startTime`（分钟）                                                    |
+| 路径              | 解析为                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| `title`           | `event.title`                                                                              |
+| `startTime.hour`  | 按 [RFC-0014](completed/0014-event-runtime-timezone-field-semantics.md) 的事件时区语义解析 |
+| `attendees.count` | `event.data.attendees.length`                                                              |
+| `priority`        | `event.data.priority`                                                                      |
+| `user.role`       | `context.user.role`                                                                        |
+| `duration`        | `endTime - startTime`（分钟）                                                              |
 
 ## 包结构
 
@@ -404,17 +410,34 @@ packages/event-model/                  ← SSOT：Event 接口 + 基础验证
 
 ## 实现状态
 
-| 模块                    | 状态      | 说明                                      |
-| ----------------------- | --------- | ----------------------------------------- |
-| PEG.js 语法 + 解析器    | ✅ 完成   | 支持全部 sections 和语法                  |
-| AST 类型定义            | ✅ 完成   | EventTypeAST + 子类型                     |
-| EventDSLCompiler        | ✅ 完成   | DSL → DataModel                           |
-| JSON Schema 生成        | ✅ 完成   | fields → Draft-07 Schema                  |
-| TypeScript 生成         | ✅ 完成   | fields → TS interface                     |
-| EventRuntime            | ✅ 完成   | validate / render / canPerform            |
-| EventDataGenerator      | ❌ 未实现 | 从 DSL 生成 Event 数据实例（见 RFC-0011） |
-| Calendar 集成           | ❌ 未实现 | Calendar 接受 EventRuntime（见 RFC-0005） |
-| `extra` → `data` 重命名 | ❌ 待执行 | 全局字段重命名                            |
+| 模块                 | 状态    | 说明                                                         |
+| -------------------- | ------- | ------------------------------------------------------------ |
+| PEG.js 语法 + 解析器 | ✅ 完成 | 支持全部 sections 和语法                                     |
+| AST 类型定义         | ✅ 完成 | EventTypeAST + 子类型                                        |
+| EventDSLCompiler     | ✅ 完成 | DSL → DataModel                                              |
+| JSON Schema 生成     | ✅ 完成 | fields → Draft-07 Schema                                     |
+| TypeScript 生成      | ✅ 完成 | fields → TS interface                                        |
+| EventRuntime         | ✅ 完成 | validate / render / canPerform（时区语义见 RFC-0014）        |
+
+**Out of scope（peer，不挡本 RFC 关单）**
+
+| 模块                    | 归属 RFC | 说明                                      |
+| ----------------------- | -------- | ----------------------------------------- |
+| EventDataGenerator      | RFC-0011 | 从 DSL 生成 Event 数据实例                |
+| Calendar EventRuntime   | RFC-0005 | Calendar 接受 / 使用 EventRuntime         |
+| `extra` → `data` 重命名 | RFC-0011 | 代码已落地；契约对账与 Generator 同属 0011 |
+| Calendar 插件机制       | RFC-0012 | 按 Event.type 注册渲染器                  |
+
+## Acceptance
+
+本 RFC 关单条件（均已满足）：
+
+1. PEG 文本 DSL 可解析为 EventTypeAST
+2. EventDSLCompiler 产出 EventTypeDataModel
+3. generateJSONSchema / generateTypeScript 可用
+4. EventRuntime 提供 validate / render / canPerform
+5. event-dsl / event-runtime / event-model 包测绿
+6. Calendar 接线、EventDataGenerator、`data` 重命名归属 peer（0005/0011），不挡本 RFC
 
 ## 未解决问题
 
