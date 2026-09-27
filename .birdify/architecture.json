@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 1,
+  "mapId": "calenderjs-monorepo",
+  "revision": 3,
+  "language": "zh",
+  "project": {
+    "id": "calenderjs",
+    "name": "CalenderJS",
+    "revision": "60899d12b783464eb771ec3a75d5f6f427970fad"
+  },
+  "constraintDiscovery": {
+    "checkedAt": "2026-09-27T04:27:21.167Z",
+    "checkedPaths": [
+      "AGENTS.md",
+      ".cursor/rules/00-llm-onboarding.mdc",
+      ".cursor/rules/wsx-calendar.mdc",
+      ".cursor/skills/wsx-work/SKILL.md",
+      "docs/llm-guide.md",
+      ".spec/ROADMAP.md",
+      ".spec/TASK_TRACKING.md",
+      ".spec/rfc/completed/0002-event-dsl.md",
+      ".spec/rfc/0005-calendar-component.md",
+      ".spec/rfc/0011-event-data-model-integration.md",
+      "packages/event-dsl/package.json",
+      "packages/event-dsl/src/compiler.ts",
+      "packages/event-dsl/README.md",
+      "packages/event-model/src/Event.ts",
+      "packages/event-model/src/EventTypeDataModel.ts",
+      "packages/event-runtime/package.json",
+      "packages/event-runtime/src/EventRuntime.ts",
+      "packages/calendar/package.json",
+      "packages/calendar/src/Calendar.wsx",
+      "packages/calendar/src/utils/event-runtime-integration.ts",
+      "packages/react/package.json",
+      "packages/react/src/Calendar.tsx",
+      "packages/react/README.md",
+      "packages/react-event-editor/package.json",
+      "packages/react-event-editor/README.md",
+      "packages/monaco-event-dsl/package.json",
+      "packages/monaco-event-dsl/README.md",
+      "demos/react/src/App.tsx",
+      "demos/react/README.md"
+    ],
+    "uninspectedPaths": [
+      "docs/vue-vs-wsx-boundary.md",
+      "docs/wsx-testing-guide.md",
+      "docs/wsx-testing-summary.md",
+      ".cursor/skills/wsx-work/reference.md",
+      "docs/persona/linus-torvalds.md"
+    ]
+  },
+  "groups": [
+    {
+      "id": "grp-dsl",
+      "name": "Event DSL 管线",
+      "role": "runtime",
+      "members": [
+        "event-model",
+        "event-dsl",
+        "event-runtime",
+        "shared-core"
+      ],
+      "evidence": [
+        {
+          "path": "docs/llm-guide.md",
+          "note": "编译时 event-dsl 与运行时 event-runtime 分离；Event SSOT 在 event-model。"
+        }
+      ]
+    },
+    {
+      "id": "grp-calendar-ui",
+      "name": "日历 UI",
+      "role": "interaction",
+      "members": [
+        "calendar-wc",
+        "react-surface"
+      ],
+      "evidence": [
+        {
+          "path": "packages/react/README.md",
+          "note": "React wrapper 仅封装 Calendar；DSL editor 是独立包。"
+        },
+        {
+          "path": "packages/calendar/package.json",
+          "note": "Calendar Web Component 与 React wrapper 属于日历显示表面。"
+        }
+      ]
+    },
+    {
+      "id": "grp-surfaces",
+      "name": "本仓表面",
+      "role": "interaction",
+      "members": [
+        "demos-react",
+        "site-docs"
+      ],
+      "evidence": [
+        {
+          "path": "pnpm-workspace.yaml",
+          "note": "demos/* 与 site 均为 workspace 成员；site 为文档站。"
+        }
+      ]
+    },
+    {
+      "id": "grp-external",
+      "name": "仓外租户",
+      "role": "external-services",
+      "members": [
+        "tenant-site"
+      ],
+      "evidence": [
+        {
+          "path": ".spec/rfc/0003-multi-tenant-service.md",
+          "note": "RFC-0003 多租户 Future Plan；工作树已指向兄弟仓 ../site（HEAD 仍写 apps/calendar-service）。"
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": "event-model",
+      "role": "generic",
+      "roleAssessment": {
+        "basis": "out-of-taxonomy",
+        "note": "领域数据模型 / JSON Schema SSOT，非 UI、后端服务或存储引擎。"
+      },
+      "name": "Event 模型 SSOT",
+      "kind": "local",
+      "responsibility": "定义 Event 接口与校验；扩展字段为 data。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/event-model"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/event-model/src/Event.ts",
+          "symbol": "Event",
+          "note": "Event 接口 SSOT；data 存放 DSL 业务字段。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 1,
+        "column": 0
+      }
+    },
+    {
+      "id": "event-dsl",
+      "role": "generic",
+      "roleAssessment": {
+        "basis": "out-of-taxonomy",
+        "note": "编译期 PEG 工具链，非运行时服务角色。"
+      },
+      "name": "Event DSL 编译",
+      "kind": "local",
+      "responsibility": "解析 Event DSL 并编译 EventTypeDataModel、Schema 与 TypeScript；定义类型和业务规则，不生成带日期的 Event 实例。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/event-dsl"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/event-dsl/src/compiler.ts",
+          "symbol": "EventDSLCompiler",
+          "note": "将 DSL AST 编译为 DataModel；Event 实例由宿主数据提供。"
+        },
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "DEFAULT_EVENTS",
+          "note": "Demo 将 DSL 编译出的类型规则应用于独立定义的 dated Event 列表。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [
+        "EventDataGenerator（RFC-0011）尚未实现。"
+      ],
+      "layout": {
+        "row": 0,
+        "column": 1
+      }
+    },
+    {
+      "id": "event-runtime",
+      "role": "generic",
+      "roleAssessment": {
+        "basis": "out-of-taxonomy",
+        "note": "库级运行时引擎（validate/render/canPerform），嵌入宿主而非独立后端。"
+      },
+      "name": "EventRuntime",
+      "kind": "local",
+      "responsibility": "按 DataModel 做验证、渲染增强与权限检查。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/event-runtime"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/event-runtime/src/EventRuntime.ts",
+          "symbol": "EventRuntime",
+          "note": "validate / render / canPerform。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 2,
+        "column": 1
+      }
+    },
+    {
+      "id": "shared-core",
+      "role": "generic",
+      "roleAssessment": {
+        "basis": "out-of-taxonomy",
+        "note": "共享模型与日期工具，非产品表面。"
+      },
+      "name": "Core / DateTime",
+      "kind": "local",
+      "responsibility": "上下文、工具函数与日期时间辅助。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/core"
+        },
+        {
+          "kind": "directory",
+          "path": "packages/date-time"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/core/package.json",
+          "note": "core = 模型/上下文/工具，不含日历 UI。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 1,
+        "column": 1
+      }
+    },
+    {
+      "id": "calendar-wc",
+      "role": "frontend",
+      "name": "wsx-calendar",
+      "kind": "local",
+      "responsibility": "月/周/日视图 Web Component，接收 Event[] 并可使用 EventRuntime 渲染增强；当前还直接解析/编译 eventDSL，形成与 DSL 编译包的耦合。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/calendar"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/calendar/src/Calendar.wsx",
+          "symbol": "rebuildRuntimeFromDSL",
+          "note": "Calendar 当前直接调用 parseEventDSL 与 EventDSLCompiler，另接收 EventRuntime。"
+        },
+        {
+          "path": "packages/calendar/package.json",
+          "note": "运行依赖同时包含 @calenderjs/event-dsl 与 @calenderjs/event-runtime。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [
+        "用户要求 DSL 编辑/编译与 Calendar 显示保持独立包边界；目前 Calendar 对 event-dsl 的直接解析/编译是否应移除，改由应用组合 EventRuntime 与 Event[]？"
+      ],
+      "layout": {
+        "row": 1,
+        "column": 2
+      }
+    },
+    {
+      "id": "react-surface",
+      "role": "frontend",
+      "name": "React Calendar 封装",
+      "kind": "local",
+      "responsibility": "仅封装 wsx-calendar 与日历布局辅助；Event DSL 编辑器由独立 react-event-editor 包提供。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/react"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/react/README.md",
+          "note": "明确本包仅封装 Calendar；DSL 编辑器使用独立 @calenderjs/react-event-editor。"
+        },
+        {
+          "path": "packages/react/src/Calendar.tsx",
+          "symbol": "CalendarProps",
+          "note": "React Calendar API 传递 view/date/events/user，不含 DSL 编辑或编译。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 0,
+        "column": 3
+      }
+    },
+    {
+      "id": "demos-react",
+      "role": "frontend",
+      "name": "React Demo + E2E",
+      "kind": "local",
+      "responsibility": "React 应用组合独立 DSL 编辑器、event-dsl 编译、event-runtime 校验/渲染与 React Calendar；当前事件实例仍由 DEFAULT_EVENTS 提供。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "demos/react"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "compiledDataModel",
+          "note": "应用层解析/编译 DSL，再用 EventRuntime 校验、渲染独立 Event[]。"
+        },
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "DEFAULT_EVENTS",
+          "note": "带日期的 Event 实例来自静态列表，不由类型 DSL 生成。"
+        },
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "EventEditor",
+          "note": "Demo 使用独立 EventEditor 与 Calendar UI。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [
+        "用户期望编辑 DSL 后 Calendar 直接反映结果；当前 DSL 定义事件类型/规则，具体日期事件仍由应用提供。"
+      ],
+      "layout": {
+        "row": 1,
+        "column": 3
+      }
+    },
+    {
+      "id": "site-docs",
+      "role": "frontend",
+      "name": "本仓文档站 ./site",
+      "kind": "local",
+      "responsibility": "WSX 官网/文档/i18n；非租户 SaaS。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "site"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "site/package.json",
+          "note": "@calenderjs/site — 官网与文档站（WSX）。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 2,
+        "column": 3
+      }
+    },
+    {
+      "id": "tenant-site",
+      "role": "backend",
+      "name": "租户 SaaS ../site",
+      "kind": "external",
+      "responsibility": "多租户 Next.js 应用（RFC-0003）；本仓勿实现。",
+      "ownership": [],
+      "evidence": [
+        {
+          "path": ".spec/rfc/0003-multi-tenant-service.md",
+          "note": "Future Plan；工作树落点改为兄弟仓 ../site。"
+        }
+      ],
+      "status": "uncertain",
+      "openQuestions": [
+        "兄弟仓 ../site 现仅为 create-next-app 脚手架；租户路由/数据层尚未落地。",
+        "HEAD 规格仍写 apps/calendar-service；工作树已改 ../site — 需提交后约束图重扫。"
+      ],
+      "layout": {
+        "row": 1,
+        "column": 4
+      }
+    },
+    {
+      "id": "spec-gov",
+      "role": "generic",
+      "roleAssessment": {
+        "basis": "out-of-taxonomy",
+        "note": "RFC/路线图治理工件，非运行时模块。"
+      },
+      "name": "RFC / Roadmap",
+      "kind": "local",
+      "responsibility": "RFC 驱动开发与里程碑（specify：一号一 concern）。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": ".spec"
+        },
+        {
+          "kind": "file",
+          "path": "docs/llm-guide.md"
+        },
+        {
+          "kind": "file",
+          "path": "AGENTS.md"
+        }
+      ],
+      "evidence": [
+        {
+          "path": ".spec/ROADMAP.md",
+          "note": "M4 执行序与架构决策表。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 0,
+        "column": 0
+      }
+    },
+    {
+      "id": "dsl-editor",
+      "role": "frontend",
+      "name": "Event DSL 编辑器",
+      "kind": "local",
+      "responsibility": "提供 React Monaco DSL 编辑 UI 与 Monaco 语言高亮/补全；不包含 Calendar，也不承担应用事件数据装配。",
+      "ownership": [
+        {
+          "kind": "directory",
+          "path": "packages/react-event-editor"
+        },
+        {
+          "kind": "directory",
+          "path": "packages/monaco-event-dsl"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "packages/react-event-editor/README.md",
+          "note": "明确编辑器与 @calenderjs/react 分离；宿主通过 props 传入 Monaco Editor。"
+        },
+        {
+          "path": "packages/monaco-event-dsl/README.md",
+          "symbol": "registerEventDSL",
+          "note": "提供 Monaco Event DSL 语言注册、高亮与补全，不含编辑器或编译器。"
+        }
+      ],
+      "status": "supported",
+      "openQuestions": [],
+      "layout": {
+        "row": 0,
+        "column": 2
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-dsl-to-model",
+      "from": "event-dsl",
+      "to": "event-model",
+      "label": "编译产出对齐 Event",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/event-dsl/package.json",
+          "note": "depends on event-model。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-runtime-to-model",
+      "from": "event-runtime",
+      "to": "event-model",
+      "label": "运行时消费 DataModel",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/event-runtime/package.json",
+          "note": "depends on event-model。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-dsl-feeds-runtime",
+      "from": "event-dsl",
+      "to": "event-runtime",
+      "label": "编译结果供 Runtime",
+      "kind": "result",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "docs/llm-guide.md",
+          "note": "编译时/运行时分离架构。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-calendar-runtime",
+      "from": "calendar-wc",
+      "to": "event-runtime",
+      "label": "可选 eventRuntime",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/calendar/package.json",
+          "note": "workspace 依赖 event-runtime。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-calendar-core",
+      "from": "calendar-wc",
+      "to": "shared-core",
+      "label": "工具与上下文",
+      "kind": "dependency",
+      "visibility": "detail",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/calendar/package.json",
+          "note": "depends on core / date-time。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-react-calendar",
+      "from": "react-surface",
+      "to": "calendar-wc",
+      "label": "包装 WC",
+      "kind": "request",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/react/src/Calendar.tsx",
+          "note": "React Calendar 包装。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-demo-react",
+      "from": "demos-react",
+      "to": "react-surface",
+      "label": "演示消费",
+      "kind": "request",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "demos/react/package.json",
+          "note": "依赖 react / react-event-editor / monaco-event-dsl。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-demo-runtime",
+      "from": "demos-react",
+      "to": "event-runtime",
+      "label": "Demo 装配 Runtime",
+      "kind": "dependency",
+      "visibility": "detail",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "demos/react/package.json",
+          "note": "直接依赖 event-runtime / event-dsl。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-site-calendar",
+      "from": "site-docs",
+      "to": "calendar-wc",
+      "label": "文档站嵌入日历",
+      "kind": "dependency",
+      "visibility": "detail",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "site/package.json",
+          "note": "depends on @calenderjs/calendar。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-tenant-consumes",
+      "from": "tenant-site",
+      "to": "react-surface",
+      "label": "计划消费本仓包",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "uncertain",
+      "evidence": [
+        {
+          "path": ".spec/rfc/0003-multi-tenant-service.md",
+          "note": "规格设想消费组件库；兄弟仓尚未接线。"
+        }
+      ],
+      "openQuestions": [
+        "../site package.json 目前无 @calenderjs/* 依赖。"
+      ]
+    },
+    {
+      "id": "rel-gov-controls",
+      "from": "spec-gov",
+      "to": "calendar-wc",
+      "label": "RFC 约束实现",
+      "kind": "control",
+      "visibility": "detail",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "note": "RFC 驱动；非琐碎变更须有 RFC。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-gov-tenant",
+      "from": "spec-gov",
+      "to": "tenant-site",
+      "label": "0003 禁止本仓实现",
+      "kind": "control",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "docs/llm-guide.md",
+          "note": "RFC-0003 DO NOT IMPLEMENT。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-calendar-dsl-current",
+      "from": "calendar-wc",
+      "to": "event-dsl",
+      "label": "当前直接解析/编译 DSL",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "packages/calendar/src/Calendar.wsx",
+          "symbol": "rebuildRuntimeFromDSL",
+          "note": "调用 parseEventDSL 与 EventDSLCompiler。"
+        },
+        {
+          "path": "packages/calendar/package.json",
+          "note": "声明 @calenderjs/event-dsl 运行依赖。"
+        }
+      ],
+      "openQuestions": [
+        "此直接依赖与用户要求的包边界冲突，待后续实现决策。"
+      ]
+    },
+    {
+      "id": "rel-demo-editor",
+      "from": "demos-react",
+      "to": "dsl-editor",
+      "label": "应用组合独立 DSL 编辑器",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "EventEditor",
+          "note": "宿主应用装配 EventEditor 与 Calendar。"
+        }
+      ],
+      "openQuestions": []
+    },
+    {
+      "id": "rel-demo-dsl",
+      "from": "demos-react",
+      "to": "event-dsl",
+      "label": "应用层解析/编译编辑内容",
+      "kind": "dependency",
+      "visibility": "overview",
+      "status": "supported",
+      "evidence": [
+        {
+          "path": "demos/react/src/App.tsx",
+          "symbol": "compiledDataModel",
+          "note": "应用层调用 parseEventDSL 与 EventDSLCompiler。"
+        }
+      ],
+      "openQuestions": []
+    }
+  ],
+  "constraints": [
+    {
+      "id": "user-separate-dsl-and-calendar",
+      "name": "DSL 编辑/编译与 Calendar 显示保持独立包和功能边界",
+      "note": "用户明确要求两者是不同包、不同功能，不要混在一起；由应用层组合编辑器/DSL 编译与 Calendar 显示。此为对用户原话的归纳。",
+      "origin": "user",
+      "strength": "required",
+      "applicability": "applicable",
+      "scope": "modules",
+      "modules": [
+        "event-dsl",
+        "event-runtime",
+        "calendar-wc",
+        "dsl-editor",
+        "react-surface",
+        "demos-react"
+      ],
+      "relationships": [],
+      "evidence": [],
+      "verification": "检查包依赖图与公开 API：Calendar 不导入/解析 event-dsl；宿主应用可组合 DSL 编辑器、event-dsl/event-runtime 与 Calendar Event[]。"
+    }
+  ]
+}

@@ -74,6 +74,14 @@ export default function App() {
   const [renderedEvents, setRenderedEvents] = useState<any[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // 同步品牌主题属性至 documentElement
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      isDarkMode ? "dark" : "light",
+    );
+  }, [isDarkMode]);
+
   // 编译 DSL
   const compiledDataModel = useMemo(() => {
     try {
@@ -117,17 +125,17 @@ export default function App() {
         return;
       }
 
-      // 验证 extra
+      // 验证 data
       if (compiledDataModel.dataSchema) {
-        const extraValidation = eventValidator.validateData(
+        const dataValidation = eventValidator.validateData(
           event,
           compiledDataModel.dataSchema,
         );
-        if (!extraValidation.valid) {
+        if (!dataValidation.valid) {
           results.push({
             eventId: event.id,
             valid: false,
-            errors: extraValidation.errors,
+            errors: dataValidation.errors,
           });
           return;
         }
@@ -180,155 +188,41 @@ export default function App() {
     console.log("Event clicked:", e.detail.event.id);
   };
 
-  // 暗色模式样式变量
-  const darkModeStyles = {
-    bg: isDarkMode ? "#1a1a1a" : "#fff",
-    bgSecondary: isDarkMode ? "#2d2d2d" : "#f5f5f5",
-    bgTertiary: isDarkMode ? "#3d3d3d" : "#f9f9f9",
-    text: isDarkMode ? "#e0e0e0" : "#000",
-    textSecondary: isDarkMode ? "#aaa" : "#666",
-    border: isDarkMode ? "#444" : "#ddd",
-    errorBg: isDarkMode ? "#4a1f1f" : "#fee",
-    errorText: isDarkMode ? "#ff6b6b" : "#c33",
-    successBg: isDarkMode ? "#1f4a1f" : "#efe",
-    successText: isDarkMode ? "#6bff6b" : "#3c3",
-    headerBg: isDarkMode ? "#0d0d0d" : "#1a1a1a",
-    splitterColor: isDarkMode ? "#444" : "#ddd",
-    splitterHover: isDarkMode ? "#555" : "#bbb",
-  };
-
   return (
-    <div
-      style={
-        {
-          display: "flex",
-          flexDirection: "column",
-          height: "100vh",
-          backgroundColor: darkModeStyles.bg,
-          color: darkModeStyles.text,
-          // 设置日历 CSS 变量以支持暗色模式
-          ...(isDarkMode
-            ? {
-                "--calender-bg-color": "#1a1a1a",
-                "--calender-text-color": "#e0e0e0",
-                "--calender-text-secondary-color": "#aaa",
-                "--calender-primary-text-color": "#fff",
-                "--calender-border-color": "#444",
-                "--calender-border-light-color": "#3d3d3d",
-                "--calender-border-hover-color": "#555",
-                "--calender-primary-color": "#4285f4",
-                "--calender-primary-hover-color": "#357ae8",
-                "--calender-today-bg-color": "#2d2d2d",
-                "--calender-selected-bg-color": "#2d2d2d",
-                "--calender-hover-bg-color": "#2d2d2d",
-                "--calender-hover-bg-color-light": "#3d3d3d",
-                "--calender-active-bg-color": "#3d3d3d",
-                "--calender-event-text-color": "#fff",
-              }
-            : {
-                "--calender-bg-color": "#fff",
-                "--calender-text-color": "#202124",
-                "--calender-text-secondary-color": "#5f6368",
-                "--calender-primary-text-color": "#fff",
-                "--calender-border-color": "#dadce0",
-                "--calender-border-light-color": "#e8eaed",
-                "--calender-border-hover-color": "#c4c7c5",
-                "--calender-primary-color": "#1a73e8",
-                "--calender-primary-hover-color": "#1765cc",
-                "--calender-today-bg-color": "#e8f0fe",
-                "--calender-selected-bg-color": "#e8f0fe",
-                "--calender-hover-bg-color": "#f1f3f4",
-                "--calender-hover-bg-color-light": "#f8f9fa",
-                "--calender-active-bg-color": "#e8eaed",
-                "--calender-event-text-color": "#fff",
-              }),
-        } as React.CSSProperties
-      }
-    >
-      {/* Header */}
-      <header
-        style={{
-          padding: "20px",
-          backgroundColor: darkModeStyles.headerBg,
-          color: "white",
-          borderBottom: `1px solid ${darkModeStyles.border}`,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          <h1 style={{ margin: 0, fontSize: "24px" }}>CalenderJS Demo</h1>
-          <p
-            style={{
-              margin: "8px 0 0 0",
-              color: "#aaa",
-              fontSize: "14px",
-            }}
-          >
-            DSL → Data Model → Event 验证 → Calendar 显示
-          </p>
+    <div className="demo-app" data-theme={isDarkMode ? "dark" : "light"}>
+      {/* 品牌风格 Header */}
+      <header className="demo-header">
+        <div className="demo-brand">
+          <div className="demo-brand-logo" aria-hidden="true">
+            📅
+          </div>
+          <div className="demo-title-group">
+            <h1>CalenderJS Demo</h1>
+            <p>DSL → Data Model → Event 验证 → Calendar 显示</p>
+          </div>
         </div>
         <button
+          className="demo-theme-btn"
           onClick={() => setIsDarkMode(!isDarkMode)}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: isDarkMode ? "#4a4a4a" : "#4285f4",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
-            transition: "background-color 0.2s",
-          }}
         >
           {isDarkMode ? "☀️ 浅色模式" : "🌙 暗色模式"}
         </button>
       </header>
 
-      {/* Main Content with Resizable Splitter */}
-      <div style={{ flex: 1, overflow: "hidden" }}>
+      {/* 主工作区 - 可拖拽分割面板 */}
+      <div className="demo-main">
         <ResizableSplitter
           initialLeftWidth={40}
           minLeftWidth={20}
           maxLeftWidth={80}
           left={
             <>
-              {/* Left Panel: DSL Editor */}
-              <div
-                style={{
-                  padding: "15px",
-                  backgroundColor: darkModeStyles.bgSecondary,
-                  borderBottom: `1px solid ${darkModeStyles.border}`,
-                }}
-              >
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: "18px",
-                    color: darkModeStyles.text,
-                  }}
-                >
-                  DSL 编辑器
-                </h2>
-                <p
-                  style={{
-                    margin: "5px 0 0 0",
-                    fontSize: "12px",
-                    color: darkModeStyles.textSecondary,
-                  }}
-                >
-                  编辑 Event DSL 定义，实时查看编译结果
-                </p>
+              {/* 左侧面板：DSL 编辑器 */}
+              <div className="demo-panel-header">
+                <h2>DSL 编辑器</h2>
+                <p>编辑 Event DSL 定义，实时查看编译结果</p>
               </div>
-              <div
-                style={{
-                  flex: 1,
-                  position: "relative",
-                  backgroundColor: darkModeStyles.bg,
-                }}
-              >
+              <div className="demo-editor-container">
                 <EventEditor
                   EditorComponent={Editor}
                   value={dslText}
@@ -338,28 +232,12 @@ export default function App() {
                 />
               </div>
               {compilationError && (
-                <div
-                  style={{
-                    padding: "10px 15px",
-                    backgroundColor: darkModeStyles.errorBg,
-                    color: darkModeStyles.errorText,
-                    fontSize: "12px",
-                    borderTop: `1px solid ${darkModeStyles.border}`,
-                  }}
-                >
+                <div className="demo-status-banner demo-status-error">
                   <strong>编译错误:</strong> {compilationError}
                 </div>
               )}
               {!compilationError && compiledDataModel && (
-                <div
-                  style={{
-                    padding: "10px 15px",
-                    backgroundColor: darkModeStyles.successBg,
-                    color: darkModeStyles.successText,
-                    fontSize: "12px",
-                    borderTop: `1px solid ${darkModeStyles.border}`,
-                  }}
-                >
+                <div className="demo-status-banner demo-status-success">
                   <strong>✓ 编译成功:</strong> {compiledDataModel.name} (
                   {compiledDataModel.id})
                 </div>
@@ -368,51 +246,23 @@ export default function App() {
           }
           right={
             <>
-              {/* Right Panel: Calendar */}
-              {/* Validation Status */}
-              <div
-                style={{
-                  padding: "15px",
-                  backgroundColor: darkModeStyles.bgTertiary,
-                  borderBottom: `1px solid ${darkModeStyles.border}`,
-                }}
-              >
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: "18px",
-                    color: darkModeStyles.text,
-                  }}
-                >
-                  验证状态
-                </h2>
-                <div
-                  style={{
-                    marginTop: "10px",
-                    fontSize: "12px",
-                  }}
-                >
+              {/* 右侧面板：验证状态与日历视图 */}
+              <div className="demo-validation-panel">
+                <h2>验证状态</h2>
+                <div className="demo-validation-list">
                   {validationResults.map((result) => {
                     const event = events.find((e) => e.id === result.eventId);
                     return (
                       <div
                         key={result.eventId}
-                        style={{
-                          marginBottom: "5px",
-                          color: result.valid
-                            ? darkModeStyles.successText
-                            : darkModeStyles.errorText,
-                        }}
+                        className={`demo-validation-item ${result.valid ? "valid" : "invalid"}`}
                       >
-                        {result.valid ? "✓" : "✗"}{" "}
+                        <span className="demo-validation-indicator">
+                          {result.valid ? "✓" : "✗"}
+                        </span>{" "}
                         {event?.title || result.eventId}
                         {result.errors && result.errors.length > 0 && (
-                          <span
-                            style={{
-                              marginLeft: "10px",
-                              color: darkModeStyles.textSecondary,
-                            }}
-                          >
+                          <span className="demo-validation-errors">
                             {result.errors.join(", ")}
                           </span>
                         )}
@@ -422,15 +272,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Calendar */}
-              <div
-                style={{
-                  flex: 1,
-                  padding: "20px",
-                  overflow: "auto",
-                  backgroundColor: darkModeStyles.bg,
-                }}
-              >
+              {/* 日历展示区域 */}
+              <div className="demo-calendar-container">
                 <Calendar
                   view={currentView}
                   date={currentDate}

@@ -1,0 +1,136 @@
+{
+  "revision": "b3f783d95fd3030e453787faa4d5e5c5eace340b",
+  "scope": "本轮审查：AGENTS / llm-guide / onboarding 不变量与 RFC-0003 禁令；persona、包 README、WSX skill 细则未逐条提炼。工作树已改 0003→../site、0002 归档，但约束目录基于 committed HEAD。",
+  "groups": [
+    {
+      "sourcePath": "AGENTS.md",
+      "category": "configuration",
+      "topic": { "id": "tooling", "name": "包管理与命令" },
+      "rules": [
+        {
+          "id": "rule-pnpm-only",
+          "name": "只用 pnpm 禁止 npx",
+          "anchor": "本项目使用 **pnpm**，**严禁使用 npx**。",
+          "condition": "运行脚本、测试或安装依赖时",
+          "explanation": "必须用 pnpm / pnpm --filter / turbo；禁止猜测 npx 命令。",
+          "verification": "核对 package.json 脚本与实际执行命令。"
+        },
+        {
+          "id": "rule-rfc-driven",
+          "name": "非琐碎变更须有 RFC",
+          "anchor": "非琐碎变更**必须**先在 `.spec/rfc/` 创建或更新 RFC",
+          "condition": "重大功能、重构或移除前",
+          "explanation": "无 RFC 支持的重大重构/功能移除禁止；RFC 须反映当前决策。",
+          "verification": "对照 .spec/rfc 与 ROADMAP/TASK 是否一致。"
+        },
+        {
+          "id": "rule-calendar-pkg",
+          "name": "日历主包是 calendar 非 core",
+          "anchor": "日历组件标签：`<wsx-calendar>`，主包 `@calenderjs/calendar`（非 `@calenderjs/core`）",
+          "condition": "导入或引用日历组件时",
+          "explanation": "UI 在 @calenderjs/calendar；core 仅模型/上下文/工具。",
+          "verification": "检查 import 路径与自定义元素标签。"
+        }
+      ]
+    },
+    {
+      "sourcePath": "docs/llm-guide.md",
+      "category": "interfaces",
+      "topic": { "id": "invariants", "name": "系统不变量" },
+      "rules": [
+        {
+          "id": "rule-calendar-not-core",
+          "targetRole": "frontend",
+          "roleReason": "针对日历 UI 包边界。",
+          "name": "Calendar 不在 core",
+          "anchor": "CALENDAR_PACKAGE     = @calenderjs/calendar   # NOT @calenderjs/core",
+          "condition": "引用日历实现时",
+          "explanation": "日历实现只在 calendar 包；core 不含日历 UI。",
+          "verification": "搜索从 core 导入 Calendar 的错误路径。"
+        },
+        {
+          "id": "rule-event-data-field",
+          "name": "扩展字段用 data",
+          "anchor": "Use `extra` field on Event                    | Use `data`",
+          "condition": "读写 Event 扩展业务字段时",
+          "explanation": "禁止使用已废弃的 extra；业务字段走 Event.data。",
+          "verification": "grep Event.extra / validateExtra 应为空。"
+        },
+        {
+          "id": "rule-no-0003-now",
+          "targetRole": "backend",
+          "roleReason": "多租户服务实现禁令。",
+          "name": "禁止实现 RFC-0003",
+          "anchor": "Implement RFC-0003 backend                    | Future plan — out of scope",
+          "condition": "规划或编码多租户后端时",
+          "explanation": "0003 为 Future Plan，当前勿实现。工作树进一步明确落点为兄弟仓 ../site，且勿写本仓 ./site。",
+          "verification": "确认本仓无租户后端脚手架；./site 仍为文档站。"
+        },
+        {
+          "id": "rule-pnpm-vitest",
+          "name": "测试走 pnpm filter",
+          "anchor": "Run `npx vitest`                              | `pnpm --filter @calenderjs/calendar test`",
+          "condition": "跑日历包测试时",
+          "explanation": "用 pnpm --filter 调 vitest，不用 npx vitest。",
+          "verification": "检查 CI/本地命令与 package scripts。"
+        }
+      ]
+    },
+    {
+      "sourcePath": ".cursor/rules/00-llm-onboarding.mdc",
+      "category": "lifecycle",
+      "topic": { "id": "not-yet", "name": "未实现边界" },
+      "rules": [
+        {
+          "id": "rule-no-event-data-generator",
+          "name": "勿假设 EventDataGenerator 已有",
+          "anchor": "EventDataGenerator (RFC-0011)",
+          "condition": "生成 Event 实例或规划 0011 时",
+          "explanation": "EventDataGenerator 尚未实现；不可当已存在 API 使用。",
+          "verification": "确认 packages/event-dsl/src/generators 无此类。"
+        },
+        {
+          "id": "rule-no-plugin-yet",
+          "name": "勿假设插件机制已有",
+          "anchor": "Calendar plugin mechanism (RFC-0012)",
+          "condition": "按 Event.type 注册渲染器时",
+          "explanation": "RFC-0012 插件机制未实现。",
+          "verification": "代码库无插件注册 API。"
+        },
+        {
+          "id": "rule-onboarding-no-0003",
+          "name": "onboarding 禁止 0003",
+          "anchor": "RFC-0003 multi-tenant backend (DO NOT IMPLEMENT)",
+          "condition": "AI 代理接到租户/后端任务时",
+          "explanation": "明确 DO NOT IMPLEMENT。工作树文案已改为 sibling ../site only。",
+          "verification": "任务范围不含本仓租户后端。"
+        },
+        {
+          "id": "rule-event-ext-data",
+          "name": "扩展字段名 data",
+          "anchor": "Event extension field: `data`",
+          "condition": "定义或访问 Event 扩展属性时",
+          "explanation": "不变量：扩展字段为 data。",
+          "verification": "Event.ts 字段名为 data。"
+        }
+      ]
+    },
+    {
+      "sourcePath": ".spec/rfc/0003-multi-tenant-service.md",
+      "category": "delivery",
+      "topic": { "id": "tenant-future", "name": "多租户未来计划" },
+      "rules": [
+        {
+          "id": "rule-0003-future-only",
+          "targetRole": "backend",
+          "roleReason": "租户服务规格。",
+          "name": "0003 仅文档暂不实现",
+          "anchor": "本 RFC 是未来计划，当前阶段仅保留在文档中，暂不实现。",
+          "condition": "处理 RFC-0003 时",
+          "explanation": "规格可保留，代码实现延后。工作树补充：落点兄弟 ../site，非本仓 ./site。",
+          "verification": "无 apps/calendar-service；本仓 ./site 仍是文档站。"
+        }
+      ]
+    }
+  ]
+}

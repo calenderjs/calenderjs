@@ -2,12 +2,138 @@
   box-sizing: border-box;
 }
 
+:root,
+[data-theme="light"] {
+  /* CalenderJS Brand Tokens - Light Theme */
+  --calenderjs-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --calenderjs-primary: #1a73e8;
+  --calenderjs-primary-hover: #1765cc;
+  --calenderjs-accent: #3b82f6;
+  --calenderjs-accent-hover: #2563eb;
+
+  /* Surfaces & Backgrounds */
+  --calenderjs-bg-primary: #ffffff;
+  --calenderjs-bg-secondary: #f8fafc;
+  --calenderjs-bg-tertiary: #f1f5f9;
+  --calenderjs-header-bg: #ffffff;
+  --calenderjs-header-text: #0f172a;
+
+  /* Typography */
+  --calenderjs-text-primary: #1e293b;
+  --calenderjs-text-secondary: #64748b;
+  --calenderjs-text-muted: #94a3b8;
+
+  /* Borders & Shadows */
+  --calenderjs-border: #e2e8f0;
+  --calenderjs-border-subtle: #f1f5f9;
+  --calenderjs-border-hover: #cbd5e1;
+  --calenderjs-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --calenderjs-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+
+  /* Status Colors */
+  --calenderjs-success-bg: #f0fdf4;
+  --calenderjs-success-text: #166534;
+  --calenderjs-success-border: #bbf7d0;
+  --calenderjs-error-bg: #fef2f2;
+  --calenderjs-error-text: #991b1b;
+  --calenderjs-error-border: #fecaca;
+
+  /* Calendar Web Component Variables (Light) */
+  --calender-bg-color: #ffffff;
+  --calender-text-color: #202124;
+  --calender-text-secondary-color: #5f6368;
+  --calender-primary-text-color: #ffffff;
+  --calender-border-color: #dadce0;
+  --calender-border-light-color: #e8eaed;
+  --calender-border-hover-color: #c4c7c5;
+  --calender-primary-color: #1a73e8;
+  --calender-primary-hover-color: #1765cc;
+  --calender-today-bg-color: #e8f0fe;
+  --calender-selected-bg-color: #e8f0fe;
+  --calender-hover-bg-color: #f1f3f4;
+  --calender-hover-bg-color-light: #f8f9fa;
+  --calender-active-bg-color: #e8eaed;
+  --calender-event-text-color: #ffffff;
+
+  /* Resizable Splitter (Light) */
+  --resizable-splitter-bg-color: #e2e8f0;
+  --resizable-splitter-hover-bg-color: #cbd5e1;
+  --resizable-splitter-handle-bg-color: rgba(0, 0, 0, 0.08);
+  --resizable-splitter-dot-color: #94a3b8;
+  --splitter-color: #e2e8f0;
+  --splitter-hover-color: #cbd5e1;
+  --splitter-handle-color: rgba(0, 0, 0, 0.08);
+  --splitter-dot-color: #94a3b8;
+}
+
+[data-theme="dark"] {
+  /* CalenderJS Brand Tokens - Dark Theme */
+  --calenderjs-primary: #4285f4;
+  --calenderjs-primary-hover: #357ae8;
+  --calenderjs-accent: #3b82f6;
+  --calenderjs-accent-hover: #2563eb;
+
+  /* Surfaces & Backgrounds */
+  --calenderjs-bg-primary: #1a1a1a;
+  --calenderjs-bg-secondary: #22252a;
+  --calenderjs-bg-tertiary: #2a2e35;
+  --calenderjs-header-bg: #141619;
+  --calenderjs-header-text: #f8fafc;
+
+  /* Typography */
+  --calenderjs-text-primary: #f1f5f9;
+  --calenderjs-text-secondary: #94a3b8;
+  --calenderjs-text-muted: #64748b;
+
+  /* Borders & Shadows */
+  --calenderjs-border: #333842;
+  --calenderjs-border-subtle: #2a2e35;
+  --calenderjs-border-hover: #555555;
+  --calenderjs-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --calenderjs-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+
+  /* Status Colors */
+  --calenderjs-success-bg: #052e16;
+  --calenderjs-success-text: #4ade80;
+  --calenderjs-success-border: #14532d;
+  --calenderjs-error-bg: #450a0a;
+  --calenderjs-error-text: #f87171;
+  --calenderjs-error-border: #7f1d1d;
+
+  /* Calendar Web Component Variables (Dark) */
+  --calender-bg-color: #1a1a1a;
+  --calender-text-color: #e0e0e0;
+  --calender-text-secondary-color: #aaa;
+  --calender-primary-text-color: #ffffff;
+  --calender-border-color: #444;
+  --calender-border-light-color: #3d3d3d;
+  --calender-border-hover-color: #555;
+  --calender-primary-color: #4285f4;
+  --calender-primary-hover-color: #357ae8;
+  --calender-today-bg-color: #2d2d2d;
+  --calender-selected-bg-color: #2d2d2d;
+  --calender-hover-bg-color: #2d2d2d;
+  --calender-hover-bg-color-light: #3d3d3d;
+  --calender-active-bg-color: #3d3d3d;
+  --calender-event-text-color: #ffffff;
+
+  /* Resizable Splitter (Dark) */
+  --resizable-splitter-bg-color: #333842;
+  --resizable-splitter-hover-bg-color: #475569;
+  --resizable-splitter-handle-bg-color: rgba(255, 255, 255, 0.12);
+  --resizable-splitter-dot-color: #64748b;
+  --splitter-color: #333842;
+  --splitter-hover-color: #475569;
+  --splitter-handle-color: rgba(255, 255, 255, 0.12);
+  --splitter-dot-color: #64748b;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+  font-family: var(--calenderjs-font-family);
+  background-color: var(--calenderjs-bg-primary);
+  color: var(--calenderjs-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -17,20 +143,178 @@ body {
   overflow: hidden;
 }
 
-/* Resizable Splitter Styles */
-.resizable-splitter {
-  --splitter-color: #ddd;
-  --splitter-hover-color: #bbb;
-  --splitter-handle-color: rgba(0, 0, 0, 0.1);
-  --splitter-dot-color: #999;
+/* App Layout & Component Styles */
+.demo-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--calenderjs-bg-primary);
+  color: var(--calenderjs-text-primary);
 }
 
-/* Dark mode support for splitter */
-@media (prefers-color-scheme: dark) {
-  .resizable-splitter {
-    --splitter-color: #444;
-    --splitter-hover-color: #555;
-    --splitter-handle-color: rgba(255, 255, 255, 0.1);
-    --splitter-dot-color: #ccc;
-  }
+.demo-header {
+  padding: 16px 24px;
+  background-color: var(--calenderjs-header-bg);
+  color: var(--calenderjs-header-text);
+  border-bottom: 1px solid var(--calenderjs-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--calenderjs-shadow-sm);
+  z-index: 10;
+}
+
+.demo-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.demo-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--calenderjs-accent), var(--calenderjs-primary));
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  user-select: none;
+}
+
+.demo-title-group h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--calenderjs-header-text);
+  letter-spacing: -0.02em;
+}
+
+.demo-title-group p {
+  margin: 4px 0 0 0;
+  color: var(--calenderjs-text-secondary);
+  font-size: 13px;
+}
+
+.demo-theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--calenderjs-bg-secondary);
+  color: var(--calenderjs-text-primary);
+  border: 1px solid var(--calenderjs-border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.demo-theme-btn:hover {
+  background-color: var(--calenderjs-bg-tertiary);
+  border-color: var(--calenderjs-text-secondary);
+}
+
+.demo-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+.demo-panel-header {
+  padding: 14px 20px;
+  background-color: var(--calenderjs-bg-secondary);
+  border-bottom: 1px solid var(--calenderjs-border);
+}
+
+.demo-panel-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--calenderjs-text-primary);
+}
+
+.demo-panel-header p {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--calenderjs-text-secondary);
+}
+
+.demo-editor-container {
+  flex: 1;
+  position: relative;
+  background-color: var(--calenderjs-bg-primary);
+}
+
+.demo-status-banner {
+  padding: 10px 16px;
+  font-size: 13px;
+  border-top: 1px solid var(--calenderjs-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-status-error {
+  background-color: var(--calenderjs-error-bg);
+  color: var(--calenderjs-error-text);
+  border-color: var(--calenderjs-error-border);
+}
+
+.demo-status-success {
+  background-color: var(--calenderjs-success-bg);
+  color: var(--calenderjs-success-text);
+  border-color: var(--calenderjs-success-border);
+}
+
+.demo-validation-panel {
+  padding: 14px 20px;
+  background-color: var(--calenderjs-bg-tertiary);
+  border-bottom: 1px solid var(--calenderjs-border);
+}
+
+.demo-validation-panel h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--calenderjs-text-primary);
+}
+
+.demo-validation-list {
+  margin-top: 10px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.demo-validation-item {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.demo-validation-item.valid {
+  color: var(--calenderjs-success-text);
+}
+
+.demo-validation-item.invalid {
+  color: var(--calenderjs-error-text);
+}
+
+.demo-validation-errors {
+  margin-left: 10px;
+  color: var(--calenderjs-text-secondary);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.demo-calendar-container {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  background-color: var(--calenderjs-bg-primary);
 }
