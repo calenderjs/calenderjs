@@ -161,8 +161,6 @@ Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已�
   - [ ] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
   - [ ] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
   - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
-- [ ] Implement RFC 0025: CI: Pull Request Workflow (Unit + E2E (RFC 0025)
-
 
 ## Done
 
@@ -176,3 +174,4 @@ Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已�
 - [x] Implement RFC 0014: Event runtime timezone field semantics (RFC 0014)
 - [x] Implement RFC 0015: React demo e2e (RFC 0015)
 - [x] Implement RFC 0016: Week view column alignment (RFC 0016)
+- [x] Implement RFC 0025: CI: Pull Request Workflow (Unit + E2E) (RFC 0025)

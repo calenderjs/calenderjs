@@ -1,6 +1,6 @@
 # RFC 0025: CI: Pull Request Workflow (Unit + E2E)
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Summary
 
