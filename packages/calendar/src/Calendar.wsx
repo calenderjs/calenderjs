@@ -48,6 +48,7 @@ const UPGRADABLE_PROPS = [
     "events",
     "user",
     "eventDSL",
+    "eventTypeDefinitions",
     "eventRuntime",
 ] as const;
 
@@ -72,6 +73,11 @@ export default class Calendar extends WebComponent {
     };
     @state private _eventDSL: string | EventTypeAST | EventTypeAST[] | null =
         null;
+    @state private _eventTypeDefinitions:
+        | string
+        | EventTypeAST
+        | EventTypeAST[]
+        | null = null;
     private _eventRuntime: EventRuntime | null = null;
     private _runtimeByType: Map<string, EventRuntime> | null = null;
 
@@ -112,6 +118,18 @@ export default class Calendar extends WebComponent {
         }
     }
 
+    /** 规范属性名；同时设置 eventDSL 时以此为准 */
+    get eventTypeDefinitions(): string | EventTypeAST | EventTypeAST[] | null {
+        return this._eventTypeDefinitions;
+    }
+    set eventTypeDefinitions(
+        value: string | EventTypeAST | EventTypeAST[] | null
+    ) {
+        this._eventTypeDefinitions = value;
+        this.rebuildRuntimeFromDSL();
+    }
+
+    /** @deprecated 使用 eventTypeDefinitions */
     get eventDSL(): string | EventTypeAST | EventTypeAST[] | null {
         return this._eventDSL;
     }
@@ -128,7 +146,7 @@ export default class Calendar extends WebComponent {
         if (value) {
             const typeId = value.getDataModel().id;
             this._runtimeByType = new Map([[typeId, value]]);
-        } else if (!this._eventDSL) {
+        } else if (!this._eventTypeDefinitions && !this._eventDSL) {
             this._runtimeByType = null;
         }
     }
@@ -203,6 +221,10 @@ export default class Calendar extends WebComponent {
             this.handleChildDateDoubleClick
         );
         this.shadowRoot?.addEventListener("event-click", this.handleChildEventClick);
+        this.shadowRoot?.addEventListener(
+            "event-delete",
+            this.handleChildEventDelete
+        );
     }
 
     private removeEventListeners() {
@@ -212,6 +234,10 @@ export default class Calendar extends WebComponent {
             this.handleChildDateDoubleClick
         );
         this.shadowRoot?.removeEventListener("event-click", this.handleChildEventClick);
+        this.shadowRoot?.removeEventListener(
+            "event-delete",
+            this.handleChildEventDelete
+        );
     }
 
     private handleChildDateClick = (e: globalThis.Event) => {
@@ -239,6 +265,17 @@ export default class Calendar extends WebComponent {
                 detail: { event },
                 bubbles: true,
             })
+        );
+    };
+
+    /** 删除先过 canPerform("deletable")；拒绝时派发 event-delete-denied */
+    private handleChildEventDelete = (e: globalThis.Event) => {
+        const event = { ...(e as CustomEvent<{ event: CalendarEvent }>).detail.event };
+        const type = this.canPerformAction("deletable", event)
+            ? "event-delete"
+            : "event-delete-denied";
+        this.dispatchEvent(
+            new CustomEvent(type, { detail: { event }, bubbles: true })
         );
     };
 
@@ -505,9 +542,10 @@ export default class Calendar extends WebComponent {
         );
     }
 
-    /** 从 eventDSL 重新编译 Runtime 映射 */
+    /** 从 eventTypeDefinitions（优先）或 eventDSL 重新编译 Runtime 映射 */
     private rebuildRuntimeFromDSL() {
-        if (!this._eventDSL) {
+        const dsl = this._eventTypeDefinitions ?? this._eventDSL;
+        if (!dsl) {
             this._runtimeByType = this._eventRuntime
                 ? new Map([
                       [
@@ -521,11 +559,11 @@ export default class Calendar extends WebComponent {
 
         try {
             const asts: EventTypeAST[] =
-                typeof this._eventDSL === "string"
-                    ? [parseEventDSL(this._eventDSL)]
-                    : Array.isArray(this._eventDSL)
-                      ? this._eventDSL
-                      : [this._eventDSL];
+                typeof dsl === "string"
+                    ? [parseEventDSL(dsl)]
+                    : Array.isArray(dsl)
+                      ? dsl
+                      : [dsl];
             const compiler = new EventDSLCompiler();
             this._runtimeByType = createRuntimeMap(
                 compiler.compileFromAST(asts)
@@ -592,9 +630,19 @@ export default class Calendar extends WebComponent {
     }
 
     /**
-     * 提议更新事件：先验证，成功派发 event-update，失败派发 event-update-error
+     * 提议更新事件：先过 editable 权限（拒绝派发 event-update-denied），再验证，成功派发 event-update，失败派发 event-update-error
      */
     proposeEventUpdate(event: CalendarEvent): boolean {
+        if (!this.canPerformAction("editable", event)) {
+            this.dispatchEvent(
+                new CustomEvent("event-update-denied", {
+                    detail: { event },
+                    bubbles: true,
+                })
+            );
+            return false;
+        }
+
         const validation = this.validateEventForUpdate(event);
         if (!validation.valid) {
             this.dispatchEvent(

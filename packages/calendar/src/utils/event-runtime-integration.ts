@@ -31,6 +31,10 @@ export function mergeRenderedIntoEvent(
     title: rendered.title ?? event.title,
     color: rendered.color ?? event.color,
     icon: rendered.icon ?? event.icon,
+    // render() 默认 description 为 ""，空串不覆盖已有 data.description
+    ...(rendered.description
+      ? { data: { ...event.data, description: rendered.description } }
+      : {}),
   };
 }
 

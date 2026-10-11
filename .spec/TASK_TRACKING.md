@@ -40,19 +40,21 @@
 | 4   | 导出到 event-dsl index.ts                | Pending | `packages/event-dsl/src/index.ts`    |
 | 5   | 更新 RFC-0011 状态 → Implemented         | Pending | `.spec/rfc/0011-*`                   |
 
-### 阶段 3: Calendar EventRuntime 集成 (RFC-0005 M4) — **跟 0002 之后**
+### 阶段 3: Calendar 本体 (RFC-0005)
 
-| #   | 任务                                                | 状态    | 文件                                   |
-| --- | --------------------------------------------------- | ------- | -------------------------------------- |
-| 1   | Calendar 添加 eventRuntime property (getter/setter) | Pending | `packages/calendar/src/Calendar.wsx`   |
-| 2   | 渲染集成：有 runtime 时 runtime.render() 增强       | Pending | `packages/calendar/src/Calendar.wsx`   |
-| 3   | 验证集成：创建/更新前 runtime.validate()            | Pending | `packages/calendar/src/Calendar.wsx`   |
-| 4   | 行为集成：拖拽/编辑/删除前 runtime.canPerform()     | Pending | `packages/calendar/src/Calendar.wsx`   |
-| 5   | 错误事件：event-create-error, event-update-error    | Pending | `packages/calendar/src/Calendar.wsx`   |
-| 6   | 添加 EventRuntime 集成测试                          | Pending | `packages/calendar/src/__tests__/`     |
-| 7   | 更新 RFC-0005 状态 → Implemented                    | Pending | `.spec/rfc/0005-calendar-component.md` |
+0005 只保留日历本体。从 0005 拆出的事项在文末 `## Active`，按子 RFC 跟踪，不再记在本阶段：
 
-> 注：阶段 3 多项代码可能已部分落地；关 0002 后做真缺口审计再改状态，禁止凭感觉勾 Done。
+| 事项 | RFC |
+| --- | --- |
+| 属性改名 `eventTypeDefinitions` | 0024 |
+| 编辑/删除前 `canPerform` | 0018 |
+| 合并 `description` 与标题模板 | 0019 |
+| 拖到新时刻 | 0020 |
+| 拖边缘改时长 | 0021 |
+| 视图切换动画 | 0022 |
+| 大量事件虚拟化 | 0023 |
+
+Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已在 `Calendar.wsx` 和 `EventRuntime.integration.test.ts`。0005 关单仍是单独的状态决定，不在这里勾选。
 
 ### 阶段 4: EventRuntime 时间字段时区语义 (RFC-0014) — **已完成**
 
@@ -143,3 +145,34 @@
 2. **RFC-0006**: 文档补全 → site 框架已有，内容待写
 3. **RFC-0007**: VS Code 扩展 → Future
 4. **RFC-0003**: 多租户服务 → 规格在兄弟仓 `../site/.spec/rfc/`（本仓已移除正文）；Future / 勿实现
+
+## Active
+
+- [ ] Implement RFC 0005: Calendar Component (RFC 0005)
+- [ ] Implement RFC 0006: Documentation and examples (RFC 0006)
+- [ ] Implement RFC 0007: VS Code extension and online editor (RFC 0007)
+- [ ] Implement RFC 0011: Event data model integration (RFC 0011)
+- [ ] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
+- [ ] Implement RFC 0017: Calendar follow-ons (Umbrella) (RFC 0017)
+  - [x] Implement RFC 0018: Gate edit and delete with canPerform (child of 0017) (RFC 0018)
+  - [x] Implement RFC 0019: Merge runtime description into display events (child of 0017) (RFC 0019)
+  - [ ] Implement RFC 0020: Drag events to a new time (child of 0017) (RFC 0020)
+  - [ ] Implement RFC 0021: Resize event duration by dragging the edge (child of 0017) (RFC 0021)
+  - [ ] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
+  - [ ] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
+  - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
+- [ ] Implement RFC 0025: CI: Pull Request Workflow (Unit + E2E (RFC 0025)
+
+
+## Done
+
+- [x] Implement RFC 0001: Event calendar DSL (RFC 0001)
+- [x] Implement RFC 0002: Event DSL (RFC 0002)
+- [x] Implement RFC 0004: React demo site (RFC 0004)
+- [x] Implement RFC 0008: Calendar component API redesign (RFC 0008)
+- [x] Implement RFC 0009: Calendar component data-driven (RFC 0009)
+- [x] Implement RFC 0010: Week view layout fix (RFC 0010)
+- [x] Implement RFC 0013: Fix today handling (RFC 0013)
+- [x] Implement RFC 0014: Event runtime timezone field semantics (RFC 0014)
+- [x] Implement RFC 0015: React demo e2e (RFC 0015)
+- [x] Implement RFC 0016: Week view column alignment (RFC 0016)

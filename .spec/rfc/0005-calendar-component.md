@@ -1,10 +1,32 @@
 # RFC-0005: Calendar Component
 
-**状态**: In Progress  
+**Status:** Under Review
 **创建日期**: 2024-12-19  
-**最后更新**: 2026-03-15  
+**最后更新**: 2026-09-26
 **作者**: WSX Team  
-**关联 RFC**: RFC-0002 (Event DSL), RFC-0008 (API Redesign), RFC-0009 (Data-driven Calendar), RFC-0011 (Event Data Model), RFC-0012 (Plugin Mechanism)
+**关联 RFC**: RFC-0002 (Event DSL), RFC-0008 (API Redesign), RFC-0009 (Data-driven Calendar), RFC-0011 (Event Data Model), RFC-0012 (Plugin Mechanism), RFC-0017 (Calendar follow-ons)
+
+## Summary
+
+CalenderJS is designed to render Event DSL definitions directly in the Calendar component. Calendar consumes DSL-defined type rules and applies them to separately supplied `Event[]` records. DSL editing is a separate feature and package; the Calendar package does not include the editor UI.
+
+## Problem
+
+Calendar is designed to work directly with Event DSL for rendering. This does not make Calendar an editor: DSL authoring and Monaco language support remain separate packages. The DSL provides event-type rules; concrete, dated events remain Calendar input data.
+
+## Goals
+
+- Calendar directly parses/compiles supplied Event DSL definitions and renders matching `Event[]` with DSL rules.
+- Calendar supports precompiled `EventRuntime` input and plain-data rendering when no DSL definition is supplied.
+- DSL editing stays outside `@calenderjs/calendar`; Calendar has no editor UI dependency.
+
+## Acceptance
+
+- Supplying DSL definitions and matching `Event[]` makes Calendar apply DSL display rules to rendered events.
+- Supplying multiple event-type definitions applies each definition to events with matching `Event.type`.
+- Supplying no DSL definition preserves plain-data rendering.
+- Calendar package does not depend on `@calenderjs/react-event-editor` or `@calenderjs/monaco-event-dsl`.
+- Property rename and old-name compatibility follow RFC-0024.
 
 ## 摘要
 
@@ -12,7 +34,8 @@
 
 **核心架构**：
 
-- **DSL 驱动**：Calendar 接受 `EventRuntime` 实例，用于增强渲染（颜色、图标、标题模板）、验证（字段和时间约束）、行为控制（拖拽、编辑权限）
+- **Event DSL 直接渲染**：Calendar 接受事件类型 DSL 定义，在组件内解析/编译，并应用渲染、验证及行为规则。`Event[]` 仍由调用方单独提供。
+- **编辑器独立**：DSL 编辑器属于 `@calenderjs/react-event-editor` 与 `@calenderjs/monaco-event-dsl`，不并入 Calendar 包；Calendar 的 DSL 渲染不依赖编辑器 UI。
 - **优雅降级**：未提供 EventRuntime 时，Calendar 回退到纯数据驱动模式，使用 Event 核心字段渲染
 - **Web Components 标准**：基于 WSX 框架，使用 Custom Elements + Shadow DOM + JSX 语法
 - **Event 数据模型**：组件消费 `Event[]` 数据，通过 `Event.type` + `Event.data` 承载 DSL 定义的业务字段
@@ -21,7 +44,8 @@
 
 - `@calenderjs/calendar`：开源日历组件（MIT 协议）
 - 依赖 `@calenderjs/event-model`（Event 数据模型 SSOT）
-- 可选依赖 `@calenderjs/event-runtime`（DSL 驱动能力）
+- 依赖 `@calenderjs/event-dsl` 与 `@calenderjs/event-runtime`，直接编译 DSL 并执行规则
+- 不依赖 DSL 编辑器包；调用方可独立选择编辑器
 
 ## 术语约定
 
@@ -39,6 +63,16 @@
 - **框架无关**：Web Components 标准，可在 React/Vue/Angular/原生 HTML 中使用
 - **业务可配**：通过 DSL 文本声明事件类型、验证规则、显示规则、行为规则
 - **零运行时开销**：WSX 在构建时编译 JSX 为原生 DOM 操作
+
+## DSL 渲染与包边界
+
+Calendar 是 Event DSL 的直接消费者：调用方把 DSL 定义交给 Calendar，Calendar 解析/编译定义并把对应规则应用于 `events`。调用方不需要另建应用层编译适配器。
+
+DSL 描述事件类型及其字段、渲染、验证和行为规则；带日期的 `Event` 实例仍通过 `events` 属性单独提供。DSL 本身不代替具体事件数据。
+
+DSL 编辑是另一项功能。`@calenderjs/react-event-editor` 提供 React 编辑器，`@calenderjs/monaco-event-dsl` 提供 Monaco 语言支持；它们不并入、不依赖 `@calenderjs/calendar`。宿主可以同时展示编辑器与 Calendar，但两个包保持独立职责。
+
+Calendar 接受 DSL 文本、单个已解析 AST 或 AST 数组。规范属性名、旧属性兼容和两种输入同时设置时的优先级由 [RFC-0024](completed/0024-rename-event-dsl-property.md) 定义。`eventRuntime` 用于注入预编译的单类型 Runtime，不是编辑器入口。
 
 ## 组件 API 设计
 
@@ -63,14 +97,15 @@ Calendar API 分三层，遵循 Web Components 标准（RFC-0008）：
 const calendar = document.querySelector("wsx-calendar") as Calendar;
 calendar.events = events; // Event[] - 事件数据
 calendar.user = currentUser; // User - 当前用户
-calendar.eventRuntime = runtime; // EventRuntime - DSL 运行时（可选）
+calendar.eventTypeDefinitions = meetingDSL; // DSL 定义；Calendar 直接编译并渲染
 ```
 
 | Property       | 类型           | 必需 | 说明                            |
 | -------------- | -------------- | ---- | ------------------------------- |
 | `events`       | `Event[]`      | 是   | 事件列表（数据模型）            |
 | `user`         | `User`         | 否   | 当前用户（权限验证用）          |
-| `eventRuntime` | `EventRuntime` | 否   | DSL 运行时（启用 DSL 驱动模式） |
+| `eventTypeDefinitions` | `string \| EventTypeAST \| EventTypeAST[]` | 否 | DSL 事件类型定义；Calendar 直接解析/编译并应用规则；别名兼容见 RFC-0024 |
+| `eventRuntime` | `EventRuntime` | 否 | 预编译单类型 Runtime 的注入入口 |
 
 **实现方式**：getter/setter 模式，setter 中处理 JSON string 和 object 两种输入。
 
@@ -108,9 +143,19 @@ deleteEvent(id: string): { success: boolean; error?: string }
 
 ## DSL 驱动架构
 
-### 两种模式
+### 三种模式
 
-#### 模式 A：DSL 驱动（提供 EventRuntime）
+#### 模式 A：直接传入 DSL 定义（主要集成方式）
+
+```typescript
+const calendar = document.querySelector("wsx-calendar") as Calendar;
+calendar.events = events;
+calendar.eventTypeDefinitions = meetingDSL;
+```
+
+Calendar 在组件内解析/编译 DSL，并按 `Event.type` 将对应规则用于事件渲染、验证和行为检查。
+
+#### 模式 B：注入预编译 Runtime（单类型入口）
 
 ```typescript
 import { EventDSLCompiler } from "@calenderjs/event-dsl";
@@ -134,7 +179,7 @@ DSL 驱动时，Calendar 的行为变化：
 | **验证** | 无验证（信任外部数据）                     | 使用 `runtime.validate()` 校验字段/时间约束/冲突                |
 | **行为** | 所有事件可编辑/拖拽/删除                   | 使用 `runtime.canPerform()` 按 DSL behavior 规则和用户角色控制  |
 
-#### 模式 B：纯数据驱动（无 EventRuntime）
+#### 模式 C：纯数据驱动（无 DSL 定义和 Runtime）
 
 ```typescript
 const calendar = document.querySelector("wsx-calendar");
@@ -320,7 +365,7 @@ Calendar.wsx (主组件: @autoRegister({ tagName: "wsx-calendar" }))
 ```
 外部应用
   ↓ (attributes: view, date)
-  ↓ (properties: events, user, eventRuntime)
+  ↓ (properties: events, user, eventTypeDefinitions 或 eventRuntime)
 Calendar 主组件
   ↓ (attributes: JSON 序列化的 events/date)
 视图子组件 (MonthView / WeekView / DayView)
@@ -450,85 +495,41 @@ packages/calendar/
 ```json
 {
   "dependencies": {
+    "@calenderjs/core": "workspace:*",
+    "@calenderjs/date-time": "workspace:*",
+    "@calenderjs/event-dsl": "workspace:*",
     "@calenderjs/event-model": "workspace:*",
-    "@wsxjs/wsx-core": "^0.0.23"
+    "@calenderjs/event-runtime": "workspace:*"
   },
   "peerDependencies": {
-    "@wsxjs/wsx-core": "^0.0.23"
-  },
-  "optionalDependencies": {
-    "@calenderjs/event-runtime": "workspace:*"
+    "@wsxjs/wsx-core": "^0.2.0"
   }
 }
 ```
 
-`event-runtime` 是可选依赖：Calendar 不硬依赖 DSL 运行时，通过 property 注入。
+`event-dsl` 与 `event-runtime` 是 Calendar DSL 渲染路径的依赖。编辑器包不是 Calendar 依赖；`eventRuntime` 仍可接收预编译的单类型 Runtime。
 
-## 实现状态
+## 范围
 
-| 模块                         | 状态      | 说明                                        |
-| ---------------------------- | --------- | ------------------------------------------- |
-| 组件基础结构                 | ✅ 完成   | WebComponent, @autoRegister, Shadow DOM     |
-| 月/周/日视图渲染             | ✅ 完成   | 数据驱动渲染，无 DSL                        |
-| 工具栏 + 视图切换 + 日期导航 | ✅ 完成   |                                             |
-| CRUD 操作 + 对话框           | ✅ 完成   | create/update/delete + CustomEvent          |
-| API 标准化 (RFC-0008)        | ✅ 完成   | observedAttributes, getter/setter, 事件统一 |
-| "today" 高亮 (RFC-0013)      | ✅ 完成   |                                             |
-| 工具函数 + 单元测试          | ✅ 完成   | 45 测试用例通过                             |
-| **EventRuntime 集成**        | ❌ 未实现 | Calendar 接受 eventRuntime property         |
-| **DSL 驱动渲染**             | ❌ 未实现 | runtime.render() 增强渲染                   |
-| **DSL 驱动验证**             | ❌ 未实现 | runtime.validate() 创建/更新前验证          |
-| **DSL 驱动行为**             | ❌ 未实现 | runtime.canPerform() 权限检查               |
-| `extra` → `data` 重命名      | ❌ 待执行 | Event 接口字段重命名                        |
-| 拖拽功能                     | ❌ 未实现 | HTML5 Drag and Drop API                     |
-| 视图切换动画                 | ❌ 未实现 | CSS transitions                             |
-| 虚拟滚动                     | ❌ 未实现 | 大量事件性能优化                            |
+本 RFC 只描述 `<wsx-calendar>` 本体：月/周/日视图、工具栏，以及可选 Runtime 下已经存在的显示、校验和提议事件。
 
-## 实施计划
+从本 RFC 拆出的事项见 [RFC-0017](0017-calendar-follow-ons.md)，不再在这里跟踪：
 
-### 已完成里程碑
+| 事项 | RFC |
+| ---- | --- |
+| `eventDSL` 改名为 `eventTypeDefinitions` | [0024](completed/0024-rename-event-dsl-property.md) |
+| 编辑/删除前的 `canPerform` | [0018](completed/0018-gate-actions-with-can-perform.md) |
+| 把 `description` 和标题模板合并进显示事件 | [0019](completed/0019-merge-runtime-description.md) |
+| 拖到新时刻 | [0020](0020-drag-events-to-new-time.md) |
+| 拖边缘改时长 | [0021](0021-resize-event-duration.md) |
+| 视图切换动画 | [0022](0022-animate-view-switch.md) |
+| 大量事件虚拟化 | [0023](0023-virtualize-event-list.md) |
 
-- **M1**: 基础视图渲染（月/周/日）
-- **M2**: CRUD 操作 + 事件系统
-- **M3**: API 标准化（RFC-0008）
-
-### 下一步里程碑
-
-**M4: DSL 集成**（优先级最高）
-
-1. `extra` → `data` 全局重命名（Event 接口 + 所有消费者）
-2. Calendar 添加 `eventRuntime` property（getter/setter）
-3. 渲染集成：有 runtime 时使用 `runtime.render()` 增强
-4. 验证集成：创建/更新时使用 `runtime.validate()`
-5. 行为集成：拖拽/编辑/删除前使用 `runtime.canPerform()`
-6. 错误事件：`event-create-error`、`event-update-error`
-
-**M5: 交互增强**
-
-1. 拖拽功能（HTML5 Drag and Drop API）
-2. 时间调整（拖拽底部边缘调整 duration）
-3. 视图切换动画
-
-**M6: 性能与文档**
-
-1. 虚拟滚动（大量事件）
-2. 事件聚合缓存
-3. API 文档 + 使用示例
-
-## 性能目标
-
-| 指标          | 目标           |
-| ------------- | -------------- |
-| 1000 事件渲染 | < 100ms        |
-| 视图切换      | < 50ms         |
-| 事件交互响应  | < 16ms (60fps) |
-| 1000 事件内存 | < 50MB         |
+`extra` → `data` 属于 RFC-0011。插件属于 RFC-0012。今天高亮属于 RFC-0013。API 分层属于 RFC-0008。性能数字属于 RFC-0023。
 
 ## 向后兼容性
 
-- 当前纯数据驱动模式（无 eventRuntime）保持不变
-- `eventRuntime` 是新增可选 property，不影响现有 API
-- `extra` → `data` 重命名是破坏性变更，需要在所有包中同步更新
+无 Runtime 时保持纯数据驱动。属性改名的兼容规则只写在 RFC-0024。
 
 ## 参考
 
@@ -539,4 +540,4 @@ packages/calendar/
 
 ---
 
-_本 RFC 定义了 `<wsx-calendar>` 组件的完整架构：DSL 驱动的事件渲染、验证和行为控制，同时支持无 DSL 的纯数据驱动降级模式。_
+_本 RFC 定义 `<wsx-calendar>` 直接渲染 Event DSL 的架构，同时保持 DSL 编辑器为独立包，并支持无 DSL 的纯数据驱动降级模式。_

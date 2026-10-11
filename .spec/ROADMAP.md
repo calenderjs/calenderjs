@@ -7,7 +7,15 @@
 | RFC  | 标题 | 状态 | 优先级 | 备注 |
 | ---- | ---- | ---- | ------ | ---- |
 | 0002 | [Event DSL](rfc/completed/0002-event-dsl.md) | **Implemented** | — | standalone 已归档；Calendar/Generator 债分别归 0005/0011 |
-| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | **In Progress** | **P1** | 基础渲染完成；跟 0002 之后做 EventRuntime 接线验收 |
+| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | Under Review | **P1** | 只含日历本体；后续事项见 0017 |
+| 0017 | [Calendar follow-ons](rfc/0017-calendar-follow-ons.md) | Draft | **P1** | Umbrella |
+| 0018 | [Gate edit and delete with canPerform](rfc/completed/0018-gate-actions-with-can-perform.md) | Implemented | **P1** | child of 0017 |
+| 0019 | [Merge runtime description into display events](rfc/completed/0019-merge-runtime-description.md) | Implemented | **P1** | child of 0017 |
+| 0020 | [Drag events to a new time](rfc/0020-drag-events-to-new-time.md) | Draft | **P2** | child of 0017 |
+| 0021 | [Resize event duration by dragging the edge](rfc/0021-resize-event-duration.md) | Draft | **P2** | child of 0017 |
+| 0022 | [Animate calendar view switches](rfc/0022-animate-view-switch.md) | Draft | **P3** | child of 0017 |
+| 0023 | [Virtualize large event lists](rfc/0023-virtualize-event-list.md) | Draft | **P3** | child of 0017 |
+| 0024 | [Rename eventDSL to eventTypeDefinitions](rfc/completed/0024-rename-event-dsl-property.md) | Implemented | **P1** | child of 0017 |
 | 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |
 | 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md) | **Superseded** | — | 由 RFC-0005 取代；归档 `completed/0009-*` |
 | 0010 | [Week View 布局修复](rfc/completed/0010-week-view-layout-fix.md) | **Implemented** | — | Google Calendar 风格布局 |
@@ -65,7 +73,7 @@
    - [x] `extra` → `data` 代码落地（TASK 对账 → Done；正式关单在 0011）
 3. **跟 0002 之后完成（当前主线）**
    - [ ] RFC-0011: EventDataGenerator + data 契约对账关单
-   - [ ] RFC-0005: Calendar EventRuntime 剩余接线验收 → Implemented
+   - [ ] RFC-0005: 日历本体关单。拖拽、门禁、属性改名、描述合并、动画、虚拟化在 RFC-0017 的子 RFC，不回写 0005 |
 4. **不挡 M4 主线**
    - [ ] RFC-0012: 插件机制（M5）
 
@@ -97,3 +105,4 @@
 | `@calenderjs/monaco-event-dsl`   | Implemented        | Monaco Editor DSL 语言插件                    |
 | `site/`                          | Implemented        | WSX 官网（i18n、路由、文档）                  |
 | `demos/react/`                   | Implemented        | React Demo（DSL 编辑器 + Calendar）           |
+| 0025 | [CI: Pull Request Workflow (Unit + E2E](rfc/0025-ci-pull-request-workflow.md) | Draft |

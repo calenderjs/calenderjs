@@ -9,6 +9,8 @@ import { EventTypeAST } from "@calenderjs/event-dsl";
 import { EventRuntime } from "@calenderjs/event-runtime";
 
 declare class Calendar extends ReactiveWebComponent {
+  eventTypeDefinitions?: string | EventTypeAST | EventTypeAST[] | null;
+  /** @deprecated 使用 eventTypeDefinitions */
   eventDSL?: string | EventTypeAST | EventTypeAST[] | null;
   eventRuntime: EventRuntime | null;
   events: Event[];

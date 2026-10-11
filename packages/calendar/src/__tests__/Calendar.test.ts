@@ -283,6 +283,54 @@ name: 会议
     });
   });
 
+  describe("eventTypeDefinitions 与 eventDSL 别名 (RFC-0024)", () => {
+    // display 在 AST 中是规则数组（compiler 直接透传给 displayRules）
+    const dslWithTitle = (title: string) => ({
+      ...createSimpleDSLAST(),
+      display: [{ name: "title", value: title }],
+    });
+    const meeting = () =>
+      createTestEvent({ type: "meeting", data: { attendees: [] } });
+
+    async function mount(
+      set: (c: Calendar) => void,
+    ): Promise<string | undefined> {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      set(calendar);
+      calendar.events = [meeting()];
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+      return calendar.displayEvents[0]?.title;
+    }
+
+    it("只设置 eventTypeDefinitions 时编译 Runtime", async () => {
+      const title = await mount((c) => {
+        c.eventTypeDefinitions = dslWithTitle("CANON");
+      });
+      expect(title).toBe("CANON");
+    });
+
+    it("只设置 eventDSL 时结果相同", async () => {
+      const title = await mount((c) => {
+        c.eventDSL = dslWithTitle("CANON");
+      });
+      expect(title).toBe("CANON");
+    });
+
+    it("两者都设置时以 eventTypeDefinitions 为准（与设置顺序无关）", async () => {
+      const a = await mount((c) => {
+        c.eventDSL = dslWithTitle("LEGACY");
+        c.eventTypeDefinitions = dslWithTitle("CANON");
+      });
+      calendar.remove();
+      const b = await mount((c) => {
+        c.eventTypeDefinitions = dslWithTitle("CANON");
+        c.eventDSL = dslWithTitle("LEGACY");
+      });
+      expect([a, b]).toEqual(["CANON", "CANON"]);
+    });
+  });
+
   describe("自定义事件派发", () => {
     beforeEach(async () => {
       calendar = document.createElement("wsx-calendar") as Calendar;

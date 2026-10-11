@@ -75,6 +75,41 @@ describe("Calendar EventRuntime 集成", () => {
     expect(calendar.displayEvents[0].icon).toBe("meeting");
   });
 
+  it("title display 规则应改写 displayEvents 标题", async () => {
+    const ast: EventTypeAST = {
+      ...MEETING_AST,
+      display: [{ name: "title", value: "[会] 团队会议" }],
+    } as EventTypeAST;
+    const runtime = new EventRuntime(
+      new EventDSLCompiler().compileFromAST([ast]).types[0],
+    );
+    const calendar = document.createElement("wsx-calendar") as Calendar;
+    calendar.eventRuntime = runtime;
+    calendar.events = [createMeetingEvent()];
+    container.appendChild(calendar);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(calendar.displayEvents[0].title).toBe("[会] 团队会议");
+  });
+
+  it("description display 规则应出现在 displayEvents 上", async () => {
+    const ast: EventTypeAST = {
+      ...MEETING_AST,
+      display: [{ name: "description", value: "周会说明" }],
+    } as EventTypeAST;
+    const runtime = new EventRuntime(
+      new EventDSLCompiler().compileFromAST([ast]).types[0],
+    );
+    const calendar = document.createElement("wsx-calendar") as Calendar;
+    calendar.eventRuntime = runtime;
+    calendar.events = [createMeetingEvent()];
+    container.appendChild(calendar);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(calendar.displayEvents[0].data?.description).toBe("周会说明");
+    expect(calendar.displayEvents[0].data?.attendees).toHaveLength(2);
+  });
+
   it("无 Runtime 时 displayEvents 应等于原始 events", () => {
     const calendar = document.createElement("wsx-calendar") as Calendar;
     const events = [createMeetingEvent()];
@@ -134,5 +169,91 @@ describe("Calendar EventRuntime 集成", () => {
     expect(calendar.canPerformAction("editable", createMeetingEvent())).toBe(
       true,
     );
+  });
+
+  describe("canPerform 门控", () => {
+    const AST_NO_PERMS: EventTypeAST = {
+      ...MEETING_AST,
+      behavior: [
+        { name: "editable", value: false },
+        { name: "deletable", value: false },
+      ],
+    };
+    const AST_PERMS: EventTypeAST = {
+      ...MEETING_AST,
+      behavior: [
+        { name: "editable", value: true },
+        { name: "deletable", value: true },
+      ],
+    };
+
+    function setup(ast: EventTypeAST | null) {
+      const calendar = document.createElement("wsx-calendar") as Calendar;
+      calendar.setAttribute("date", "2024-01-15T10:00:00");
+      calendar.events = [createMeetingEvent()];
+      if (ast) {
+        calendar.eventRuntime = new EventRuntime(
+          new EventDSLCompiler().compileFromAST([ast]).types[0],
+        );
+        calendar.user = { id: "1", email: "u@example.com", role: "user" };
+      }
+      container.appendChild(calendar);
+      return calendar;
+    }
+
+    // 子视图 event-delete 不 composed，只在 ShadowRoot 汇合
+    function childDelete(calendar: Calendar) {
+      calendar.shadowRoot!.dispatchEvent(
+        new CustomEvent("event-delete", {
+          detail: { event: createMeetingEvent() },
+        }),
+      );
+    }
+
+    it("删除被拒绝：不派发 event-delete，派发 event-delete-denied", () => {
+      const calendar = setup(AST_NO_PERMS);
+      const ok = vi.fn();
+      const denied = vi.fn();
+      calendar.addEventListener("event-delete", ok);
+      calendar.addEventListener("event-delete-denied", denied);
+      childDelete(calendar);
+      expect(ok).not.toHaveBeenCalled();
+      expect(denied).toHaveBeenCalledTimes(1);
+    });
+
+    it("删除被允许：派发 event-delete", () => {
+      const calendar = setup(AST_PERMS);
+      const ok = vi.fn();
+      calendar.addEventListener("event-delete", ok);
+      childDelete(calendar);
+      expect(ok).toHaveBeenCalledTimes(1);
+    });
+
+    it("无 Runtime：删除照常放行", () => {
+      const calendar = setup(null);
+      const ok = vi.fn();
+      calendar.addEventListener("event-delete", ok);
+      childDelete(calendar);
+      expect(ok).toHaveBeenCalledTimes(1);
+    });
+
+    it("编辑被拒绝：proposeEventUpdate 返回 false 并派发 event-update-denied", () => {
+      const calendar = setup(AST_NO_PERMS);
+      const ok = vi.fn();
+      const denied = vi.fn();
+      calendar.addEventListener("event-update", ok);
+      calendar.addEventListener("event-update-denied", denied);
+      expect(calendar.proposeEventUpdate(createMeetingEvent())).toBe(false);
+      expect(ok).not.toHaveBeenCalled();
+      expect(denied).toHaveBeenCalledTimes(1);
+    });
+
+    it("编辑被允许：派发 event-update", () => {
+      const calendar = setup(AST_PERMS);
+      const ok = vi.fn();
+      calendar.addEventListener("event-update", ok);
+      expect(calendar.proposeEventUpdate(createMeetingEvent())).toBe(true);
+      expect(ok).toHaveBeenCalledTimes(1);
+    });
   });
 });

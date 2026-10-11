@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "mapId": "calenderjs-monorepo",
-  "revision": 3,
+  "revision": 4,
   "language": "zh",
   "project": {
     "id": "calenderjs",
     "name": "CalenderJS",
-    "revision": "60899d12b783464eb771ec3a75d5f6f427970fad"
+    "revision": "7a3837ed418300d9c23e41651f92e820e90b6b8c"
   },
   "constraintDiscovery": {
-    "checkedAt": "2026-09-27T04:27:21.167Z",
+    "checkedAt": "2026-09-27T06:06:39.637Z",
     "checkedPaths": [
       "AGENTS.md",
       ".cursor/rules/00-llm-onboarding.mdc",
@@ -252,7 +252,7 @@
       "role": "frontend",
       "name": "wsx-calendar",
       "kind": "local",
-      "responsibility": "月/周/日视图 Web Component，接收 Event[] 并可使用 EventRuntime 渲染增强；当前还直接解析/编译 eventDSL，形成与 DSL 编译包的耦合。",
+      "responsibility": "月/周/日视图 Web Component，直接接收 Event DSL 并构建 Runtime，以 DSL 规则渲染、验证事件；DSL 编辑器由独立包提供。",
       "ownership": [
         {
           "kind": "directory",
@@ -272,7 +272,7 @@
       ],
       "status": "supported",
       "openQuestions": [
-        "用户要求 DSL 编辑/编译与 Calendar 显示保持独立包边界；目前 Calendar 对 event-dsl 的直接解析/编译是否应移除，改由应用组合 EventRuntime 与 Event[]？"
+        "Calendar DSL 输入属性的公开名称待确认；用户认为现有 eventDSL 命名不合适。"
       ],
       "layout": {
         "row": 1,
@@ -666,7 +666,7 @@
       "id": "rel-calendar-dsl-current",
       "from": "calendar-wc",
       "to": "event-dsl",
-      "label": "当前直接解析/编译 DSL",
+      "label": "组件直接解析 DSL 并构建 Runtime",
       "kind": "dependency",
       "visibility": "overview",
       "status": "supported",
@@ -681,9 +681,7 @@
           "note": "声明 @calenderjs/event-dsl 运行依赖。"
         }
       ],
-      "openQuestions": [
-        "此直接依赖与用户要求的包边界冲突，待后续实现决策。"
-      ]
+      "openQuestions": []
     },
     {
       "id": "rel-demo-editor",
@@ -722,9 +720,9 @@
   ],
   "constraints": [
     {
-      "id": "user-separate-dsl-and-calendar",
-      "name": "DSL 编辑/编译与 Calendar 显示保持独立包和功能边界",
-      "note": "用户明确要求两者是不同包、不同功能，不要混在一起；由应用层组合编辑器/DSL 编译与 Calendar 显示。此为对用户原话的归纳。",
+      "id": "user-calendar-renders-dsl-editor-separate",
+      "name": "Calendar 直接渲染 Event DSL，DSL 编辑器保持独立",
+      "note": "用户明确要求 Calendar 组件直接渲染 Event DSL；DSL 编辑与 Calendar 显示是不同包、不同功能，不要把编辑器混入 Calendar。",
       "origin": "user",
       "strength": "required",
       "applicability": "applicable",
@@ -739,7 +737,7 @@
       ],
       "relationships": [],
       "evidence": [],
-      "verification": "检查包依赖图与公开 API：Calendar 不导入/解析 event-dsl；宿主应用可组合 DSL 编辑器、event-dsl/event-runtime 与 Calendar Event[]。"
+      "verification": "检查 Calendar 直接接收 DSL 并应用渲染规则；DSL 编辑器仍由独立包提供，不把 Monaco 编辑 UI 并入 Calendar。"
     }
   ]
 }

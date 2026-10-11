@@ -10,7 +10,10 @@ import { EventTypeAST } from "@calenderjs/event-dsl";
  * Calendar 组件属性
  */
 export interface CalendarProps {
-  /** Event DSL 配置（文本或已解析的 AST） */
+  /** Event 类型 DSL 配置（文本或已解析的 AST） */
+  eventTypeDefinitions?: string | EventTypeAST | EventTypeAST[];
+
+  /** @deprecated 使用 eventTypeDefinitions */
   eventDSL?: string | EventTypeAST | EventTypeAST[];
 
   /** 事件数据 */
