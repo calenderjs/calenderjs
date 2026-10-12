@@ -11,6 +11,7 @@ import {
   sortEventsByTime,
   isEventInTimeRange,
   calculateEventPosition,
+  expandRecurringEvents,
 } from "../event-utils";
 
 // 创建测试事件
@@ -220,6 +221,34 @@ describe("event-utils", () => {
 
       expect(position.top).toBeGreaterThanOrEqual(0);
       expect(position.height).toBeGreaterThan(0);
+    });
+  });
+
+  describe("expandRecurringEvents", () => {
+    it("应该原样返回普通单次事件", () => {
+      const event = createTestEvent({ id: "single-1" });
+      const expanded = expandRecurringEvents([event]);
+      expect(expanded.length).toBe(1);
+      expect(expanded[0].id).toBe("single-1");
+    });
+
+    it("应该按 RecurringRule 展开重复事件", () => {
+      const recurringEvent = createTestEvent({
+        id: "rec-1",
+        startTime: new Date("2024-01-15T09:00:00"),
+        endTime: new Date("2024-01-15T10:00:00"),
+        recurring: {
+          frequency: "daily",
+          interval: 1,
+          count: 3,
+        },
+      });
+      const expanded = expandRecurringEvents([recurringEvent]);
+      expect(expanded.length).toBe(3);
+      expect(expanded[0].id).toBe("rec-1-1");
+      expect(expanded[1].id).toBe("rec-1-2");
+      expect(expanded[2].id).toBe("rec-1-3");
+      expect(expanded[0].parentEventId).toBe("rec-1");
     });
   });
 });

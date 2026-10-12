@@ -99,6 +99,26 @@ export interface CalendarProps {
   onDateDoubleClick?: (event: CustomEvent<{ date: Date }>) => void;
 
   /**
+   * 事件创建回调
+   */
+  onEventCreate?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
+   * 事件更新回调
+   */
+  onEventUpdate?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
+   * 事件删除回调
+   */
+  onEventDelete?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
+   * 时间槽点击回调
+   */
+  onSlotClick?: (event: CustomEvent<{ date: Date; hour: number }>) => void;
+
+  /**
    * 其他 HTML 属性
    */
   className?: string;
@@ -129,6 +149,21 @@ export interface CalendarRef {
    * 跳转到今天
    */
   goToToday: () => void;
+
+  /**
+   * 获取所有事件
+   */
+  getEvents: () => Event[];
+
+  /**
+   * 获取当前 Event DSL / 类型定义
+   */
+  getEventDSL: () => string | any | null;
+
+  /**
+   * 手动添加事件
+   */
+  addEvent: (event: Event) => boolean;
 }
 
 /**
@@ -145,6 +180,10 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onViewChange,
       onEventClick,
       onDateDoubleClick,
+      onEventCreate,
+      onEventUpdate,
+      onEventDelete,
+      onSlotClick,
       className,
       style,
       ...rest
@@ -187,6 +226,24 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         if (calendarRef.current) {
           (calendarRef.current as any).date = new Date();
         }
+      },
+      getEvents: () => {
+        if (calendarRef.current && typeof (calendarRef.current as any).getEvents === "function") {
+          return (calendarRef.current as any).getEvents();
+        }
+        return (calendarRef.current as any)?.events || [];
+      },
+      getEventDSL: () => {
+        if (calendarRef.current && typeof (calendarRef.current as any).getEventDSL === "function") {
+          return (calendarRef.current as any).getEventDSL();
+        }
+        return (calendarRef.current as any)?.eventTypeDefinitions ?? (calendarRef.current as any)?.eventDSL ?? null;
+      },
+      addEvent: (newEvent: Event) => {
+        if (calendarRef.current && typeof (calendarRef.current as any).addEvent === "function") {
+          return (calendarRef.current as any).addEvent(newEvent);
+        }
+        return false;
       },
     }));
 
@@ -236,16 +293,40 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         onDateDoubleClick?.(e as CustomEvent<{ date: Date }>);
       };
 
+      const handleEventCreate = (e: globalThis.Event) => {
+        onEventCreate?.(e as CustomEvent<{ event: Event }>);
+      };
+
+      const handleEventUpdate = (e: globalThis.Event) => {
+        onEventUpdate?.(e as CustomEvent<{ event: Event }>);
+      };
+
+      const handleEventDelete = (e: globalThis.Event) => {
+        onEventDelete?.(e as CustomEvent<{ event: Event }>);
+      };
+
+      const handleSlotClick = (e: globalThis.Event) => {
+        onSlotClick?.(e as CustomEvent<{ date: Date; hour: number }>);
+      };
+
       element.addEventListener("date-change", handleDateChange);
       element.addEventListener("view-change", handleViewChange);
       element.addEventListener("event-click", handleEventClick);
       element.addEventListener("date-double-click", handleDateDoubleClick);
+      element.addEventListener("event-create", handleEventCreate);
+      element.addEventListener("event-update", handleEventUpdate);
+      element.addEventListener("event-delete", handleEventDelete);
+      element.addEventListener("slot-click", handleSlotClick);
 
       return () => {
         element.removeEventListener("date-change", handleDateChange);
         element.removeEventListener("view-change", handleViewChange);
         element.removeEventListener("event-click", handleEventClick);
         element.removeEventListener("date-double-click", handleDateDoubleClick);
+        element.removeEventListener("event-create", handleEventCreate);
+        element.removeEventListener("event-update", handleEventUpdate);
+        element.removeEventListener("event-delete", handleEventDelete);
+        element.removeEventListener("slot-click", handleSlotClick);
       };
     }, [
       isClient,
@@ -253,6 +334,10 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onViewChange,
       onEventClick,
       onDateDoubleClick,
+      onEventCreate,
+      onEventUpdate,
+      onEventDelete,
+      onSlotClick,
     ]);
 
     // 服务器端渲染时返回占位符

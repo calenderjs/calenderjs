@@ -4,6 +4,29 @@
 
 import type { Event } from "@calenderjs/event-model";
 import { isSameDay, formatDateKey, isTimeInRange } from "@calenderjs/date-time";
+import { generateRecurringInstances } from "@calenderjs/core";
+
+/**
+ * 展开重复事件为具体实例
+ * 若事件包含 recurring 规则，则调用 generateRecurringInstances 展开；普通事件原样保留。
+ */
+export function expandRecurringEvents(events: Event[]): Event[] {
+  const result: Event[] = [];
+  for (const event of events) {
+    if (event.recurring) {
+      try {
+        const instances = generateRecurringInstances(event, event.recurring);
+        result.push(...instances);
+      } catch (e) {
+        console.warn(`Failed to generate recurring instances for event ${event.id}:`, e);
+        result.push(event);
+      }
+    } else {
+      result.push(event);
+    }
+  }
+  return result;
+}
 
 /**
  * 按日期分组事件

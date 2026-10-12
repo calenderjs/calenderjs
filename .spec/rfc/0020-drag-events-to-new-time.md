@@ -1,6 +1,6 @@
 # RFC 0020: Drag events to a new time (child of 0017)
 
-**Status:** Draft
+**Status:** Implemented
 
 **Parent:** [0017](0017-calendar-follow-ons.md)
 

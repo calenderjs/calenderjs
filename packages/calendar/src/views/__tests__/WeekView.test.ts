@@ -424,5 +424,79 @@ describe("WeekView 组件", () => {
       // 应该只显示周一的事件
       expect(eventElements.length).toBe(1);
     });
+
+    it("应该在点击时间槽时派发 slot-click 事件", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      weekView = document.createElement("wsx-week-view") as WeekView;
+      weekView.viewDate = viewDate;
+      container.appendChild(weekView);
+      await waitForComponentInit(weekView);
+
+      const slotHandler = vi.fn();
+      weekView.addEventListener("slot-click", slotHandler);
+
+      const shadowRoot = weekView.shadowRoot;
+      const hourCell = shadowRoot?.querySelector(".week-view-hour-cell") as HTMLElement;
+      expect(hourCell).toBeTruthy();
+
+      hourCell.click();
+      await waitForDOMUpdate();
+
+      expect(slotHandler).toHaveBeenCalledTimes(1);
+      const detail = slotHandler.mock.calls[0][0].detail;
+      expect(detail).toHaveProperty("date");
+      expect(detail).toHaveProperty("hour");
+    });
+
+    it("应该在按上下箭头键时派发 event-update-request 调整时间", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      const testEvent = createTestEvent({
+        id: "ev-move-1",
+        startTime: new Date(2024, 0, 15, 10, 0, 0),
+        endTime: new Date(2024, 0, 15, 11, 0, 0),
+      });
+
+      weekView = document.createElement("wsx-week-view") as WeekView;
+      weekView.viewDate = viewDate;
+      weekView.events = [testEvent];
+      container.appendChild(weekView);
+      await waitForComponentInit(weekView);
+
+      const updateHandler = vi.fn();
+      weekView.addEventListener("event-update-request", updateHandler);
+
+      const shadowRoot = weekView.shadowRoot;
+      const eventElem = shadowRoot?.querySelector(".week-view-event") as HTMLElement;
+      expect(eventElem).toBeTruthy();
+      expect(eventElem.getAttribute("draggable")).toBe("true");
+
+      // 模拟键盘下键（延后 1 小时）
+      eventElem.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      await waitForDOMUpdate();
+
+      expect(updateHandler).toHaveBeenCalledTimes(1);
+      const updatedEvent = updateHandler.mock.calls[0][0].detail.event;
+      expect(new Date(updatedEvent.startTime).getHours()).toBe(11);
+      expect(new Date(updatedEvent.endTime).getHours()).toBe(12);
+    });
+
+    it("应该包含拖拽时长调整手柄 week-view-resize-handle", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      const testEvent = createTestEvent({
+        id: "ev-resize-1",
+        startTime: new Date(2024, 0, 15, 10, 0, 0),
+        endTime: new Date(2024, 0, 15, 11, 0, 0),
+      });
+
+      weekView = document.createElement("wsx-week-view") as WeekView;
+      weekView.viewDate = viewDate;
+      weekView.events = [testEvent];
+      container.appendChild(weekView);
+      await waitForComponentInit(weekView);
+
+      const shadowRoot = weekView.shadowRoot;
+      const handle = shadowRoot?.querySelector(".week-view-resize-handle") as HTMLElement;
+      expect(handle).toBeTruthy();
+    });
   });
 });

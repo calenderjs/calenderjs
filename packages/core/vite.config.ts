@@ -11,8 +11,6 @@ export default defineConfig({
         "src/**/*.test.ts",
         "src/**/__tests__/**",
         "src/Calendar.ts",
-        "src/types.ts",
-        "src/utils/**",
       ],
     }),
   ],

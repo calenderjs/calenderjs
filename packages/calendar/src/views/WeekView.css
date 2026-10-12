@@ -229,3 +229,27 @@
   line-height: var(--calender-week-event-line-height, 1.3);
   margin-bottom: var(--calender-event-title-margin-bottom, 2px);
 }
+
+.week-view-event.draggable {
+  cursor: grab;
+}
+
+.week-view-event.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.week-view-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  cursor: ns-resize;
+  background: transparent;
+  z-index: 10;
+}
+
+.week-view-resize-handle:hover {
+  background: rgba(255, 255, 255, 0.4);
+}

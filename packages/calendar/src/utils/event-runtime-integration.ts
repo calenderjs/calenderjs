@@ -9,6 +9,7 @@ import type {
 } from "@calenderjs/event-model";
 import type { RenderContext, User, ValidationContext } from "@calenderjs/core";
 import { EventRuntime } from "@calenderjs/event-runtime";
+import { expandRecurringEvents } from "./event-utils";
 
 /** 从编译后的 Data Model 构建按 type 索引的 Runtime 映射 */
 export function createRuntimeMap(
@@ -38,19 +39,20 @@ export function mergeRenderedIntoEvent(
   };
 }
 
-/** 有 Runtime 时增强事件显示数据，否则原样返回 */
+/** 有 Runtime 时增强事件显示数据，展开重复事件为实例；否则原样展开返回 */
 export function getDisplayEvents(
   events: Event[],
   runtimeByType: Map<string, EventRuntime> | null,
   user?: User,
 ): Event[] {
+  const expanded = expandRecurringEvents(events);
   if (!runtimeByType || runtimeByType.size === 0) {
-    return events;
+    return expanded;
   }
 
   const renderContext: RenderContext = { user };
 
-  return events.map((event) => {
+  return expanded.map((event) => {
     const runtime = runtimeByType.get(event.type);
     if (!runtime) {
       return event;

@@ -225,6 +225,11 @@ export default class Calendar extends WebComponent {
             "event-delete",
             this.handleChildEventDelete
         );
+        this.shadowRoot?.addEventListener("slot-click", this.handleChildSlotClick);
+        this.shadowRoot?.addEventListener(
+            "event-update-request",
+            this.handleChildEventUpdateRequest
+        );
     }
 
     private removeEventListeners() {
@@ -237,6 +242,11 @@ export default class Calendar extends WebComponent {
         this.shadowRoot?.removeEventListener(
             "event-delete",
             this.handleChildEventDelete
+        );
+        this.shadowRoot?.removeEventListener("slot-click", this.handleChildSlotClick);
+        this.shadowRoot?.removeEventListener(
+            "event-update-request",
+            this.handleChildEventUpdateRequest
         );
     }
 
@@ -277,6 +287,41 @@ export default class Calendar extends WebComponent {
         this.dispatchEvent(
             new CustomEvent(type, { detail: { event }, bubbles: true })
         );
+    };
+
+    /** 点击时间槽：派发 slot-click 并提议创建默认 1 小时事件 */
+    private handleChildSlotClick = (e: globalThis.Event) => {
+        const { date, hour } = (e as CustomEvent<{ date: Date; hour: number }>).detail;
+        const slotDate = new Date(date);
+        this.dispatchEvent(
+            new CustomEvent("slot-click", {
+                detail: { date: slotDate, hour },
+                bubbles: true,
+            })
+        );
+
+        // 默认提议创建一个持续 1 小时的临时/新事件
+        const startTime = new Date(slotDate);
+        const endTime = new Date(slotDate.getTime() + 60 * 60 * 1000);
+        const defaultType = this._runtimeByType && this._runtimeByType.size > 0
+            ? Array.from(this._runtimeByType.keys())[0]
+            : "event";
+
+        const newEvent: CalendarEvent = {
+            id: `event-${Date.now()}`,
+            type: defaultType,
+            title: "新事件",
+            startTime,
+            endTime,
+        };
+
+        this.proposeEventCreate(newEvent);
+    };
+
+    /** 视图发起的事件更新请求（拖拽移动或改变时长） */
+    private handleChildEventUpdateRequest = (e: globalThis.Event) => {
+        const { event } = (e as CustomEvent<{ event: CalendarEvent }>).detail;
+        this.proposeEventUpdate(event);
     };
 
     // ========== 属性变化处理（对外使用 attribute） ==========
@@ -661,5 +706,33 @@ export default class Calendar extends WebComponent {
             })
         );
         return true;
+    }
+
+    /**
+     * 获取当前日历的所有事件列表
+     */
+    getEvents(): CalendarEvent[] {
+        return [...this._events];
+    }
+
+    /**
+     * 获取当前的 Event DSL / 事件类型定义
+     */
+    getEventDSL(): string | EventTypeAST | EventTypeAST[] | null {
+        return this._eventTypeDefinitions ?? this._eventDSL;
+    }
+
+    /**
+     * 获取当前的事件类型定义（规范命名）
+     */
+    getEventTypeDefinitions(): string | EventTypeAST | EventTypeAST[] | null {
+        return this.getEventDSL();
+    }
+
+    /**
+     * 手动添加新事件，自动过校验并派发 event-create
+     */
+    addEvent(event: CalendarEvent): boolean {
+        return this.proposeEventCreate(event);
     }
 }

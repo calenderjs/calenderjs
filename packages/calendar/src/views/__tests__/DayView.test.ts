@@ -374,5 +374,78 @@ describe("DayView 组件", () => {
       expect(countElement).toBeTruthy();
       expect(countElement!.textContent).toContain("2");
     });
+
+    it("应该在点击时间槽时派发 slot-click 事件", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      dayView = document.createElement("wsx-day-view") as DayView;
+      dayView.viewDate = viewDate;
+      container.appendChild(dayView);
+      await waitForComponentInit(dayView);
+
+      const slotHandler = vi.fn();
+      dayView.addEventListener("slot-click", slotHandler);
+
+      const shadowRoot = dayView.shadowRoot;
+      const hourCell = shadowRoot?.querySelector(".day-view-hour-cell") as HTMLElement;
+      expect(hourCell).toBeTruthy();
+
+      hourCell.click();
+      await waitForDOMUpdate();
+
+      expect(slotHandler).toHaveBeenCalledTimes(1);
+      const detail = slotHandler.mock.calls[0][0].detail;
+      expect(detail).toHaveProperty("date");
+      expect(detail).toHaveProperty("hour");
+    });
+
+    it("应该在按上下箭头键时派发 event-update-request 调整时间", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      const testEvent = createTestEvent({
+        id: "day-ev-move-1",
+        startTime: new Date(2024, 0, 15, 10, 0, 0),
+        endTime: new Date(2024, 0, 15, 11, 0, 0),
+      });
+
+      dayView = document.createElement("wsx-day-view") as DayView;
+      dayView.viewDate = viewDate;
+      dayView.events = [testEvent];
+      container.appendChild(dayView);
+      await waitForComponentInit(dayView);
+
+      const updateHandler = vi.fn();
+      dayView.addEventListener("event-update-request", updateHandler);
+
+      const shadowRoot = dayView.shadowRoot;
+      const eventElem = shadowRoot?.querySelector(".day-view-event") as HTMLElement;
+      expect(eventElem).toBeTruthy();
+      expect(eventElem.getAttribute("draggable")).toBe("true");
+
+      eventElem.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      await waitForDOMUpdate();
+
+      expect(updateHandler).toHaveBeenCalledTimes(1);
+      const updatedEvent = updateHandler.mock.calls[0][0].detail.event;
+      expect(new Date(updatedEvent.startTime).getHours()).toBe(11);
+      expect(new Date(updatedEvent.endTime).getHours()).toBe(12);
+    });
+
+    it("应该包含拖拽时长调整手柄 day-view-resize-handle", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      const testEvent = createTestEvent({
+        id: "day-ev-resize-1",
+        startTime: new Date(2024, 0, 15, 10, 0, 0),
+        endTime: new Date(2024, 0, 15, 11, 0, 0),
+      });
+
+      dayView = document.createElement("wsx-day-view") as DayView;
+      dayView.viewDate = viewDate;
+      dayView.events = [testEvent];
+      container.appendChild(dayView);
+      await waitForComponentInit(dayView);
+
+      const shadowRoot = dayView.shadowRoot;
+      const handle = shadowRoot?.querySelector(".day-view-resize-handle") as HTMLElement;
+      expect(handle).toBeTruthy();
+    });
   });
 });

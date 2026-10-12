@@ -543,7 +543,7 @@ name: 会议
     });
   });
 
-  describe("组件属性访问", () => {
+  describe("组件属性访问与公开 API", () => {
     it("应该能够读取和设置属性", async () => {
       calendar = document.createElement("wsx-calendar") as Calendar;
 
@@ -556,6 +556,43 @@ name: 会议
       expect(calendar.defaultView).toBe("day");
       expect(calendar.events.length).toBe(1);
       expect(calendar.user?.email).toBe("test@example.com");
+    });
+
+    it("应该支持 getEvents() 获取当前事件", async () => {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      calendar.events = [createTestEvent({ id: "e-1" }), createTestEvent({ id: "e-2" })];
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      const events = calendar.getEvents();
+      expect(events.length).toBe(2);
+      expect(events[0].id).toBe("e-1");
+      expect(events[1].id).toBe("e-2");
+    });
+
+    it("应该支持 getEventDSL() 和 getEventTypeDefinitions() 获取定义", async () => {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      calendar.eventTypeDefinitions = "event_type Meeting { field topic: string }";
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      expect(calendar.getEventDSL()).toBe("event_type Meeting { field topic: string }");
+      expect(calendar.getEventTypeDefinitions()).toBe("event_type Meeting { field topic: string }");
+    });
+
+    it("应该支持 addEvent() 手动添加新事件并触发校验与派发", async () => {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      const createHandler = vi.fn();
+      calendar.addEventListener("event-create", createHandler);
+
+      const newEvent = createTestEvent({ id: "manual-add-1", title: "手动事件" });
+      const success = calendar.addEvent(newEvent);
+      expect(success).toBe(true);
+      expect(createHandler).toHaveBeenCalledTimes(1);
+      expect(createHandler.mock.calls[0][0].detail.event.id).toBe("manual-add-1");
     });
   });
 
