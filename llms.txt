@@ -11,9 +11,10 @@
 
 ## Architecture
 
-- [.spec/rfc/0005-calendar-component.md](.spec/rfc/0005-calendar-component.md): Calendar 组件设计（In Progress）
+- [.spec/rfc/completed/0005-calendar-component.md](.spec/rfc/completed/0005-calendar-component.md): Calendar 组件设计（Implemented）
 - [.spec/rfc/completed/0002-event-dsl.md](.spec/rfc/completed/0002-event-dsl.md): Event DSL 语法与编译管线（已归档）
-- [.spec/rfc/0011-event-data-model-integration.md](.spec/rfc/0011-event-data-model-integration.md): Event 数据模型与 DSL 集成（Draft）
+- [.spec/rfc/completed/0011-event-data-model-integration.md](.spec/rfc/completed/0011-event-data-model-integration.md): Event 数据模型与 DSL 集成（Implemented）
+- [.spec/rfc/completed/0017-calendar-follow-ons.md](.spec/rfc/completed/0017-calendar-follow-ons.md): Calendar 交互与虚拟滚动 Umbrella（Implemented）
 - [.spec/rfc/completed/0008-calendar-component-api-redesign.md](.spec/rfc/completed/0008-calendar-component-api-redesign.md): Calendar API（Implemented）
 - [.spec/rfc/completed/0014-event-runtime-timezone-field-semantics.md](.spec/rfc/completed/0014-event-runtime-timezone-field-semantics.md): EventRuntime 时间字段时区语义（Implemented）
 - [.spec/rfc/completed/0015-react-demo-e2e.md](.spec/rfc/completed/0015-react-demo-e2e.md): React Demo 浏览器端到端验收（Implemented）

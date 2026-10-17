@@ -22,15 +22,15 @@ RFC-0005 同时写了运行时门禁、显示合并、拖拽、改时长、视�
 
 ## Children
 
-| RFC | Concern |
-|-----|---------|
-| [0024](completed/0024-rename-event-dsl-property.md) | Rename eventDSL to eventTypeDefinitions |
-| [0018](completed/0018-gate-actions-with-can-perform.md) | Gate edit and delete with canPerform |
-| [0019](completed/0019-merge-runtime-description.md) | Merge runtime description into display events |
-| [0020](0020-drag-events-to-new-time.md) | Drag events to a new time |
-| [0021](0021-resize-event-duration.md) | Resize event duration by dragging the edge |
-| [0022](0022-animate-view-switch.md) | Animate calendar view switches |
-| [0023](0023-virtualize-event-list.md) | Virtualize large event lists |
+| RFC                                           | Concern                                       |
+| --------------------------------------------- | --------------------------------------------- |
+| [0024](0024-rename-event-dsl-property.md)     | Rename eventDSL to eventTypeDefinitions       |
+| [0018](0018-gate-actions-with-can-perform.md) | Gate edit and delete with canPerform          |
+| [0019](0019-merge-runtime-description.md)     | Merge runtime description into display events |
+| [0020](0020-drag-events-to-new-time.md)       | Drag events to a new time                     |
+| [0021](0021-resize-event-duration.md)         | Resize event duration by dragging the edge    |
+| [0022](0022-animate-view-switch.md)           | Animate calendar view switches                |
+| [0023](0023-virtualize-event-list.md)         | Virtualize large event lists                  |
 
 ## Acceptance
 

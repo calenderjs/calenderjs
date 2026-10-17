@@ -2,7 +2,7 @@
 
 **Status:** Implemented
 
-**Parent:** [0017](../0017-calendar-follow-ons.md)
+**Parent:** [0017](0017-calendar-follow-ons.md)
 
 ## Summary
 

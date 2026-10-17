@@ -5,7 +5,7 @@
 **创建日期**: 2024-12-30  
 **作者**: WSX Team  
 **关联**: RFC-0001 (Event DSL), RFC-0008 (API Redesign)  
-**被取代**: [RFC-0005](../0005-calendar-component.md)（在纯数据驱动基础上增加 DSL 驱动）
+**被取代**: [RFC-0005](0005-calendar-component.md)（在纯数据驱动基础上增加 DSL 驱动）
 
 ## 摘要
 

@@ -100,12 +100,12 @@ calendar.user = currentUser; // User - 当前用户
 calendar.eventTypeDefinitions = meetingDSL; // DSL 定义；Calendar 直接编译并渲染
 ```
 
-| Property       | 类型           | 必需 | 说明                            |
-| -------------- | -------------- | ---- | ------------------------------- |
-| `events`       | `Event[]`      | 是   | 事件列表（数据模型）            |
-| `user`         | `User`         | 否   | 当前用户（权限验证用）          |
-| `eventTypeDefinitions` | `string \| EventTypeAST \| EventTypeAST[]` | 否 | DSL 事件类型定义；Calendar 直接解析/编译并应用规则；别名兼容见 RFC-0024 |
-| `eventRuntime` | `EventRuntime` | 否 | 预编译单类型 Runtime 的注入入口 |
+| Property               | 类型                                       | 必需 | 说明                                                                    |
+| ---------------------- | ------------------------------------------ | ---- | ----------------------------------------------------------------------- |
+| `events`               | `Event[]`                                  | 是   | 事件列表（数据模型）                                                    |
+| `user`                 | `User`                                     | 否   | 当前用户（权限验证用）                                                  |
+| `eventTypeDefinitions` | `string \| EventTypeAST \| EventTypeAST[]` | 否   | DSL 事件类型定义；Calendar 直接解析/编译并应用规则；别名兼容见 RFC-0024 |
+| `eventRuntime`         | `EventRuntime`                             | 否   | 预编译单类型 Runtime 的注入入口                                         |
 
 **实现方式**：getter/setter 模式，setter 中处理 JSON string 和 object 两种输入。
 
@@ -515,15 +515,15 @@ packages/calendar/
 
 从本 RFC 拆出的事项见 [RFC-0017](0017-calendar-follow-ons.md)，不再在这里跟踪：
 
-| 事项 | RFC |
-| ---- | --- |
-| `eventDSL` 改名为 `eventTypeDefinitions` | [0024](completed/0024-rename-event-dsl-property.md) |
-| 编辑/删除前的 `canPerform` | [0018](completed/0018-gate-actions-with-can-perform.md) |
-| 把 `description` 和标题模板合并进显示事件 | [0019](completed/0019-merge-runtime-description.md) |
-| 拖到新时刻 | [0020](0020-drag-events-to-new-time.md) |
-| 拖边缘改时长 | [0021](0021-resize-event-duration.md) |
-| 视图切换动画 | [0022](0022-animate-view-switch.md) |
-| 大量事件虚拟化 | [0023](0023-virtualize-event-list.md) |
+| 事项                                      | RFC                                           |
+| ----------------------------------------- | --------------------------------------------- |
+| `eventDSL` 改名为 `eventTypeDefinitions`  | [0024](0024-rename-event-dsl-property.md)     |
+| 编辑/删除前的 `canPerform`                | [0018](0018-gate-actions-with-can-perform.md) |
+| 把 `description` 和标题模板合并进显示事件 | [0019](0019-merge-runtime-description.md)     |
+| 拖到新时刻                                | [0020](0020-drag-events-to-new-time.md)       |
+| 拖边缘改时长                              | [0021](0021-resize-event-duration.md)         |
+| 视图切换动画                              | [0022](0022-animate-view-switch.md)           |
+| 大量事件虚拟化                            | [0023](0023-virtualize-event-list.md)         |
 
 `extra` → `data` 属于 RFC-0011。插件属于 RFC-0012。今天高亮属于 RFC-0013。API 分层属于 RFC-0008。性能数字属于 RFC-0023。
 

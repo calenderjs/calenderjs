@@ -8,19 +8,19 @@
 
 ## 1. Task routing
 
-| If you need to…                  | Read first                                          | Edit                                             |
-| -------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
-| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                  | `packages/calendar/src/views/*.wsx`              |
-| Change Calendar API / props      | `.spec/rfc/completed/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx` |
-| Modify Event data shape          | `.spec/rfc/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`              |
-| Change DSL syntax / parser       | `.spec/rfc/completed/0002-event-dsl.md`              | `packages/event-dsl/src/event-dsl.pegjs`         |
-| Change DSL compiler output       | `.spec/rfc/completed/0002-event-dsl.md`              | `packages/event-dsl/src/compiler.ts`             |
-| Runtime validate/render/behavior | `packages/event-dsl/README.md`                      | `packages/event-runtime/src/`                    |
-| React calendar wrapper / demo    | `packages/react/README.md`                          | `packages/react/src/`, `demos/react/`            |
-| React Event DSL editor           | `packages/react-event-editor/README.md`             | `packages/react-event-editor/src/`               |
-| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md`               | `packages/monaco-event-dsl/src/`                 |
-| Date/time utilities              | —                                                   | `packages/date-time/src/`                        |
-| Add RFC-level feature            | `.spec/ROADMAP.md`                                  | `.spec/rfc/` (create/update RFC **before** code) |
+| If you need to…                  | Read first                                                    | Edit                                             |
+| -------------------------------- | ------------------------------------------------------------- | ------------------------------------------------ |
+| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                            | `packages/calendar/src/views/*.wsx`              |
+| Change Calendar API / props      | `.spec/rfc/completed/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`             |
+| Modify Event data shape          | `.spec/rfc/completed/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`              |
+| Change DSL syntax / parser       | `.spec/rfc/completed/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`         |
+| Change DSL compiler output       | `.spec/rfc/completed/0002-event-dsl.md`                       | `packages/event-dsl/src/compiler.ts`             |
+| Runtime validate/render/behavior | `packages/event-dsl/README.md`                                | `packages/event-runtime/src/`                    |
+| React calendar wrapper / demo    | `packages/react/README.md`                                    | `packages/react/src/`, `demos/react/`            |
+| React Event DSL editor           | `packages/react-event-editor/README.md`                       | `packages/react-event-editor/src/`               |
+| Monaco Event DSL language plugin | `packages/monaco-event-dsl/README.md`                         | `packages/monaco-event-dsl/src/`                 |
+| Date/time utilities              | —                                                             | `packages/date-time/src/`                        |
+| Add RFC-level feature            | `.spec/ROADMAP.md`                                            | `.spec/rfc/` (create/update RFC **before** code) |
 
 ---
 
@@ -28,22 +28,22 @@
 
 Use these markers when reasoning about the codebase. **Do not assume PLANNED features exist.**
 
-| Feature                                          | Status               | Notes                          |
-| ------------------------------------------------ | -------------------- | ------------------------------ |
-| Month/Week/Day views                             | **IMPLEMENTED**      | `packages/calendar/src/views/` |
-| Today highlight                                  | **IMPLEMENTED**      | RFC-0013                       |
-| Calendar API (observedAttributes, getter/setter) | **IMPLEMENTED**      | RFC-0008                       |
-| Pure data-driven rendering (`events` prop)       | **IMPLEMENTED**      | No runtime required            |
-| React wrapper + demo                             | **IMPLEMENTED**      | RFC-0004                       |
-| Event DSL parse/compile                          | **IMPLEMENTED**      | `packages/event-dsl/`          |
-| EventRuntime (validate/render/canPerform)        | **IMPLEMENTED**      | Not yet wired into Calendar    |
-| Calendar `eventRuntime` property                 | **IMPLEMENTED**      | RFC-0005 M4                    |
-| DSL-driven render via `displayEvents`            | **IMPLEMENTED**      | Uses `EventRuntime.render()`   |
-| validate / canPerform / proposeEvent*            | **IMPLEMENTED**      | Calendar.wsx public methods    |
-| `extra` → `data` rename                          | **IMPLEMENTED**      | RFC-0011 — use `Event.data`    |
-| EventDataGenerator                               | **PLANNED**          | RFC-0011                       |
-| Calendar plugin mechanism                        | **PLANNED**          | RFC-0012                       |
-| Multi-tenant SaaS (spec in sibling `../site/.spec/rfc`) | **DO NOT IMPLEMENT** | RFC-0003 正文已迁出本仓 |
+| Feature                                                 | Status               | Notes                                    |
+| ------------------------------------------------------- | -------------------- | ---------------------------------------- |
+| Month/Week/Day views                                    | **IMPLEMENTED**      | `packages/calendar/src/views/`           |
+| Today highlight                                         | **IMPLEMENTED**      | RFC-0013                                 |
+| Calendar API (observedAttributes, getter/setter)        | **IMPLEMENTED**      | RFC-0008                                 |
+| Pure data-driven rendering (`events` prop)              | **IMPLEMENTED**      | No runtime required                      |
+| React wrapper + demo                                    | **IMPLEMENTED**      | RFC-0004                                 |
+| Event DSL parse/compile                                 | **IMPLEMENTED**      | `packages/event-dsl/`                    |
+| EventRuntime (validate/render/canPerform)               | **IMPLEMENTED**      | Wired into Calendar (RFC-0005, RFC-0018) |
+| Calendar `eventRuntime` property                        | **IMPLEMENTED**      | RFC-0005 M4                              |
+| DSL-driven render via `displayEvents`                   | **IMPLEMENTED**      | Uses `EventRuntime.render()`             |
+| validate / canPerform / proposeEvent*                   | **IMPLEMENTED**      | Calendar.wsx public methods              |
+| `extra` → `data` rename                                 | **IMPLEMENTED**      | RFC-0011 — use `Event.data`              |
+| EventDataGenerator                                      | **IMPLEMENTED**      | RFC-0011                                 |
+| Calendar plugin mechanism                               | **PLANNED**          | RFC-0012                                 |
+| Multi-tenant SaaS (spec in sibling `../site/.spec/rfc`) | **DO NOT IMPLEMENT** | RFC-0003 正文已迁出本仓                  |
 
 ---
 
@@ -174,16 +174,16 @@ pnpm --filter @calenderjs/event-dsl build
 
 ## 8. Common mistakes (avoid)
 
-| Mistake                                       | Correct                                      |
-| --------------------------------------------- | -------------------------------------------- |
-| Import Calendar from `@calenderjs/core`       | Import from `@calenderjs/calendar`           |
-| Use Vue refs in `.wsx`                        | Use `@state` decorator                       |
-| Use `extra` field on Event                    | Use `data`                                   |
-| Assume `eventRuntime` prop exists on Calendar | Not implemented yet — check TASK_TRACKING    |
-| Run `npx vitest`                              | `pnpm --filter @calenderjs/calendar test`    |
+| Mistake                                        | Correct                                      |
+| ---------------------------------------------- | -------------------------------------------- |
+| Import Calendar from `@calenderjs/core`        | Import from `@calenderjs/calendar`           |
+| Use Vue refs in `.wsx`                         | Use `@state` decorator                       |
+| Use `extra` field on Event                     | Use `data`                                   |
+| Assume `eventRuntime` prop exists on Calendar  | Not implemented yet — check TASK_TRACKING    |
+| Run `npx vitest`                               | `pnpm --filter @calenderjs/calendar test`    |
 | Implement RFC-0003 in this monorepo / `./site` | Spec lives in `../site/.spec/rfc/` only      |
-| Skip `updateComplete` in WSX tests            | `await element.updateComplete` before assert |
-| Hand-edit `generated/parser.js`               | Edit `.pegjs` and rebuild                    |
+| Skip `updateComplete` in WSX tests             | `await element.updateComplete` before assert |
+| Hand-edit `generated/parser.js`                | Edit `.pegjs` and rebuild                    |
 
 ---
 

@@ -42,6 +42,7 @@
 两 job 均用 `actions/setup-node@v4`（node-version 对齐 `engines` 区间内的 22.x LTS）+ `pnpm/action-setup@v4`（version 对齐 `packageManager: pnpm@10.27.0`），pnpm store 走 `actions/cache` 缓存。
 
 涉及文件：
+
 - 新增 `.github/workflows/pull-request.yml`
 - 不改动任何现有 package.json / turbo.json / RFC-0015 脚本
 

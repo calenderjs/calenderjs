@@ -4,32 +4,32 @@
 
 ## RFC 状态总览
 
-| RFC  | 标题 | 状态 | 优先级 | 备注 |
-| ---- | ---- | ---- | ------ | ---- |
-| 0002 | [Event DSL](rfc/completed/0002-event-dsl.md) | **Implemented** | — | standalone 已归档；Calendar/Generator 债分别归 0005/0011 |
-| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | **Implemented** | **P1** | 只含日历本体；后续子项（0017 傘下 7 项）均已落地 |
-| 0017 | [Calendar follow-ons](rfc/0017-calendar-follow-ons.md) | **Implemented** | **P1** | Umbrella（7 项子 RFC 均已落地） |
-| 0018 | [Gate edit and delete with canPerform](rfc/completed/0018-gate-actions-with-can-perform.md) | Implemented | **P1** | child of 0017 |
-| 0019 | [Merge runtime description into display events](rfc/completed/0019-merge-runtime-description.md) | Implemented | **P1** | child of 0017 |
-| 0020 | [Drag events to a new time](rfc/completed/0020-drag-events-to-new-time.md) | Implemented | **P2** | child of 0017 |
-| 0021 | [Resize event duration by dragging the edge](rfc/completed/0021-resize-event-duration.md) | Implemented | **P2** | child of 0017 |
-| 0022 | [Animate calendar view switches](rfc/0022-animate-view-switch.md) | **Implemented** | **P3** | child of 0017 |
-| 0023 | [Virtualize large event lists](rfc/0023-virtualize-event-list.md) | **Implemented** | **P3** | child of 0017 |
-| 0024 | [Rename eventDSL to eventTypeDefinitions](rfc/completed/0024-rename-event-dsl-property.md) | Implemented | **P1** | child of 0017 |
-| 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |
-| 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md) | **Superseded** | — | 由 RFC-0005 取代；归档 `completed/0009-*` |
-| 0010 | [Week View 布局修复](rfc/completed/0010-week-view-layout-fix.md) | **Implemented** | — | Google Calendar 风格布局 |
-| 0016 | [周视图表头与时段列对齐](rfc/completed/0016-week-view-column-alignment.md) | **Implemented** | — | 滚动条不再只压缩时段网格；与 0010 的 key 错位无关 |
-| 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md) | **Implemented** | — | MonthView/DayView/WeekView |
-| 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md) | **Implemented** | — | 属性/状态分层、observedAttributes、getter/setter |
-| 0011 | [Event 数据模型与 DSL 集成](rfc/0011-event-data-model-integration.md) | **Implemented** | **P1** | `data` 与 EventDataGenerator 均已落地，单测与 E2E 完备 |
-| 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md) | Draft | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器 |
-| 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md) | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC |
-| 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md) | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁 |
-| 0006 | [Documentation & Examples](rfc/0006-documentation-and-examples.md) | Draft | **P3** | site 已有基础框架，文档内容待补全 |
-| 0007 | [VS Code Extension & Online Editor](rfc/0007-vscode-extension-and-online-editor.md) | Draft | **P4** | 未来特性 |
-| 0003 | [Multi-Tenant Service](../../site/.spec/rfc/0003-multi-tenant-service.md) | Future Plan | **P5** | **规格已迁至兄弟仓** `../site/.spec/rfc/`；本仓无正文；勿在本仓/`./site` 实现 |
-| 0025 | [CI: Pull Request Workflow (Unit + E2E)](rfc/completed/0025-ci-pull-request-workflow.md) | **Implemented** | — | PR 并行 unit-test + e2e-test（三引擎 + RFC-0015 覆盖率门槛） |
+| RFC  | 标题                                                                                             | 状态            | 优先级 | 备注                                                                          |
+| ---- | ------------------------------------------------------------------------------------------------ | --------------- | ------ | ----------------------------------------------------------------------------- |
+| 0002 | [Event DSL](rfc/completed/0002-event-dsl.md)                                                     | **Implemented** | —      | standalone 已归档；Calendar/Generator 债分别归 0005/0011                      |
+| 0005 | [Calendar Component](rfc/completed/0005-calendar-component.md)                                   | **Implemented** | **P1** | 只含日历本体；后续子项（0017 傘下 7 项）均已落地                              |
+| 0017 | [Calendar follow-ons](rfc/completed/0017-calendar-follow-ons.md)                                 | **Implemented** | **P1** | Umbrella（7 项子 RFC 均已落地）                                               |
+| 0018 | [Gate edit and delete with canPerform](rfc/completed/0018-gate-actions-with-can-perform.md)      | Implemented     | **P1** | child of 0017                                                                 |
+| 0019 | [Merge runtime description into display events](rfc/completed/0019-merge-runtime-description.md) | Implemented     | **P1** | child of 0017                                                                 |
+| 0020 | [Drag events to a new time](rfc/completed/0020-drag-events-to-new-time.md)                       | Implemented     | **P2** | child of 0017                                                                 |
+| 0021 | [Resize event duration by dragging the edge](rfc/completed/0021-resize-event-duration.md)        | Implemented     | **P2** | child of 0017                                                                 |
+| 0022 | [Animate calendar view switches](rfc/completed/0022-animate-view-switch.md)                      | **Implemented** | **P3** | child of 0017                                                                 |
+| 0023 | [Virtualize large event lists](rfc/completed/0023-virtualize-event-list.md)                      | **Implemented** | **P3** | child of 0017                                                                 |
+| 0024 | [Rename eventDSL to eventTypeDefinitions](rfc/completed/0024-rename-event-dsl-property.md)       | Implemented     | **P1** | child of 0017                                                                 |
+| 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md)                                    | **Implemented** | —      | @calenderjs/react + demos/react                                               |
+| 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md)                        | **Superseded**  | —      | 由 RFC-0005 取代；归档 `completed/0009-*`                                     |
+| 0010 | [Week View 布局修复](rfc/completed/0010-week-view-layout-fix.md)                                 | **Implemented** | —      | Google Calendar 风格布局                                                      |
+| 0016 | [周视图表头与时段列对齐](rfc/completed/0016-week-view-column-alignment.md)                       | **Implemented** | —      | 滚动条不再只压缩时段网格；与 0010 的 key 错位无关                             |
+| 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md)                                     | **Implemented** | —      | MonthView/DayView/WeekView                                                    |
+| 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md)                   | **Implemented** | —      | 属性/状态分层、observedAttributes、getter/setter                              |
+| 0011 | [Event 数据模型与 DSL 集成](rfc/completed/0011-event-data-model-integration.md)                  | **Implemented** | **P1** | `data` 与 EventDataGenerator 均已落地，单测与 E2E 完备                        |
+| 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md)                                       | Draft           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
+| 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md)    | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                          |
+| 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md)                              | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁                       |
+| 0006 | [Documentation & Examples](rfc/0006-documentation-and-examples.md)                               | Draft           | **P3** | site 已有基础框架，文档内容待补全                                             |
+| 0007 | [VS Code Extension & Online Editor](rfc/0007-vscode-extension-and-online-editor.md)              | Draft           | **P4** | 未来特性                                                                      |
+| 0003 | [Multi-Tenant Service](../../site/.spec/rfc/0003-multi-tenant-service.md)                        | Future Plan     | **P5** | **规格已迁至兄弟仓** `../site/.spec/rfc/`；本仓无正文；勿在本仓/`./site` 实现 |
+| 0025 | [CI: Pull Request Workflow (Unit + E2E)](rfc/completed/0025-ci-pull-request-workflow.md)         | **Implemented** | —      | PR 并行 unit-test + e2e-test（三引擎 + RFC-0015 覆盖率门槛）                  |
 
 ## 关键架构决策（2026-03-15 确认）
 
@@ -94,16 +94,16 @@
 
 ## 已实现的包
 
-| 包                               | 状态               | 说明                                          |
-| -------------------------------- | ------------------ | --------------------------------------------- |
-| `@calenderjs/core`               | Implemented        | 核心模型、上下文、工具函数                    |
-| `@calenderjs/calendar`           | Implemented        | WSX 日历组件（月/周/日视图，DSL 驱动，拖拽/伸缩/动画/虚拟化） |
-| `@calenderjs/event-model`        | Implemented        | Event 接口 SSOT、验证器、JSON Schema          |
-| `@calenderjs/event-dsl`          | Implemented        | PEG.js 语法、解析器、编译器、生成器           |
-| `@calenderjs/event-runtime`      | Implemented        | EventRuntime：验证、渲染、权限                |
-| `@calenderjs/date-time`          | Implemented        | 日期时间工具函数                              |
-| `@calenderjs/react`              | Implemented        | React 日历封装（Calendar、ResizableSplitter） |
-| `@calenderjs/react-event-editor` | Implemented        | React Event DSL 编辑器（Monaco）              |
-| `@calenderjs/monaco-event-dsl`   | Implemented        | Monaco Editor DSL 语言插件                    |
-| `site/`                          | Implemented        | WSX 官网（i18n、路由、文档）                  |
-| `demos/react/`                   | Implemented        | React Demo（DSL 编辑器 + Calendar）           |
+| 包                               | 状态        | 说明                                                          |
+| -------------------------------- | ----------- | ------------------------------------------------------------- |
+| `@calenderjs/core`               | Implemented | 核心模型、上下文、工具函数                                    |
+| `@calenderjs/calendar`           | Implemented | WSX 日历组件（月/周/日视图，DSL 驱动，拖拽/伸缩/动画/虚拟化） |
+| `@calenderjs/event-model`        | Implemented | Event 接口 SSOT、验证器、JSON Schema                          |
+| `@calenderjs/event-dsl`          | Implemented | PEG.js 语法、解析器、编译器、生成器                           |
+| `@calenderjs/event-runtime`      | Implemented | EventRuntime：验证、渲染、权限                                |
+| `@calenderjs/date-time`          | Implemented | 日期时间工具函数                                              |
+| `@calenderjs/react`              | Implemented | React 日历封装（Calendar、ResizableSplitter）                 |
+| `@calenderjs/react-event-editor` | Implemented | React Event DSL 编辑器（Monaco）                              |
+| `@calenderjs/monaco-event-dsl`   | Implemented | Monaco Editor DSL 语言插件                                    |
+| `site/`                          | Implemented | WSX 官网（i18n、路由、文档）                                  |
+| `demos/react/`                   | Implemented | React Demo（DSL 编辑器 + Calendar）                           |

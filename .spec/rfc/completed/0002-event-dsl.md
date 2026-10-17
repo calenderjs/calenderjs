@@ -366,14 +366,14 @@ const canEdit = runtime.canPerform("edit", event, user);
 
 EventRuntime 通过以下路径解析验证表达式中的字段：
 
-| 路径              | 解析为                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| `title`           | `event.title`                                                                              |
+| 路径              | 解析为                                                                           |
+| ----------------- | -------------------------------------------------------------------------------- |
+| `title`           | `event.title`                                                                    |
 | `startTime.hour`  | 按 [RFC-0014](0014-event-runtime-timezone-field-semantics.md) 的事件时区语义解析 |
-| `attendees.count` | `event.data.attendees.length`                                                              |
-| `priority`        | `event.data.priority`                                                                      |
-| `user.role`       | `context.user.role`                                                                        |
-| `duration`        | `endTime - startTime`（分钟）                                                              |
+| `attendees.count` | `event.data.attendees.length`                                                    |
+| `priority`        | `event.data.priority`                                                            |
+| `user.role`       | `context.user.role`                                                              |
+| `duration`        | `endTime - startTime`（分钟）                                                    |
 
 ## 包结构
 
@@ -410,23 +410,23 @@ packages/event-model/                  ← SSOT：Event 接口 + 基础验证
 
 ## 实现状态
 
-| 模块                 | 状态    | 说明                                                         |
-| -------------------- | ------- | ------------------------------------------------------------ |
-| PEG.js 语法 + 解析器 | ✅ 完成 | 支持全部 sections 和语法                                     |
-| AST 类型定义         | ✅ 完成 | EventTypeAST + 子类型                                        |
-| EventDSLCompiler     | ✅ 完成 | DSL → DataModel                                              |
-| JSON Schema 生成     | ✅ 完成 | fields → Draft-07 Schema                                     |
-| TypeScript 生成      | ✅ 完成 | fields → TS interface                                        |
-| EventRuntime         | ✅ 完成 | validate / render / canPerform（时区语义见 RFC-0014）        |
+| 模块                 | 状态    | 说明                                                  |
+| -------------------- | ------- | ----------------------------------------------------- |
+| PEG.js 语法 + 解析器 | ✅ 完成 | 支持全部 sections 和语法                              |
+| AST 类型定义         | ✅ 完成 | EventTypeAST + 子类型                                 |
+| EventDSLCompiler     | ✅ 完成 | DSL → DataModel                                       |
+| JSON Schema 生成     | ✅ 完成 | fields → Draft-07 Schema                              |
+| TypeScript 生成      | ✅ 完成 | fields → TS interface                                 |
+| EventRuntime         | ✅ 完成 | validate / render / canPerform（时区语义见 RFC-0014） |
 
 **Out of scope（peer，不挡本 RFC 关单）**
 
-| 模块                    | 归属 RFC | 说明                                      |
-| ----------------------- | -------- | ----------------------------------------- |
-| EventDataGenerator      | RFC-0011 | 从 DSL 生成 Event 数据实例                |
-| Calendar EventRuntime   | RFC-0005 | Calendar 接受 / 使用 EventRuntime         |
+| 模块                    | 归属 RFC | 说明                                       |
+| ----------------------- | -------- | ------------------------------------------ |
+| EventDataGenerator      | RFC-0011 | 从 DSL 生成 Event 数据实例                 |
+| Calendar EventRuntime   | RFC-0005 | Calendar 接受 / 使用 EventRuntime          |
 | `extra` → `data` 重命名 | RFC-0011 | 代码已落地；契约对账与 Generator 同属 0011 |
-| Calendar 插件机制       | RFC-0012 | 按 Event.type 注册渲染器                  |
+| Calendar 插件机制       | RFC-0012 | 按 Event.type 注册渲染器                   |
 
 ## Acceptance
 

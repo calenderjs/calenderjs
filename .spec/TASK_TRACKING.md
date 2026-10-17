@@ -8,13 +8,13 @@
 
 ### 阶段 0: 关 RFC-0002 Event DSL — **已完成**
 
-| # | 任务 | 状态 | 文件 |
-| --- | --- | --- | --- |
-| 1 | Acceptance 收窄：仅语法/编译/Schema·TS/EventRuntime 契约/包测 | Done | `.spec/rfc/completed/0002-event-dsl.md` |
-| 2 | 实现状态表剥除 Calendar / EventDataGenerator / `extra`→`data`（改指向 0005/0011） | Done | `.spec/rfc/completed/0002-event-dsl.md` |
-| 3 | 补 `**Status:**` + `## Summary`（specify validate） | Done | `.spec/rfc/completed/0002-event-dsl.md` |
-| 4 | `specify archive 0002` | Done | `.spec/rfc/completed/0002-event-dsl.md` |
-| 5 | ROADMAP / TASK / sync-check 对齐 | Done | `.spec/` |
+| #   | 任务                                                                              | 状态 | 文件                                    |
+| --- | --------------------------------------------------------------------------------- | ---- | --------------------------------------- |
+| 1   | Acceptance 收窄：仅语法/编译/Schema·TS/EventRuntime 契约/包测                     | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 2   | 实现状态表剥除 Calendar / EventDataGenerator / `extra`→`data`（改指向 0005/0011） | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 3   | 补 `**Status:**` + `## Summary`（specify validate）                               | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 4   | `specify archive 0002`                                                            | Done | `.spec/rfc/completed/0002-event-dsl.md` |
+| 5   | ROADMAP / TASK / sync-check 对齐                                                  | Done | `.spec/`                                |
 
 ### 阶段 1: `extra` → `data` 对账 (RFC-0011 前置，代码已落地)
 
@@ -44,15 +44,15 @@
 
 0005 只保留日历本体。从 0005 拆出的 7 项子 RFC 均已落地完成：
 
-| 事项 | RFC | 状态 |
-| --- | --- | --- |
+| 事项                            | RFC  | 状态 |
+| ------------------------------- | ---- | ---- |
 | 属性改名 `eventTypeDefinitions` | 0024 | Done |
-| 编辑/删除前 `canPerform` | 0018 | Done |
-| 合并 `description` 与标题模板 | 0019 | Done |
-| 拖到新时刻 | 0020 | Done |
-| 拖边缘改时长 | 0021 | Done |
-| 视图切换动画 | 0022 | Done |
-| 大量事件虚拟化 | 0023 | Done |
+| 编辑/删除前 `canPerform`        | 0018 | Done |
+| 合并 `description` 与标题模板   | 0019 | Done |
+| 拖到新时刻                      | 0020 | Done |
+| 拖边缘改时长                    | 0021 | Done |
+| 视图切换动画                    | 0022 | Done |
+| 大量事件虚拟化                  | 0023 | Done |
 
 日历本体已完整接入 Event DSL 与 EventRuntime 规则，单测 100% 通过，端到端 63 项测试（三引擎）全部通过。RFC-0005 与 RFC-0017 正式完成关闭。
 
@@ -69,14 +69,14 @@
 
 ### RFC-0015: React Demo 浏览器端到端验收 — **已完成**
 
-| # | 任务 | 状态 | 文件 |
-| --- | --- | --- | --- |
-| 1 | RFC 与覆盖口径 | Done | `.spec/rfc/completed/0015-react-demo-e2e.md` |
-| 2 | Playwright、浏览器与 pnpm 入口 | Done | `demos/react/playwright.config.ts` |
-| 3 | E01–E13 真实浏览器验收 | Done | `demos/react/e2e/` |
-| 4 | 回归驱动的最小产品修复 | Done | `demos/react/src/`, `packages/calendar/src/` |
-| 5 | 覆盖报告与门槛 | Done | `demos/react/e2e/check-coverage.mjs` |
-| 6 | 全量验收、文档与归档 | Done | `.spec/rfc/completed/0015-*` |
+| #   | 任务                           | 状态 | 文件                                         |
+| --- | ------------------------------ | ---- | -------------------------------------------- |
+| 1   | RFC 与覆盖口径                 | Done | `.spec/rfc/completed/0015-react-demo-e2e.md` |
+| 2   | Playwright、浏览器与 pnpm 入口 | Done | `demos/react/playwright.config.ts`           |
+| 3   | E01–E13 真实浏览器验收         | Done | `demos/react/e2e/`                           |
+| 4   | 回归驱动的最小产品修复         | Done | `demos/react/src/`, `packages/calendar/src/` |
+| 5   | 覆盖报告与门槛                 | Done | `demos/react/e2e/check-coverage.mjs`         |
+| 6   | 全量验收、文档与归档           | Done | `.spec/rfc/completed/0015-*`                 |
 
 ---
 
