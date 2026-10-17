@@ -271,9 +271,17 @@ body {
 }
 
 .demo-validation-panel {
-  padding: 14px 20px;
+  padding: 12px 20px;
   background-color: var(--calenderjs-bg-tertiary);
   border-bottom: 1px solid var(--calenderjs-border);
+}
+
+.demo-validation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .demo-validation-panel h2 {
@@ -283,12 +291,45 @@ body {
   color: var(--calenderjs-text-primary);
 }
 
+.demo-feature-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.demo-feature-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid var(--calenderjs-border);
+  background-color: var(--calenderjs-bg-primary);
+  color: var(--calenderjs-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.demo-feature-btn:hover {
+  background-color: var(--calenderjs-bg-secondary);
+  border-color: var(--calenderjs-primary);
+}
+
+.demo-action-log {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--calenderjs-primary);
+  font-weight: 500;
+}
+
 .demo-validation-list {
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 13px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 72px;
+  overflow-y: auto;
 }
 
 .demo-validation-item {

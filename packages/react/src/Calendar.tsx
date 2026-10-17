@@ -77,6 +77,11 @@ export interface CalendarProps {
   user?: User;
 
   /**
+   * Event DSL 定义（文本或 AST）
+   */
+  eventTypeDefinitions?: string | any;
+
+  /**
    * 日期变化时的回调
    */
   onDateChange?: (event: CustomEvent<{ date: Date }>) => void;
@@ -112,6 +117,13 @@ export interface CalendarProps {
    * 事件删除回调
    */
   onEventDelete?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
+   * 动作被权限拒绝时的回调 (RFC-0018)
+   */
+  onEventActionDenied?: (
+    event: CustomEvent<{ action: "edit" | "delete"; event: Event }>,
+  ) => void;
 
   /**
    * 时间槽点击回调
@@ -176,6 +188,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       date,
       events,
       user,
+      eventTypeDefinitions,
       onDateChange,
       onViewChange,
       onEventClick,
@@ -183,6 +196,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onEventCreate,
       onEventUpdate,
       onEventDelete,
+      onEventActionDenied,
       onSlotClick,
       className,
       style,
@@ -228,19 +242,32 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         }
       },
       getEvents: () => {
-        if (calendarRef.current && typeof (calendarRef.current as any).getEvents === "function") {
+        if (
+          calendarRef.current &&
+          typeof (calendarRef.current as any).getEvents === "function"
+        ) {
           return (calendarRef.current as any).getEvents();
         }
         return (calendarRef.current as any)?.events || [];
       },
       getEventDSL: () => {
-        if (calendarRef.current && typeof (calendarRef.current as any).getEventDSL === "function") {
+        if (
+          calendarRef.current &&
+          typeof (calendarRef.current as any).getEventDSL === "function"
+        ) {
           return (calendarRef.current as any).getEventDSL();
         }
-        return (calendarRef.current as any)?.eventTypeDefinitions ?? (calendarRef.current as any)?.eventDSL ?? null;
+        return (
+          (calendarRef.current as any)?.eventTypeDefinitions ??
+          (calendarRef.current as any)?.eventDSL ??
+          null
+        );
       },
       addEvent: (newEvent: Event) => {
-        if (calendarRef.current && typeof (calendarRef.current as any).addEvent === "function") {
+        if (
+          calendarRef.current &&
+          typeof (calendarRef.current as any).addEvent === "function"
+        ) {
           return (calendarRef.current as any).addEvent(newEvent);
         }
         return false;
@@ -269,7 +296,11 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       if (user !== undefined) {
         element.user = user;
       }
-    }, [isClient, view, date, events, user]);
+
+      if (eventTypeDefinitions !== undefined) {
+        element.eventTypeDefinitions = eventTypeDefinitions;
+      }
+    }, [isClient, view, date, events, user, eventTypeDefinitions]);
 
     // 绑定事件监听器。同 props：客户端 wsx-calendar 出现后再挂载，避免冷启动漏绑。
     useEffect(() => {
@@ -305,6 +336,12 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         onEventDelete?.(e as CustomEvent<{ event: Event }>);
       };
 
+      const handleEventActionDenied = (e: globalThis.Event) => {
+        onEventActionDenied?.(
+          e as CustomEvent<{ action: "edit" | "delete"; event: Event }>,
+        );
+      };
+
       const handleSlotClick = (e: globalThis.Event) => {
         onSlotClick?.(e as CustomEvent<{ date: Date; hour: number }>);
       };
@@ -316,6 +353,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       element.addEventListener("event-create", handleEventCreate);
       element.addEventListener("event-update", handleEventUpdate);
       element.addEventListener("event-delete", handleEventDelete);
+      element.addEventListener("event-action-denied", handleEventActionDenied);
       element.addEventListener("slot-click", handleSlotClick);
 
       return () => {
@@ -326,6 +364,10 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         element.removeEventListener("event-create", handleEventCreate);
         element.removeEventListener("event-update", handleEventUpdate);
         element.removeEventListener("event-delete", handleEventDelete);
+        element.removeEventListener(
+          "event-action-denied",
+          handleEventActionDenied,
+        );
         element.removeEventListener("slot-click", handleSlotClick);
       };
     }, [
@@ -337,6 +379,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onEventCreate,
       onEventUpdate,
       onEventDelete,
+      onEventActionDenied,
       onSlotClick,
     ]);
 
