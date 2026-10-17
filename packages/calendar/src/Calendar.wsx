@@ -78,6 +78,8 @@ export default class Calendar extends WebComponent {
         | EventTypeAST
         | EventTypeAST[]
         | null = null;
+    @state private _isViewTransitioning: boolean = false;
+    private _transitionTimer: any = null;
     private _eventRuntime: EventRuntime | null = null;
     private _runtimeByType: Map<string, EventRuntime> | null = null;
 
@@ -102,6 +104,9 @@ export default class Calendar extends WebComponent {
     }
     set view(value: "month" | "week" | "day") {
         if (VALID_VIEWS.includes(value)) {
+            if (this.currentView !== value) {
+                this.startViewTransition();
+            }
             this.currentView = value;
         }
     }
@@ -209,6 +214,10 @@ export default class Calendar extends WebComponent {
 
     onDisconnected() {
         super.onDisconnected?.();
+        if (this._transitionTimer) {
+            clearTimeout(this._transitionTimer);
+            this._transitionTimer = null;
+        }
         this.removeEventListeners();
     }
 
@@ -459,19 +468,32 @@ export default class Calendar extends WebComponent {
     private renderView() {
         // 确保 currentView 始终是有效值
         const view = this.currentView || "month";
+        let viewContent;
         switch (view) {
             case "month":
-                return this.renderMonthView();
+                viewContent = this.renderMonthView();
+                break;
             case "week":
-                return this.renderWeekView();
+                viewContent = this.renderWeekView();
+                break;
             case "day":
-                return this.renderDayView();
+                viewContent = this.renderDayView();
+                break;
             default:
                 // 如果 view 无效，默认使用 month 视图
                 console.warn(`Invalid view: ${view}, falling back to "month"`);
                 this.currentView = "month";
-                return this.renderMonthView();
+                viewContent = this.renderMonthView();
+                break;
         }
+
+        const transitionClass = this._isViewTransitioning ? "view-transitioning" : "";
+
+        return (
+            <div class={`calendar-view-container ${transitionClass}`} data-view={view}>
+                {viewContent}
+            </div>
+        );
     }
 
     // ========== 月视图 ==========
@@ -578,6 +600,8 @@ export default class Calendar extends WebComponent {
     }
 
     private handleViewChange(view: "month" | "week" | "day") {
+        if (this.currentView === view) return;
+        this.startViewTransition();
         this.currentView = view;
         this.dispatchEvent(
             new CustomEvent("view-change", {
@@ -585,6 +609,25 @@ export default class Calendar extends WebComponent {
                 bubbles: true,
             })
         );
+    }
+
+    private startViewTransition() {
+        if (this._transitionTimer) {
+            clearTimeout(this._transitionTimer);
+        }
+        this._isViewTransitioning = true;
+        const container = this.shadowRoot?.querySelector(".calendar-view-container");
+        if (container) {
+            container.classList.add("view-transitioning");
+        }
+        this._transitionTimer = setTimeout(() => {
+            this._isViewTransitioning = false;
+            const c = this.shadowRoot?.querySelector(".calendar-view-container");
+            if (c) {
+                c.classList.remove("view-transitioning");
+            }
+            this._transitionTimer = null;
+        }, 150);
     }
 
     /** 从 eventTypeDefinitions（优先）或 eventDSL 重新编译 Runtime 映射 */

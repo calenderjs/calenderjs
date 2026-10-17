@@ -157,7 +157,7 @@ Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已�
   - [x] Implement RFC 0019: Merge runtime description into display events (child of 0017) (RFC 0019)
   - [x] Implement RFC 0020: Drag events to a new time (child of 0017) (RFC 0020)
   - [x] Implement RFC 0021: Resize event duration by dragging the edge (child of 0017) (RFC 0021)
-  - [ ] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
+  - [x] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
   - [ ] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
   - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
 

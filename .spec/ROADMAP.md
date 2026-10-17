@@ -13,7 +13,7 @@
 | 0019 | [Merge runtime description into display events](rfc/completed/0019-merge-runtime-description.md) | Implemented | **P1** | child of 0017 |
 | 0020 | [Drag events to a new time](rfc/completed/0020-drag-events-to-new-time.md) | Implemented | **P2** | child of 0017 |
 | 0021 | [Resize event duration by dragging the edge](rfc/completed/0021-resize-event-duration.md) | Implemented | **P2** | child of 0017 |
-| 0022 | [Animate calendar view switches](rfc/0022-animate-view-switch.md) | Draft | **P3** | child of 0017 |
+| 0022 | [Animate calendar view switches](rfc/0022-animate-view-switch.md) | **Implemented** | **P3** | child of 0017 |
 | 0023 | [Virtualize large event lists](rfc/0023-virtualize-event-list.md) | Draft | **P3** | child of 0017 |
 | 0024 | [Rename eventDSL to eventTypeDefinitions](rfc/completed/0024-rename-event-dsl-property.md) | Implemented | **P1** | child of 0017 |
 | 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |

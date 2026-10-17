@@ -596,6 +596,51 @@ name: 会议
     });
   });
 
+  describe("视图切换过渡与容器 (RFC-0022)", () => {
+    it("应该渲染 .calendar-view-container 且包含 data-view", async () => {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      const shadowRoot = calendar.shadowRoot!;
+      const viewContainer = shadowRoot.querySelector(".calendar-view-container");
+      expect(viewContainer).toBeTruthy();
+      expect(viewContainer?.getAttribute("data-view")).toBe("month");
+    });
+
+    it("切换视图时应触发过渡样式，且过渡后视图一致 (RFC-0022 Acceptance)", async () => {
+      calendar = document.createElement("wsx-calendar") as Calendar;
+      container.appendChild(calendar);
+      await waitForComponentInit(calendar);
+
+      const shadowRoot = calendar.shadowRoot!;
+      const viewContainer = shadowRoot.querySelector(".calendar-view-container");
+
+      // 切换到周视图
+      calendar.view = "week";
+      expect(viewContainer?.classList.contains("view-transitioning")).toBe(true);
+      expect(calendar.currentView).toBe("week");
+
+      // 等待过渡完成
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(viewContainer?.classList.contains("view-transitioning")).toBe(false);
+      expect(viewContainer?.getAttribute("data-view")).toBe("week");
+      expect(shadowRoot.querySelector("wsx-week-view")).toBeTruthy();
+      expect(shadowRoot.querySelector("wsx-month-view")).toBeNull();
+
+      // 切换到日视图
+      calendar.view = "day";
+      expect(viewContainer?.classList.contains("view-transitioning")).toBe(true);
+      expect(calendar.currentView).toBe("day");
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(viewContainer?.classList.contains("view-transitioning")).toBe(false);
+      expect(viewContainer?.getAttribute("data-view")).toBe("day");
+      expect(shadowRoot.querySelector("wsx-day-view")).toBeTruthy();
+      expect(shadowRoot.querySelector("wsx-week-view")).toBeNull();
+    });
+  });
+
   describe("组件生命周期", () => {
     it("应该在连接到 DOM 后执行初始化", async () => {
       calendar = document.createElement("wsx-calendar") as Calendar;
