@@ -1,6 +1,6 @@
 # RFC 0017: Calendar follow-ons (Umbrella)
 
-**Status:** Draft
+**Status:** Implemented
 
 **Type:** Umbrella
 

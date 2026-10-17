@@ -38,6 +38,8 @@ export default class DayView extends WebComponent {
         email: "john.doe@example.com",
         role: "user",
     };
+    @state private _scrollTop: number = 0;
+    @state private _viewportHeight: number = 0;
     // 保存"今天"的日期，确保在切换视图时不会改变
     private readonly _today: Date;
 
@@ -109,7 +111,36 @@ export default class DayView extends WebComponent {
         // 框架可能在升级前就赋值，需重新过 setter
         upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
+        this.setupScrollListener();
     }
+
+    onDisconnected() {
+        super.onDisconnected?.();
+        this.teardownScrollListener();
+    }
+
+    private setupScrollListener() {
+        const body = this.shadowRoot?.querySelector(".day-view-body") as HTMLElement | null;
+        if (body) {
+            body.addEventListener("scroll", this.handleScroll, { passive: true });
+            this._viewportHeight = body.clientHeight || 600;
+        }
+    }
+
+    private teardownScrollListener() {
+        const body = this.shadowRoot?.querySelector(".day-view-body");
+        if (body) {
+            body.removeEventListener("scroll", this.handleScroll);
+        }
+    }
+
+    private handleScroll = (e: globalThis.Event) => {
+        const target = e.currentTarget as HTMLElement;
+        this._scrollTop = target.scrollTop;
+        if (target.clientHeight) {
+            this._viewportHeight = target.clientHeight;
+        }
+    };
 
     onAttributeChanged(
         name: string,
@@ -160,6 +191,39 @@ export default class DayView extends WebComponent {
     // ========== Getters ==========
     private get dayEvents() {
         return sortEventsByTime(getEventsForDate(this.events, this.viewDate));
+    }
+
+    /**
+     * 虚拟化过滤（RFC-0023）：
+     * 当单日事件较少（<= 20）时全量渲染，保持小数据量简单稳定；
+     * 当单日事件远超视口（> 20）时，根据当前滚动视口动态回收视口外的 DOM 节点。
+     */
+    private get visibleEvents() {
+        const events = this.dayEvents;
+        if (events.length <= 20) {
+            return events;
+        }
+
+        // 总时间轴高度：24 小时 * 48px = 1152px
+        const totalHeight = 24 * 48;
+        const viewportHeight = this._viewportHeight || 600;
+        const scrollTop = this._scrollTop || 0;
+
+        // 视口上下预留 150px 缓冲区，保证滚动平滑且能看见边缘事件
+        const buffer = 150;
+        const viewTopPx = Math.max(0, scrollTop - buffer);
+        const viewBottomPx = scrollTop + viewportHeight + buffer;
+
+        const viewTopPct = (viewTopPx / totalHeight) * 100;
+        const viewBottomPct = (viewBottomPx / totalHeight) * 100;
+
+        return events.filter((event) => {
+            const pos = calculateEventPosition(event, this.dayStart, this.dayEnd);
+            const eventTopPct = pos.top;
+            const eventBottomPct = pos.top + pos.height;
+            // 判断与视口区间是否有重叠
+            return eventBottomPct >= viewTopPct && eventTopPct <= viewBottomPct;
+        });
     }
 
     private get hours() {
@@ -365,7 +429,7 @@ export default class DayView extends WebComponent {
                                 ></div>
                             );
                         })}
-                        {this.dayEvents.map((event) => {
+                        {this.visibleEvents.map((event) => {
                             const position = calculateEventPosition(
                                 event,
                                 this.dayStart,

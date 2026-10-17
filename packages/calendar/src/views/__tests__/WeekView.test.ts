@@ -4,7 +4,7 @@
  * 测试周视图的事件渲染功能
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { Event } from "@calenderjs/event-model";
 import { User } from "@calenderjs/core";
 import "../WeekView.wsx";
@@ -498,5 +498,49 @@ describe("WeekView 组件", () => {
       const handle = shadowRoot?.querySelector(".week-view-resize-handle") as HTMLElement;
       expect(handle).toBeTruthy();
     });
+
+    it("大量事件时应按视口虚拟化回收节点，并在滚动时更新 (RFC-0023 Acceptance)", async () => {
+      const events: Event[] = [];
+      const baseDate = new Date(2024, 0, 15); // 周一
+      for (let i = 0; i < 70; i++) {
+        const hour = Math.floor(i / 3);
+        const min = (i * 20) % 60;
+        const start = new Date(baseDate);
+        start.setHours(hour, min, 0, 0);
+        const end = new Date(start.getTime() + 20 * 60 * 1000);
+        events.push({
+          id: `dense-week-ev-${i}`,
+          title: `密集周事件 ${i}`,
+          startTime: start,
+          endTime: end,
+        });
+      }
+
+      weekView = document.createElement("wsx-week-view") as WeekView;
+      weekView.viewDate = baseDate;
+      weekView.events = events;
+      container.appendChild(weekView);
+      await waitForComponentInit(weekView);
+
+      const shadowRoot = weekView.shadowRoot;
+      const initialRenderedCount = shadowRoot?.querySelectorAll(".week-view-event").length || 0;
+
+      // 70 个事件单日超过 15 个阈值，初始仅渲染视口范围，明显少于 70
+      expect(initialRenderedCount).toBeLessThan(70);
+      expect(initialRenderedCount).toBeGreaterThan(0);
+
+      // 模拟滚动到下方
+      const body = shadowRoot?.querySelector(".week-view-body") as HTMLElement;
+      expect(body).toBeTruthy();
+      Object.defineProperty(body, "scrollTop", { value: 650, writable: true });
+      Object.defineProperty(body, "clientHeight", { value: 400, writable: true });
+      body.dispatchEvent(new Event("scroll"));
+      await waitForDOMUpdate();
+
+      const afterScrollCount = shadowRoot?.querySelectorAll(".week-view-event").length || 0;
+      expect(afterScrollCount).toBeLessThan(70);
+      expect(afterScrollCount).toBeGreaterThan(0);
+    });
   });
 });
+

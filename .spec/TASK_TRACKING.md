@@ -1,8 +1,8 @@
 # CalenderJS Task Tracking
 
-> **当前里程碑**: M4 - DSL 集成  
-> **最后更新**: 2026-09-26  
-> **执行序**: RFC-0002 已关 → 当前跟 0011 / 0005（见 ROADMAP M4）
+> **当前里程碑**: M4 - DSL 集成 (Completed)  
+> **最后更新**: 2026-10-17  
+> **执行序**: RFC-0002 / RFC-0011 / RFC-0017 (0018-0024) / RFC-0005 均已关单，M4 目标全量达成！
 
 ## 当前 Sprint: 跟 0002 之后 — 0011 → 0005
 
@@ -40,21 +40,21 @@
 | 4   | 导出到 event-dsl index.ts                | Done | `packages/event-dsl/src/index.ts`    |
 | 5   | 更新 RFC-0011 状态 → Implemented         | Done | `.spec/rfc/0011-*`                   |
 
-### 阶段 3: Calendar 本体 (RFC-0005)
+### 阶段 3: Calendar 本体 (RFC-0005) 与后续 (RFC-0017) — **已完成**
 
-0005 只保留日历本体。从 0005 拆出的事项在文末 `## Active`，按子 RFC 跟踪，不再记在本阶段：
+0005 只保留日历本体。从 0005 拆出的 7 项子 RFC 均已落地完成：
 
-| 事项 | RFC |
-| --- | --- |
-| 属性改名 `eventTypeDefinitions` | 0024 |
-| 编辑/删除前 `canPerform` | 0018 |
-| 合并 `description` 与标题模板 | 0019 |
-| 拖到新时刻 | 0020 |
-| 拖边缘改时长 | 0021 |
-| 视图切换动画 | 0022 |
-| 大量事件虚拟化 | 0023 |
+| 事项 | RFC | 状态 |
+| --- | --- | --- |
+| 属性改名 `eventTypeDefinitions` | 0024 | Done |
+| 编辑/删除前 `canPerform` | 0018 | Done |
+| 合并 `description` 与标题模板 | 0019 | Done |
+| 拖到新时刻 | 0020 | Done |
+| 拖边缘改时长 | 0021 | Done |
+| 视图切换动画 | 0022 | Done |
+| 大量事件虚拟化 | 0023 | Done |
 
-Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已在 `Calendar.wsx` 和 `EventRuntime.integration.test.ts`。0005 关单仍是单独的状态决定，不在这里勾选。
+日历本体已完整接入 Event DSL 与 EventRuntime 规则，单测 100% 通过，端到端 63 项测试（三引擎）全部通过。RFC-0005 与 RFC-0017 正式完成关闭。
 
 ### 阶段 4: EventRuntime 时间字段时区语义 (RFC-0014) — **已完成**
 
@@ -148,24 +148,16 @@ Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已�
 
 ## Active
 
-- [ ] Implement RFC 0005: Calendar Component (RFC 0005)
+- [ ] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
 - [ ] Implement RFC 0006: Documentation and examples (RFC 0006)
 - [ ] Implement RFC 0007: VS Code extension and online editor (RFC 0007)
-- [ ] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
-- [ ] Implement RFC 0017: Calendar follow-ons (Umbrella) (RFC 0017)
-  - [x] Implement RFC 0018: Gate edit and delete with canPerform (child of 0017) (RFC 0018)
-  - [x] Implement RFC 0019: Merge runtime description into display events (child of 0017) (RFC 0019)
-  - [x] Implement RFC 0020: Drag events to a new time (child of 0017) (RFC 0020)
-  - [x] Implement RFC 0021: Resize event duration by dragging the edge (child of 0017) (RFC 0021)
-  - [x] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
-  - [ ] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
-  - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
 
 ## Done
 
 - [x] Implement RFC 0001: Event calendar DSL (RFC 0001)
 - [x] Implement RFC 0002: Event DSL (RFC 0002)
 - [x] Implement RFC 0004: React demo site (RFC 0004)
+- [x] Implement RFC 0005: Calendar Component (RFC 0005)
 - [x] Implement RFC 0008: Calendar component API redesign (RFC 0008)
 - [x] Implement RFC 0009: Calendar component data-driven (RFC 0009)
 - [x] Implement RFC 0010: Week view layout fix (RFC 0010)
@@ -174,4 +166,12 @@ Runtime 属性、`displayEvents`、创建/更新校验、提议失败事件已�
 - [x] Implement RFC 0014: Event runtime timezone field semantics (RFC 0014)
 - [x] Implement RFC 0015: React demo e2e (RFC 0015)
 - [x] Implement RFC 0016: Week view column alignment (RFC 0016)
+- [x] Implement RFC 0017: Calendar follow-ons (Umbrella) (RFC 0017)
+  - [x] Implement RFC 0018: Gate edit and delete with canPerform (child of 0017) (RFC 0018)
+  - [x] Implement RFC 0019: Merge runtime description into display events (child of 0017) (RFC 0019)
+  - [x] Implement RFC 0020: Drag events to a new time (child of 0017) (RFC 0020)
+  - [x] Implement RFC 0021: Resize event duration by dragging the edge (child of 0017) (RFC 0021)
+  - [x] Implement RFC 0022: Animate calendar view switches (child of 0017) (RFC 0022)
+  - [x] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
+  - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
 - [x] Implement RFC 0025: CI: Pull Request Workflow (Unit + E2E) (RFC 0025)

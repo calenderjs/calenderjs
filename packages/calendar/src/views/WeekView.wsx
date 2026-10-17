@@ -36,6 +36,8 @@ export default class WeekView extends WebComponent {
     @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
     @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
+    @state private _scrollTop: number = 0;
+    @state private _viewportHeight: number = 0;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -122,7 +124,37 @@ export default class WeekView extends WebComponent {
         // 框架可能在升级前就赋值，需重新过 setter
         upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
+        this.setupScrollListener();
     }
+
+    onDisconnected() {
+        super.onDisconnected?.();
+        this.teardownScrollListener();
+    }
+
+    private setupScrollListener() {
+        const body = this.shadowRoot?.querySelector(".week-view-body") as HTMLElement | null;
+        if (body) {
+            body.addEventListener("scroll", this.handleScroll, { passive: true });
+            this._viewportHeight = body.clientHeight || 600;
+        }
+    }
+
+    private teardownScrollListener() {
+        const body = this.shadowRoot?.querySelector(".week-view-body");
+        if (body) {
+            body.removeEventListener("scroll", this.handleScroll);
+        }
+    }
+
+    private handleScroll = (e: globalThis.Event) => {
+        const target = e.currentTarget as HTMLElement;
+        this._scrollTop = target.scrollTop;
+        if (target.clientHeight) {
+            this._viewportHeight = target.clientHeight;
+        }
+    };
+
 
     onAttributeChanged(
         name: string,
@@ -192,6 +224,34 @@ export default class WeekView extends WebComponent {
 
     private get hours() {
         return Array.from({ length: 24 }, (_, i) => i);
+    }
+
+    /**
+     * 视口内可见事件（RFC-0023 虚拟滚动）
+     * 当单日事件数量 <= 15 时全量渲染；> 15 时仅渲染视口及缓冲区范围内的事件。
+     */
+    private getVisibleEventsForDay(events: Event[], dayStart: Date, dayEnd: Date): Event[] {
+        if (events.length <= 15) {
+            return events;
+        }
+
+        const totalHeight = 24 * 48;
+        const viewportHeight = this._viewportHeight || 600;
+        const scrollTop = this._scrollTop || 0;
+
+        const buffer = 150;
+        const viewTopPx = Math.max(0, scrollTop - buffer);
+        const viewBottomPx = scrollTop + viewportHeight + buffer;
+
+        const viewTopPct = (viewTopPx / totalHeight) * 100;
+        const viewBottomPct = (viewBottomPx / totalHeight) * 100;
+
+        return events.filter((event) => {
+            const pos = calculateEventPosition(event, dayStart, dayEnd);
+            const eventTopPct = pos.top;
+            const eventBottomPct = pos.top + pos.height;
+            return eventBottomPct >= viewTopPct && eventTopPct <= viewBottomPct;
+        });
     }
 
     // ========== 事件处理 ==========
@@ -471,7 +531,7 @@ export default class WeekView extends WebComponent {
                                             ></div>
                                         );
                                     })}
-                                    {dayEvents.map((event) => {
+                                    {this.getVisibleEventsForDay(dayEvents, dayStart, dayEnd).map((event) => {
                                         const position = calculateEventPosition(
                                             event,
                                             dayStart,

@@ -447,5 +447,47 @@ describe("DayView 组件", () => {
       const handle = shadowRoot?.querySelector(".day-view-resize-handle") as HTMLElement;
       expect(handle).toBeTruthy();
     });
+
+    it("虚拟化在大规模事件时应该只渲染视口附近事件并回收视口外节点 (RFC-0023 Acceptance)", async () => {
+      const viewDate = new Date(2024, 0, 15);
+      // 构造一整天 24 个小时内密集的 100 个事件
+      const manyEvents: Event[] = [];
+      for (let i = 0; i < 100; i++) {
+        const hour = i % 24;
+        manyEvents.push(
+          createTestEvent({
+            id: `large-ev-${i}`,
+            title: `批量事件 ${i}`,
+            startTime: new Date(2024, 0, 15, hour, 0, 0),
+            endTime: new Date(2024, 0, 15, hour, 30, 0),
+          })
+        );
+      }
+
+      dayView = document.createElement("wsx-day-view") as DayView;
+      dayView.viewDate = viewDate;
+      dayView.events = manyEvents;
+      container.appendChild(dayView);
+      await waitForComponentInit(dayView);
+
+      const shadowRoot = dayView.shadowRoot!;
+      const body = shadowRoot.querySelector(".day-view-body") as HTMLElement;
+      expect(body).toBeTruthy();
+
+      // 在初始滚动位置（scrollTop = 0，视口约 600px），渲染的 DOM 节点数应远小于 100
+      const initialDOMElements = shadowRoot.querySelectorAll(".day-view-event");
+      expect(initialDOMElements.length).toBeLessThan(manyEvents.length);
+      expect(initialDOMElements.length).toBeGreaterThan(0);
+
+      // 模拟滚动到下方（如滚动到下午或晚上时间段，scrollTop = 700px）
+      body.scrollTop = 700;
+      body.dispatchEvent(new Event("scroll"));
+      await waitForDOMUpdate();
+
+      const scrolledDOMElements = shadowRoot.querySelectorAll(".day-view-event");
+      expect(scrolledDOMElements.length).toBeLessThan(manyEvents.length);
+      expect(scrolledDOMElements.length).toBeGreaterThan(0);
+    });
   });
 });
+

@@ -1,6 +1,6 @@
 # RFC-0005: Calendar Component
 
-**Status:** Under Review
+**Status:** Implemented
 **创建日期**: 2024-12-19  
 **最后更新**: 2026-09-26
 **作者**: WSX Team  

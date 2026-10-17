@@ -7,14 +7,14 @@
 | RFC  | 标题 | 状态 | 优先级 | 备注 |
 | ---- | ---- | ---- | ------ | ---- |
 | 0002 | [Event DSL](rfc/completed/0002-event-dsl.md) | **Implemented** | — | standalone 已归档；Calendar/Generator 债分别归 0005/0011 |
-| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | Under Review | **P1** | 只含日历本体；后续事项见 0017 |
-| 0017 | [Calendar follow-ons](rfc/0017-calendar-follow-ons.md) | Draft | **P1** | Umbrella |
+| 0005 | [Calendar Component](rfc/0005-calendar-component.md) | **Implemented** | **P1** | 只含日历本体；后续子项（0017 傘下 7 项）均已落地 |
+| 0017 | [Calendar follow-ons](rfc/0017-calendar-follow-ons.md) | **Implemented** | **P1** | Umbrella（7 项子 RFC 均已落地） |
 | 0018 | [Gate edit and delete with canPerform](rfc/completed/0018-gate-actions-with-can-perform.md) | Implemented | **P1** | child of 0017 |
 | 0019 | [Merge runtime description into display events](rfc/completed/0019-merge-runtime-description.md) | Implemented | **P1** | child of 0017 |
 | 0020 | [Drag events to a new time](rfc/completed/0020-drag-events-to-new-time.md) | Implemented | **P2** | child of 0017 |
 | 0021 | [Resize event duration by dragging the edge](rfc/completed/0021-resize-event-duration.md) | Implemented | **P2** | child of 0017 |
 | 0022 | [Animate calendar view switches](rfc/0022-animate-view-switch.md) | **Implemented** | **P3** | child of 0017 |
-| 0023 | [Virtualize large event lists](rfc/0023-virtualize-event-list.md) | Draft | **P3** | child of 0017 |
+| 0023 | [Virtualize large event lists](rfc/0023-virtualize-event-list.md) | **Implemented** | **P3** | child of 0017 |
 | 0024 | [Rename eventDSL to eventTypeDefinitions](rfc/completed/0024-rename-event-dsl-property.md) | Implemented | **P1** | child of 0017 |
 | 0004 | [React Package & Demo](rfc/completed/0004-react-demo-site.md) | **Implemented** | — | @calenderjs/react + demos/react |
 | 0009 | [Calendar Component (数据驱动)](rfc/completed/0009-calendar-component.md) | **Superseded** | — | 由 RFC-0005 取代；归档 `completed/0009-*` |
@@ -60,9 +60,9 @@
 
 - [x] RFC-0008: Calendar API 重新设计
 
-### M4: DSL 集成 (Current - P1)
+### M4: DSL 集成 (Completed)
 
-**执行序：先关 0002，再跟 peer 收口（非 umbrella）。**
+**执行序：关 0002 → 0011 → 0017 (0018-0024) → 0005。**
 
 1. **关 RFC-0002** — **已完成**
    - [x] Acceptance 收窄到：语法 / 编译管线 / Schema·TS 生成 / EventRuntime 契约 / 包测绿
@@ -72,10 +72,11 @@
    - [x] RFC-0014: EventRuntime 时间字段时区语义
    - [x] RFC-0015: React Demo 浏览器端到端验收
    - [x] `extra` → `data` 代码落地（TASK 对账 → Done；正式关单在 0011）
-3. **跟 0002 之后完成（当前主线）**
-   - [ ] RFC-0011: EventDataGenerator + data 契约对账关单
-   - [ ] RFC-0005: 日历本体关单。拖拽、门禁、属性改名、描述合并、动画、虚拟化在 RFC-0017 的子 RFC，不回写 0005 |
-4. **不挡 M4 主线**
+3. **跟 0002 之后完成**
+   - [x] RFC-0011: EventDataGenerator + data 契约对账关单
+   - [x] RFC-0017: Calendar follow-ons（0018, 0019, 0020, 0021, 0022, 0023, 0024 全部落地）
+   - [x] RFC-0005: 日历本体关单。已全面接入 DSL 驱动与运行时校验
+4. **不挡 M4 主线（下一阶段）**
    - [ ] RFC-0012: 插件机制（M5）
 
 ### M5: 插件生态
@@ -96,7 +97,7 @@
 | 包                               | 状态               | 说明                                          |
 | -------------------------------- | ------------------ | --------------------------------------------- |
 | `@calenderjs/core`               | Implemented        | 核心模型、上下文、工具函数                    |
-| `@calenderjs/calendar`           | Implemented (基础) | WSX 日历组件（月/周/日视图），DSL 集成待完成  |
+| `@calenderjs/calendar`           | Implemented        | WSX 日历组件（月/周/日视图，DSL 驱动，拖拽/伸缩/动画/虚拟化） |
 | `@calenderjs/event-model`        | Implemented        | Event 接口 SSOT、验证器、JSON Schema          |
 | `@calenderjs/event-dsl`          | Implemented        | PEG.js 语法、解析器、编译器、生成器           |
 | `@calenderjs/event-runtime`      | Implemented        | EventRuntime：验证、渲染、权限                |
