@@ -1,8 +1,8 @@
 # RFC-0011: Event 数据模型与 Event DSL 集成
 
-**状态**: Draft  
+**状态**: Implemented  
 **创建日期**: 2026-01-01  
-**最后更新**: 2026-01-01  
+**最后更新**: 2026-10-16  
 **作者**: CalenderJS Team  
 **关联 RFC**: RFC-0001, RFC-0002, RFC-0009, RFC-0012
 
