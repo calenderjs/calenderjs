@@ -62,12 +62,30 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   );
   await expect(page.getByText("✓ DSL生成会议", { exact: true })).toBeVisible();
 
-  // 2. 添加重复事件 (RFC-0005)
+  // 2. 添加重复事件 (RFC-0005)，此时当天共有 4 条事件，出现 "+1 更多"
   await page.getByTestId("btn-add-recurring").click();
   await expect(actionLog).toContainText(
     "已添加连续 5 天重复事件: 每日站会(重复)",
   );
   await expect(page.getByText("✓ 每日站会(重复)", { exact: true })).toBeVisible();
+
+  // 2b. 验证月视图 "+1 更多" 严格位于当天单元格内部且可点击展开/收起
+  const todayCell = page.locator(".month-view-cell.today");
+  const moreBtn = todayCell.locator(".month-view-more");
+  await expect(moreBtn).toBeVisible();
+  await expect(moreBtn).toContainText("+1 更多");
+  const cellBox = await todayCell.boundingBox();
+  const moreBox = await moreBtn.boundingBox();
+  expect(cellBox).not.toBeNull();
+  expect(moreBox).not.toBeNull();
+  expect(moreBox!.y + moreBox!.height).toBeLessThanOrEqual(
+    cellBox!.y + cellBox!.height + 1,
+  );
+  await moreBtn.click();
+  await expect(todayCell.locator(".month-view-event")).toHaveCount(4);
+  await expect(moreBtn).toContainText("收起");
+  await moreBtn.click();
+  await expect(todayCell.locator(".month-view-event")).toHaveCount(3);
 
   // 3. 切换到日视图，测试点击时间槽创建事件与键盘上下键移动事件时间 (RFC-0020)
   await page.getByRole("button", { name: "日", exact: true }).click();

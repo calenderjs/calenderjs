@@ -232,7 +232,7 @@ describe("MonthView 组件", () => {
       expect(eventElements.length).toBe(3);
     });
 
-    it.skip("应该显示'更多'提示当事件超过3个时", async () => {
+    it("应该显示'更多'提示并在点击后展开/收起全部事件", async () => {
       const viewDate = new Date(2024, 0, 15);
       const events = [
         createTestEvent({
@@ -263,14 +263,32 @@ describe("MonthView 组件", () => {
 
       monthView = document.createElement("wsx-month-view") as MonthView;
       monthView.setAttribute("view-date", viewDate.toISOString());
-      monthView.events = events;
       container.appendChild(monthView);
       await waitForComponentInit(monthView);
+      monthView.events = events;
+      await waitForDOMUpdate();
+      await waitForDOMUpdate();
 
       const querySelector = getQuerySelector(monthView);
-      const moreElement = querySelector(".month-view-more");
+      const querySelectorAll = getQuerySelectorAll(monthView);
+      const moreElement = querySelector(".month-view-more") as HTMLElement;
       expect(moreElement).toBeTruthy();
       expect(moreElement!.textContent).toContain("+1 更多");
+      expect(querySelectorAll(".month-view-event").length).toBe(3);
+
+      // 点击 "+1 更多" 展开该日期的全部 4 个事件
+      moreElement.click();
+      await waitForDOMUpdate();
+      await waitForDOMUpdate();
+      expect(querySelectorAll(".month-view-event").length).toBe(4);
+      const collapseElement = querySelector(".month-view-more") as HTMLElement;
+      expect(collapseElement!.textContent).toContain("收起");
+
+      // 再次点击 "收起" 折叠回 3 个事件
+      collapseElement.click();
+      await waitForDOMUpdate();
+      await waitForDOMUpdate();
+      expect(querySelectorAll(".month-view-event").length).toBe(3);
     });
 
     it("应该不显示'更多'提示当事件不超过3个时", async () => {

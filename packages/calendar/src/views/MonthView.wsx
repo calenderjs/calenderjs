@@ -37,6 +37,7 @@ export default class MonthView extends WebComponent {
     @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
     @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
+    @state private _expandedDateKey: string = "";
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -266,6 +267,19 @@ export default class MonthView extends WebComponent {
         );
     };
 
+    private handleMoreClick = (
+        dateKey: string,
+        date: Date,
+        evt?: MouseEvent,
+    ) => {
+        if (evt) {
+            evt.stopPropagation();
+        }
+        this._expandedDateKey =
+            this._expandedDateKey === dateKey ? "" : dateKey;
+        this.handleDateClick(date);
+    };
+
     // ========== 渲染 ==========
     render() {
         return (
@@ -296,6 +310,10 @@ export default class MonthView extends WebComponent {
                         const dayEvents = sortEventsByTime(
                             this.eventsByDate.get(dateKey) || [],
                         );
+                        const isExpanded = this._expandedDateKey === dateKey;
+                        const visibleEvents = isExpanded
+                            ? dayEvents
+                            : dayEvents.slice(0, 3);
                         const isCurrentMonth = !Number.isNaN(
                             this.viewDate.getTime(),
                         )
@@ -325,7 +343,7 @@ export default class MonthView extends WebComponent {
                                     {normalizedDate.getDate()}
                                 </div>
                                 <div class="month-view-cell-events">
-                                    {dayEvents.slice(0, 3).map((event) => {
+                                    {visibleEvents.map((event) => {
                                         const eventColor =
                                             event.color || "#4285f4";
                                         return (
@@ -360,8 +378,19 @@ export default class MonthView extends WebComponent {
                                         );
                                     })}
                                     {dayEvents.length > 3 && (
-                                        <div class="month-view-more">
-                                            +{dayEvents.length - 3} 更多
+                                        <div
+                                            class="month-view-more"
+                                            onClick={(evt) =>
+                                                this.handleMoreClick(
+                                                    dateKey,
+                                                    normalizedDate,
+                                                    evt,
+                                                )
+                                            }
+                                        >
+                                            {isExpanded
+                                                ? "收起"
+                                                : `+${dayEvents.length - 3} 更多`}
                                         </div>
                                     )}
                                 </div>
