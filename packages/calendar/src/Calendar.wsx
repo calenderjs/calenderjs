@@ -78,7 +78,7 @@ export default class Calendar extends WebComponent {
         | EventTypeAST
         | EventTypeAST[]
         | null = null;
-    @state private _isViewTransitioning: boolean = false;
+    private _isViewTransitioning: boolean = false;
     private _transitionTimer: any = null;
     private _eventRuntime: EventRuntime | null = null;
     private _runtimeByType: Map<string, EventRuntime> | null = null;

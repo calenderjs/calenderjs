@@ -83,6 +83,8 @@ export default function App() {
   const [renderedEvents, setRenderedEvents] = useState<any[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [actionLog, setActionLog] = useState<string>("");
+  const [editingId, setEditingId] = useState<string>("");
+  const [editingTitle, setEditingTitle] = useState<string>("");
 
   // 同步品牌主题属性至 documentElement
   useEffect(() => {
@@ -196,6 +198,19 @@ export default function App() {
   const handleEventClick = (e: CustomEvent<{ event: Event }>) => {
     // 打印 id，避免 Proxy 在控制台显示为 Proxy(Object) 导致验收无法断言。
     console.log("Event clicked:", e.detail.event.id);
+    setEditingId(e.detail.event.id);
+    setEditingTitle(e.detail.event.title);
+  };
+
+  // 点击事件后内联编辑标题并保存 (RFC-0005, RFC-0018)
+  const handleSaveEdit = () => {
+    setEvents((prev) =>
+      prev.map((item) =>
+        item.id === editingId ? { ...item, title: editingTitle } : item,
+      ),
+    );
+    setActionLog(`已编辑事件: ${editingTitle}`);
+    setEditingId("");
   };
 
   // 拖拽移动、键盘上下键移动或调整时长后同步更新事件 (RFC-0020, RFC-0021)
@@ -438,6 +453,25 @@ export default function App() {
                     data-testid="demo-action-log"
                   >
                     {actionLog}
+                  </div>
+                )}
+                {editingId && (
+                  <div className="demo-edit-bar" data-testid="demo-edit-bar">
+                    <input
+                      type="text"
+                      className="demo-edit-input"
+                      data-testid="input-edit-title"
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="demo-feature-btn"
+                      data-testid="btn-save-edit"
+                      onClick={handleSaveEdit}
+                    >
+                      💾 保存标题
+                    </button>
                   </div>
                 )}
                 <div className="demo-validation-list">

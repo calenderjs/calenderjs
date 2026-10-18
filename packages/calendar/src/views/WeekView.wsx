@@ -400,9 +400,29 @@ export default class WeekView extends WebComponent {
             const deltaHours = e.key === "ArrowDown" ? 1 : -1;
             const originalStart = new Date(event.startTime);
             const originalEnd = new Date(event.endTime);
-            const durationMs = originalEnd.getTime() - originalStart.getTime();
 
-            const newStart = new Date(originalStart.getTime() + deltaHours * 60 * 60 * 1000);
+            if (e.shiftKey) {
+                const newEnd = new Date(
+                    originalEnd.getTime() + deltaHours * 60 * 60 * 1000,
+                );
+                if (newEnd.getTime() <= originalStart.getTime()) return;
+                const updatedEvent: Event = {
+                    ...event,
+                    endTime: newEnd,
+                };
+                this.dispatchEvent(
+                    new CustomEvent("event-update-request", {
+                        detail: { event: updatedEvent },
+                        bubbles: true,
+                    }),
+                );
+                return;
+            }
+
+            const durationMs = originalEnd.getTime() - originalStart.getTime();
+            const newStart = new Date(
+                originalStart.getTime() + deltaHours * 60 * 60 * 1000,
+            );
             const newEnd = new Date(newStart.getTime() + durationMs);
 
             const updatedEvent: Event = {
@@ -417,6 +437,9 @@ export default class WeekView extends WebComponent {
                     bubbles: true,
                 }),
             );
+        } else if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            this.handleEventClick(event);
         }
     };
 

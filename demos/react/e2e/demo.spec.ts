@@ -87,15 +87,43 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   await moreBtn.click();
   await expect(todayCell.locator(".month-view-event")).toHaveCount(3);
 
-  // 3. 切换到日视图，测试点击时间槽创建事件与键盘上下键移动事件时间 (RFC-0020)
+  // 2c. 点击事件打开内联编辑栏，修改标题并保存
+  await todayCell.locator(".month-view-event", { hasText: "团队会议" }).click();
+  const editInput = page.getByTestId("input-edit-title");
+  await expect(editInput).toBeVisible();
+  await editInput.fill("架构评审会议");
+  await page.getByTestId("btn-save-edit").click();
+  await expect(actionLog).toContainText("已编辑事件: 架构评审会议");
+  await expect(page.getByText("✓ 架构评审会议", { exact: true })).toBeVisible();
+
+  // 3. 切换到日视图，测试点击时间槽创建事件、键盘移动时间、键盘调整时长与拖拽边缘调整时长 (RFC-0020, RFC-0021)
   await page.getByRole("button", { name: "日", exact: true }).click();
   await page.locator(".day-view-hour-cell").nth(13).click();
   await expect(actionLog).toContainText("已在 13:00 创建时段预约");
   await expect(page.getByText("✓ 时段预约", { exact: true })).toBeVisible();
 
-  const firstDayEvent = page.locator(".day-view-event").first();
+  const firstDayEvent = page.locator(".day-view-event", {
+    hasText: "架构评审会议",
+  });
   await firstDayEvent.focus();
   await firstDayEvent.press("ArrowDown");
+  await expect(actionLog).toContainText("已更新事件: 架构评审会议");
+  await firstDayEvent.press("Shift+ArrowDown");
+  await expect(actionLog).toContainText("已更新事件: 架构评审会议");
+
+  const resizeHandle = firstDayEvent.locator(".day-view-resize-handle");
+  const handleBox = await resizeHandle.boundingBox();
+  expect(handleBox).not.toBeNull();
+  await page.mouse.move(
+    handleBox!.x + handleBox!.width / 2,
+    handleBox!.y + handleBox!.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    handleBox!.x + handleBox!.width / 2,
+    handleBox!.y + handleBox!.height / 2 + 52,
+  );
+  await page.mouse.up();
   await expect(actionLog).toContainText("已更新事件:");
 
   // 4. 从日历 API 导出当前 DSL 与事件状态
