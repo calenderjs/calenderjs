@@ -217,13 +217,22 @@ export default class DayView extends WebComponent {
         const viewTopPct = (viewTopPx / totalHeight) * 100;
         const viewBottomPct = (viewBottomPx / totalHeight) * 100;
 
-        return events.filter((event) => {
-            const pos = calculateEventPosition(event, this.dayStart, this.dayEnd);
-            const eventTopPct = pos.top;
-            const eventBottomPct = pos.top + pos.height;
-            // 判断与视口区间是否有重叠
-            return eventBottomPct >= viewTopPct && eventTopPct <= viewBottomPct;
-        });
+        return events
+            .filter((event) => {
+                const pos = calculateEventPosition(
+                    event,
+                    this.dayStart,
+                    this.dayEnd,
+                );
+                const eventTopPct = pos.top;
+                const eventBottomPct = pos.top + pos.height;
+                // 判断与视口区间是否有重叠
+                return (
+                    eventBottomPct >= viewTopPct &&
+                    eventTopPct <= viewBottomPct
+                );
+            })
+            .slice(0, 60);
     }
 
     private get hours() {

@@ -246,12 +246,17 @@ export default class WeekView extends WebComponent {
         const viewTopPct = (viewTopPx / totalHeight) * 100;
         const viewBottomPct = (viewBottomPx / totalHeight) * 100;
 
-        return events.filter((event) => {
-            const pos = calculateEventPosition(event, dayStart, dayEnd);
-            const eventTopPct = pos.top;
-            const eventBottomPct = pos.top + pos.height;
-            return eventBottomPct >= viewTopPct && eventTopPct <= viewBottomPct;
-        });
+        return events
+            .filter((event) => {
+                const pos = calculateEventPosition(event, dayStart, dayEnd);
+                const eventTopPct = pos.top;
+                const eventBottomPct = pos.top + pos.height;
+                return (
+                    eventBottomPct >= viewTopPct &&
+                    eventTopPct <= viewBottomPct
+                );
+            })
+            .slice(0, 60);
     }
 
     // ========== 事件处理 ==========
