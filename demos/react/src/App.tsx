@@ -81,10 +81,25 @@ export default function App() {
     Array<{ eventId: string; valid: boolean; errors?: string[] }>
   >([]);
   const [renderedEvents, setRenderedEvents] = useState<any[]>([]);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => window.matchMedia("(prefers-color-scheme: dark)").matches,
+  );
+  const hasManualThemeOverride = useRef(false);
   const [actionLog, setActionLog] = useState<string>("");
   const [editingId, setEditingId] = useState<string>("");
   const [editingTitle, setEditingTitle] = useState<string>("");
+
+  // 跟随系统深色/浅色模式，直到用户手动切换过一次
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!hasManualThemeOverride.current) {
+        setIsDarkMode(e.matches);
+      }
+    };
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
 
   // 同步品牌主题属性至 documentElement
   useEffect(() => {
@@ -164,7 +179,11 @@ export default function App() {
           valid: false,
           errors: validationResult.errors,
         });
-        return;
+      } else {
+        results.push({
+          eventId: event.id,
+          valid: true,
+        });
       }
 
       // 渲染
@@ -175,10 +194,6 @@ export default function App() {
         icon: renderedEvent.icon,
       });
 
-      results.push({
-        eventId: event.id,
-        valid: true,
-      });
     });
 
     setValidationResults(results);
@@ -353,7 +368,10 @@ export default function App() {
         </div>
         <button
           className="demo-theme-btn"
-          onClick={() => setIsDarkMode(!isDarkMode)}
+          onClick={() => {
+            hasManualThemeOverride.current = true;
+            setIsDarkMode(!isDarkMode);
+          }}
         >
           {isDarkMode ? "☀️ 浅色模式" : "🌙 暗色模式"}
         </button>

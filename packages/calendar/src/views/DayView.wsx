@@ -14,6 +14,8 @@ import {
     toStateIso,
 } from "../utils/state-date";
 import { upgradeProperties } from "../utils/upgrade-property";
+import { startPointerDrag } from "../utils/pointer-drag";
+import { DEFAULT_HOUR_CELL_HEIGHT_PX, snapMinutesFromPixelOffset } from "../utils/time-grid";
 import styles from "./DayView.css?inline";
 
 /** 需要在 customElements 升级时补写的公开属性 */
@@ -33,13 +35,16 @@ export default class DayView extends WebComponent {
     // 日期存 ISO：避免 WSX reactive Proxy 破坏 Date
     @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
+    private static readonly DRAG_THRESHOLD = 4;
+    private _suppressNextClick = false;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
         role: "user",
     };
-    @state private _scrollTop: number = 0;
-    @state private _viewportHeight: number = 0;
+    private _scrollTop: number = 0;
+    private _viewportHeight: number = 0;
+    @state private _virtualScrollBucket: number = 0;
     // 保存"今天"的日期，确保在切换视图时不会改变
     private readonly _today: Date;
 
@@ -59,6 +64,7 @@ export default class DayView extends WebComponent {
         return this._events;
     }
     set events(value: Event[] | string) {
+        this.captureScrollPosition();
         if (Array.isArray(value)) {
             this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
@@ -74,6 +80,7 @@ export default class DayView extends WebComponent {
         } else {
             this._events = [];
         }
+        this.scheduleRestoreScroll();
     }
 
     get user(): User {
@@ -112,11 +119,46 @@ export default class DayView extends WebComponent {
         upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
         this.setupScrollListener();
+        this.restoreScrollPosition();
+        this.scheduleRestoreScroll();
+    }
+
+    onRendered() {
+        super.onRendered?.();
+        this.restoreScrollPosition();
     }
 
     onDisconnected() {
         super.onDisconnected?.();
         this.teardownScrollListener();
+    }
+
+    private captureScrollPosition() {
+        const body = this.shadowRoot?.querySelector(
+            ".day-view-body",
+        ) as HTMLElement | null;
+        if (body && body.scrollTop > 0) {
+            this._scrollTop = body.scrollTop;
+        }
+    }
+
+    private restoreScrollPosition = () => {
+        if (this._scrollTop > 0) {
+            const body = this.shadowRoot?.querySelector(
+                ".day-view-body",
+            ) as HTMLElement | null;
+            if (body && body.scrollTop !== this._scrollTop) {
+                body.scrollTop = this._scrollTop;
+            }
+        }
+    };
+
+    private scheduleRestoreScroll() {
+        if (this._scrollTop > 0 && typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(() => {
+                this.restoreScrollPosition();
+            });
+        }
     }
 
     private setupScrollListener() {
@@ -140,6 +182,12 @@ export default class DayView extends WebComponent {
         if (target.clientHeight) {
             this._viewportHeight = target.clientHeight;
         }
+        if (this._events.length > 20) {
+            const bucket = Math.floor(this._scrollTop / 48);
+            if (bucket !== this._virtualScrollBucket) {
+                this._virtualScrollBucket = bucket;
+            }
+        }
     };
 
     onAttributeChanged(
@@ -147,6 +195,7 @@ export default class DayView extends WebComponent {
         oldValue: string | null,
         newValue: string | null,
     ) {
+        this.captureScrollPosition();
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
         switch (name) {
@@ -199,6 +248,7 @@ export default class DayView extends WebComponent {
      * 当单日事件远超视口（> 20）时，根据当前滚动视口动态回收视口外的 DOM 节点。
      */
     private get visibleEvents() {
+        void this._virtualScrollBucket;
         const events = this.dayEvents;
         if (events.length <= 20) {
             return events;
@@ -264,6 +314,10 @@ export default class DayView extends WebComponent {
     };
 
     private handleEventClick = (event: Event) => {
+        if (this._suppressNextClick) {
+            this._suppressNextClick = false;
+            return;
+        }
         if (this.onEventClick) {
             this.onEventClick(event);
         }
@@ -276,94 +330,101 @@ export default class DayView extends WebComponent {
         );
     };
 
-    private handleDragStart = (e: DragEvent, event: Event) => {
-        if (!e.dataTransfer) return;
-        const target = e.currentTarget as HTMLElement;
-        target.classList.add("dragging");
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("application/json", JSON.stringify(event));
-    };
-
-    private handleDragEnd = (e: DragEvent) => {
-        const target = e.currentTarget as HTMLElement;
-        target.classList.remove("dragging");
-    };
-
-    private handleDragOver = (e: DragEvent) => {
-        e.preventDefault();
-        if (e.dataTransfer) {
-            e.dataTransfer.dropEffect = "move";
+    private handleEventPointerDown = (e: PointerEvent, event: Event) => {
+        if (e.button !== 0) return;
+        if (e.composedPath().some((target) =>
+            target instanceof HTMLElement && target.matches(".day-view-resize-handle"),
+        )) {
+            this.handleResizePointerDown(e, event);
+            return;
         }
-    };
-
-    private handleDrop = (e: DragEvent, targetHour: number) => {
-        e.preventDefault();
-        const data = e.dataTransfer?.getData("application/json");
-        if (!data) return;
-        try {
-            const event = JSON.parse(data) as Event;
-            const originalStart = new Date(event.startTime);
-            const originalEnd = new Date(event.endTime);
-            const durationMs = originalEnd.getTime() - originalStart.getTime();
-
-            const newStart = new Date(this.viewDate);
-            newStart.setHours(targetHour, originalStart.getMinutes(), originalStart.getSeconds(), 0);
-            const newEnd = new Date(newStart.getTime() + durationMs);
-
-            const updatedEvent: Event = {
-                ...event,
-                startTime: newStart,
-                endTime: newEnd,
-            };
-
-            this.dispatchEvent(
-                new CustomEvent("event-update-request", {
-                    detail: { event: updatedEvent },
-                    bubbles: true,
-                }),
-            );
-        } catch (err) {
-            console.error("Failed to parse dragged event:", err);
-        }
-    };
-
-    private handleResizeMouseDown = (e: MouseEvent, event: Event) => {
         e.stopPropagation();
         e.preventDefault();
-
-        const startY = e.clientY;
-        const originalEnd = new Date(event.endTime);
-
-        const onMouseMove = (moveEvent: MouseEvent) => {};
-
-        const onMouseUp = (upEvent: MouseEvent) => {
-            window.removeEventListener("mousemove", onMouseMove);
-            window.removeEventListener("mouseup", onMouseUp);
-
-            const deltaY = upEvent.clientY - startY;
-            const hoursDelta = Math.round(deltaY / 48);
-            if (hoursDelta === 0) return;
-
-            const newEnd = new Date(originalEnd.getTime() + hoursDelta * 60 * 60 * 1000);
-            const start = new Date(event.startTime);
-            if (newEnd.getTime() <= start.getTime()) return;
-
-            const updatedEvent: Event = {
-                ...event,
-                endTime: newEnd,
-            };
-
-            this.dispatchEvent(
-                new CustomEvent("event-update-request", {
-                    detail: { event: updatedEvent },
-                    bubbles: true,
-                }),
-            );
+        const element = e.currentTarget as HTMLElement;
+        const clearPreview = () => {
+            element.classList.remove("dragging");
+            element.style.removeProperty("transform");
+            element.style.removeProperty("z-index");
         };
-
-        window.addEventListener("mousemove", onMouseMove);
-        window.addEventListener("mouseup", onMouseUp);
+        startPointerDrag(e, {
+            onMove: (dx, dy) => {
+                element.classList.add("dragging");
+                element.style.transform = `translate(${dx}px, ${dy}px)`;
+                element.style.zIndex = "20";
+            },
+            onEnd: (dx, dy, upEvent) => {
+                clearPreview();
+                if (Math.abs(dx) <= DayView.DRAG_THRESHOLD && Math.abs(dy) <= DayView.DRAG_THRESHOLD) return;
+                this._suppressNextClick = true;
+                const column = this.shadowRoot?.querySelector(".day-view-events-column");
+                if (!column) return;
+                const bounds = column.getBoundingClientRect();
+                if (upEvent.clientY < bounds.top || upEvent.clientY >= bounds.bottom) return;
+                const hourCellHeight = this.shadowRoot
+                    ?.querySelector(".day-view-hour-cell")
+                    ?.getBoundingClientRect().height || DEFAULT_HOUR_CELL_HEIGHT_PX;
+                const minutesOfDay = Math.min(
+                    24 * 60 - 15,
+                    Math.max(0, snapMinutesFromPixelOffset(upEvent.clientY - bounds.top, hourCellHeight)),
+                );
+                const originalStart = new Date(event.startTime);
+                const duration = new Date(event.endTime).getTime() - originalStart.getTime();
+                const startTime = new Date(this.viewDate);
+                startTime.setHours(
+                    Math.floor(minutesOfDay / 60),
+                    minutesOfDay % 60,
+                    originalStart.getSeconds(),
+                    0,
+                );
+                this.dispatchEvent(new CustomEvent("event-update-request", {
+                    detail: { event: { ...event, startTime, endTime: new Date(startTime.getTime() + duration) } },
+                    bubbles: true,
+                }));
+            },
+            onCancel: clearPreview,
+        });
     };
+
+    private handleResizePointerDown = (e: PointerEvent, event: Event) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const originalHeight = element.style.height;
+        const originalEnd = new Date(event.endTime);
+        const hourCellHeight = this.shadowRoot
+            ?.querySelector(".day-view-hour-cell")
+            ?.getBoundingClientRect().height || DEFAULT_HOUR_CELL_HEIGHT_PX;
+        startPointerDrag(e, {
+            onMove: (_dx, dy) => {
+                const deltaMinutes = snapMinutesFromPixelOffset(dy, hourCellHeight);
+                const deltaPx = (deltaMinutes / 60) * hourCellHeight;
+                element.style.height = `calc(${originalHeight} + ${deltaPx}px)`;
+            },
+            onEnd: (_dx, dy) => {
+                element.style.height = originalHeight;
+                const deltaMinutes = snapMinutesFromPixelOffset(dy, hourCellHeight);
+                if (!deltaMinutes) return;
+                const endTime = new Date(originalEnd.getTime() + deltaMinutes * 60_000);
+                if (endTime <= new Date(event.startTime)) return;
+                this.dispatchEvent(new CustomEvent("event-update-request", {
+                    detail: { event: { ...event, endTime } },
+                    bubbles: true,
+                }));
+            },
+            onCancel: () => { element.style.height = originalHeight; },
+        }, element);
+    };
+
+    showUpdateRejected(eventId: string) {
+        const element = this.shadowRoot?.querySelector<HTMLElement>(
+            `[data-event-id="${CSS.escape(eventId)}"]`,
+        );
+        if (!element) return;
+        element.classList.remove("update-rejected");
+        void element.offsetWidth;
+        element.classList.add("update-rejected");
+        window.setTimeout(() => element.classList.remove("update-rejected"), 650);
+    }
 
     private handleEventKeyDown = (e: KeyboardEvent, event: Event) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
@@ -417,23 +478,34 @@ export default class DayView extends WebComponent {
     // ========== 渲染 ==========
     render() {
         return (
-            <div class="day-view">
-                <div class="day-view-header">
+            <div class="day-view" key="day-view">
+                <div class="day-view-header" key="day-view-header">
                     <div
                         class={`day-view-date ${
                             isSameDay(this.viewDate, this._today) ? "today" : ""
                         }`}
+                        key="day-view-date"
                     >
                         {this.viewDate.getFullYear()}年
                         {this.viewDate.getMonth() + 1}月
                         {this.viewDate.getDate()}日
                     </div>
-                    <div class="day-view-events-count">
+                    <div
+                        class="day-view-events-count"
+                        key="day-view-events-count"
+                    >
                         {this.dayEvents.length} 个事件
                     </div>
                 </div>
-                <div class="day-view-body">
-                    <div class="day-view-time-column">
+                <div
+                    class="day-view-body"
+                    key="day-view-body"
+                    onScroll={this.handleScroll}
+                >
+                    <div
+                        class="day-view-time-column"
+                        key="day-view-time-column"
+                    >
                         {this.hours.map((hour) => {
                             const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
                             const timeStr = `${hourStr}:00`;
@@ -447,17 +519,17 @@ export default class DayView extends WebComponent {
                             );
                         })}
                     </div>
-                    <div class="day-view-events-column">
+                    <div
+                        class="day-view-events-column"
+                        key="day-view-events-column"
+                    >
                         {this.hours.map((hour) => {
                             return (
                                 <div
                                     class="day-view-hour-cell"
+                                    data-hour={hour}
                                     key={`right-hour-${hour}`}
                                     onClick={() => this.handleSlotClick(hour)}
-                                    onDragOver={this.handleDragOver}
-                                    onDrop={(e: DragEvent) =>
-                                        this.handleDrop(e, hour)
-                                    }
                                 ></div>
                             );
                         })}
@@ -475,37 +547,41 @@ export default class DayView extends WebComponent {
                                 <div
                                     class="day-view-event draggable"
                                     key={event.id}
+                                    data-event-id={event.id}
                                     style={`top: ${position.top}%; height: ${position.height}%; background-color: ${eventColor}`}
-                                    draggable="true"
                                     tabIndex={0}
-                                    onDragStart={(e: DragEvent) =>
-                                        this.handleDragStart(e, event)
-                                    }
-                                    onDragEnd={this.handleDragEnd}
+                                    onPointerDown={(e: PointerEvent) => this.handleEventPointerDown(e, event)}
                                     onKeyDown={(e: KeyboardEvent) =>
                                         this.handleEventKeyDown(e, event)
                                     }
                                     onClick={() => this.handleEventClick(event)}
                                     title={event.title}
                                 >
-                                    <div class="day-view-event-time">
+                                    <div
+                                        class="day-view-event-time"
+                                        key={`${event.id}-time`}
+                                    >
                                         {getTimeString(event.startTime)} -{" "}
                                         {getTimeString(event.endTime)}
                                     </div>
-                                    <div class="day-view-event-title">
+                                    <div
+                                        class="day-view-event-title"
+                                        key={`${event.id}-title`}
+                                    >
                                         {event.title}
                                     </div>
                                     {eventDescription && (
-                                        <div class="day-view-event-description">
+                                        <div
+                                            class="day-view-event-description"
+                                            key={`${event.id}-desc`}
+                                        >
                                             {eventDescription}
                                         </div>
                                     )}
                                     <div
                                         class="day-view-resize-handle"
+                                        key={`${event.id}-resize`}
                                         title="拖拽修改时长"
-                                        onMouseDown={(e: MouseEvent) =>
-                                            this.handleResizeMouseDown(e, event)
-                                        }
                                     ></div>
                                 </div>
                             );

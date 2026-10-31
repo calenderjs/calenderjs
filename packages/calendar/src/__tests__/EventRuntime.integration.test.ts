@@ -152,6 +152,36 @@ describe("Calendar EventRuntime 集成", () => {
     expect(errorHandler).toHaveBeenCalled();
   });
 
+  it("skipValidation 只绕过更新校验，不影响 editable 权限", () => {
+    const compiler = new EventDSLCompiler();
+    const astWithRule: EventTypeAST = {
+      ...MEETING_AST,
+      validate: [
+        {
+          type: "Between",
+          field: { type: "FieldAccess", path: ["data", "attendees", "count"] },
+          min: 3,
+          max: 50,
+        },
+      ],
+    };
+    const runtime = new EventRuntime(compiler.compileFromAST([astWithRule]).types[0]);
+    const calendar = document.createElement("wsx-calendar") as Calendar;
+    calendar.eventRuntime = runtime;
+
+    expect(calendar.proposeEventUpdate(createMeetingEvent())).toBe(false);
+    expect(calendar.proposeEventUpdate(createMeetingEvent(), { skipValidation: true })).toBe(true);
+
+    const deniedCalendar = document.createElement("wsx-calendar") as Calendar;
+    deniedCalendar.eventRuntime = new EventRuntime(
+      compiler.compileFromAST([{
+        ...MEETING_AST,
+        behavior: [{ name: "editable", value: false }],
+      }]).types[0],
+    );
+    expect(deniedCalendar.proposeEventUpdate(createMeetingEvent(), { skipValidation: true })).toBe(false);
+  });
+
   it("canPerformAction 应委托给 EventRuntime", () => {
     const compiler = new EventDSLCompiler();
     const runtime = new EventRuntime(

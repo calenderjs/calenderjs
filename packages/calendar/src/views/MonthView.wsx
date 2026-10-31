@@ -17,6 +17,7 @@ import {
     UNSELECTED_DATE_ISO,
 } from "../utils/state-date";
 import { upgradeProperties } from "../utils/upgrade-property";
+import { startPointerDrag, findMatchAtPoint } from "../utils/pointer-drag";
 import styles from "./MonthView.css?inline";
 
 /** 需要在 customElements 升级时补写的公开属性 */
@@ -38,6 +39,8 @@ export default class MonthView extends WebComponent {
     @state private _events: Event[] = [];
     @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
     @state private _expandedDateKey: string = "";
+    private _suppressNextClick = false;
+    private _scrollTop: number = 0;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -62,6 +65,7 @@ export default class MonthView extends WebComponent {
         return this._events;
     }
     set events(value: Event[] | string) {
+        this.captureScrollPosition();
         if (Array.isArray(value)) {
             this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
@@ -77,6 +81,7 @@ export default class MonthView extends WebComponent {
         } else {
             this._events = [];
         }
+        this.scheduleRestoreScroll();
     }
 
     get selectedDate(): Date {
@@ -124,13 +129,54 @@ export default class MonthView extends WebComponent {
         // 框架可能在升级前就赋值，需重新过 setter
         upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
+        this.restoreScrollPosition();
+        this.scheduleRestoreScroll();
     }
+
+    onRendered() {
+        super.onRendered?.();
+        this.restoreScrollPosition();
+    }
+
+    private captureScrollPosition() {
+        const gridEl = this.shadowRoot?.querySelector(
+            ".month-view-grid",
+        ) as HTMLElement | null;
+        if (gridEl && gridEl.scrollTop > 0) {
+            this._scrollTop = gridEl.scrollTop;
+        }
+    }
+
+    private restoreScrollPosition = () => {
+        if (this._scrollTop > 0) {
+            const gridEl = this.shadowRoot?.querySelector(
+                ".month-view-grid",
+            ) as HTMLElement | null;
+            if (gridEl && gridEl.scrollTop !== this._scrollTop) {
+                gridEl.scrollTop = this._scrollTop;
+            }
+        }
+    };
+
+    private scheduleRestoreScroll() {
+        if (this._scrollTop > 0 && typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(() => {
+                this.restoreScrollPosition();
+            });
+        }
+    }
+
+    private handleScroll = (e: globalThis.Event) => {
+        const target = e.currentTarget as HTMLElement;
+        this._scrollTop = target.scrollTop;
+    };
 
     onAttributeChanged(
         name: string,
         oldValue: string | null,
         newValue: string | null,
     ) {
+        this.captureScrollPosition();
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
         switch (name) {
@@ -241,6 +287,10 @@ export default class MonthView extends WebComponent {
         if (evt) {
             evt.stopPropagation();
         }
+        if (this._suppressNextClick) {
+            this._suppressNextClick = false;
+            return;
+        }
         if (this.onEventClick) {
             this.onEventClick(event);
         }
@@ -251,6 +301,62 @@ export default class MonthView extends WebComponent {
             }),
         );
     };
+
+    private handleEventPointerDown = (e: PointerEvent, event: Event) => {
+        if (e.button !== 0) return;
+        if (e.composedPath().some((target) =>
+            target instanceof HTMLElement && target.matches(".month-view-event-delete"),
+        )) return;
+        e.stopPropagation();
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const clearPreview = () => {
+            element.classList.remove("dragging");
+            element.style.removeProperty("transform");
+            element.style.removeProperty("z-index");
+        };
+        startPointerDrag(e, {
+            onMove: (dx, dy) => {
+                element.classList.add("dragging");
+                element.style.transform = `translate(${dx}px, ${dy}px)`;
+                element.style.zIndex = "10";
+            },
+            onEnd: (dx, dy, upEvent) => {
+                clearPreview();
+                if (Math.abs(dx) <= 4 && Math.abs(dy) <= 4) return;
+                this._suppressNextClick = true;
+                const cell = findMatchAtPoint(upEvent.clientX, upEvent.clientY, ".month-view-cell");
+                const targetTimestamp = Number(cell?.dataset.date);
+                if (!Number.isFinite(targetTimestamp)) return;
+                const targetDate = new Date(targetTimestamp);
+                const dateKey = formatDateKey(targetDate);
+                const originalStart = new Date(event.startTime);
+                if (formatDateKey(originalStart) === dateKey) return;
+                const duration = new Date(event.endTime).getTime() - originalStart.getTime();
+                const startTime = new Date(targetDate);
+                startTime.setHours(originalStart.getHours(), originalStart.getMinutes(), originalStart.getSeconds(), originalStart.getMilliseconds());
+                if ((this.eventsByDate.get(dateKey)?.length ?? 0) >= 3) {
+                    this._expandedDateKey = dateKey;
+                }
+                this.dispatchEvent(new CustomEvent("event-update-request", {
+                    detail: { event: { ...event, startTime, endTime: new Date(startTime.getTime() + duration) } },
+                    bubbles: true,
+                }));
+            },
+            onCancel: clearPreview,
+        });
+    };
+
+    showUpdateRejected(eventId: string) {
+        const element = this.shadowRoot?.querySelector<HTMLElement>(
+            `[data-event-id="${CSS.escape(eventId)}"]`,
+        );
+        if (!element) return;
+        element.classList.remove("update-rejected");
+        void element.offsetWidth;
+        element.classList.add("update-rejected");
+        window.setTimeout(() => element.classList.remove("update-rejected"), 650);
+    }
 
     private handleEventDelete = (event: Event, evt?: MouseEvent) => {
         if (evt) {
@@ -283,8 +389,8 @@ export default class MonthView extends WebComponent {
     // ========== 渲染 ==========
     render() {
         return (
-            <div class="month-view">
-                <div class="month-view-header">
+            <div class="month-view" key="month-view">
+                <div class="month-view-header" key="month-view-header">
                     {this.weekDays.map((day) => {
                         return (
                             <div class="month-view-day-header" key={day}>
@@ -293,7 +399,11 @@ export default class MonthView extends WebComponent {
                         );
                     })}
                 </div>
-                <div class="month-view-grid">
+                <div
+                    class="month-view-grid"
+                    key="month-view-grid"
+                    onScroll={this.handleScroll}
+                >
                     {this.monthDates.map((date) => {
                         if (
                             !date ||
@@ -332,6 +442,7 @@ export default class MonthView extends WebComponent {
                                 class={`month-view-cell ${
                                     !isCurrentMonth ? "other-month" : ""
                                 } ${isToday && isCurrentMonth ? "today" : ""}`}
+                                data-date={normalizedDate.getTime()}
                                 onClick={() =>
                                     this.handleDateClick(normalizedDate)
                                 }
@@ -339,10 +450,16 @@ export default class MonthView extends WebComponent {
                                     this.handleDateDoubleClick(normalizedDate)
                                 }
                             >
-                                <div class="month-view-cell-date">
+                                <div
+                                    class="month-view-cell-date"
+                                    key={`${dateKey}-date`}
+                                >
                                     {normalizedDate.getDate()}
                                 </div>
-                                <div class="month-view-cell-events">
+                                <div
+                                    class="month-view-cell-events"
+                                    key={`${dateKey}-events`}
+                                >
                                     {visibleEvents.map((event) => {
                                         const eventColor =
                                             event.color || "#4285f4";
@@ -350,6 +467,8 @@ export default class MonthView extends WebComponent {
                                             <div
                                                 class="month-view-event"
                                                 key={event.id}
+                                                data-event-id={event.id}
+                                                onPointerDown={(e: PointerEvent) => this.handleEventPointerDown(e, event)}
                                                 style={`background-color: ${eventColor}`}
                                                 onClick={(evt) =>
                                                     this.handleEventClick(
@@ -358,12 +477,16 @@ export default class MonthView extends WebComponent {
                                                     )
                                                 }
                                             >
-                                                <span class="month-view-event-title">
+                                                <span
+                                                    class="month-view-event-title"
+                                                    key={`${event.id}-title`}
+                                                >
                                                     {event.title}
                                                 </span>
                                                 {this.onEventDelete && (
                                                     <button
                                                         class="month-view-event-delete"
+                                                        key={`${event.id}-delete`}
                                                         onClick={(evt) =>
                                                             this.handleEventDelete(
                                                                 event,
@@ -380,6 +503,7 @@ export default class MonthView extends WebComponent {
                                     {dayEvents.length > 3 && (
                                         <div
                                             class="month-view-more"
+                                            key={`${dateKey}-more`}
                                             onClick={(evt) =>
                                                 this.handleMoreClick(
                                                     dateKey,

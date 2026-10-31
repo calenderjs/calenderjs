@@ -26,8 +26,8 @@
 | 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md)                                       | Draft           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
 | 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md)    | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                          |
 | 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md)                              | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁                       |
-| 0006 | [Documentation & Examples](rfc/0006-documentation-and-examples.md)                               | Draft           | **P3** | site 已有基础框架，文档内容待补全                                             |
-| 0007 | [VS Code Extension & Online Editor](rfc/0007-vscode-extension-and-online-editor.md)              | Draft           | **P4** | 未来特性                                                                      |
+| 0006 | [Documentation & Examples](rfc/rejected/0006-documentation-and-examples.md)                               | Rejected           | **P3** | site 已有基础框架，文档内容待补全                                             |
+| 0007 | [VS Code Extension & Online Editor](rfc/rejected/0007-vscode-extension-and-online-editor.md)              | Rejected           | **P4** | 未来特性                                                                      |
 | 0003 | [Multi-Tenant Service](../../site/.spec/rfc/0003-multi-tenant-service.md)                        | Future Plan     | **P5** | **规格已迁至兄弟仓** `../site/.spec/rfc/`；本仓无正文；勿在本仓/`./site` 实现 |
 | 0025 | [CI: Pull Request Workflow (Unit + E2E)](rfc/completed/0025-ci-pull-request-workflow.md)         | **Implemented** | —      | PR 并行 unit-test + e2e-test（三引擎 + RFC-0015 覆盖率门槛）                  |
 
@@ -107,3 +107,18 @@
 | `@calenderjs/monaco-event-dsl`   | Implemented | Monaco Editor DSL 语言插件                                    |
 | `site/`                          | Implemented | WSX 官网（i18n、路由、文档）                                  |
 | `demos/react/`                   | Implemented | React Demo（DSL 编辑器 + Calendar）                           |
+| 0026 | [Calendar readonly/edit mode](rfc/0026-calendar-readonly-edit-mode.md) | Draft |
+| 0027 | [RFC-demo coverage golden rule](rfc/0027-rfc-demo-coverage-rule.md) | Draft |
+| 0028 | [Agent-friendly skills for calenderjs usage](rfc/0028-agent-friendly-skills.md) | Draft |
+| 0029 | [Fix WeekView hour-cell key collision breaking drag/click per column](rfc/completed/0029-week-view-hour-cell-key-collision.md) | Implemented |
+| 0030 | [拖拽交互重构：原生 HTML5 DnD 换成 pointer-event 自建引擎 (Umbrella)](rfc/completed/0030-drag-interaction-rework.md) | Implemented |
+| 0031 | [共用 pointer-event 拖拽引擎 (child of 0030)](rfc/completed/0031-pointer-drag-engine.md) | Implemented |
+| 0032 | [WeekView 接入 pointer-event 拖拽 (child of 0030)](rfc/completed/0032-week-view-pointer-drag.md) | Implemented |
+| 0033 | [DayView 接入 pointer-event 拖拽 (child of 0030)](rfc/completed/0033-day-view-pointer-drag.md) | Implemented |
+| 0034 | [Resize 拖拽改时长实时预览 (child of 0030)](rfc/completed/0034-resize-live-preview.md) | Implemented |
+| 0035 | [拖拽/resize 改时间不应被 validate 规则拦截](rfc/completed/0035-drag-rejection-feedback.md) | Implemented |
+| 0036 | [MonthView 事件拖拽改日期](rfc/completed/0036-month-view-drag-move.md) | Implemented |
+| 0037 | [DayView/WeekView 拖拽与 resize 支持 15 分钟粒度](rfc/0037-quarter-hour-drag-snap.md) | Approved |
+| 0038 | [日历事件编辑弹窗 (Umbrella)](rfc/0038-event-edit-popup-umbrella.md) | Draft |
+| 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/0039-event-edit-trigger.md) | Draft |
+| 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/0040-event-edit-form.md) | Draft |

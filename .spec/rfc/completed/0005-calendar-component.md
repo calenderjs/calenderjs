@@ -72,7 +72,7 @@ DSL 描述事件类型及其字段、渲染、验证和行为规则；带日期�
 
 DSL 编辑是另一项功能。`@calenderjs/react-event-editor` 提供 React 编辑器，`@calenderjs/monaco-event-dsl` 提供 Monaco 语言支持；它们不并入、不依赖 `@calenderjs/calendar`。宿主可以同时展示编辑器与 Calendar，但两个包保持独立职责。
 
-Calendar 接受 DSL 文本、单个已解析 AST 或 AST 数组。规范属性名、旧属性兼容和两种输入同时设置时的优先级由 [RFC-0024](completed/0024-rename-event-dsl-property.md) 定义。`eventRuntime` 用于注入预编译的单类型 Runtime，不是编辑器入口。
+Calendar 接受 DSL 文本、单个已解析 AST 或 AST 数组。规范属性名、旧属性兼容和两种输入同时设置时的优先级由 [RFC-0024](0024-rename-event-dsl-property.md) 定义。`eventRuntime` 用于注入预编译的单类型 Runtime，不是编辑器入口。
 
 ## 组件 API 设计
 

@@ -126,6 +126,25 @@
   opacity: var(--calender-event-hover-opacity, 0.9);
 }
 
+.month-view-event.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  pointer-events: none;
+}
+
+.month-view-event.dragging * {
+  pointer-events: none;
+}
+
+.month-view-event.update-rejected {
+  animation: month-view-update-rejected 0.65s ease-out;
+}
+
+@keyframes month-view-update-rejected {
+  25%, 75% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+
 .month-view-event-title {
   flex: 1;
   overflow: hidden;

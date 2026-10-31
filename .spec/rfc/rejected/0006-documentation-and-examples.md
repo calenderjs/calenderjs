@@ -1,6 +1,7 @@
 # RFC-0006: Documentation and Examples
 
-**状态**: Draft  
+**Status:** Rejected  
+**状态**: Rejected  
 **创建日期**: 2024-12-30  
 **作者**: WSX Team  
 **关联 RFC**: RFC-0001, RFC-0004

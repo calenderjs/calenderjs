@@ -330,7 +330,13 @@ export default class Calendar extends WebComponent {
     /** 视图发起的事件更新请求（拖拽移动或改变时长） */
     private handleChildEventUpdateRequest = (e: globalThis.Event) => {
         const { event } = (e as CustomEvent<{ event: CalendarEvent }>).detail;
-        this.proposeEventUpdate(event);
+        const allowed = this.proposeEventUpdate(event, { skipValidation: true });
+        if (!allowed) {
+            const source = e.target as HTMLElement & {
+                showUpdateRejected?: (eventId: string) => void;
+            };
+            source.showUpdateRejected?.(event.id);
+        }
     };
 
     // ========== 属性变化处理（对外使用 attribute） ==========
@@ -394,7 +400,7 @@ export default class Calendar extends WebComponent {
     // ========== 渲染 ==========
     render() {
         return (
-            <div class="calendar">
+            <div class="calendar" key="calendar-root">
                 {this.renderToolbar()}
                 {this.renderView()}
             </div>
@@ -403,42 +409,46 @@ export default class Calendar extends WebComponent {
 
     private renderToolbar() {
         return (
-            <div class="calendar-toolbar">
-                <div class="calendar-toolbar-left">
+            <div class="calendar-toolbar" key="calendar-toolbar">
+                <div class="calendar-toolbar-left" key="calendar-toolbar-left">
                     <button
                         class="calendar-nav-button"
+                        key="calendar-nav-prev"
                         onClick={() => this.handleNavigate(-1)}
                         aria-label="上一页"
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        <svg width="24" height="24" viewBox="0 0 24 24" key="calendar-nav-prev-svg">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" key="calendar-nav-prev-path" />
                         </svg>
                     </button>
                     <button
                         class="calendar-nav-button"
+                        key="calendar-nav-next"
                         onClick={() => this.handleNavigate(1)}
                         aria-label="下一页"
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        <svg width="24" height="24" viewBox="0 0 24 24" key="calendar-nav-next-svg">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" key="calendar-nav-next-path" />
                         </svg>
                     </button>
                     <button
                         class="calendar-today-button"
+                        key="calendar-today-btn"
                         onClick={() => this.handleToday()}
                     >
                         今天
                     </button>
-                    <div class="calendar-toolbar-date">
+                    <div class="calendar-toolbar-date" key="calendar-toolbar-date">
                         {this.formatViewDate()}
                     </div>
                 </div>
-                <div class="calendar-toolbar-right">
-                    <div class="calendar-view-buttons">
+                <div class="calendar-toolbar-right" key="calendar-toolbar-right">
+                    <div class="calendar-view-buttons" key="calendar-view-buttons">
                         <button
                             class={`calendar-view-button ${
                                 this.currentView === "month" ? "active" : ""
                             }`}
+                            key="calendar-view-btn-month"
                             onClick={() => this.handleViewChange("month")}
                         >
                             月
@@ -447,6 +457,7 @@ export default class Calendar extends WebComponent {
                             class={`calendar-view-button ${
                                 this.currentView === "week" ? "active" : ""
                             }`}
+                            key="calendar-view-btn-week"
                             onClick={() => this.handleViewChange("week")}
                         >
                             周
@@ -455,6 +466,7 @@ export default class Calendar extends WebComponent {
                             class={`calendar-view-button ${
                                 this.currentView === "day" ? "active" : ""
                             }`}
+                            key="calendar-view-btn-day"
                             onClick={() => this.handleViewChange("day")}
                         >
                             日
@@ -490,7 +502,11 @@ export default class Calendar extends WebComponent {
         const transitionClass = this._isViewTransitioning ? "view-transitioning" : "";
 
         return (
-            <div class={`calendar-view-container ${transitionClass}`} data-view={view}>
+            <div
+                class={`calendar-view-container ${transitionClass}`}
+                key="calendar-view-container"
+                data-view={view}
+            >
                 {viewContent}
             </div>
         );
@@ -500,6 +516,7 @@ export default class Calendar extends WebComponent {
     private renderMonthView() {
         return (
             <wsx-month-view
+                key="view-month"
                 view-date={this.currentDate.toISOString()}
                 events={JSON.stringify(this.displayEvents)}
                 selected-date={this.currentDate.toISOString()}
@@ -512,6 +529,7 @@ export default class Calendar extends WebComponent {
     private renderWeekView() {
         return (
             <wsx-week-view
+                key="view-week"
                 view-date={this.currentDate.toISOString()}
                 events={JSON.stringify(this.displayEvents)}
                 selected-date={this.currentDate.toISOString()}
@@ -524,6 +542,7 @@ export default class Calendar extends WebComponent {
     private renderDayView() {
         return (
             <wsx-day-view
+                key="view-day"
                 view-date={this.currentDate.toISOString()}
                 events={JSON.stringify(this.displayEvents)}
                 user={this.user ? JSON.stringify(this.user) : undefined}
@@ -720,7 +739,10 @@ export default class Calendar extends WebComponent {
     /**
      * 提议更新事件：先过 editable 权限（拒绝派发 event-update-denied），再验证，成功派发 event-update，失败派发 event-update-error
      */
-    proposeEventUpdate(event: CalendarEvent): boolean {
+    proposeEventUpdate(
+        event: CalendarEvent,
+        options: { skipValidation?: boolean } = {},
+    ): boolean {
         if (!this.canPerformAction("editable", event)) {
             this.dispatchEvent(
                 new CustomEvent("event-update-denied", {
@@ -731,8 +753,10 @@ export default class Calendar extends WebComponent {
             return false;
         }
 
-        const validation = this.validateEventForUpdate(event);
-        if (!validation.valid) {
+        const validation = options.skipValidation
+            ? null
+            : this.validateEventForUpdate(event);
+        if (validation && !validation.valid) {
             this.dispatchEvent(
                 new CustomEvent("event-update-error", {
                     detail: { event, errors: validation.errors ?? [] },

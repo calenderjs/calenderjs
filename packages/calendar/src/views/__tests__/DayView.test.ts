@@ -418,7 +418,8 @@ describe("DayView 组件", () => {
       const shadowRoot = dayView.shadowRoot;
       const eventElem = shadowRoot?.querySelector(".day-view-event") as HTMLElement;
       expect(eventElem).toBeTruthy();
-      expect(eventElem.getAttribute("draggable")).toBe("true");
+      expect(eventElem.hasAttribute("draggable")).toBe(false);
+      expect(eventElem.classList.contains("draggable")).toBe(true);
 
       eventElem.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
       await waitForDOMUpdate();

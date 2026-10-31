@@ -210,6 +210,20 @@
 .day-view-event.dragging {
   opacity: 0.5;
   cursor: grabbing;
+  pointer-events: none;
+}
+
+.day-view-event.dragging * {
+  pointer-events: none;
+}
+
+.day-view-event.update-rejected {
+  animation: day-view-update-rejected 0.65s ease-out;
+}
+
+@keyframes day-view-update-rejected {
+  25%, 75% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
 }
 
 .day-view-resize-handle {

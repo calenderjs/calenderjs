@@ -24,7 +24,7 @@ declare class Calendar extends ReactiveWebComponent {
   validateEventForUpdate(event: Event): ValidationResult;
   canPerformAction(action: string, event: Event): boolean;
   proposeEventCreate(event: Event): boolean;
-  proposeEventUpdate(event: Event): boolean;
+  proposeEventUpdate(event: Event, options?: { skipValidation?: boolean }): boolean;
 }
 
 export default Calendar;

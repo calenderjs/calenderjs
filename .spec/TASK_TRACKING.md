@@ -149,8 +149,15 @@
 ## Active
 
 - [ ] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
-- [ ] Implement RFC 0006: Documentation and examples (RFC 0006)
-- [ ] Implement RFC 0007: VS Code extension and online editor (RFC 0007)
+- [ ] Implement RFC 0026: Calendar readonly/edit mode (RFC 0026)
+- [ ] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
+- [ ] Implement RFC 0028: Agent-friendly skills for calenderjs usage (RFC 0028)
+- [ ] Implement RFC 0037: DayView/WeekView 拖拽与 resize 支持 15 分钟粒度 (RFC 0037)
+- [ ] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
+  - [ ] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
+  - [ ] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
+
+
 
 ## Done
 
@@ -175,3 +182,13 @@
   - [x] Implement RFC 0023: Virtualize large event lists (child of 0017) (RFC 0023)
   - [x] Implement RFC 0024: Rename eventDSL to eventTypeDefinitions (child of 0017) (RFC 0024)
 - [x] Implement RFC 0025: CI: Pull Request Workflow (Unit + E2E) (RFC 0025)
+- [x] Implement RFC 0007: VS Code extension and online editor (RFC 0007)
+- [x] Implement RFC 0006: Documentation and examples (RFC 0006)
+- [x] Implement RFC 0029: Fix WeekView hour-cell key collision breaking drag/click per column (RFC 0029)
+- [x] Implement RFC 0035: 拖拽/resize 改时间不应被 validate 规则拦截 (RFC 0035)
+- [x] Implement RFC 0036: MonthView 事件拖拽改日期 (RFC 0036)
+- [x] Implement RFC 0030: 拖拽交互重构：原生 HTML5 DnD 换成 pointer-event 自建引擎 (Umbrella) (RFC 0030)
+  - [x] Implement RFC 0031: 共用 pointer-event 拖拽引擎 (child of 0030) (RFC 0031)
+  - [x] Implement RFC 0032: WeekView 接入 pointer-event 拖拽 (child of 0030) (RFC 0032)
+  - [x] Implement RFC 0033: DayView 接入 pointer-event 拖拽 (child of 0030) (RFC 0033)
+  - [x] Implement RFC 0034: Resize 拖拽改时长实时预览 (child of 0030) (RFC 0034)

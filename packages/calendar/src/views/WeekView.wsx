@@ -16,6 +16,8 @@ import {
     UNSELECTED_DATE_ISO,
 } from "../utils/state-date";
 import { upgradeProperties } from "../utils/upgrade-property";
+import { startPointerDrag, findMatchAtPoint } from "../utils/pointer-drag";
+import { DEFAULT_HOUR_CELL_HEIGHT_PX, snapMinuteWithinHour, snapMinutesFromPixelOffset } from "../utils/time-grid";
 import styles from "./WeekView.css?inline";
 
 /** 需要在 customElements 升级时补写的公开属性 */
@@ -36,8 +38,11 @@ export default class WeekView extends WebComponent {
     @state private _viewDateIso: string = new Date().toISOString();
     @state private _events: Event[] = [];
     @state private _selectedDateIso: string = UNSELECTED_DATE_ISO;
-    @state private _scrollTop: number = 0;
-    @state private _viewportHeight: number = 0;
+    private _scrollTop: number = 0;
+    private _viewportHeight: number = 0;
+    @state private _virtualScrollBucket: number = 0;
+    // 拖拽改时间过程中的实时视觉偏移（RFC-0032）；松手后清空，不参与数据提交
+    @state private _dragPreview: { eventId: string; dx: number; dy: number } | null = null;
     @state private _user: User = {
         id: "1",
         email: "john.doe@example.com",
@@ -62,6 +67,7 @@ export default class WeekView extends WebComponent {
         return this._events;
     }
     set events(value: Event[] | string) {
+        this.captureScrollPosition();
         if (Array.isArray(value)) {
             this._events = normalizeEventsForState(value) as Event[];
         } else if (typeof value === "string") {
@@ -77,6 +83,7 @@ export default class WeekView extends WebComponent {
         } else {
             this._events = [];
         }
+        this.scheduleRestoreScroll();
     }
 
     get selectedDate(): Date {
@@ -125,6 +132,13 @@ export default class WeekView extends WebComponent {
         upgradeProperties(this, UPGRADABLE_PROPS);
         this.initializeFromAttributes();
         this.setupScrollListener();
+        this.restoreScrollPosition();
+        this.scheduleRestoreScroll();
+    }
+
+    onRendered() {
+        super.onRendered?.();
+        this.restoreScrollPosition();
     }
 
     onDisconnected() {
@@ -132,15 +146,62 @@ export default class WeekView extends WebComponent {
         this.teardownScrollListener();
     }
 
+    private captureScrollPosition() {
+        const viewEl = this.shadowRoot?.querySelector(
+            ".week-view",
+        ) as HTMLElement | null;
+        const bodyEl = this.shadowRoot?.querySelector(
+            ".week-view-body",
+        ) as HTMLElement | null;
+        const currentScroll = viewEl?.scrollTop || bodyEl?.scrollTop || 0;
+        if (currentScroll > 0) {
+            this._scrollTop = currentScroll;
+        }
+    }
+
+    private restoreScrollPosition = () => {
+        if (this._scrollTop > 0) {
+            const viewEl = this.shadowRoot?.querySelector(
+                ".week-view",
+            ) as HTMLElement | null;
+            if (viewEl && viewEl.scrollTop !== this._scrollTop) {
+                viewEl.scrollTop = this._scrollTop;
+            }
+            const bodyEl = this.shadowRoot?.querySelector(
+                ".week-view-body",
+            ) as HTMLElement | null;
+            if (bodyEl && bodyEl.scrollTop !== this._scrollTop) {
+                bodyEl.scrollTop = this._scrollTop;
+            }
+        }
+    };
+
+    private scheduleRestoreScroll() {
+        if (this._scrollTop > 0 && typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(() => {
+                this.restoreScrollPosition();
+            });
+        }
+    }
+
     private setupScrollListener() {
+        const viewEl = this.shadowRoot?.querySelector(".week-view") as HTMLElement | null;
+        if (viewEl) {
+            viewEl.addEventListener("scroll", this.handleScroll, { passive: true });
+            this._viewportHeight = viewEl.clientHeight || 600;
+        }
         const body = this.shadowRoot?.querySelector(".week-view-body") as HTMLElement | null;
         if (body) {
             body.addEventListener("scroll", this.handleScroll, { passive: true });
-            this._viewportHeight = body.clientHeight || 600;
+            this._viewportHeight = body.clientHeight || this._viewportHeight || 600;
         }
     }
 
     private teardownScrollListener() {
+        const viewEl = this.shadowRoot?.querySelector(".week-view");
+        if (viewEl) {
+            viewEl.removeEventListener("scroll", this.handleScroll);
+        }
         const body = this.shadowRoot?.querySelector(".week-view-body");
         if (body) {
             body.removeEventListener("scroll", this.handleScroll);
@@ -153,6 +214,12 @@ export default class WeekView extends WebComponent {
         if (target.clientHeight) {
             this._viewportHeight = target.clientHeight;
         }
+        if (this._events.length > 15) {
+            const bucket = Math.floor(this._scrollTop / 48);
+            if (bucket !== this._virtualScrollBucket) {
+                this._virtualScrollBucket = bucket;
+            }
+        }
     };
 
 
@@ -161,6 +228,7 @@ export default class WeekView extends WebComponent {
         oldValue: string | null,
         newValue: string | null,
     ) {
+        this.captureScrollPosition();
         super.onAttributeChanged?.(name, oldValue ?? "", newValue ?? "");
 
         switch (name) {
@@ -231,6 +299,7 @@ export default class WeekView extends WebComponent {
      * 当单日事件数量 <= 15 时全量渲染；> 15 时仅渲染视口及缓冲区范围内的事件。
      */
     private getVisibleEventsForDay(events: Event[], dayStart: Date, dayEnd: Date): Event[] {
+        void this._virtualScrollBucket;
         if (events.length <= 15) {
             return events;
         }
@@ -296,6 +365,10 @@ export default class WeekView extends WebComponent {
     };
 
     private handleEventClick = (event: Event) => {
+        if (this._suppressNextClick) {
+            this._suppressNextClick = false;
+            return;
+        }
         if (this.onEventClick) {
             this.onEventClick(event);
         }
@@ -307,97 +380,121 @@ export default class WeekView extends WebComponent {
         );
     };
 
-    private handleDragStart = (e: DragEvent, event: Event) => {
-        if (!e.dataTransfer) return;
-        const target = e.currentTarget as HTMLElement;
-        target.classList.add("dragging");
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("application/json", JSON.stringify(event));
-    };
+    /**
+     * 事件移动改时间/改日期（RFC-0032）：原生 HTML5 DnD 手势识别对真实指针输入不稳定
+     * （实测真实鼠标拖拽有时完全不触发 dragstart），换成 pointer-event 自建拖拽并提供
+     * 实时跟手预览。松手时用 elementFromPoint 找落点列/格，换算新的 startTime/endTime。
+     */
+    // 拖拽判定阈值（px）：低于此位移视为点击而非拖拽，保留点击打开事件的行为
+    private static readonly DRAG_THRESHOLD = 4;
+    private _suppressNextClick = false;
 
-    private handleDragEnd = (e: DragEvent) => {
-        const target = e.currentTarget as HTMLElement;
-        target.classList.remove("dragging");
-    };
-
-    private handleDragOver = (e: DragEvent) => {
-        e.preventDefault();
-        if (e.dataTransfer) {
-            e.dataTransfer.dropEffect = "move";
+    private handleEventPointerDown = (e: PointerEvent, event: Event) => {
+        if (e.button !== 0) return;
+        if (e.composedPath().some((target) =>
+            target instanceof HTMLElement && target.matches(".week-view-resize-handle"),
+        )) {
+            this.handleResizePointerDown(e, event);
+            return;
         }
-    };
-
-    private handleDrop = (e: DragEvent, targetDate: Date, targetHour: number) => {
-        e.preventDefault();
-        const data = e.dataTransfer?.getData("application/json");
-        if (!data) return;
-        try {
-            const event = JSON.parse(data) as Event;
-            const originalStart = new Date(event.startTime);
-            const originalEnd = new Date(event.endTime);
-            const durationMs = originalEnd.getTime() - originalStart.getTime();
-
-            const newStart = new Date(targetDate);
-            newStart.setHours(targetHour, originalStart.getMinutes(), originalStart.getSeconds(), 0);
-            const newEnd = new Date(newStart.getTime() + durationMs);
-
-            const updatedEvent: Event = {
-                ...event,
-                startTime: newStart,
-                endTime: newEnd,
-            };
-
-            this.dispatchEvent(
-                new CustomEvent("event-update-request", {
-                    detail: { event: updatedEvent },
-                    bubbles: true,
-                }),
-            );
-        } catch (err) {
-            console.error("Failed to parse dragged event:", err);
-        }
-    };
-
-    private handleResizeMouseDown = (e: MouseEvent, event: Event) => {
         e.stopPropagation();
         e.preventDefault();
 
-        const startY = e.clientY;
-        const originalEnd = new Date(event.endTime);
-
-        const onMouseMove = (moveEvent: MouseEvent) => {
-            // 实时预览移动
-        };
-
-        const onMouseUp = (upEvent: MouseEvent) => {
-            window.removeEventListener("mousemove", onMouseMove);
-            window.removeEventListener("mouseup", onMouseUp);
-
-            const deltaY = upEvent.clientY - startY;
-            // 48px 为每小时高度
-            const hoursDelta = Math.round(deltaY / 48);
-            if (hoursDelta === 0) return;
-
-            const newEnd = new Date(originalEnd.getTime() + hoursDelta * 60 * 60 * 1000);
-            const start = new Date(event.startTime);
-            if (newEnd.getTime() <= start.getTime()) return;
-
-            const updatedEvent: Event = {
-                ...event,
-                endTime: newEnd,
-            };
-
-            this.dispatchEvent(
-                new CustomEvent("event-update-request", {
-                    detail: { event: updatedEvent },
-                    bubbles: true,
-                }),
-            );
-        };
-
-        window.addEventListener("mousemove", onMouseMove);
-        window.addEventListener("mouseup", onMouseUp);
+        startPointerDrag(e, {
+            onMove: (dx, dy) => {
+                this._dragPreview = { eventId: event.id, dx, dy };
+            },
+            onEnd: (dx, dy, upEvent) => {
+                this._dragPreview = null;
+                const moved =
+                    Math.abs(dx) > WeekView.DRAG_THRESHOLD ||
+                    Math.abs(dy) > WeekView.DRAG_THRESHOLD;
+                if (moved) {
+                    this._suppressNextClick = true;
+                    this.commitEventDrop(event, upEvent.clientX, upEvent.clientY);
+                }
+            },
+            onCancel: () => {
+                this._dragPreview = null;
+            },
+        });
     };
+
+    private commitEventDrop = (event: Event, clientX: number, clientY: number) => {
+        const dropTarget = findMatchAtPoint(clientX, clientY, ".week-view-hour-cell");
+        if (!dropTarget) return;
+
+        const targetDateMs = Number(dropTarget.dataset.columnDate);
+        const targetHour = Number(dropTarget.dataset.hour);
+        if (Number.isNaN(targetDateMs) || Number.isNaN(targetHour)) return;
+        const targetBounds = dropTarget.getBoundingClientRect();
+        const targetMinute = snapMinuteWithinHour(
+            clientY - targetBounds.top,
+            targetBounds.height || DEFAULT_HOUR_CELL_HEIGHT_PX,
+        );
+
+        const originalStart = new Date(event.startTime);
+        const originalEnd = new Date(event.endTime);
+        const durationMs = originalEnd.getTime() - originalStart.getTime();
+
+        const newStart = new Date(targetDateMs);
+        newStart.setHours(targetHour, targetMinute, originalStart.getSeconds(), 0);
+        const newEnd = new Date(newStart.getTime() + durationMs);
+
+        const updatedEvent: Event = {
+            ...event,
+            startTime: newStart,
+            endTime: newEnd,
+        };
+
+        this.dispatchEvent(
+            new CustomEvent("event-update-request", {
+                detail: { event: updatedEvent },
+                bubbles: true,
+            }),
+        );
+    };
+
+    private handleResizePointerDown = (e: PointerEvent, event: Event) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const element = e.currentTarget as HTMLElement;
+        const originalHeight = element.style.height;
+        const originalEnd = new Date(event.endTime);
+        const hourCellHeight = this.shadowRoot
+            ?.querySelector(".week-view-hour-cell")
+            ?.getBoundingClientRect().height || DEFAULT_HOUR_CELL_HEIGHT_PX;
+        startPointerDrag(e, {
+            onMove: (_dx, dy) => {
+                const deltaMinutes = snapMinutesFromPixelOffset(dy, hourCellHeight);
+                const deltaPx = (deltaMinutes / 60) * hourCellHeight;
+                element.style.height = `calc(${originalHeight} + ${deltaPx}px)`;
+            },
+            onEnd: (_dx, dy) => {
+                element.style.height = originalHeight;
+                const deltaMinutes = snapMinutesFromPixelOffset(dy, hourCellHeight);
+                if (!deltaMinutes) return;
+                const endTime = new Date(originalEnd.getTime() + deltaMinutes * 60_000);
+                if (endTime <= new Date(event.startTime)) return;
+                this.dispatchEvent(new CustomEvent("event-update-request", {
+                    detail: { event: { ...event, endTime } },
+                    bubbles: true,
+                }));
+            },
+            onCancel: () => { element.style.height = originalHeight; },
+        }, element);
+    };
+
+    showUpdateRejected(eventId: string) {
+        const element = this.shadowRoot?.querySelector<HTMLElement>(
+            `[data-event-id="${CSS.escape(eventId)}"]`,
+        );
+        if (!element) return;
+        element.classList.remove("update-rejected");
+        void element.offsetWidth;
+        element.classList.add("update-rejected");
+        window.setTimeout(() => element.classList.remove("update-rejected"), 650);
+    }
 
     private handleEventKeyDown = (e: KeyboardEvent, event: Event) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
@@ -451,13 +548,21 @@ export default class WeekView extends WebComponent {
     // ========== 渲染 ==========
     render() {
         return (
-            <div class="week-view">
-                <div class="week-view-header">
-                    <div class="week-view-time-gutter"></div>
+            <div
+                class="week-view"
+                key="week-view"
+                onScroll={this.handleScroll}
+            >
+                <div class="week-view-header" key="week-view-header">
+                    <div
+                        class="week-view-time-gutter"
+                        key="week-view-header-gutter"
+                    ></div>
                     {this.weekDates.map((date) => {
                         // 确保日期对象的时间部分为 0，便于准确比较
                         const normalizedDate = new Date(date);
                         normalizedDate.setHours(0, 0, 0, 0);
+                        const dayKey = normalizedDate.getTime();
 
                         // 检查 selectedDate 是否是有效日期（不是 1970-01-01）
                         const isSelected =
@@ -474,11 +579,15 @@ export default class WeekView extends WebComponent {
                                 class={`week-view-day-header ${
                                     isToday ? "today" : ""
                                 }`}
+                                key={`week-header-${dayKey}`}
                                 onClick={() =>
                                     this.handleDateClick(normalizedDate)
                                 }
                             >
-                                <div class="week-view-day-name">
+                                <div
+                                    class="week-view-day-name"
+                                    key={`week-header-name-${dayKey}`}
+                                >
                                     {
                                         [
                                             "日",
@@ -491,18 +600,31 @@ export default class WeekView extends WebComponent {
                                         ][normalizedDate.getDay()]
                                     }
                                 </div>
-                                <div class="week-view-day-date">
+                                <div
+                                    class="week-view-day-date"
+                                    key={`week-header-date-${dayKey}`}
+                                >
                                     {normalizedDate.getDate()}
                                 </div>
-                                <div class="week-view-day-events-count">
+                                <div
+                                    class="week-view-day-events-count"
+                                    key={`week-header-count-${dayKey}`}
+                                >
                                     {dayEvents.length} 个事件
                                 </div>
                             </div>
                         );
                     })}
                 </div>
-                <div class="week-view-body">
-                    <div class="week-view-time-gutter">
+                <div
+                    class="week-view-body"
+                    key="week-view-body"
+                    onScroll={this.handleScroll}
+                >
+                    <div
+                        class="week-view-time-gutter"
+                        key="week-view-body-gutter"
+                    >
                         {this.hours.map((hour) => {
                             const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
                             const timeStr = `${hourStr}:00`;
@@ -516,7 +638,7 @@ export default class WeekView extends WebComponent {
                             );
                         })}
                     </div>
-                    <div class="week-view-columns">
+                    <div class="week-view-columns" key="week-view-columns">
                         {this.weekDates.map((date) => {
                             // 确保日期对象的时间部分为 0，便于准确比较
                             const normalizedDate = new Date(date);
@@ -541,17 +663,16 @@ export default class WeekView extends WebComponent {
                                         return (
                                             <div
                                                 class="week-view-hour-cell"
-                                                key={"time-slot-cell-" + hour}
+                                                key={
+                                                    "time-slot-cell-" +
+                                                    normalizedDate.getTime() +
+                                                    "-" +
+                                                    hour
+                                                }
+                                                data-column-date={normalizedDate.getTime()}
+                                                data-hour={hour}
                                                 onClick={() =>
                                                     this.handleSlotClick(
-                                                        normalizedDate,
-                                                        hour,
-                                                    )
-                                                }
-                                                onDragOver={this.handleDragOver}
-                                                onDrop={(e: DragEvent) =>
-                                                    this.handleDrop(
-                                                        e,
                                                         normalizedDate,
                                                         hour,
                                                     )
@@ -570,21 +691,30 @@ export default class WeekView extends WebComponent {
                                             event.color || "#4285f4";
                                         const eventDescription = event.data
                                             ?.description as string | undefined;
+                                        const preview =
+                                            this._dragPreview?.eventId === event.id
+                                                ? this._dragPreview
+                                                : null;
+                                        const previewStyle = preview
+                                            ? `transform: translate(${preview.dx}px, ${preview.dy}px); z-index: 20;`
+                                            : "";
 
                                         return (
                                             <div
-                                                class="week-view-event draggable"
+                                                class={
+                                                    "week-view-event draggable" +
+                                                    (preview ? " dragging" : "")
+                                                }
                                                 key={
                                                     "time-slot-event-" +
                                                     event.id
                                                 }
-                                                style={`top: ${position.top}%; height: ${position.height}%; background-color: ${eventColor}`}
-                                                draggable="true"
+                                                data-event-id={event.id}
+                                                style={`top: ${position.top}%; height: ${position.height}%; background-color: ${eventColor}; ${previewStyle}`}
                                                 tabIndex={0}
-                                                onDragStart={(e: DragEvent) =>
-                                                    this.handleDragStart(e, event)
+                                                onPointerDown={(e: PointerEvent) =>
+                                                    this.handleEventPointerDown(e, event)
                                                 }
-                                                onDragEnd={this.handleDragEnd}
                                                 onKeyDown={(e: KeyboardEvent) =>
                                                     this.handleEventKeyDown(e, event)
                                                 }
@@ -592,7 +722,10 @@ export default class WeekView extends WebComponent {
                                                     this.handleEventClick(event)
                                                 }
                                             >
-                                                <div class="week-view-event-time">
+                                                <div
+                                                    class="week-view-event-time"
+                                                    key={`time-slot-event-${event.id}-time`}
+                                                >
                                                     {getTimeString(
                                                         event.startTime,
                                                     )}{" "}
@@ -601,20 +734,24 @@ export default class WeekView extends WebComponent {
                                                         event.endTime,
                                                     )}
                                                 </div>
-                                                <div class="week-view-event-title">
+                                                <div
+                                                    class="week-view-event-title"
+                                                    key={`time-slot-event-${event.id}-title`}
+                                                >
                                                     {event.title}
                                                 </div>
                                                 {eventDescription && (
-                                                    <div class="week-view-event-description">
+                                                    <div
+                                                        class="week-view-event-description"
+                                                        key={`time-slot-event-${event.id}-desc`}
+                                                    >
                                                         {eventDescription}
                                                     </div>
                                                 )}
                                                 <div
                                                     class="week-view-resize-handle"
+                                                    key={`time-slot-event-${event.id}-resize`}
                                                     title="拖拽修改时长"
-                                                    onMouseDown={(e: MouseEvent) =>
-                                                        this.handleResizeMouseDown(e, event)
-                                                    }
                                                 ></div>
                                             </div>
                                         );

@@ -237,6 +237,19 @@
 .week-view-event.dragging {
   opacity: 0.5;
   cursor: grabbing;
+  /* 拖拽预览跟手移动期间不参与命中测试，否则松手瞬间 elementFromPoint
+     可能命中正悬停在落点上方的预览框本身，而不是它下面真正的 hour-cell
+     （RFC-0032 实测过的 bug：state 清空到 DOM 更新之间有时序差）。 */
+  pointer-events: none;
+}
+
+.week-view-event.update-rejected {
+  animation: week-view-update-rejected 0.65s ease-out;
+}
+
+@keyframes week-view-update-rejected {
+  25%, 75% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
 }
 
 .week-view-resize-handle {

@@ -468,7 +468,7 @@ describe("WeekView 组件", () => {
       const shadowRoot = weekView.shadowRoot;
       const eventElem = shadowRoot?.querySelector(".week-view-event") as HTMLElement;
       expect(eventElem).toBeTruthy();
-      expect(eventElem.getAttribute("draggable")).toBe("true");
+      expect(eventElem.classList.contains("draggable")).toBe(true);
 
       // 模拟键盘下键（延后 1 小时）
       eventElem.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));

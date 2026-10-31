@@ -14,7 +14,7 @@
 
 - Calendar 组件提供插件注册系统
 - 插件根据 `Event.type` 注册不同的详情卡片渲染器
-- 插件可以访问 `Event.extra` 字段来渲染详情卡片
+- 插件可以访问 `Event.data` 字段来渲染详情卡片
 - 插件系统应该易于扩展，不修改核心代码
 
 ### 插件系统架构图
@@ -38,7 +38,7 @@ graph TB
         G[Event.type: appointment]
         H[Event.type: holiday]
         I[Event.type: meeting]
-        J[Event.extra]
+        J[Event.data]
     end
 
     A --> B
@@ -73,7 +73,7 @@ graph TB
 
 - ✅ Calendar 组件已实现（WeekView、DayView、MonthView）
 - ✅ Event Data Model 已定义（`@calenderjs/event-model`）
-- ✅ Event 接口包含 `extra` 字段（用于详情卡片数据）
+- ✅ Event 接口包含 `data` 字段（用于详情卡片数据）
 - ❌ Calendar 组件缺少插件机制
 - ❌ 无法为不同类型的事件渲染不同的详情卡片
 
@@ -88,7 +88,7 @@ graph TB
 1. **设计插件接口**
    - 定义插件接口规范
    - 支持根据 `Event.type` 注册不同的渲染器
-   - 支持插件访问 `Event.extra` 字段
+   - 支持插件访问 `Event.data` 字段
 
 2. **实现插件注册系统**
    - Calendar 组件提供插件注册 API
@@ -160,8 +160,8 @@ interface Event {
   endTime: Date;
   color?: string;
   icon?: string;
-  extra?: Record<string, any>; // 详情卡片数据
-  metadata?: EventMetadata;
+  data?: Record<string, any>; // 详情卡片数据
+  timeZone?: string; // IANA 时区标识符（RFC-0014）
 }
 ```
 
@@ -179,7 +179,7 @@ graph TB
     subgraph "数据契约 (Data Contract)"
         A[Event 接口]
         B[Event.type]
-        C[Event.extra]
+        C[Event.data]
     end
 
     subgraph "插件系统"
@@ -378,7 +378,7 @@ const appointmentPlugin: EventDetailCardPlugin = {
   },
 
   render(event: Event, context?: RenderContext): string {
-    const { doctor, department, notes } = event.extra || {};
+    const { doctor, department, notes } = event.data || {};
 
     return `
       <div class="appointment-detail-card">
@@ -408,7 +408,7 @@ const holidayPlugin: EventDetailCardPlugin = {
   },
 
   render(event: Event, context?: RenderContext): string {
-    const { country, isOfficial, description } = event.extra || {};
+    const { country, isOfficial, description } = event.data || {};
 
     return `
       <div class="holiday-detail-card">
@@ -442,7 +442,7 @@ const defaultPlugin: EventDetailCardPlugin = {
       <div class="default-detail-card">
         <h3>${event.title}</h3>
         <p>时间: ${event.startTime.toLocaleString()} - ${event.endTime.toLocaleString()}</p>
-        ${event.extra ? `<pre>${JSON.stringify(event.extra, null, 2)}</pre>` : ""}
+        ${event.data ? `<pre>${JSON.stringify(event.data, null, 2)}</pre>` : ""}
       </div>
     `;
   },
