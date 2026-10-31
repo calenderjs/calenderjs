@@ -15,6 +15,10 @@ describe("time-grid", () => {
     expect(snapMinutesFromPixelOffset(offsetPx)).toBe(expectedMinutes);
   });
 
+  it("rounds half-step offsets away from zero in both directions", () => {
+    expect(snapMinutesFromPixelOffset(-6)).toBe(-15);
+  });
+
   it.each([
     [0, 0],
     [12, 15],

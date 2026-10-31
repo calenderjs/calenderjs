@@ -7,7 +7,8 @@ export function snapMinutesFromPixelOffset(
   hourCellHeightPx = DEFAULT_HOUR_CELL_HEIGHT_PX,
 ): number {
   const minutes = (offsetPx / hourCellHeightPx) * MINUTES_PER_HOUR;
-  return Math.round(minutes / TIME_SNAP_MINUTES) * TIME_SNAP_MINUTES;
+  const snappedSteps = Math.round(Math.abs(minutes) / TIME_SNAP_MINUTES);
+  return Math.sign(minutes) * snappedSteps * TIME_SNAP_MINUTES;
 }
 
 export function snapMinuteWithinHour(

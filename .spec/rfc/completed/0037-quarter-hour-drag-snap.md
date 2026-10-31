@@ -1,6 +1,6 @@
 # RFC 0037: DayView/WeekView 拖拽与 resize 支持 15 分钟粒度
 
-**Status:** Approved
+**Status:** Implemented
 
 ## Summary
 
@@ -41,3 +41,10 @@ Implementation touches `DayView.wsx`, `WeekView.wsx`, and their E2E specs. Add f
 - E2E tests resize events by 15 minutes in both views and assert live preview height and committed end time.
 - Existing whole-hour movement, cross-day WeekView movement, permission rejection, and event duration preservation continue to pass.
 - Run Calendar unit tests and the DayView/WeekView drag E2E cases in Chromium, Firefox, and WebKit.
+
+## Implementation record
+
+- Added `packages/calendar/src/utils/time-grid.ts`. DayView and WeekView share 15-minute pixel snapping for event moves and signed resize deltas. Move preserves duration; resize previews the matching height and commits the same snapped delta.
+- E27 and E29 verify moving an event from 10:00 to 10:15 in DayView and WeekView. E28 and E30 verify resizing by 15 minutes and seeing the height update before pointer release.
+- The full E14–E30 drag matrix passed 51/51 across Chromium, Firefox, and WebKit. After symmetric negative-delta rounding coverage was added, E27–E30 passed 12/12 across all three engines.
+- Calendar unit tests passed 124 tests with 25 skipped. The monorepo typecheck passed all 11 packages. Calendar build, Calendar lint, and E2E build passed.
