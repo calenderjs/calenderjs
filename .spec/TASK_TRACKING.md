@@ -192,3 +192,4 @@
   - [x] Implement RFC 0032: WeekView 接入 pointer-event 拖拽 (child of 0030) (RFC 0032)
   - [x] Implement RFC 0033: DayView 接入 pointer-event 拖拽 (child of 0030) (RFC 0033)
   - [x] Implement RFC 0034: Resize 拖拽改时长实时预览 (child of 0030) (RFC 0034)
+- [x] Implement RFC 0041: RFC 验收测试门槛 (RFC 0041)
