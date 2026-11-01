@@ -155,6 +155,7 @@
 - [ ] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
   - [ ] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
   - [ ] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
+- [ ] Implement RFC 0042: Monaco 编辑器首次加载暗色主题不生效 (RFC 0042)
 
 ## Done
 

@@ -123,4 +123,5 @@
 | 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/0039-event-edit-trigger.md) | Draft |
 | 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/0040-event-edit-form.md) | Draft |
 | 0041 | [RFC 0041: RFC 验收测试门槛](rfc/completed/0041-test-quality-gates.md) | Implemented |
+| 0042 | [Monaco 编辑器首次加载暗色主题不生效](rfc/0042-monaco-dark-theme-race.md) | Approved |
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
