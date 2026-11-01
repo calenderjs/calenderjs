@@ -31,7 +31,7 @@
 
 改动范围：
 
-- `.github/workflows/pull-request.yml`：保留 `pull_request` 目标 `main`，新增 `workflow_dispatch`；顶层设置 `permissions: contents: read`；新增 `Lint`、`Typecheck`、`Build` jobs。`Build` 运行 `pnpm build`，覆盖 Turbo package build 和 `verify:bundles`。现有 `Unit Tests`、`E2E Tests` 保持独立并行。
+- `.github/workflows/pull-request.yml`：保留 `pull_request` 目标 `main`，新增 `workflow_dispatch`；顶层设置 `permissions: contents: read`；新增 `Lint`、`Typecheck`、`Build` jobs。`Build` 运行 `pnpm build`，覆盖 Turbo package build 和 `verify:bundles`。`Typecheck` 先运行 `pnpm build`，因为包间类型声明由构建产出，随后运行 `pnpm typecheck`。现有 `Unit Tests`、`E2E Tests` 保持独立并行。
 - `scripts/verify-package-bundles.mjs`：当前检查用 `source.length` 计数，却把结果标成 bytes。当前 Calendar ESM/CJS 产物分别为 129,761 和 130,665 bytes；所需依赖仍保持外部导入，禁止内联标记不存在。将门槛改为 `Buffer.byteLength(source, "utf8")`，并把 Calendar 上限设为 140,000 bytes。其他包上限不变。
 - GitHub Ruleset：目标只匹配 `refs/heads/main`；要求 PR 和五个验证 jobs；禁止删除和 non-fast-forward 更新；不设 bypass actors。先推送 workflow 并手动运行，再读取 GitHub 实际报告的 job contexts，使用这些准确名称写 required checks。当前仓库没有规则集或 branch protection。
 
@@ -52,4 +52,5 @@
 - Added manual workflow dispatch and explicit read-only `contents` permission. Added separate lint, typecheck, and full build plus bundle verification jobs.
 - Changed bundle verification to count UTF-8 bytes. Raised Calendar package cap from 120,000 to 140,000 bytes after confirming current ESM and CJS bundles are 129,761 and 130,665 bytes and all required dependencies remain external.
 - Local `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm validate:docs`, RFC validation, `specify sync-check`, YAML parsing, and `git diff --check` passed.
-- GitHub workflow run and `main` ruleset remain pending. Configure required checks only after reading exact job contexts from a successful hosted run.
+- First hosted run confirmed build, lint, and unit tests pass. Typecheck exposed that clean CI checkout lacks generated workspace declarations; its job now builds packages before typechecking. E2E was still running when this record was written.
+- Configure required checks only after a successful hosted run and reading exact job contexts.
