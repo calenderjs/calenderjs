@@ -22,7 +22,7 @@
 
 - 不新增发布、部署或版本自动升级 workflow。
 - 不要求特定数量的 PR review；仓库尚无此策略。
-- 不改变 E2E 用例、优先级定义或产品功能。
+- 不改变产品功能或优先级定义。若新启用的 E2E CI 揭示验收断言与其他明确行为契约冲突，只校正失效断言。
 - 不更改 RFC 0042 或其工作区改动。
 
 ## Design
@@ -44,6 +44,7 @@
 - `pnpm build` 与 `verify:bundles` 通过；Calendar 校验使用真实 UTF-8 字节数，预算为 140,000 bytes；其他包预算不变。
 - GitHub 为 `main` 返回 active ruleset：必须 PR 和五个实际 run contexts；禁止 branch deletion 与 force push；无 bypass actors。
 - `main` 的 branch protection/effective rules 查询确认规则生效。
+- E06 业务规则用例在 Chromium、Firefox、WebKit 均通过：验证状态显示拒绝，日历继续保留已存在事件，符合 E20/E26 对已存在事件的操作契约。
 - RFC 校验、`specify sync-check`、workflow YAML/action 检查、文档检查与 `git diff --check` 通过。
 - 本 RFC 不改生产运行时代码；测试通过率、E2E 场景和代码覆盖率报告按“不适用”记录理由。
 
@@ -53,4 +54,5 @@
 - Changed bundle verification to count UTF-8 bytes. Raised Calendar package cap from 120,000 to 140,000 bytes after confirming current ESM and CJS bundles are 129,761 and 130,665 bytes and all required dependencies remain external.
 - Local `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm validate:docs`, RFC validation, `specify sync-check`, YAML parsing, and `git diff --check` passed.
 - First hosted run confirmed build, lint, and unit tests pass. Typecheck exposed that clean CI checkout lacks generated workspace declarations; its job now builds packages before typechecking. E2E was still running when this record was written.
+- Second hosted run confirmed lint, typecheck, build, and unit tests pass. It exposed a stale E06 assertion that hid already-existing calendar events after a business-rule rejection, contradicting E20/E26 behavior. Corrected E06 to assert rejected validation status while retaining existing events; product behavior remains unchanged.
 - Configure required checks only after a successful hosted run and reading exact job contexts.

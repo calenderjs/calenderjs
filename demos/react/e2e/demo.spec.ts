@@ -28,11 +28,12 @@ test("E05 语法错误清空结果，修复与清空输入均可恢复", async (
   await expect(page.locator(eventSelector)).toHaveCount(2);
 });
 
-test("E06 业务规则过滤事件，恢复后重新显示", async ({ page }) => {
+test("E06 业务规则拒绝更新验证状态，但保留已有事件", async ({ page }) => {
   await openDemo(page);
   await replaceDSL(page, validDSL.replace("between 1 and 50", "between 2 and 50"));
-  await expect(page.locator(eventSelector)).toHaveCount(1);
-  await expect(page.locator(eventSelector)).toContainText("团队会议");
+  await expect(page.locator(eventSelector)).toHaveCount(2);
+  await expect(page.locator(eventSelector).filter({ hasText: "团队会议" })).toHaveCount(1);
+  await expect(page.locator(eventSelector).filter({ hasText: "客户演示" })).toHaveCount(1);
   await expect(page.getByText(/✗ 客户演示/)).toBeVisible();
   await replaceDSL(page, validDSL);
   await expect(page.locator(eventSelector)).toHaveCount(2);
