@@ -41,7 +41,7 @@ const PACKAGE_RULES = [
   },
   {
     dir: "packages/calendar",
-    maxBytes: 120_000,
+    maxBytes: 140_000,
     requiredImports: [
       "@wsxjs/wsx-core",
       "@calenderjs/date-time",
@@ -108,10 +108,11 @@ async function verifyPackage(rule) {
       "utf8",
     );
     const imports = collectImports(source);
+    const sizeBytes = Buffer.byteLength(source, "utf8");
 
-    if (source.length > rule.maxBytes) {
+    if (sizeBytes > rule.maxBytes) {
       throw new Error(
-        `${filePath} 体积异常：${source.length} > ${rule.maxBytes} bytes`,
+        `${filePath} 体积异常：${sizeBytes} > ${rule.maxBytes} bytes`,
       );
     }
 
