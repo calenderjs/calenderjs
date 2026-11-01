@@ -1,6 +1,6 @@
 # RFC 0043: CI 门禁与 main 分支保护
 
-**Status:** Approved
+**Status:** Implemented
 
 ## Summary
 
@@ -55,4 +55,7 @@
 - Local `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm validate:docs`, RFC validation, `specify sync-check`, YAML parsing, and `git diff --check` passed.
 - First hosted run confirmed build, lint, and unit tests pass. Typecheck exposed that clean CI checkout lacks generated workspace declarations; its job now builds packages before typechecking. E2E was still running when this record was written.
 - Second hosted run confirmed lint, typecheck, build, and unit tests pass. It exposed a stale E06 assertion that hid already-existing calendar events after a business-rule rejection, contradicting E20/E26 behavior. Corrected E06 to assert rejected validation status while retaining existing events; product behavior remains unchanged.
-- Configure required checks only after a successful hosted run and reading exact job contexts.
+- Local `pnpm test:e2e` passed: 117/117 tests across Chromium, Firefox, and WebKit; RFC-0015 coverage gates passed (lines/statements 95.83%, functions 91.43%, branches 90.70%).
+- Hosted workflow run [41326382431](https://github.com/calenderjs/calenderjs/actions/runs/41326382431) passed all five jobs at commit `562e05390f66f4d6a74ade1bb17fac5646c0bfd2`.
+- Created active repository ruleset `Protect main` (ID `26317123`): `refs/heads/main`, pull request required, strict required checks `Unit Tests`, `E2E Tests`, `Lint`, `Typecheck`, `Build and bundle checks` from GitHub Actions app 15368, deletion and non-fast-forward blocked, zero bypass actors. Effective rules query confirmed all rules.
+- `pnpm validate:docs`, RFC validation, `specify sync-check`, workflow YAML parsing, and `git diff --check` passed. RFC 0042 working-tree changes were preserved.
