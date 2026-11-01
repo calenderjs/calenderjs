@@ -1,6 +1,6 @@
 # RFC 0042: Monaco 编辑器首次加载暗色主题不生效
 
-**Status:** Approved
+**Status:** Implemented
 
 ## Summary
 
@@ -44,3 +44,17 @@ Demo 首次打开时，日历本体正确跟随系统暗色模式，但左侧 DS
 - 系统/浏览器处于浅色模式时，刷新页面，编辑器首次渲染即为浅色主题。
 - 点击主题切换按钮，编辑器主题仍能正确来回切换（不能因为新增的 `onMount` 兜底破坏现有切换路径）。
 - 真实浏览器验证（遵循 RFC-0027 金科玉律）：在系统暗色模式下完整刷新一次页面，确认日历和编辑器同时为暗色，不依赖任何点击操作。
+
+## Test priorities
+
+- P0: 不适用。主题同步不涉及核心数据完整性或安全性。
+- P1: E09 主题切换往返；E31 系统暗色首次加载时编辑器与日历同步。Chromium、Firefox、WebKit 均须 100% 通过。
+- P2: 不适用。本 RFC 只修复主要主题流程，无额外次要流程或边界行为。
+- 单元测试相关用例通过率须 100%；生产代码聚合行覆盖率须高于 80%。
+
+## Implementation record
+
+- `EventEditor.handleMount` 先注册 Event DSL 主题，再显式调用 `monaco.editor.setTheme`，使用当前 `darkMode` 选择暗/浅主题，最后调用宿主 `onMount`。
+- 单元测试 4/4 通过；`EventEditor.tsx` 行覆盖率 100%，包聚合行覆盖率 98.48%。
+- 浏览器 E2E 120/120 通过，Chromium、Firefox、WebKit 各全通过；E09 与 E31 的 P1 场景均为 100%。
+- `pnpm typecheck`、`pnpm lint`、`pnpm test`、`pnpm build`（含 bundle boundary 检查）均通过。

@@ -155,7 +155,6 @@
 - [ ] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
   - [ ] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
   - [ ] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
-- [ ] Implement RFC 0042: Monaco 编辑器首次加载暗色主题不生效 (RFC 0042)
 
 ## Done
 
@@ -193,3 +192,4 @@
 - [x] Implement RFC 0037: DayView/WeekView 拖拽与 resize 支持 15 分钟粒度 (RFC 0037)
 - [x] Implement RFC 0041: RFC 0041: RFC 验收测试门槛 (RFC 0041)
 - [x] Implement RFC 0043: CI 门禁与 main 分支保护 (RFC 0043)
+- [x] Implement RFC 0042: Monaco 编辑器首次加载暗色主题不生效 (RFC 0042)

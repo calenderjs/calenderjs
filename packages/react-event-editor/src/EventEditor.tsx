@@ -84,6 +84,9 @@ export default function EventEditor({
     monaco: typeof import("monaco-editor"),
   ) => {
     registerEventDSL(monaco as Parameters<typeof registerEventDSL>[0]);
+    monaco.editor.setTheme(
+      darkMode ? EVENT_DSL_THEME_DARK : EVENT_DSL_THEME_LIGHT,
+    );
     onMount?.(editorInstance, monaco);
   };
 

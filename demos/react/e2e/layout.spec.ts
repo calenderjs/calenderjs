@@ -1,6 +1,6 @@
 import { test, expect, openDemo, eventSelector } from "./fixtures";
 
-test("E09 深浅主题往返保持编辑器与日历一致", async ({ page }) => {
+test("E09 [P1] 深浅主题往返保持编辑器与日历一致", async ({ page }) => {
   await openDemo(page);
   // 根节点类名为 .calendar；暗色依赖 App 注入的 --calender-bg-color。
   const calendar = page.locator(".calendar");
@@ -13,6 +13,16 @@ test("E09 深浅主题往返保持编辑器与日历一致", async ({ page }) =>
   await expect(calendar).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await expect(page.locator(".monaco-editor").first()).not.toHaveClass(/vs-dark/);
   await expect(page.locator(eventSelector)).toHaveCount(2);
+});
+
+test("E31 [P1] 系统暗色首次加载时编辑器与日历同步", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await openDemo(page);
+  await expect(page.locator(".calendar")).toHaveCSS(
+    "background-color",
+    "rgb(26, 26, 26)",
+  );
+  await expect(page.locator(".monaco-editor").first()).toHaveClass(/vs-dark/);
 });
 
 test("E10 分栏拖动遵守边界，释放后停止", async ({ page }) => {

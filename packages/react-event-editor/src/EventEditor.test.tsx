@@ -3,6 +3,11 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import EventEditor from "./EventEditor";
 import type { EditorProps } from "@monaco-editor/react";
+import { registerEventDSL } from "@calenderjs/monaco-event-dsl";
+
+vi.mock("@calenderjs/monaco-event-dsl", () => ({
+  registerEventDSL: vi.fn(),
+}));
 
 describe("EventEditor", () => {
   it("renders container with event-editor class and passes language to EditorComponent", () => {
@@ -40,5 +45,28 @@ describe("EventEditor", () => {
     );
 
     expect(markup).toContain("--event-editor-bg-color-dark");
+  });
+
+  it.each([
+    { darkMode: true, expectedTheme: "event-dsl-theme-dark" },
+    { darkMode: false, expectedTheme: "event-dsl-theme" },
+  ])("synchronizes Monaco theme on mount for darkMode=$darkMode", ({
+    darkMode,
+    expectedTheme,
+  }) => {
+    const setTheme = vi.fn();
+    const monaco = { editor: { setTheme } } as unknown as typeof import("monaco-editor");
+    const editorInstance = {} as Parameters<NonNullable<EditorProps["onMount"]>>[0];
+    const EditorStub = ({ onMount }: EditorProps) => {
+      onMount?.(editorInstance, monaco);
+      return createElement("div");
+    };
+
+    renderToStaticMarkup(
+      createElement(EventEditor, { EditorComponent: EditorStub, darkMode }),
+    );
+
+    expect(registerEventDSL).toHaveBeenCalledWith(monaco);
+    expect(setTheme).toHaveBeenCalledWith(expectedTheme);
   });
 });
