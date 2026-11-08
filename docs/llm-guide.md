@@ -210,7 +210,7 @@ Runs automatically in **husky pre-commit**.
 
 | File                                | Scope     | Purpose                                            |
 | ------------------------------------ | --------- | --------------------------------------------------- |
-| `AGENTS.md` / `CLAUDE.md`            | always    | Read order, invariants, task routing               |
+| `AGENTS.md`                          | always    | Read order, invariants, task routing               |
 | `.agents/skills/wsx-work/SKILL.md`   | on demand | Full WSX skill (views, API, DSL boundary, testing) |
 
 ---

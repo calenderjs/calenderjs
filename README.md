@@ -234,7 +234,7 @@ const compiled = compile(ast);
 
 - [docs/llm-guide.md](./docs/llm-guide.md) — AI 代理主指南
 - [llms.txt](./llms.txt) — 链接索引
-- [AGENTS.md](./AGENTS.md) — 开发规范（`CLAUDE.md`、`GEMINI.md` 同步）
+- [AGENTS.md](./AGENTS.md) — 开发规范（唯一规则源；不再维护 `CLAUDE.md`）
 
 ### 路线图与任务
 
