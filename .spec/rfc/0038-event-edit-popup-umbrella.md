@@ -34,7 +34,7 @@
 | RFC | Concern |
 |-----|---------|
 | [0044](0044-edit-save-propose-update.md) | 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 |
-| [0039](0039-event-edit-trigger.md) | 双击/快捷键触发事件编辑弹窗 |
+| [0039](completed/0039-event-edit-trigger.md) | 双击/快捷键触发事件编辑弹窗 |
 | [0040](0040-event-edit-form.md) | 事件编辑弹窗：多字段表单 |
 
 ## Acceptance

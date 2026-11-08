@@ -120,7 +120,7 @@
 | 0036 | [MonthView 事件拖拽改日期](rfc/completed/0036-month-view-drag-move.md) | Implemented |
 | 0037 | [DayView/WeekView 拖拽与 resize 支持 15 分钟粒度](rfc/completed/0037-quarter-hour-drag-snap.md) | Implemented |
 | 0038 | [日历事件编辑弹窗 (Umbrella)](rfc/0038-event-edit-popup-umbrella.md) | Draft |
-| 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/0039-event-edit-trigger.md) | Approved |
+| 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/completed/0039-event-edit-trigger.md) | Implemented |
 | 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/0040-event-edit-form.md) | Draft |
 | 0041 | [RFC 0041: RFC 验收测试门槛](rfc/completed/0041-test-quality-gates.md) | Implemented |
 | 0042 | [Monaco 编辑器首次加载暗色主题不生效](rfc/completed/0042-monaco-dark-theme-race.md) | Implemented |

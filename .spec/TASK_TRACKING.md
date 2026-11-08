@@ -153,7 +153,7 @@
 - [ ] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
 - [ ] Implement RFC 0028: Agent-friendly skills for calenderjs usage (RFC 0028)
 - [ ] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
-  - [ ] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
+  - [x] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
   - [ ] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
   - [ ] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
 

@@ -1,8 +1,8 @@
 # RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038)
 
-**Status:** Approved
+**Status:** Implemented
 
-**Parent:** [0038](0038-event-edit-popup-umbrella.md)
+**Parent:** [0038](../0038-event-edit-popup-umbrella.md)
 
 ## Summary
 
