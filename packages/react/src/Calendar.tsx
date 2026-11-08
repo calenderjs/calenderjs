@@ -99,6 +99,11 @@ export interface CalendarProps {
   onEventClick?: (event: CustomEvent<{ event: Event }>) => void;
 
   /**
+   * 请求编辑事件时的回调（双击，或聚焦后按 Enter/Space）
+   */
+  onEventEditRequest?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
    * 日期双击时的回调
    */
   onDateDoubleClick?: (event: CustomEvent<{ date: Date }>) => void;
@@ -192,6 +197,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onDateChange,
       onViewChange,
       onEventClick,
+      onEventEditRequest,
       onDateDoubleClick,
       onEventCreate,
       onEventUpdate,
@@ -320,6 +326,10 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         onEventClick?.(e as CustomEvent<{ event: Event }>);
       };
 
+      const handleEventEditRequest = (e: globalThis.Event) => {
+        onEventEditRequest?.(e as CustomEvent<{ event: Event }>);
+      };
+
       const handleDateDoubleClick = (e: globalThis.Event) => {
         onDateDoubleClick?.(e as CustomEvent<{ date: Date }>);
       };
@@ -349,6 +359,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       element.addEventListener("date-change", handleDateChange);
       element.addEventListener("view-change", handleViewChange);
       element.addEventListener("event-click", handleEventClick);
+      element.addEventListener("event-edit-request", handleEventEditRequest);
       element.addEventListener("date-double-click", handleDateDoubleClick);
       element.addEventListener("event-create", handleEventCreate);
       element.addEventListener("event-update", handleEventUpdate);
@@ -360,6 +371,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         element.removeEventListener("date-change", handleDateChange);
         element.removeEventListener("view-change", handleViewChange);
         element.removeEventListener("event-click", handleEventClick);
+        element.removeEventListener("event-edit-request", handleEventEditRequest);
         element.removeEventListener("date-double-click", handleDateDoubleClick);
         element.removeEventListener("event-create", handleEventCreate);
         element.removeEventListener("event-update", handleEventUpdate);
@@ -375,6 +387,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onDateChange,
       onViewChange,
       onEventClick,
+      onEventEditRequest,
       onDateDoubleClick,
       onEventCreate,
       onEventUpdate,

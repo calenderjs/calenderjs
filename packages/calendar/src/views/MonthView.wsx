@@ -302,6 +302,27 @@ export default class MonthView extends WebComponent {
         );
     };
 
+    private handleEventEditRequest = (event: Event, evt?: MouseEvent) => {
+        evt?.stopPropagation();
+        if (evt?.composedPath().some((target) =>
+            target instanceof HTMLElement && target.matches(".month-view-event-delete"),
+        )) return;
+        this.dispatchEvent(
+            new CustomEvent("event-edit-request", {
+                detail: { event },
+                bubbles: true,
+            }),
+        );
+    };
+
+    private handleEventKeyDown = (e: KeyboardEvent, event: Event) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            this.handleEventEditRequest(event);
+        }
+    };
+
     private handleEventPointerDown = (e: PointerEvent, event: Event) => {
         if (e.button !== 0) return;
         if (e.composedPath().some((target) =>
@@ -468,10 +489,20 @@ export default class MonthView extends WebComponent {
                                                 class="month-view-event"
                                                 key={event.id}
                                                 data-event-id={event.id}
+                                                tabIndex={0}
                                                 onPointerDown={(e: PointerEvent) => this.handleEventPointerDown(e, event)}
+                                                onKeyDown={(e: KeyboardEvent) =>
+                                                    this.handleEventKeyDown(e, event)
+                                                }
                                                 style={`background-color: ${eventColor}`}
                                                 onClick={(evt) =>
                                                     this.handleEventClick(
+                                                        event,
+                                                        evt,
+                                                    )
+                                                }
+                                                onDblClick={(evt: MouseEvent) =>
+                                                    this.handleEventEditRequest(
                                                         event,
                                                         evt,
                                                     )

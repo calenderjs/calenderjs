@@ -231,6 +231,10 @@ export default class Calendar extends WebComponent {
         );
         this.shadowRoot?.addEventListener("event-click", this.handleChildEventClick);
         this.shadowRoot?.addEventListener(
+            "event-edit-request",
+            this.handleChildEventEditRequest
+        );
+        this.shadowRoot?.addEventListener(
             "event-delete",
             this.handleChildEventDelete
         );
@@ -248,6 +252,10 @@ export default class Calendar extends WebComponent {
             this.handleChildDateDoubleClick
         );
         this.shadowRoot?.removeEventListener("event-click", this.handleChildEventClick);
+        this.shadowRoot?.removeEventListener(
+            "event-edit-request",
+            this.handleChildEventEditRequest
+        );
         this.shadowRoot?.removeEventListener(
             "event-delete",
             this.handleChildEventDelete
@@ -281,6 +289,16 @@ export default class Calendar extends WebComponent {
         const event = { ...customEvent.detail.event };
         this.dispatchEvent(
             new CustomEvent("event-click", {
+                detail: { event },
+                bubbles: true,
+            })
+        );
+    };
+
+    private handleChildEventEditRequest = (e: globalThis.Event) => {
+        const event = { ...(e as CustomEvent<{ event: CalendarEvent }>).detail.event };
+        this.dispatchEvent(
+            new CustomEvent("event-edit-request", {
                 detail: { event },
                 bubbles: true,
             })

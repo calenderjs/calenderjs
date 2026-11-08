@@ -213,6 +213,10 @@ export default function App() {
   const handleEventClick = (e: CustomEvent<{ event: Event }>) => {
     // 打印 id，避免 Proxy 在控制台显示为 Proxy(Object) 导致验收无法断言。
     console.log("Event clicked:", e.detail.event.id);
+  };
+
+  // 双击或聚焦后按 Enter/Space 打开内联编辑 (RFC-0039)
+  const handleEventEditRequest = (e: CustomEvent<{ event: Event }>) => {
     setEditingId(e.detail.event.id);
     setEditingTitle(e.detail.event.title);
   };
@@ -526,6 +530,7 @@ export default function App() {
                   onDateChange={handleDateChange}
                   onViewChange={handleViewChange}
                   onEventClick={handleEventClick}
+                  onEventEditRequest={handleEventEditRequest}
                   onEventUpdate={handleEventUpdate}
                   onSlotClick={handleSlotClick}
                   style={{ width: "100%", height: "100%" }}

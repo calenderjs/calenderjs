@@ -1,6 +1,6 @@
 # RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038)
 
-**Status:** Draft
+**Status:** Approved
 
 **Parent:** [0038](0038-event-edit-popup-umbrella.md)
 
@@ -43,6 +43,8 @@ MonthView/WeekView/DayView 三视图里，事件元素目前都是单击（`onCl
   - `handleEventKeyDown`（WeekView/DayView 已有，MonthView 新增）：Enter/Space 改派发 `event-edit-request`（不再调用 `handleEventClick`/`event-click`）——键盘路径直接对标"双击"语义，不是"单击"语义。
   - MonthView `.month-view-event` 补 `tabIndex={0}` + 新增 `handleEventKeyDown`（Enter/Space → `event-edit-request`），抄 WeekView/DayView 的实现模式。
   - 双击与拖拽互不干扰：浏览器原生 `dblclick` 在两次 `click` 之后才触发，而拖拽路径走的是 `pointerdown`/`pointermove`/`pointerup`（`startPointerDrag`），两套事件互相独立，不共享状态；唯一需要注意的是 `handleEventPointerDown` 里 `e.preventDefault()`（`WeekView.wsx:400`）是否会抑制后续 `click`/`dblclick`——需要在实现时用真实浏览器验证一次点击-双击序列不会被拖拽逻辑吃掉（已有 `_suppressNextClick` 机制处理"拖拽结束抑制紧接的一次 click"，双击时序需要确认两次 click 都不被吃或都被正确处理）。
+- `packages/calendar/src/Calendar.wsx`：子视图事件在 ShadowRoot 汇合后由宿主重新派发（`handleChildEventClick`，`event-forwarding.test.ts` 覆盖）。新增同构的 `handleChildEventEditRequest`，监听子视图的 `event-edit-request`，展开 `@state` Proxy 后从宿主重新派发，保证公开事件只触发一次、`target` 为 calendar。
+- MonthView 事件元素的 `dblclick` 处理器必须 `stopPropagation()`：`.month-view-cell` 已有 `onDblClick` → `date-double-click`，不拦截的话双击事件会同时派发 `date-double-click`。
 - `demos/react/src/App.tsx`：
   - 新增 `handleEventEditRequest` 监听 `event-edit-request`，替换现在 `handleEventClick` 里"点击就进编辑态"的逻辑（`setEditingId`/`setEditingTitle` 移到这个新 handler）。
   - `handleEventClick`（监听 `event-click`）改为仅做选中/预览（例如只 `console.log`，不再 `setEditingId`），避免和新的编辑触发语义混淆；具体"选中"要不要做可见 UI 效果留给 0040 或后续迭代判断，本 RFC 不强制。
@@ -57,3 +59,6 @@ MonthView/WeekView/DayView 三视图里，事件元素目前都是单击（`onCl
 - 真实浏览器验证（遵循 RFC-0027 金科玉律）：拖拽一个事件到新时间/日期，松手后不应同时触发 `event-edit-request`；正常双击事件应可靠打开（不被拖拽逻辑吞掉）。
 - 新增单测覆盖三视图的 `event-edit-request` 派发路径（双击 + 键盘两条）与 `event-click` 语义不变。
 - React 包装层 `onEventEditRequest` prop 正确转发。
+- 双击 MonthView 事件只派发 `event-edit-request`，不派发 `date-double-click`。
+- Calendar 宿主对每次 `event-edit-request` 只重新派发一次，`target` 为 calendar，`detail.event` 为普通对象。
+- 现有 e2e `demo.spec.ts`（"点击事件打开内联编辑栏"）改为双击触发；`navigation.spec.ts` 对 `Event clicked:` 日志的断言保持不变（单击仍派发 `event-click`）。

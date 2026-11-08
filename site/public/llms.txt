@@ -42,7 +42,7 @@
 
 ## Skills & conventions
 
-- [.cursor/skills/wsx-work/SKILL.md](.cursor/skills/wsx-work/SKILL.md): WSX 开发铁律与测试模式（编辑 .wsx 前必读）
+- [.agents/skills/wsx-work/SKILL.md](.agents/skills/wsx-work/SKILL.md): WSX 开发铁律与测试模式（编辑 .wsx 前必读）
 
 ## Demos
 

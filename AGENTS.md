@@ -119,7 +119,26 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 
 4. **WSX 组件开发**
    - 日历组件位于 `packages/calendar/`，使用 `.wsx` 文件
-   - 参考 `.cursor/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
+   - 参考 `.agents/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
+
+5. **不变量（任何任务均适用）**
+   - 日历包：`@calenderjs/calendar`（不是 `@calenderjs/core`）
+   - Web Component 标签：`wsx-calendar`
+   - Event SSOT：`packages/event-model/src/Event.ts`
+   - Event 扩展字段：`data`
+   - 尚未实现（不要假设已存在）：EventDataGenerator（RFC-0011）、Calendar 插件机制（RFC-0012）、RFC-0003 多租户 SaaS（规格在兄弟仓 `../site/.spec/rfc/`，严禁在本仓或 `./site` 实现）
+
+6. **任务路由**
+
+   | 任务       | 主要文件                                 |
+   | ---------- | ----------------------------------------- |
+   | 日历视图   | `packages/calendar/src/views/*.wsx`        |
+   | 日历 API   | `packages/calendar/src/Calendar.wsx`       |
+   | Event 模型 | `packages/event-model/src/Event.ts`        |
+   | DSL 语法   | `packages/event-dsl/src/event-dsl.pegjs`   |
+   | React 封装 | `packages/react/src/`                      |
+
+   非琐碎任务开始前按序阅读：`docs/llm-guide.md` → `.spec/TASK_TRACKING.md` → 相关 RFC → 本文档。
 
 ---
 
@@ -142,13 +161,6 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 | 代码检查             | `pnpm lint`                               |
 | 类型检查             | `pnpm typecheck`                          |
 | 校验 LLM 文档链接    | `pnpm validate:docs`                      |
-
-### Cursor 规则
-
-AI 代理自动加载 `.cursor/rules/`：
-
-- `00-llm-onboarding.mdc` — 始终生效，任务路由与不变量
-- `wsx-calendar.mdc` — 编辑 `packages/calendar/**` 时生效
 
 ### 关键约定
 

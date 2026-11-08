@@ -88,9 +88,12 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   await moreBtn.click();
   await expect(todayCell.locator(".month-view-event")).toHaveCount(3);
 
-  // 2c. 点击事件打开内联编辑栏，修改标题并保存
-  await todayCell.locator(".month-view-event", { hasText: "团队会议" }).click();
+  // 2c. 单击不打开编辑；双击打开内联编辑栏 (RFC-0039)，修改标题并保存
   const editInput = page.getByTestId("input-edit-title");
+  const teamMeeting = todayCell.locator(".month-view-event", { hasText: "团队会议" });
+  await teamMeeting.click();
+  await expect(editInput).toBeHidden();
+  await teamMeeting.dblclick();
   await expect(editInput).toBeVisible();
   await editInput.fill("架构评审会议");
   await page.getByTestId("btn-save-edit").click();
@@ -143,4 +146,27 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   await expect(actionLog).toContainText("已重置为默认示例事件");
   await expect(page.locator(".day-view-event")).toHaveCount(2);
 });
+
+test("E32 月视图事件可聚焦，Enter 打开编辑", async ({ page }) => {
+  await openDemo(page);
+  const editInput = page.getByTestId("input-edit-title");
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.focus();
+  await expect(event).toBeFocused();
+  await expect(editInput).toBeHidden();
+  await page.keyboard.press("Enter");
+  await expect(editInput).toBeVisible();
+});
+
+for (const [label, view] of [["月", "month"], ["周", "week"], ["日", "day"]]) {
+  test(`E33 ${label}视图双击打开编辑时输入框带出原标题`, async ({ page }) => {
+    await openDemo(page);
+    await page.getByRole("button", { name: label, exact: true }).click();
+    const events = page.locator(`.${view}-view-event`);
+    await events.first().dblclick();
+    await expect(page.getByTestId("input-edit-title")).toHaveValue("团队会议");
+    await events.last().dblclick();
+    await expect(page.getByTestId("input-edit-title")).toHaveValue("客户演示");
+  });
+}
 

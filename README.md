@@ -26,7 +26,7 @@ event_field:    data
 milestone:      M4 DSL integration
 package_mgr:    pnpm                     # NEVER npx
 test:           vitest via pnpm scripts
-wsx_skill:      .cursor/skills/wsx-work/SKILL.md
+wsx_skill:      .agents/skills/wsx-work/SKILL.md
 ```
 
 ### Task → file routing
