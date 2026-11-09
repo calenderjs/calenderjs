@@ -1,8 +1,8 @@
 # RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038)
 
-**Status:** Approved
+**Status:** Implemented
 
-**Parent:** [0038](0038-event-edit-popup-umbrella.md)
+**Parent:** [0038](../0038-event-edit-popup-umbrella.md)
 
 ## Summary
 
