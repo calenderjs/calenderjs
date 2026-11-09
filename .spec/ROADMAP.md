@@ -125,4 +125,4 @@
 | 0041 | [RFC 0041: RFC 验收测试门槛](rfc/completed/0041-test-quality-gates.md) | Implemented |
 | 0042 | [Monaco 编辑器首次加载暗色主题不生效](rfc/completed/0042-monaco-dark-theme-race.md) | Implemented |
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
-| 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/0044-edit-save-propose-update.md) | Draft |
+| 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/completed/0044-edit-save-propose-update.md) | Implemented |
