@@ -106,6 +106,25 @@ test("P0/P2 DSL 校验拒绝不改 host 或日历，并保留草稿和错误提�
   await expect(page.getByText("✓ 客户演示", { exact: true })).toBeVisible();
 });
 
+test("系统主题变化生效，手动切换后保持用户选择", async ({ page }) => {
+  await openDemo(page);
+  const app = page.locator(".demo-app");
+  const initialTheme = await app.getAttribute("data-theme");
+  const systemTheme = initialTheme === "dark" ? "light" : "dark";
+
+  await page.emulateMedia({ colorScheme: systemTheme });
+  await expect(app).toHaveAttribute("data-theme", systemTheme);
+
+  await page.getByRole("button", { name: /暗色模式|浅色模式/ }).click();
+  const manualTheme = systemTheme === "dark" ? "light" : "dark";
+  await expect(app).toHaveAttribute("data-theme", manualTheme);
+
+  await page.emulateMedia({
+    colorScheme: initialTheme === "dark" ? "dark" : "light",
+  });
+  await expect(app).toHaveAttribute("data-theme", manualTheme);
+});
+
 test("功能演示：DSL生成事件、重复事件、时段点击、键盘调整、100事件虚拟化与API导出", async ({
   page,
 }) => {

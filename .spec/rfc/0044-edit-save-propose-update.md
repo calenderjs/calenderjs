@@ -94,11 +94,12 @@ Calendar 的 `events` 由 React props 提供，host 才是事件数据的权威�
 
 ## Verification record
 
-验证日期：2026-11-08。当前按用户指示完成 Chromium 验收；Firefox 和 WebKit 留待后续。
+验证日期：2026-11-08。功能验收在 Chromium 完成；PR 必需 CI 自动运行了 Chromium、Firefox、WebKit，三浏览器用例均通过。
 
 - React wrapper 单测：7/7 通过；`Calendar.tsx` 行覆盖 203/233（87.12%）。RFC 0044 wrapper 用例 4/4 通过。
-- React Demo Chromium E2E：47/47 通过（100%）。P0：2/2；P1：1/1；P2：2/2。P0/P2 的权限拒绝与 DSL 校验失败都验证事件不变、草稿保留和错误可见。
+- React Demo Chromium E2E：48/48 通过（100%）。RFC 0044 的 P0：2/2；P1：1/1；P2：2/2。P0/P2 的权限拒绝与 DSL 校验失败都验证事件不变、草稿保留和错误可见。
+- Demo 覆盖门禁：lines 75/77（97.40%）、statements 75/78（96.15%）、functions 35/37（94.59%）、branches 49/53（92.45%），均达到门槛。新增主题行为用例覆盖系统主题变化和手动覆盖分支。
 - 手动浏览器验收：通过 `agent-browser` 打开已构建 Demo，双击事件、编辑标题并保存；host action log 与 Calendar 均显示新标题。
-- 变更生产文件加权行覆盖：React `Calendar.tsx` 203/233，加 Demo 源码 74/77，合计 277/310（89.35%），高于 80%。
-- 完整多浏览器命令因本机缺少 Firefox/WebKit 可执行文件而未通过；Chromium 结果独立通过。按用户指示，此轮不安装或运行 Firefox/WebKit。
+- 变更生产文件加权行覆盖：React `Calendar.tsx` 203/233，加 Demo 源码 75/77，合计 278/310（89.68%），高于 80%。
+- PR 第一次 E2E CI 的浏览器用例均通过，随后既有 RFC-0015 demo 分支门禁因 47/53（88.68%）低于 90% 失败；补测主题行为后门禁为 49/53（92.45%）。
 - DSL 校验失败用例保持现有标题编辑表单不变；测试在真实浏览器中打开编辑草稿后，通过 Calendar 实际 DOM API 提交违反时间规则的 Event，验证校验事件、草稿保留及 host/日历数据不变。
