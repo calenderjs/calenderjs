@@ -1,8 +1,8 @@
 # RFC 0044: 编辑保存通过变更提议通知 host (child of 0038)
 
-**Status:** Approved
+**Status:** Implemented
 
-**Parent:** [0038](0038-event-edit-popup-umbrella.md)
+**Parent:** [0038](../0038-event-edit-popup-umbrella.md)
 
 ## Summary
 
