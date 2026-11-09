@@ -114,6 +114,95 @@ test("P2 editable false 时整个弹窗只读且不提供保存按钮", async ({
   await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
 });
 
+test("P2 JSON Schema 数字、布尔、枚举和可选空值正确保存", async ({ page }) => {
+  await openDemo(page);
+  const typedFieldsDSL = validDSL
+    .replace(
+      "  - location: string",
+      "  - location: string\n  - participantLimit: number, default: 8\n  - remote: boolean, default: true\n  - urgency: enum(low,high), default: low",
+    );
+  await replaceDSL(page, typedFieldsDSL);
+  await page.locator(".month-view-event", { hasText: "团队会议" }).dblclick();
+
+  const limit = page.getByTestId("event-data-participantLimit");
+  const remote = page.getByTestId("event-data-remote");
+  const urgency = page.getByTestId("event-data-urgency");
+  await expect(limit).toHaveAttribute("type", "number");
+  await expect(urgency.locator("option")).toHaveCount(3);
+
+  await limit.fill("8");
+  await limit.fill("");
+  await remote.check();
+  await remote.uncheck();
+  await urgency.selectOption("high");
+  await urgency.selectOption("");
+  await page.getByTestId("event-data-location").fill("暂存会议室");
+  await page.getByTestId("event-data-location").fill("");
+  await page.getByTestId("btn-save-edit").click();
+
+  const data = await page.locator("wsx-calendar").evaluate((element) => {
+    const calendar = element as HTMLElement & { getEvents: () => Event[] };
+    return calendar.getEvents().find((item) => item.id === "event-1")?.data;
+  });
+  expect(data).toMatchObject({ remote: false });
+  expect(data).not.toHaveProperty("participantLimit");
+  expect(data).not.toHaveProperty("urgency");
+  expect(data).not.toHaveProperty("location");
+});
+
+test("P2 缺少 data 的 host event 仍可打开编辑并显示未设置字段", async ({ page }) => {
+  await openDemo(page);
+  await page.locator("wsx-calendar").evaluate((element) => {
+    const event = {
+      id: "event-without-data",
+      type: "meeting",
+      title: "无附加数据事件",
+      startTime: new Date().toISOString(),
+      endTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    element.dispatchEvent(
+      new CustomEvent("event-edit-request", {
+        detail: { event },
+        bubbles: true,
+      }),
+    );
+  });
+
+  await expect(page.getByTestId("event-edit-dialog")).toBeVisible();
+  await expect(page.getByTestId("input-edit-start-time")).toHaveValue(
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/,
+  );
+  await expect(page.getByTestId("event-data-attendees")).toHaveText("未设置");
+  await expect(page.getByTestId("event-data-location")).toHaveValue("");
+});
+
+test("P2 DSL 编译失败时 stale host event 可显示无 schema 草稿", async ({ page }) => {
+  await openDemo(page);
+  await replaceDSL(page, "type: ???");
+  await page.locator("wsx-calendar").evaluate((element) => {
+    const event = {
+      id: "stale-event",
+      type: "meeting",
+      title: "旧 schema 事件",
+      startTime: "invalid",
+      endTime: undefined,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    element.dispatchEvent(
+      new CustomEvent("event-edit-request", {
+        detail: { event },
+        bubbles: true,
+      }),
+    );
+  });
+
+  await expect(page.getByTestId("event-edit-dialog")).toBeVisible();
+  await expect(page.getByTestId("input-edit-start-time")).toHaveValue("");
+  await expect(page.getByTestId("input-edit-end-time")).toHaveValue("");
+  await expect(page.getByTestId("event-data-location")).toHaveCount(0);
+});
+
 test("P1 时区不匹配时开始和结束时间只读", async ({ page }) => {
   await openDemo(page);
   await page.locator("wsx-calendar").evaluate((element) => {
