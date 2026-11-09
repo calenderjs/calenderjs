@@ -38,9 +38,13 @@ test("E17 月视图拖动事件改日期并保留时间长度", async ({ page })
   await expect(targetCell.locator(".month-view-event", { hasText: "团队会议" })).toHaveCount(0);
   const finalEvent = secondTarget.locator(".month-view-event", { hasText: "团队会议" });
   const selectedDate = await page.locator("wsx-calendar").evaluate((element) => (element as HTMLElement & { date: Date }).date.getDate());
+  const editBar = page.locator('[data-testid="demo-edit-bar"]');
+  await expect(editBar).toBeHidden();
   await finalEvent.click();
   expect(await page.locator("wsx-calendar").evaluate((element) => (element as HTMLElement & { date: Date }).date.getDate())).toBe(selectedDate);
-  await expect(page.locator('[data-testid="demo-edit-bar"]')).toBeVisible();
+  await expect(editBar).toBeHidden();
+  await finalEvent.dblclick();
+  await expect(editBar).toBeVisible();
 });
 
 test("E23 月视图拒绝无编辑权限的日期更新并反馈", async ({ page }) => {

@@ -10,7 +10,7 @@
 
 | If you need to…                  | Read first                                                    | Edit                                             |
 | -------------------------------- | ------------------------------------------------------------- | ------------------------------------------------ |
-| Fix/implement calendar views     | `.cursor/skills/wsx-work/SKILL.md`                            | `packages/calendar/src/views/*.wsx`              |
+| Fix/implement calendar views     | `.agents/skills/wsx-work/SKILL.md`                            | `packages/calendar/src/views/*.wsx`              |
 | Change Calendar API / props      | `.spec/rfc/completed/0008-calendar-component-api-redesign.md` | `packages/calendar/src/Calendar.wsx`             |
 | Modify Event data shape          | `.spec/rfc/completed/0011-event-data-model-integration.md`    | `packages/event-model/src/Event.ts`              |
 | Change DSL syntax / parser       | `.spec/rfc/completed/0002-event-dsl.md`                       | `packages/event-dsl/src/event-dsl.pegjs`         |
@@ -64,7 +64,7 @@ MONOREPO_TOOL        = turbo + pnpm workspaces
 
 1. **Calendar lives in `@calenderjs/calendar`**, not `@calenderjs/core`. Core = models, contexts, utils only.
 2. **Event is the technical model**; Appointment is a business concept defined via DSL.
-3. **WSX and Vue/React must not mix** inside `.wsx` files. See `.cursor/skills/wsx-work/SKILL.md`.
+3. **WSX and Vue/React must not mix** inside `.wsx` files. See `.agents/skills/wsx-work/SKILL.md`.
 4. **Non-trivial changes require RFC** in `.spec/rfc/` before implementation.
 5. **Use `pnpm`**, not `npx`. Check `package.json` scripts first.
 6. **Field name is `data`** — stores DSL-defined business fields on Event.
@@ -206,13 +206,12 @@ pnpm validate:docs    # verify links in llms.txt / llm-guide.md / README.md
 
 Runs automatically in **husky pre-commit**.
 
-### Cursor integration
+### Agent skills
 
-| File                                  | Scope                  | Purpose                              |
-| ------------------------------------- | ---------------------- | ------------------------------------ |
-| `.cursor/rules/00-llm-onboarding.mdc` | always                 | Read order, invariants, task routing |
-| `.cursor/rules/wsx-calendar.mdc`      | `packages/calendar/**` | WSX dev rules                        |
-| `.cursor/skills/wsx-work/SKILL.md`    | on demand              | Full WSX skill                       |
+| File                                | Scope     | Purpose                                            |
+| ------------------------------------ | --------- | --------------------------------------------------- |
+| `AGENTS.md`                          | always    | Read order, invariants, task routing               |
+| `.agents/skills/wsx-work/SKILL.md`   | on demand | Full WSX skill (views, API, DSL boundary, testing) |
 
 ---
 

@@ -88,6 +88,7 @@ export default function App() {
   const [actionLog, setActionLog] = useState<string>("");
   const [editingId, setEditingId] = useState<string>("");
   const [editingTitle, setEditingTitle] = useState<string>("");
+  const [editError, setEditError] = useState<string>("");
 
   // 跟随系统深色/浅色模式，直到用户手动切换过一次
   useEffect(() => {
@@ -213,19 +214,25 @@ export default function App() {
   const handleEventClick = (e: CustomEvent<{ event: Event }>) => {
     // 打印 id，避免 Proxy 在控制台显示为 Proxy(Object) 导致验收无法断言。
     console.log("Event clicked:", e.detail.event.id);
-    setEditingId(e.detail.event.id);
-    setEditingTitle(e.detail.event.title);
   };
 
-  // 点击事件后内联编辑标题并保存 (RFC-0005, RFC-0018)
+  // 双击或聚焦后按 Enter/Space 打开内联编辑 (RFC-0039)
+  const handleEventEditRequest = (e: CustomEvent<{ event: Event }>) => {
+    setEditingId(e.detail.event.id);
+    setEditingTitle(e.detail.event.title);
+    setEditError("");
+  };
+
+  // 保存只向 Calendar 提议变更；host 收到 event-update 后才更新权威 state (RFC-0044)
   const handleSaveEdit = () => {
-    setEvents((prev) =>
-      prev.map((item) =>
-        item.id === editingId ? { ...item, title: editingTitle } : item,
-      ),
-    );
-    setActionLog(`已编辑事件: ${editingTitle}`);
-    setEditingId("");
+    const current = events.find((item) => item.id === editingId);
+    if (!current || !calendarRef.current) return;
+
+    const accepted = calendarRef.current.proposeEventUpdate({
+      ...current,
+      title: editingTitle,
+    });
+    if (accepted) setEditingId("");
   };
 
   // 拖拽移动、键盘上下键移动或调整时长后同步更新事件 (RFC-0020, RFC-0021)
@@ -236,7 +243,19 @@ export default function App() {
         item.id === updated.id ? { ...item, ...updated } : item,
       ),
     );
-    setActionLog(`已更新事件: ${updated.title}`);
+    setActionLog(
+      `${updated.id === editingId ? "已编辑" : "已更新"}事件: ${updated.title}`,
+    );
+  };
+
+  const handleEventUpdateDenied = () => {
+    setEditError("没有编辑此事件的权限");
+  };
+
+  const handleEventUpdateError = (
+    e: CustomEvent<{ event: Event; errors: string[] }>,
+  ) => {
+    setEditError(`事件校验失败: ${e.detail.errors.join("、") || "请检查输入"}`);
   };
 
   // 点击时间槽快速新建事件 (RFC-0005)
@@ -492,6 +511,11 @@ export default function App() {
                     </button>
                   </div>
                 )}
+                {editError && (
+                  <div role="alert" data-testid="edit-error">
+                    {editError}
+                  </div>
+                )}
                 <div className="demo-validation-list">
                   {validationResults.map((result) => {
                     const event = events.find((e) => e.id === result.eventId);
@@ -526,7 +550,10 @@ export default function App() {
                   onDateChange={handleDateChange}
                   onViewChange={handleViewChange}
                   onEventClick={handleEventClick}
+                  onEventEditRequest={handleEventEditRequest}
                   onEventUpdate={handleEventUpdate}
+                  onEventUpdateDenied={handleEventUpdateDenied}
+                  onEventUpdateError={handleEventUpdateError}
                   onSlotClick={handleSlotClick}
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -538,4 +565,3 @@ export default function App() {
     </div>
   );
 }
-

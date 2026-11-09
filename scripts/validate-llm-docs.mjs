@@ -15,7 +15,7 @@ const REQUIRED_FILES = [
   "AGENTS.md",
   ".spec/TASK_TRACKING.md",
   ".spec/ROADMAP.md",
-  ".cursor/rules/00-llm-onboarding.mdc",
+  ".agents/skills/wsx-work/SKILL.md",
 ];
 
 const SCANNED_MARKDOWN = ["llms.txt", "docs/llm-guide.md", "README.md"];

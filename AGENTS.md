@@ -113,13 +113,34 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
    - 涉及用户流程的 RFC 必须列出适用的 P0、P1、P2 E2E 场景，并分别达到 100% 通过率。P0 指核心流程或数据完整性、安全性；P1 指主要功能流程；P2 指受支持的次要流程、边界行为或兼容性回归。每个场景须标注优先级；不适用级别须说明理由。记录实际执行的浏览器或运行环境及结果。
    - RFC 涉及的生产代码，聚合行覆盖率必须高于 80%。按受影响包的可覆盖行数加权计算，不得对各包百分比取简单平均。RFC 验收记录覆盖率报告、覆盖行数和可覆盖行数；没有报告就不能声称达标。
    - 测试通过率与代码覆盖率分别报告。专项 RFC 可设更严格门槛，不得降低以上基线。纯文档或不涉及可执行代码的 RFC，须说明测试与覆盖率为何不适用。
+   - **禁止把"代码已写/已提交"报告为"已完成"**。涉及用户可见行为的 RFC，关单前必须实际跑过其 E2E 场景并看到结果（终端输出或报告文件），不能只凭代码改动推断会通过。没跑就说没跑，不得默认通过。
+   - **禁止凭读代码推断 demo app 能跑**。涉及 `demos/react/` 的改动，关单或汇报"已完成"前必须实际启动过 demo（`pnpm dev:react`）并在浏览器里走一遍对应交互，不能只做了类型检查/单测就算验证过真实体验。
 
 3. **语言规范**
    - 默认使用**中文**与用户沟通（除非用户明确要求其他语言）
 
 4. **WSX 组件开发**
    - 日历组件位于 `packages/calendar/`，使用 `.wsx` 文件
-   - 参考 `.cursor/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
+   - 参考 `.agents/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
+
+5. **不变量（任何任务均适用）**
+   - 日历包：`@calenderjs/calendar`（不是 `@calenderjs/core`）
+   - Web Component 标签：`wsx-calendar`
+   - Event SSOT：`packages/event-model/src/Event.ts`
+   - Event 扩展字段：`data`
+   - 尚未实现（不要假设已存在）：EventDataGenerator（RFC-0011）、Calendar 插件机制（RFC-0012）、RFC-0003 多租户 SaaS（规格在兄弟仓 `../site/.spec/rfc/`，严禁在本仓或 `./site` 实现）
+
+6. **任务路由**
+
+   | 任务       | 主要文件                                 |
+   | ---------- | ----------------------------------------- |
+   | 日历视图   | `packages/calendar/src/views/*.wsx`        |
+   | 日历 API   | `packages/calendar/src/Calendar.wsx`       |
+   | Event 模型 | `packages/event-model/src/Event.ts`        |
+   | DSL 语法   | `packages/event-dsl/src/event-dsl.pegjs`   |
+   | React 封装 | `packages/react/src/`                      |
+
+   非琐碎任务开始前按序阅读：`docs/llm-guide.md` → `.spec/TASK_TRACKING.md` → 相关 RFC → 本文档。
 
 ---
 
@@ -142,13 +163,6 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 | 代码检查             | `pnpm lint`                               |
 | 类型检查             | `pnpm typecheck`                          |
 | 校验 LLM 文档链接    | `pnpm validate:docs`                      |
-
-### Cursor 规则
-
-AI 代理自动加载 `.cursor/rules/`：
-
-- `00-llm-onboarding.mdc` — 始终生效，任务路由与不变量
-- `wsx-calendar.mdc` — 编辑 `packages/calendar/**` 时生效
 
 ### 关键约定
 

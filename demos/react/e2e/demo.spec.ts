@@ -50,6 +50,81 @@ test("E07 数据 schema 拒绝事件，修复后恢复", async ({ page }) => {
   await expect(page.locator(eventSelector)).toHaveCount(2);
 });
 
+test("P1 编辑保存经 event-update 与 host props 更新日历", async ({ page }) => {
+  await openDemo(page);
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.dblclick();
+  const input = page.getByTestId("input-edit-title");
+  await input.fill("RFC 0044 评审");
+  await page.getByTestId("btn-save-edit").click();
+
+  await expect(page.getByTestId("demo-action-log")).toContainText("已编辑事件: RFC 0044 评审");
+  await expect(page.getByText("✓ RFC 0044 评审", { exact: true })).toBeVisible();
+  await expect(input).toBeHidden();
+});
+
+test("P0/P2 权限拒绝不改 host 或日历，并保留草稿和错误提示", async ({ page }) => {
+  await openDemo(page);
+  await replaceDSL(page, validDSL.replace("editable: true", "editable: false"));
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.dblclick();
+  const input = page.getByTestId("input-edit-title");
+  await input.fill("不应保存");
+  await page.getByTestId("btn-save-edit").click();
+
+  await expect(page.getByTestId("edit-error")).toContainText("没有编辑此事件的权限");
+  await expect(input).toHaveValue("不应保存");
+  await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
+  await expect(page.getByText("不应保存", { exact: true })).toHaveCount(0);
+});
+
+test("P0/P2 DSL 校验拒绝不改 host 或日历，并保留草稿和错误提示", async ({ page }) => {
+  await openDemo(page);
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.dblclick();
+  const input = page.getByTestId("input-edit-title");
+  await input.fill("非法改名草稿");
+
+  // 当前 Demo 编辑表单只修改标题；通过真实 Calendar API 提交违反 DSL 时间规则的 Event。
+  const accepted = await page.locator("wsx-calendar").evaluate((element) => {
+    const calendar = element as HTMLElement & {
+      getEvents: () => Array<Event & { startTime: Date }>;
+      proposeEventUpdate: (event: Event) => boolean;
+    };
+    const current = calendar.getEvents().find((item) => item.id === "event-1");
+    if (!current) throw new Error("找不到待更新事件");
+    const startTime = new Date(current.startTime);
+    startTime.setHours(5, 0, 0, 0);
+    return calendar.proposeEventUpdate({ ...current, startTime });
+  });
+  expect(accepted).toBe(false);
+
+  await expect(page.getByTestId("edit-error")).toContainText("事件校验失败");
+  await expect(input).toHaveValue("非法改名草稿");
+  await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
+  await expect(page.getByText("非法改名草稿", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("✓ 客户演示", { exact: true })).toBeVisible();
+});
+
+test("系统主题变化生效，手动切换后保持用户选择", async ({ page }) => {
+  await openDemo(page);
+  const app = page.locator(".demo-app");
+  const initialTheme = await app.getAttribute("data-theme");
+  const systemTheme = initialTheme === "dark" ? "light" : "dark";
+
+  await page.emulateMedia({ colorScheme: systemTheme });
+  await expect(app).toHaveAttribute("data-theme", systemTheme);
+
+  await page.getByRole("button", { name: /暗色模式|浅色模式/ }).click();
+  const manualTheme = systemTheme === "dark" ? "light" : "dark";
+  await expect(app).toHaveAttribute("data-theme", manualTheme);
+
+  await page.emulateMedia({
+    colorScheme: initialTheme === "dark" ? "dark" : "light",
+  });
+  await expect(app).toHaveAttribute("data-theme", manualTheme);
+});
+
 test("功能演示：DSL生成事件、重复事件、时段点击、键盘调整、100事件虚拟化与API导出", async ({
   page,
 }) => {
@@ -88,9 +163,12 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   await moreBtn.click();
   await expect(todayCell.locator(".month-view-event")).toHaveCount(3);
 
-  // 2c. 点击事件打开内联编辑栏，修改标题并保存
-  await todayCell.locator(".month-view-event", { hasText: "团队会议" }).click();
+  // 2c. 单击不打开编辑；双击打开内联编辑栏 (RFC-0039)，修改标题并保存
   const editInput = page.getByTestId("input-edit-title");
+  const teamMeeting = todayCell.locator(".month-view-event", { hasText: "团队会议" });
+  await teamMeeting.click();
+  await expect(editInput).toBeHidden();
+  await teamMeeting.dblclick();
   await expect(editInput).toBeVisible();
   await editInput.fill("架构评审会议");
   await page.getByTestId("btn-save-edit").click();
@@ -143,4 +221,27 @@ test("功能演示：DSL生成事件、重复事件、时段点击、键盘调�
   await expect(actionLog).toContainText("已重置为默认示例事件");
   await expect(page.locator(".day-view-event")).toHaveCount(2);
 });
+
+test("E32 月视图事件可聚焦，Enter 打开编辑", async ({ page }) => {
+  await openDemo(page);
+  const editInput = page.getByTestId("input-edit-title");
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.focus();
+  await expect(event).toBeFocused();
+  await expect(editInput).toBeHidden();
+  await page.keyboard.press("Enter");
+  await expect(editInput).toBeVisible();
+});
+
+for (const [label, view] of [["月", "month"], ["周", "week"], ["日", "day"]]) {
+  test(`E33 ${label}视图双击打开编辑时输入框带出原标题`, async ({ page }) => {
+    await openDemo(page);
+    await page.getByRole("button", { name: label, exact: true }).click();
+    const events = page.locator(`.${view}-view-event`);
+    await events.first().dblclick();
+    await expect(page.getByTestId("input-edit-title")).toHaveValue("团队会议");
+    await events.last().dblclick();
+    await expect(page.getByTestId("input-edit-title")).toHaveValue("客户演示");
+  });
+}
 

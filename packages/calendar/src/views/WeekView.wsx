@@ -541,8 +541,17 @@ export default class WeekView extends WebComponent {
             );
         } else if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            this.handleEventClick(event);
+            this.handleEventEditRequest(event);
         }
+    };
+
+    private handleEventEditRequest = (event: Event) => {
+        this.dispatchEvent(
+            new CustomEvent("event-edit-request", {
+                detail: { event },
+                bubbles: true,
+            }),
+        );
     };
 
     // ========== 渲染 ==========
@@ -720,6 +729,9 @@ export default class WeekView extends WebComponent {
                                                 }
                                                 onClick={() =>
                                                     this.handleEventClick(event)
+                                                }
+                                                onDblClick={() =>
+                                                    this.handleEventEditRequest(event)
                                                 }
                                             >
                                                 <div
