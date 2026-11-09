@@ -71,7 +71,7 @@ calenderjs/
 │   ├── react-event-editor/   # React Event DSL 编辑器
 │   └── monaco-event-dsl/     # Monaco Editor DSL 语言插件
 ├── demos/react/                # React + Vite 演示
-├── site/                       # WSX 官网（i18n、路由、文档）
+├── apps/site/                  # WSX 官网（i18n、路由、文档）
 ├── .spec/
 │   ├── ROADMAP.md              # 路线图与 RFC 状态
 │   ├── TASK_TRACKING.md        # 当前 Sprint 任务
@@ -127,7 +127,7 @@ pnpm build
 pnpm test
 pnpm lint
 pnpm typecheck
-pnpm validate:docs   # LLM doc links + sync llms.txt to site/public
+pnpm validate:docs   # LLM doc links + sync llms.txt to apps/site/public
 ```
 
 ### 单包操作

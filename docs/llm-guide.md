@@ -181,7 +181,7 @@ pnpm --filter @calenderjs/event-dsl build
 | Use `extra` field on Event                     | Use `data`                                   |
 | Assume `eventRuntime` prop exists on Calendar  | Not implemented yet — check TASK_TRACKING    |
 | Run `npx vitest`                               | `pnpm --filter @calenderjs/calendar test`    |
-| Implement RFC-0003 in this monorepo / `./site` | Spec lives in `../site/.spec/rfc/` only      |
+| Implement RFC-0003 in this monorepo / `./apps/site` | Spec lives in `../site/.spec/rfc/` only      |
 | Skip `updateComplete` in WSX tests             | `await element.updateComplete` before assert |
 | Hand-edit `generated/parser.js`                | Edit `.pegjs` and rebuild                    |
 
@@ -201,7 +201,7 @@ pnpm --filter @calenderjs/event-dsl build
 
 ```bash
 pnpm validate:docs    # verify links in llms.txt / llm-guide.md / README.md
-                      # syncs llms.txt → site/public/llms.txt
+                      # syncs llms.txt → apps/site/public/llms.txt
 ```
 
 Runs automatically in **husky pre-commit**.

@@ -1,0 +1,18 @@
+{
+  "title": "CalenderJS",
+  "subtitle": "基于 Web Components 的日历组件与 Event DSL，用声明式语法定义事件类型、校验与多视图展示。",
+  "stats": {
+    "license": "MIT 协议",
+    "webComponents": "Web Components"
+  },
+  "heroCard": {
+    "eventId": "EVT · 0001",
+    "dslValidated": "DSL 已校验",
+    "fieldTitle": "标题",
+    "fieldType": "类型",
+    "fieldStart": "开始",
+    "fieldEditable": "可编辑",
+    "titleValue": "团队站会",
+    "ariaLabel": "一张被 Event DSL 校验过的事件记录卡"
+  }
+}

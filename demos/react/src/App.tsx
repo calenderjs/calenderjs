@@ -14,6 +14,7 @@ import { EventRuntime } from "@calenderjs/event-runtime";
 import { EventValidator } from "@calenderjs/event-model";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Editor } from "@monaco-editor/react";
+import { EventEditDialog } from "./EventEditDialog";
 
 const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -86,8 +87,8 @@ export default function App() {
   );
   const hasManualThemeOverride = useRef(false);
   const [actionLog, setActionLog] = useState<string>("");
-  const [editingId, setEditingId] = useState<string>("");
-  const [editingTitle, setEditingTitle] = useState<string>("");
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [canEditEvent, setCanEditEvent] = useState(false);
   const [editError, setEditError] = useState<string>("");
 
   // 跟随系统深色/浅色模式，直到用户手动切换过一次
@@ -216,23 +217,21 @@ export default function App() {
     console.log("Event clicked:", e.detail.event.id);
   };
 
-  // 双击或聚焦后按 Enter/Space 打开内联编辑 (RFC-0039)
+  // 双击或聚焦后按 Enter/Space 打开事件编辑弹窗。
   const handleEventEditRequest = (e: CustomEvent<{ event: Event }>) => {
-    setEditingId(e.detail.event.id);
-    setEditingTitle(e.detail.event.title);
+    setEditingEvent(e.detail.event);
+    setCanEditEvent(
+      calendarRef.current?.canPerformAction("editable", e.detail.event) ?? false,
+    );
     setEditError("");
   };
 
-  // 保存只向 Calendar 提议变更；host 收到 event-update 后才更新权威 state (RFC-0044)
-  const handleSaveEdit = () => {
-    const current = events.find((item) => item.id === editingId);
-    if (!current || !calendarRef.current) return;
-
-    const accepted = calendarRef.current.proposeEventUpdate({
-      ...current,
-      title: editingTitle,
-    });
-    if (accepted) setEditingId("");
+  // 保存继续经过 Calendar 权限与 DSL 校验；host handler 负责权威数据更新。
+  const handleSaveEdit = (updatedEvent: Event) => {
+    if (!calendarRef.current) return;
+    if (calendarRef.current.proposeEventUpdate(updatedEvent)) {
+      setEditingEvent(null);
+    }
   };
 
   // 拖拽移动、键盘上下键移动或调整时长后同步更新事件 (RFC-0020, RFC-0021)
@@ -244,7 +243,7 @@ export default function App() {
       ),
     );
     setActionLog(
-      `${updated.id === editingId ? "已编辑" : "已更新"}事件: ${updated.title}`,
+      `${updated.id === editingEvent?.id ? "已编辑" : "已更新"}事件: ${updated.title}`,
     );
   };
 
@@ -492,29 +491,21 @@ export default function App() {
                     {actionLog}
                   </div>
                 )}
-                {editingId && (
-                  <div className="demo-edit-bar" data-testid="demo-edit-bar">
-                    <input
-                      type="text"
-                      className="demo-edit-input"
-                      data-testid="input-edit-title"
-                      value={editingTitle}
-                      onChange={(e) => setEditingTitle(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="demo-feature-btn"
-                      data-testid="btn-save-edit"
-                      onClick={handleSaveEdit}
-                    >
-                      💾 保存标题
-                    </button>
-                  </div>
-                )}
-                {editError && (
-                  <div role="alert" data-testid="edit-error">
-                    {editError}
-                  </div>
+                {editingEvent && (
+                  <EventEditDialog
+                    key={editingEvent.id}
+                    event={editingEvent}
+                    schema={
+                      compiledDataModel?.id === editingEvent.type
+                        ? compiledDataModel.dataSchema
+                        : undefined
+                    }
+                    editable={canEditEvent}
+                    browserTimeZone={LOCAL_TIME_ZONE}
+                    error={editError}
+                    onSave={handleSaveEdit}
+                    onCancel={() => setEditingEvent(null)}
+                  />
                 )}
                 <div className="demo-validation-list">
                   {validationResults.map((result) => {

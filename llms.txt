@@ -47,7 +47,7 @@
 ## Demos
 
 - [demos/react/](demos/react/): React + Vite 演示
-- [site/](site/): WSX 官网与文档站
+- [apps/site/](apps/site/): WSX 官网与文档站
 
 ## Optional
 

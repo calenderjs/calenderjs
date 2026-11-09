@@ -1,0 +1,68 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import styles from "./HomePage.css?inline";
+
+@autoRegister({ tagName: "home-page" })
+@i18n("home")
+export class HomePage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "home-page" });
+  }
+
+  private get fields() {
+    return [
+      { label: this.t("heroCard.fieldTitle"), value: this.t("heroCard.titleValue"), cut: true },
+      { label: this.t("heroCard.fieldType"), value: "meeting", cut: true },
+      { label: this.t("heroCard.fieldStart"), value: "10:00", cut: true },
+      { label: this.t("heroCard.fieldEditable"), value: "—", cut: false },
+    ];
+  }
+
+  render() {
+    return (
+      <div class="home-page">
+        <section class="hero">
+          <div class="hero-card">
+            <div class="hero-card-strip">
+              <span class="hero-card-id">{this.t("heroCard.eventId")}</span>
+              <span class="hero-card-id hero-card-id-right">{this.t("heroCard.dslValidated")}</span>
+            </div>
+            <div class="hero-card-body">
+              <div class="hero-copy">
+                <h1 class="hero-title">{this.t("title")}</h1>
+                <p class="hero-subtitle">{this.t("subtitle")}</p>
+                <div class="hero-actions">
+                  <wsx-link to="/demos" class="btn btn-primary btn-large">
+                    {this.t("viewDemos", { ns: "common" })}
+                  </wsx-link>
+                  <wsx-link to="/docs/guide/getting-started" class="btn btn-secondary">
+                    {this.t("quickStartCTA", { ns: "common" })}
+                  </wsx-link>
+                </div>
+              </div>
+              <div class="hero-punchcard" role="img" aria-label={this.t("heroCard.ariaLabel")}>
+                {this.fields.map((f) => (
+                  <div class="punch-row" key={f.label}>
+                    <span class="punch-row-label">{f.label}</span>
+                    <span class="punch-row-value">{f.value}</span>
+                    <span
+                      class={f.cut ? "punch-hole punch-hole-cut" : "punch-hole"}
+                      aria-hidden="true"
+                    ></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="hero-card-footer">
+              <span class="hero-stamp">{this.t("stats.license")}: MIT</span>
+              <span class="hero-stamp">{this.t("stats.webComponents")}</span>
+              <span class="hero-stamp">中文 / EN</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+}

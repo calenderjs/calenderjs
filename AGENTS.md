@@ -13,7 +13,7 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
 - **数据模型**：`@calenderjs/event-model`（Event 接口 SSOT）
 - **运行时**：`@calenderjs/event-runtime`（验证/渲染/行为）
 - **React**：`@calenderjs/react`（日历）+ `@calenderjs/react-event-editor`（DSL 编辑器）+ `demos/react/`
-- **官网**：`site/`（WSX + i18n）
+- **官网**：`apps/site/`（WSX + i18n）
 
 当前里程碑：**M4 DSL 集成**（详见 [.spec/ROADMAP.md](./.spec/ROADMAP.md)、[.spec/TASK_TRACKING.md](./.spec/TASK_TRACKING.md)）
 
@@ -123,12 +123,18 @@ CalenderJS 是基于日历的事件/预约管理系统 monorepo：
    - 日历组件位于 `packages/calendar/`，使用 `.wsx` 文件
    - 参考 `.agents/skills/wsx-work/SKILL.md` 了解 WSX 开发约定
 
+4a. **框架中立原则（不可违反）**
+   - `packages/calendar` 是唯一拥有业务逻辑/能力的包；`@calenderjs/react`、`@calenderjs/vue`（如存在）等框架封装**只能是薄绑定层**（props/ref/事件转发），严禁把任何新能力、新状态管理或新设计只实现在某一个框架封装里。
+   - 任何新能力设计（插件机制、校验、权限、编辑流程等）提案时必须说明：原生 WSX（`<wsx-calendar>` 直接使用）、React 封装、Vue 封装（如存在）这三种消费方式下分别如何使用，不能只在 React 下给出方案、让其它消费方式自行脑补。
+   - 验证新能力时，**不得只跑 React demo 就算验证过**：涉及跨框架可用性的改动，必须同时在原生 WSX demo（如 `apps/site/src/components/pages/DemosPage.wsx`）和已存在的框架 demo（`demos/react/`、`demos/vue/` 如存在）中实际验证，缺一个消费方式没验证就不能称"验证完成"。
+   - 违反本条（即把本该框架中立的能力做成只有 React 能用）属于设计错误，须重新设计，不得以"React 先做、其它框架以后补"为由绕过。
+
 5. **不变量（任何任务均适用）**
    - 日历包：`@calenderjs/calendar`（不是 `@calenderjs/core`）
    - Web Component 标签：`wsx-calendar`
    - Event SSOT：`packages/event-model/src/Event.ts`
    - Event 扩展字段：`data`
-   - 尚未实现（不要假设已存在）：EventDataGenerator（RFC-0011）、Calendar 插件机制（RFC-0012）、RFC-0003 多租户 SaaS（规格在兄弟仓 `../site/.spec/rfc/`，严禁在本仓或 `./site` 实现）
+   - 尚未实现（不要假设已存在）：EventDataGenerator（RFC-0011）、Calendar 插件机制（RFC-0012）、RFC-0003 多租户 SaaS（规格在兄弟仓 `../site/.spec/rfc/`，严禁在本仓或 `./apps/site` 实现）
 
 6. **任务路由**
 
@@ -189,3 +195,22 @@ _最后更新：2026年3月_
 - If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
 
 <!-- nx configuration end-->
+
+<!-- reasongraph:begin -->
+## Design reasoning lives in `.reasongraph/why/`
+
+This repo records the *why* behind its code in `.reasongraph/why/<branch>.md` ("why-packs"),
+distilled from AI coding sessions. **The why-pack is the ground truth for *why* —
+prefer it over commit messages, which are lossy and can be out of date.**
+
+- Before working on unfamiliar code, run `reasongraph context <file>` (or grep
+  `.reasongraph/why/`) to see the decisions that touch it.
+- When asked what changed on a branch, or *why* something is the way it is, read
+  `.reasongraph/why/<branch>.md` — not just `git log`.
+- `grep -rn "agent-initiated" .reasongraph/why/` surfaces decisions an agent made
+  unilaterally, with no human sign-off — scrutinize these first.
+
+Commits titled `reasongraph: update why-pack (…)` are written by the tool (the
+why-pack only, via a scratch index — they never touch your staged work). They're
+safe to rebase past or drop; don't amend them into your feature commits.
+<!-- reasongraph:end -->
