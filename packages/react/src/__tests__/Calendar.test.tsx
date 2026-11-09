@@ -99,3 +99,104 @@ describe("RFC-0039 Calendar onEventEditRequest 转发", () => {
     expect(onEventEditRequest).not.toHaveBeenCalled();
   });
 });
+
+describe("RFC-0044 Calendar 更新提议转发", () => {
+  const fakeEvent: Event = {
+    id: "e44",
+    title: "提议事件",
+    startTime: new Date("2026-09-07T10:00:00Z"),
+    endTime: new Date("2026-09-07T11:00:00Z"),
+    type: "meeting",
+  } as Event;
+
+  it("ref 将更新提议转发到底层 Calendar 并返回结果", () => {
+    const ref = mount();
+    const element = ref.current!.getElement() as HTMLElement & {
+      proposeEventUpdate: (event: Event) => boolean;
+    };
+    const proposeEventUpdate = vi.fn(() => true);
+    element.proposeEventUpdate = proposeEventUpdate;
+
+    expect(ref.current!.proposeEventUpdate(fakeEvent)).toBe(true);
+    expect(proposeEventUpdate).toHaveBeenCalledWith(fakeEvent);
+  });
+
+  it("ref 命令转发视图、日期、事件、DSL 和创建操作", () => {
+    const ref = mount();
+    const element = ref.current!.getElement() as HTMLElement & {
+      view?: string;
+      date?: Date;
+      getEvents?: () => Event[];
+      getEventDSL?: () => string;
+      addEvent?: (event: Event) => boolean;
+    };
+    const addEvent = vi.fn(() => true);
+    element.getEvents = vi.fn(() => [fakeEvent]);
+    element.getEventDSL = vi.fn(() => "type: meeting");
+    element.addEvent = addEvent;
+
+    ref.current!.setView("week");
+    expect(element.view).toBe("week");
+    ref.current!.setDate("2026-09-07T10:00:00Z");
+    expect(element.date).toEqual(new Date("2026-09-07T10:00:00Z"));
+    ref.current!.goToToday();
+    expect(element.date).toBeInstanceOf(Date);
+    expect(ref.current!.getEvents()).toEqual([fakeEvent]);
+    expect(ref.current!.getEventDSL()).toBe("type: meeting");
+    expect(ref.current!.addEvent(fakeEvent)).toBe(true);
+    expect(addEvent).toHaveBeenCalledWith(fakeEvent);
+
+    element.addEvent = undefined;
+    (element as any).proposeEventUpdate = undefined;
+    expect(ref.current!.addEvent(fakeEvent)).toBe(false);
+    expect(ref.current!.proposeEventUpdate(fakeEvent)).toBe(false);
+  });
+
+  it("转发成功、权限拒绝和校验错误事件", () => {
+    const onEventUpdate = vi.fn();
+    const onEventUpdateDenied = vi.fn();
+    const onEventUpdateError = vi.fn();
+    const ref = mount({ onEventUpdate, onEventUpdateDenied, onEventUpdateError });
+    const element = ref.current!.getElement()!;
+    const denied = new CustomEvent("event-update-denied", {
+      detail: { event: fakeEvent },
+    });
+    const invalid = new CustomEvent("event-update-error", {
+      detail: { event: fakeEvent, errors: ["title invalid"] },
+    });
+
+    act(() => {
+      element.dispatchEvent(
+        new CustomEvent("event-update", { detail: { event: fakeEvent } }),
+      );
+      element.dispatchEvent(denied);
+      element.dispatchEvent(invalid);
+    });
+
+    expect(onEventUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ detail: { event: fakeEvent } }),
+    );
+    expect(onEventUpdateDenied).toHaveBeenCalledWith(denied);
+    expect(onEventUpdateError).toHaveBeenCalledWith(invalid);
+  });
+
+  it("卸载时清理拒绝与校验错误监听器", () => {
+    const onEventUpdateDenied = vi.fn();
+    const onEventUpdateError = vi.fn();
+    const ref = mount({ onEventUpdateDenied, onEventUpdateError });
+    const element = ref.current!.getElement()!;
+
+    act(() => root!.unmount());
+    element.dispatchEvent(
+      new CustomEvent("event-update-denied", { detail: { event: fakeEvent } }),
+    );
+    element.dispatchEvent(
+      new CustomEvent("event-update-error", {
+        detail: { event: fakeEvent, errors: [] },
+      }),
+    );
+
+    expect(onEventUpdateDenied).not.toHaveBeenCalled();
+    expect(onEventUpdateError).not.toHaveBeenCalled();
+  });
+});

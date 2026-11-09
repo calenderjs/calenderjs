@@ -119,6 +119,18 @@ export interface CalendarProps {
   onEventUpdate?: (event: CustomEvent<{ event: Event }>) => void;
 
   /**
+   * 事件更新被权限拒绝时的回调
+   */
+  onEventUpdateDenied?: (event: CustomEvent<{ event: Event }>) => void;
+
+  /**
+   * 事件更新未通过 DSL 校验时的回调
+   */
+  onEventUpdateError?: (
+    event: CustomEvent<{ event: Event; errors: string[] }>,
+  ) => void;
+
+  /**
    * 事件删除回调
    */
   onEventDelete?: (event: CustomEvent<{ event: Event }>) => void;
@@ -181,6 +193,11 @@ export interface CalendarRef {
    * 手动添加事件
    */
   addEvent: (event: Event) => boolean;
+
+  /**
+   * 提议更新事件；成功只表示组件已派发 event-update
+   */
+  proposeEventUpdate: (event: Event) => boolean;
 }
 
 /**
@@ -201,6 +218,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onDateDoubleClick,
       onEventCreate,
       onEventUpdate,
+      onEventUpdateDenied,
+      onEventUpdateError,
       onEventDelete,
       onEventActionDenied,
       onSlotClick,
@@ -278,6 +297,11 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         }
         return false;
       },
+      proposeEventUpdate: (updatedEvent: Event) => {
+        const element = calendarRef.current as any;
+        if (typeof element?.proposeEventUpdate !== "function") return false;
+        return element.proposeEventUpdate(updatedEvent);
+      },
     }));
 
     // 处理属性变化。isClient 必须入依赖：占位阶段 ref 为空，客户端元素出现后需补写初始 props。
@@ -342,6 +366,16 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         onEventUpdate?.(e as CustomEvent<{ event: Event }>);
       };
 
+      const handleEventUpdateDenied = (e: globalThis.Event) => {
+        onEventUpdateDenied?.(e as CustomEvent<{ event: Event }>);
+      };
+
+      const handleEventUpdateError = (e: globalThis.Event) => {
+        onEventUpdateError?.(
+          e as CustomEvent<{ event: Event; errors: string[] }>,
+        );
+      };
+
       const handleEventDelete = (e: globalThis.Event) => {
         onEventDelete?.(e as CustomEvent<{ event: Event }>);
       };
@@ -363,6 +397,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       element.addEventListener("date-double-click", handleDateDoubleClick);
       element.addEventListener("event-create", handleEventCreate);
       element.addEventListener("event-update", handleEventUpdate);
+      element.addEventListener("event-update-denied", handleEventUpdateDenied);
+      element.addEventListener("event-update-error", handleEventUpdateError);
       element.addEventListener("event-delete", handleEventDelete);
       element.addEventListener("event-action-denied", handleEventActionDenied);
       element.addEventListener("slot-click", handleSlotClick);
@@ -375,6 +411,14 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         element.removeEventListener("date-double-click", handleDateDoubleClick);
         element.removeEventListener("event-create", handleEventCreate);
         element.removeEventListener("event-update", handleEventUpdate);
+        element.removeEventListener(
+          "event-update-denied",
+          handleEventUpdateDenied,
+        );
+        element.removeEventListener(
+          "event-update-error",
+          handleEventUpdateError,
+        );
         element.removeEventListener("event-delete", handleEventDelete);
         element.removeEventListener(
           "event-action-denied",
@@ -391,6 +435,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       onDateDoubleClick,
       onEventCreate,
       onEventUpdate,
+      onEventUpdateDenied,
+      onEventUpdateError,
       onEventDelete,
       onEventActionDenied,
       onSlotClick,
