@@ -156,6 +156,11 @@
   - [x] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
   - [ ] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
   - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
+  - [ ] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
+- [ ] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
+- [ ] Implement RFC 0047: 新增 demos/wsx 原生 Web Component 技术 demo (RFC 0047)
+
+
 
 ## Done
 

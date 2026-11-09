@@ -1,60 +1,92 @@
 # RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038)
 
-**Status:** Draft
+**Status:** Approved
 
 **Parent:** [0038](0038-event-edit-popup-umbrella.md)
 
 ## Summary
 
-把 demo 里现在的"点击事件只能改标题"的内联编辑（`App.tsx` 的 `editingId`/`editingTitle`），换成能改多个字段的弹窗表单：固定字段（标题、开始/结束时间）+ 该事件类型 DSL 定义的 `data` 字段（如 `attendees`/`location`），都能改；提交复用现有的 `proposeEventUpdate` 校验通道，不新开一条更新路径。
+将 React Demo 当前只编辑标题的内联编辑栏替换为多字段事件编辑弹窗。表单固定字段为标题、开始时间、结束时间；`Event.data` 字段根据当前事件类型编译后的 JSON Schema 动态渲染。保存复用 RFC-0044 已接通的 `proposeEventUpdate` 和 host `event-update` 数据流，不增加第二条更新路径。
 
 ## Problem
 
-现状（`demos/react/src/App.tsx:213-229`）：
-
-- `handleEventClick` 只存 `editingId` + `editingTitle` 两个 state。
-- 编辑 UI（约 476-495 行）是一个条件渲染的 `<input>`，只绑定标题。
-- `handleSaveEdit` 直接 `setEvents` 本地替换，**没有经过** `Calendar.wsx` 的 `proposeEventUpdate`/`event-update-request` 通道——绕过了 RFC-0018 的 `editable` 权限网关和 RFC-0035 落地的 validate 规则，是一个既有的技术债（本 RFC 顺带修掉，不是本 RFC 的主要目标，但不能在新表单里继续绕过）。
-- 事件类型的其他字段（DSL `fields:` 里定义的、落在 `Event.data` 里的字段，例如当前默认 DSL 的 `attendees`/`location`）在 UI 上完全不可编辑，只能改 DSL 文本重新生成整个事件集合。
-- 固定字段 `startTime`/`endTime` 同样不可通过 UI 编辑（只能拖拽/resize 改，RFC-0020/0021/0032~0037；这是"直接操纵"路径，不是"表单输入"路径，两者性质不同，见 RFC-0035 的"操作类型"区分）。
+- RFC-0039 已通过 `event-edit-request` 打开编辑 UI；当前 Demo 收到请求后只编辑 `title`。
+- RFC-0044 已让 React `CalendarRef` 暴露 `proposeEventUpdate`，并让 Demo host 在 `event-update` 回调中更新权威 `events`。本 RFC 不再把“保存绕过权限和校验”列为现状，也不重复实现这条链路。
+- 开始/结束时间及类型数据（例如 `location`）不能从编辑 UI 修改。
+- `EventTypeDataModel.dataSchema` 来自 DSL 字段定义；默认 Demo 中 `attendees` 是必填数组，`location` 是字符串。MVP 不编辑数组，因此不能用清空 `attendees` 作为表单校验失败验收。
 
 ## Goals
 
-- 事件编辑弹窗支持编辑：标题（`title`）、开始时间（`startTime`）、结束时间（`endTime`），以及该事件 `type` 对应的 DSL `data` 字段（从 `EventTypeDataModel.dataSchema`，即 JSON Schema 生成表单字段：`string`/`number`/`boolean`/`enum` 映射到对应的 input/select）。
-- 表单渲染字段集合**动态**，由事件的 `type` 查到的 schema 决定——不同事件类型显示不同字段，不硬编码 `attendees`/`location` 这类具体字段名。
-- 提交统一走 `proposeEventUpdate(updatedEvent)`（**不传** `skipValidation`，表单输入场景继续全量校验，对齐 RFC-0035 的"数据输入提交 vs. 直接操纵手势"区分原则）——校验失败时表单内联显示错误，不关闭弹窗；`editable: false` 时字段渲染为只读（禁用态），不是悄悄提交后被拒绝。
-- 修掉现有技术债：新表单的保存路径必须经过 `proposeEventUpdate`，不能像现在的 `handleSaveEdit` 一样直接 `setEvents`。
+- 在 Month、Week、Day 视图打开同一事件编辑弹窗，提供 `title`、`startTime`、`endTime` 和当前事件类型 `dataSchema.properties` 中的字段。
+- 根据 JSON Schema 将 `string` 映射为文本输入、`number` 映射为数字输入、`boolean` 映射为复选框、含 `enum` 映射为选择框；必填信息来自 `dataSchema.required`。
+- `array`、嵌套 `object`、`null` 或不支持的 Schema 字段以只读方式显示，原值随草稿保留，不静默清空或删除。
+- 编辑草稿期间不修改 host `events`。保存调用现有 `proposeEventUpdate(updatedEvent)`；通过后由 host 的 `event-update` handler 更新 `events`，Calendar 再由 props 显示新值。
+- 表单以 Calendar 当前权限查询结果决定是否可编辑。`editable: false` 时字段只读、没有保存按钮；提议阶段仍由 `proposeEventUpdate` 再检查权限和 DSL 规则。
+- DSL 校验拒绝时在弹窗内显示错误，保留草稿和原事件，不关闭弹窗。
 
 ## Non-goals
 
-- 不做字段级 UI 组件库/表单生成器包——按 Simplicity First，表单渲染逻辑留在 demo 层（`demos/react/src/App.tsx` 或该文件拆出的一个组件），不新建 npm 包，不引入表单库依赖；JSON Schema → 表单字段的映射是一段直接的 if/switch，不是通用引擎。
-- 不支持嵌套 `object`/`array` 类型字段的复杂编辑 UI（如果 DSL 定义了嵌套对象字段，MVP 只做扁平字段：`string`/`number`/`boolean`/`enum`；嵌套字段留空或只读，后续需要再开 RFC）。
-- 不改变 `proposeEventUpdate`/`canPerformAction`/`validateEventForUpdate` 的现有签名或语义（RFC-0035 已定稿，不重新讨论）。
-- 不实现弹窗的打开触发机制——由 0039 负责派发 `event-edit-request`，本 RFC 只管收到这个事件之后弹出的表单内容。
-- 不做多事件类型并存的 DSL 编辑器改版（demo 目前一次只有一个 DSL 文本/一个 compiledDataModel；表单按 `event.type` 去查对应 schema，如果查不到就用当前 `compiledDataModel`，不新增多类型管理 UI）。
+- 不创建通用表单包、不引入表单库依赖；表单只服务 React Demo。
+- 不编辑 `array`、嵌套 `object`、`null` 或未知 Schema 类型；不实现 JSON Schema 通用渲染器。
+- 不实现事件创建、删除、异步持久化、后端审批或异步失败回传。
+- 不改变 `proposeEventUpdate`、`canPerformAction` 或运行时权限/校验语义。
+- 不改 `packages/calendar/src/Calendar.wsx`；其 `canPerformAction` 与 `proposeEventUpdate` 已提供所需行为。
+- 本 Demo 时间输入按浏览器本地时区解释。仅当 `Event.timeZone` 与浏览器解析出的时区一致时，开始/结束时间可编辑；不一致时这两个字段只读并说明原因。保存生成新的 `Date` 时间戳并保留 `Event.timeZone`。MVP 不增加任意 IANA 时区的编辑/转换 UI。
 
 ## Design
 
-关键决策：**表单字段来自 JSON Schema（`EventTypeDataModel.dataSchema`），不是原始 DSL AST 的 `FieldDefinition[]`**——`EventDSLCompiler.compileFromAST` 编译后只保留 `dataSchema`（JSON Schema），原始字段级元数据（`description` 之外的展示用信息）不随编译产物保留；JSON Schema 的 `type`/`enum`/`required`/`properties` 已经足够映射出基本输入控件，不需要额外保留 AST。
+表单字段来源是编译后的 `EventTypeDataModel.dataSchema`，不是原始 DSL AST。当前 Demo 只编译一个类型，按 `event.type` 与当前 `compiledDataModel.id` 匹配后读取其 schema；类型不匹配或没有 schema 时，只显示固定事件字段，不猜测其他类型的字段。
 
-涉及文件：
+React wrapper 当前只透出 `proposeEventUpdate`。为满足打开时只读权限要求，给 `CalendarRef` 增加 `canPerformAction(action, event): boolean` 的只读转发，直接调用底层 Calendar 同名方法，不复制权限逻辑。保存时仍调用 `proposeEventUpdate`，处理表单打开后权限发生变化的情况。
 
-- `demos/react/src/App.tsx`：
-  - 新增 `handleEventEditRequest`（监听 0039 新增的 `event-edit-request`），打开一个新的弹窗组件（替代现有的 476-495 行内联编辑块），初始化表单状态为该事件的浅拷贝。
-  - 新增表单组件（同文件内或拆成 `EventEditDialog.tsx`，视改动量定，不强制拆文件）：
-    - 固定字段：标题（text input）、开始/结束时间（datetime-local input，或复用现有时间选择习惯）。
-    - 动态字段：遍历 `compiledDataModel.dataSchema.properties`（或按 `event.type` 查到对应的已编译 schema——当前 demo 一次只有一个类型，直接用 `compiledDataModel`），`type: "string"` → text input，`"number"` → number input，`"boolean"` → checkbox，`enum` 存在 → select；值读写 `event.data[fieldName]`。
-    - 提交按钮：调用 `calendarRef.current.proposeEventUpdate(updatedEvent)`（通过现有 `CalendarRef` 暴露的方法，或监听返回的 `event-update`/`event-update-error`/`event-update-denied` 事件；具体用哪种调用方式取决于 `@calenderjs/react` 的 `CalendarRef` 现有能力，实现时确认）。校验失败（`event-update-error`）时表单内联显示 `errors`，不关闭弹窗；权限拒绝（`event-update-denied`）时字段整体禁用并提示。
-    - `editable: false` 时（`canPerformAction("editable", event)` 返回 `false`）：表单打开即全字段只读，不渲染可提交的保存按钮。
-  - 删除现有 `editingId`/`editingTitle`/`handleSaveEdit`（被新表单组件取代，避免并存两套编辑 UI）。
-- `packages/react/src/Calendar.tsx` / `CalendarRef`：如果现有 ref 没有暴露 `proposeEventUpdate`，补上（走 Web Component 的同名方法转发，不新增校验逻辑）。
-- `packages/calendar/src/Calendar.wsx`：**不改动**——`proposeEventUpdate`/`canPerformAction` 签名已经够用（RFC-0035 落地时就设计好了 `skipValidation` 可选、默认全量校验）。
+表单数据在独立 draft 中编辑。开始/结束时间使用 `datetime-local`；只有事件 `timeZone` 与浏览器解析出的时区一致时才可编辑，输入按浏览器本地时间转换为 `Date`，不修改 `timeZone` 字段。时区不一致或缺失时，时间字段只读，避免把本地钟面值误当成事件时区。提交构造完整 Event，保留未知或只读的 `data` 字段。数字空值不转换为 `0`；可选字段空值从草稿 `data` 中移除，必填字段空值交给现有校验通道拒绝。不得将 `proposeEventUpdate` 的 `true` 描述为后端持久化成功；它表示权限/校验通过且 `event-update` 已派发，沿用 RFC-0044 的 host 同步更新流程。
+
+### Task 1: 暴露 React 权限查询
+
+- 文件：`packages/react/src/Calendar.tsx`、`packages/react/src/__tests__/Calendar.test.tsx`
+- 给 `CalendarRef` 增加 `canPerformAction(action, event)`，仅转发底层 Calendar 方法。
+- 单测覆盖允许/拒绝结果及底层方法调用；保留 `proposeEventUpdate` 作为提交时的最终权限与校验网关。
+
+### Task 2: 实现 Schema 字段映射与表单
+
+- 文件：`demos/react/src/event-edit-form.ts`、`demos/react/src/event-edit-form.test.ts`、`demos/react/src/EventEditDialog.tsx`、`demos/react/src/index.css`、`demos/react/package.json`
+- 纯函数把 Schema 属性映射成字段描述，处理 `required`、`enum` 和只读类型；对 string/number/boolean/enum 的映射、必填状态、数组只读及空数字序列化写单元测试。
+- Demo 现无单测脚本。添加 `test` 脚本，用仓库已有 `tsx` 执行 Node `node:test`，不增加新依赖；根目录 `pnpm test` 通过 Turbo `test` 任务发现并运行该包测试。
+- 创建可访问的编辑弹窗，含固定字段、动态字段、只读权限状态、提交错误、保存和取消操作。弹窗只操作草稿；取消、权限拒绝和校验拒绝都不改变事件。
+
+### Task 3: 将 Demo 接入现有 host 数据流
+
+- 文件：`demos/react/src/App.tsx`
+- 用选中的 Event 草稿和 `EventEditDialog` 替换 `editingId`、`editingTitle` 与标题内联编辑栏。
+- `event-edit-request` 初始化草稿；权限查询决定只读态；提交调用 `calendarRef.current.proposeEventUpdate(updatedEvent)`；错误回调显示错误并保留草稿；成功后由既有 `handleEventUpdate` 更新 host `events`，保存 handler 关闭弹窗。
+- 保持 `handleEventUpdate` 为唯一的 Demo host 更新入口，不在保存 handler 直接调用 `setEvents`。
+
+### Task 4: 增加浏览器验收
+
+- 文件：`demos/react/e2e/demo.spec.ts`
+- P1：在 Month、Week、Day 各验证打开弹窗、改标题/本地时区下的时间/`location`、保存、host 收到更新且日历显示新值；另验证时区不一致事件时间只读。
+- P0：将开始时间改到当前 DSL `startTime.hour >= 9` 规则之外，验证错误可见、草稿保留、host Event 和 Calendar 显示值不变。
+- P2：设置 `editable: false`，验证弹窗字段只读、无保存按钮，事件值不变。
+- 使用真实 Chromium 浏览器和真实 Demo/Calendar；不使用 mock 替代用户流程。本轮不要求 Firefox/WebKit。
 
 ## Acceptance
 
-- 双击（或 Enter/Space，见 0039）任意事件，弹出表单，能看到标题、开始/结束时间，以及该事件类型 DSL 定义的 `data` 字段。
-- 改标题、改时间、改一个 `data` 字段（如默认 DSL 的 `location`）后保存，日历上对应事件更新，且更新经过 `event-update` 事件（可在 `handleEventUpdate` 里观察到），不是绕过校验的直接 `setEvents`。
-- 故意把表单填成违反 validate 规则的值（如把 `attendees` 清空，触发 "attendees.count between 1 and 50"）提交，表单内联显示错误，事件不更新，弹窗不关闭。
-- 把 DSL 的 `behavior.editable` 改成 `false`，对应类型事件的表单打开后字段只读，没有保存按钮。
-- 新增单测覆盖：JSON Schema → 表单字段的映射（string/number/boolean/enum 各一种）、提交成功/校验失败/权限拒绝三种路径。
-- 真实浏览器验证（遵循 RFC-0027 金科玉律）：完整走一次"双击打开 → 改字段 → 保存 → 日历刷新"流程。
+- Month、Week、Day 三视图均可打开编辑弹窗；表单显示标题、开始/结束时间及当前 Event 类型支持的 DSL data 字段。
+- string/number/boolean/enum 映射正确；required 字段有明确必填状态；array、object、null 和未知类型显示为只读且保留原值。
+- 成功编辑标题、时间和 `location` 后，变更经过 `proposeEventUpdate` → `event-update` → host `events` → Calendar props 的完整链路。
+- 校验失败后 host Event 与 Calendar 显示均不变，弹窗和草稿保留，错误可读。
+- `editable: false` 时弹窗只读且无保存按钮；提交仍受现有权限检查保护。
+- 新增单测全部通过；Schema 映射、序列化及权限转发新增代码行覆盖率 100%。E2E 中 P0、P1、P2 场景各 100% 通过，无失败或跳过用例。
+- RFC 相关生产代码聚合行覆盖率高于 80%；记录每个受影响文件的覆盖行数及可覆盖行数。
+- 实际启动 React Demo，用 Chromium 走通成功、拒绝和只读流程；记录命令、浏览器及结果。Firefox/WebKit 留待后续。
+
+## Implementation verification
+
+- Unit: `pnpm --filter @calenderjs/demos-react test` — 4/4 passed; `event-edit-form.ts` 22/22 executable lines, 100% line/branch/function coverage.
+- Root Turbo test routing: `pnpm test --filter=@calenderjs/demos-react --filter=@calenderjs/react` — both package test tasks passed (4 Demo tests, 8 React tests); prerequisite builds completed.
+- Wrapper: `pnpm --filter @calenderjs/react test` — 8/8 passed; permission forwarding test covers allow, deny, argument forwarding, and missing underlying method fallback.
+- Chromium E2E: `pnpm --filter @calenderjs/demos-react exec playwright test --project=chromium` — 51/51 passed, 0 failed, 0 skipped. P0 1/1, P1 4/4, P2 1/1; Month/Week/Day success, validation rejection, permission read-only, and timezone mismatch all exercised. Firefox/WebKit not run per scope.
+- Typecheck/lint: React and Demo typechecks passed; Demo lint passed.
+- RFC production line coverage (weighted by executable lines): `packages/react/src/Calendar.tsx` 208/238 (87.39%); `demos/react/src/App.tsx` 70/72 (97.22%); `demos/react/src/EventEditDialog.tsx` 18/20 (90.00%); `demos/react/src/event-edit-form.ts` 18/22 (81.81%) under Chromium instrumentation. Aggregate: 314/352 (89.20%), above 80%. The helper's dedicated unit run independently reports 22/22 lines covered.
+- Overall React Demo source coverage from Chromium run: 64.40% lines across all demo source; this is broader than RFC-affected production files and is not the RFC aggregate metric.
+- Permission query behavior is covered for allowed, denied, and unavailable underlying method paths. Schema mapping/serialization unit coverage is 100%.

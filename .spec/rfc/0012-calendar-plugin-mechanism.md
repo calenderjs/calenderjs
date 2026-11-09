@@ -1,656 +1,179 @@
-# RFC-0012: Calendar 插件机制
+# RFC-0012: Calendar 插件机制（框架中立详情渲染）
 
-**状态**: Draft  
-**创建日期**: 2026-01-01  
-**最后更新**: 2026-01-01  
-**作者**: CalenderJS Team  
-**关联 RFC**: RFC-0009, RFC-0011
+**Status:** Draft
 
-## 摘要
+## Summary
 
-设计并实现 Calendar 组件的插件机制，允许为不同类型的事件（Event）注册自定义的详情卡片渲染器。
+为不同 `Event.type` 提供可扩展的"详情展示"渲染逻辑，而不需要修改 `@calenderjs/calendar` 核心代码。**本次修订**纠正了初版设计中的架构错误：插件机制不属于 Calendar 组件内部渲染职责，也绝不能只挂在某一个框架封装（如 React）上——它必须是框架中立的纯函数式工具，在原生 WSX、`@calenderjs/react`、`@calenderjs/vue`（RFC-0046）三种消费方式下行为完全一致。
 
-**核心设计理念**（参考 Editor.js 插件架构）：
+## Problem
 
-- Calendar 组件提供插件注册系统
-- 插件根据 `Event.type` 注册不同的详情卡片渲染器
-- 插件可以访问 `Event.data` 字段来渲染详情卡片
-- 插件系统应该易于扩展，不修改核心代码
+### 初版设计的架构错误（本次修订要解决的问题）
 
-### 插件系统架构图
+原 RFC-0012（2026-01-01 版本）设计 `Calendar.renderEventDetailCard(event): string | HTMLElement`，让 `Calendar.wsx` 组件自己管理插件注册表、自己决定渲染什么 HTML。这个设计和仓库实际演进出来的架构完全冲突：
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
-graph TB
-    subgraph "Calendar 组件"
-        A[Calendar]
-        B[CalendarPluginRegistry]
-    end
+- **实际架构**（RFC-0018/0035/0039/0044 确立）：`Calendar.wsx` 只负责派发事件——单击派发 `event-click`，双击/键盘派发 `event-edit-request`，保存时 host 调用 `proposeEventUpdate()` 得到 `event-update`/`event-update-denied`/`event-update-error`。**Calendar 组件本身从不渲染任何详情卡片或编辑框 UI**，UI 完全由 host（demo app / 宿主应用）自己决定。
+- `packages/react/src/Calendar.tsx` 证实了这一点：它只是把这些 `CustomEvent` 转发成 `onEventClick`/`onEventEditRequest` React props，自己也不渲染任何卡片 UI。
+- 原设计如果照做，意味着要在 Calendar 组件内部塞一个 HTML 字符串渲染器，这既绕开了 host 决定 UI 的既定架构，也会把"渲染"这件事从宿主框架（React/Vue 有自己的渲染系统）手里抢过来，用字符串拼接去跟组件化框架打架。
 
-    subgraph "插件系统"
-        C[Appointment Plugin]
-        D[Holiday Plugin]
-        E[Meeting Plugin]
-        F[Default Plugin]
-    end
+### 真正要解决的问题
 
-    subgraph "Event 数据"
-        G[Event.type: appointment]
-        H[Event.type: holiday]
-        I[Event.type: meeting]
-        J[Event.data]
-    end
+1. 不同 `Event.type`（`appointment`/`holiday`/`meeting`...）的 `data` 字段结构不同，host 在收到 `event-click`/`event-edit-request` 后，怎么把 `event.data` 翻译成"这类事件该显示哪些字段、怎么标注"，目前只能每个 host 手写 `if (event.type === "appointment") {...}` 式分支，无法跨项目复用。
+2. 这个"翻译规则"不能是 React-only 的方案（违反框架中立原则，见 AGENTS.md 4a），必须在原生 WSX demo、React demo、Vue demo 三处都能复用同一套规则定义。
 
-    A --> B
-    B --> C
-    B --> D
-    B --> E
-    B --> F
-    G --> C
-    H --> D
-    I --> E
-    J --> C
-    J --> D
-    J --> E
+## Goals
 
-    C --> K[详情卡片渲染]
-    D --> K
-    E --> K
-    F --> K
+- 定义一个**纯数据/纯函数**的插件接口：输入 `Event`，输出"这个事件该如何展示"的结构化描述（字段列表 + 标签 + 格式化后的值），**不输出 HTML 字符串，不输出 HTMLElement，不做任何 DOM 操作**。
+- 插件注册表（`EventDetailPluginRegistry`）是一个独立的、不依赖任何 UI 框架、不依赖 Calendar 组件实例的类，可以在 `@calenderjs/calendar`（或拆出的 `@calenderjs/event-model`/新增轻量包，设计阶段待定，见 Design）中提供，供任意 host 直接 import 使用。
+- host（原生 WSX / React / Vue）各自监听 `event-click`/`event-edit-request`，拿到 `event` 后调用 `registry.describe(event)`，自己决定用什么组件渲染这份结构化描述——渲染永远是 host 的职责，插件只负责"数据翻译"。
+- 默认插件（`type: "*"`）兜底：没有匹配的具体插件时，返回事件的通用字段（title/start/end/data 原始 JSON）。
 
-    style A fill:#4caf50,stroke:#388e3c,color:#fff
-    style B fill:#4caf50,stroke:#388e3c,color:#fff
-    style C fill:#ff9800,stroke:#f57c00,color:#fff
-    style D fill:#ff9800,stroke:#f57c00,color:#fff
-    style E fill:#ff9800,stroke:#f57c00,color:#fff
-    style F fill:#ff9800,stroke:#f57c00,color:#fff
-    style K fill:#1e88e5,stroke:#1565c0,color:#fff
-```
+## Non-goals
 
-## 动机
+- 不在 `Calendar.wsx` 内新增任何渲染方法或 UI 相关 API——`canPerformAction`/`proposeEventUpdate`/`validateEventForUpdate` 等既有方法不受影响，不修改。
+- 不规定 host 具体怎么渲染详情卡片的 UI（弹窗/侧栏/inline 展开都行），这是 host 自己的产品决策，RFC 只管"数据怎么来"。
+- 不做插件市场、插件热加载、插件权限系统（同初版 Out-of-Scope，继续有效）。
+- 不在本 RFC 内实现 `@calenderjs/vue`——该包的交付是 RFC-0046 的范围，本 RFC 只要求插件机制的 API 设计必须同时可用于 WSX/React/Vue 三种消费方式，具体 Vue 封装包留给 0046。
 
-当前状态：
+## Design
 
-- ✅ Calendar 组件已实现（WeekView、DayView、MonthView）
-- ✅ Event Data Model 已定义（`@calenderjs/event-model`）
-- ✅ Event 接口包含 `data` 字段（用于详情卡片数据）
-- ❌ Calendar 组件缺少插件机制
-- ❌ 无法为不同类型的事件渲染不同的详情卡片
-
-需要解决的问题：
-
-1. 如何为不同类型的事件（appointment, holiday, meeting）渲染不同的详情卡片？
-2. 如何设计插件系统，使其易于扩展？
-3. 如何确保插件系统不影响 Calendar 核心功能？
-
-## 目标
-
-1. **设计插件接口**
-   - 定义插件接口规范
-   - 支持根据 `Event.type` 注册不同的渲染器
-   - 支持插件访问 `Event.data` 字段
-
-2. **实现插件注册系统**
-   - Calendar 组件提供插件注册 API
-   - 支持注册、注销、查询插件
-   - 支持插件优先级和冲突处理
-
-3. **实现详情卡片渲染**
-   - 根据 `Event.type` 选择对应的插件
-   - 使用插件渲染详情卡片
-   - 支持默认插件（当没有注册插件时）
-
-## 范围
-
-### In-Scope
-
-- 插件接口定义
-- 插件注册系统
-- 详情卡片渲染机制
-- 插件生命周期管理
-- 插件与 Calendar 组件的集成
-
-### Out-of-Scope
-
-- 插件市场或插件分发机制
-- 插件权限系统
-- 插件热加载
-- 插件配置管理
-
-## 核心交付物
-
-1. **插件接口定义**
-   - `EventDetailCardPlugin` 接口
-   - 插件注册 API
-   - 插件渲染方法
-
-2. **插件注册系统**
-   - `CalendarPluginRegistry` 类
-   - 插件注册、注销、查询方法
-   - 插件优先级处理
-
-3. **详情卡片渲染**
-   - 根据 `Event.type` 选择插件
-   - 渲染详情卡片
-   - 默认插件支持
-
-## 成功标准
-
-1. ✅ 可以为不同类型的事件注册自定义详情卡片渲染器
-2. ✅ 插件系统支持注册、注销、查询插件
-3. ✅ Calendar 组件可以根据 `Event.type` 渲染不同的详情卡片
-4. ✅ 插件系统不影响 Calendar 核心功能
-5. ✅ 所有代码达到 100% 测试覆盖率
-6. ✅ 所有测试通过
-
-## 详细设计
-
-### 1. 数据契约
-
-**数据契约定义**（来自 RFC-0011）：
-
-Event Data Model 定义了 Calendar 组件消费 Event 数据的标准接口：
+### 1. 插件接口（框架中立，纯函数）
 
 ```typescript
-interface Event {
-  id: string;
-  type: string;
-  title: string;
-  startTime: Date;
-  endTime: Date;
-  color?: string;
-  icon?: string;
-  data?: Record<string, any>; // 详情卡片数据
-  timeZone?: string; // IANA 时区标识符（RFC-0014）
-}
-```
+// packages/calendar/src/plugins/types.ts（或拆分到独立的
+// @calenderjs/event-detail-plugins 包，视实现时机而定）
 
-**数据契约的作用**：
-
-- 定义 Calendar 组件消费 Event 数据的标准接口
-- 确保所有 Event 数据都符合统一的结构
-- 支持插件系统根据 `Event.type` 渲染不同的详情卡片
-
-**数据契约与插件系统关系图**：
-
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'clusterBkg':'#2d2d2d', 'clusterBorder':'#64b5f6'}}}%%
-graph TB
-    subgraph "数据契约 (Data Contract)"
-        A[Event 接口]
-        B[Event.type]
-        C[Event.data]
-    end
-
-    subgraph "插件系统"
-        D[CalendarPluginRegistry]
-        E[插件选择逻辑]
-    end
-
-    subgraph "插件"
-        F[Appointment Plugin]
-        G[Holiday Plugin]
-        H[Default Plugin]
-    end
-
-    A --> D
-    B --> E
-    C --> F
-    C --> G
-    E --> F
-    E --> G
-    E --> H
-
-    style A fill:#1e88e5,stroke:#1565c0,color:#fff
-    style B fill:#1e88e5,stroke:#1565c0,color:#fff
-    style C fill:#1e88e5,stroke:#1565c0,color:#fff
-    style D fill:#4caf50,stroke:#388e3c,color:#fff
-    style E fill:#4caf50,stroke:#388e3c,color:#fff
-    style F fill:#ff9800,stroke:#f57c00,color:#fff
-    style G fill:#ff9800,stroke:#f57c00,color:#fff
-    style H fill:#ff9800,stroke:#f57c00,color:#fff
-```
-
-### 2. 插件接口设计
-
-#### 2.1 EventDetailCardPlugin 接口
-
-```typescript
-/**
- * 事件详情卡片插件接口
- *
- * 参考 Editor.js 插件架构设计
- */
-interface EventDetailCardPlugin {
-  /** 插件名称 */
-  name: string;
-
-  /** 支持的事件类型（对应 Event.type） */
-  type: string | string[];
-
-  /** 插件版本 */
-  version?: string;
-
-  /** 插件优先级（数字越大优先级越高，默认 0） */
-  priority?: number;
-
-  /**
-   * 渲染详情卡片
-   *
-   * @param event - Event 对象
-   * @param context - 渲染上下文（可选）
-   * @returns 详情卡片的 HTML 字符串或 HTMLElement
-   */
-  render(event: Event, context?: RenderContext): string | HTMLElement;
-
-  /**
-   * 检查是否支持该事件类型
-   *
-   * @param eventType - 事件类型（Event.type）
-   * @returns 是否支持
-   */
-  supports(eventType: string): boolean;
-
-  /**
-   * 插件初始化（可选）
-   *
-   * @param calendar - Calendar 组件实例
-   */
-  initialize?(calendar: Calendar): void;
-
-  /**
-   * 插件销毁（可选）
-   */
-  destroy?(): void;
-}
-```
-
-#### 2.2 RenderContext 接口
-
-```typescript
-/**
- * 渲染上下文
- */
-interface RenderContext {
-  /** 用户上下文 */
-  user?: User;
-
-  /** Calendar 组件实例 */
-  calendar?: Calendar;
-
-  /** 其他上下文数据 */
-  [key: string]: any;
-}
-```
-
-### 3. 插件注册系统
-
-#### 3.1 CalendarPluginRegistry 类
-
-```typescript
-/**
- * Calendar 插件注册表
- *
- * 管理所有注册的插件，提供注册、注销、查询功能
- */
-class CalendarPluginRegistry {
-  private plugins: Map<string, EventDetailCardPlugin[]> = new Map();
-
-  /**
-   * 注册插件
-   *
-   * @param plugin - 插件实例
-   */
-  register(plugin: EventDetailCardPlugin): void;
-
-  /**
-   * 注销插件
-   *
-   * @param pluginName - 插件名称
-   */
-  unregister(pluginName: string): void;
-
-  /**
-   * 获取支持指定事件类型的插件
-   *
-   * @param eventType - 事件类型
-   * @returns 插件列表（按优先级排序）
-   */
-  getPlugins(eventType: string): EventDetailCardPlugin[];
-
-  /**
-   * 获取所有注册的插件
-   *
-   * @returns 插件列表
-   */
-  getAllPlugins(): EventDetailCardPlugin[];
-}
-```
-
-#### 3.2 Calendar 组件集成
-
-```typescript
-/**
- * Calendar 组件应该提供插件注册 API
- */
-class Calendar {
-  private pluginRegistry: CalendarPluginRegistry;
-
-  /**
-   * 注册插件
-   *
-   * @param plugin - 插件实例
-   */
-  registerPlugin(plugin: EventDetailCardPlugin): void;
-
-  /**
-   * 注销插件
-   *
-   * @param pluginName - 插件名称
-   */
-  unregisterPlugin(pluginName: string): void;
-
-  /**
-   * 渲染事件详情卡片
-   *
-   * @param event - Event 对象
-   * @returns 详情卡片的 HTML 字符串或 HTMLElement
-   */
-  renderEventDetailCard(event: Event): string | HTMLElement;
-}
-```
-
-### 4. 插件使用示例
-
-#### 4.1 注册 Appointment 插件
-
-```typescript
-import { Calendar } from "@calenderjs/calendar";
 import type { Event } from "@calenderjs/event-model";
 
-const appointmentPlugin: EventDetailCardPlugin = {
-  name: "appointment-detail-card",
-  type: "appointment",
-  priority: 10,
+/** 一个详情字段的结构化描述，host 拿这个去渲染，自己决定用什么 UI 组件 */
+export interface EventDetailField {
+  key: string;
+  label: string;
+  value: string;
+}
 
-  supports(eventType: string): boolean {
-    return eventType === "appointment";
-  },
+/** 插件 describe() 的返回值——纯数据，没有任何 HTML/DOM */
+export interface EventDetailDescription {
+  title: string;
+  fields: EventDetailField[];
+}
 
-  render(event: Event, context?: RenderContext): string {
-    const { doctor, department, notes } = event.data || {};
-
-    return `
-      <div class="appointment-detail-card">
-        <h3>${event.title}</h3>
-        <p>医生: ${doctor}</p>
-        <p>科室: ${department}</p>
-        ${notes ? `<p>备注: ${notes}</p>` : ""}
-      </div>
-    `;
-  },
-};
-
-// 注册插件
-calendar.registerPlugin(appointmentPlugin);
-```
-
-#### 4.2 注册 Holiday 插件
-
-```typescript
-const holidayPlugin: EventDetailCardPlugin = {
-  name: "holiday-detail-card",
-  type: "holiday",
-  priority: 10,
-
-  supports(eventType: string): boolean {
-    return eventType === "holiday";
-  },
-
-  render(event: Event, context?: RenderContext): string {
-    const { country, isOfficial, description } = event.data || {};
-
-    return `
-      <div class="holiday-detail-card">
-        <h3>${event.title}</h3>
-        <p>国家: ${country}</p>
-        <p>类型: ${isOfficial ? "法定节假日" : "假期"}</p>
-        ${description ? `<p>${description}</p>` : ""}
-      </div>
-    `;
-  },
-};
-
-// 注册插件
-calendar.registerPlugin(holidayPlugin);
-```
-
-#### 4.3 默认插件
-
-```typescript
-const defaultPlugin: EventDetailCardPlugin = {
-  name: "default-detail-card",
-  type: "*", // 支持所有类型
-  priority: 0, // 最低优先级
-
-  supports(eventType: string): boolean {
-    return true; // 支持所有类型
-  },
-
-  render(event: Event, context?: RenderContext): string {
-    return `
-      <div class="default-detail-card">
-        <h3>${event.title}</h3>
-        <p>时间: ${event.startTime.toLocaleString()} - ${event.endTime.toLocaleString()}</p>
-        ${event.data ? `<pre>${JSON.stringify(event.data, null, 2)}</pre>` : ""}
-      </div>
-    `;
-  },
-};
-
-// 注册默认插件（当没有其他插件时使用）
-calendar.registerPlugin(defaultPlugin);
-```
-
-### 5. 插件选择逻辑
-
-```typescript
-/**
- * Calendar 组件渲染详情卡片时的插件选择逻辑
- */
-class Calendar {
-  renderEventDetailCard(event: Event): string | HTMLElement {
-    // 1. 获取支持该事件类型的插件（按优先级排序）
-    const plugins = this.pluginRegistry.getPlugins(event.type);
-
-    // 2. 选择优先级最高的插件
-    const plugin = plugins[0];
-
-    if (!plugin) {
-      // 3. 如果没有找到插件，使用默认插件
-      const defaultPlugin = this.pluginRegistry.getPlugins("*")[0];
-      if (defaultPlugin) {
-        return defaultPlugin.render(event, this.getRenderContext());
-      }
-
-      // 4. 如果连默认插件都没有，返回空字符串
-      return "";
-    }
-
-    // 5. 使用选中的插件渲染详情卡片
-    return plugin.render(event, this.getRenderContext());
-  }
+export interface EventDetailPlugin {
+  /** 插件名称，用于注册/注销时的唯一标识 */
+  name: string;
+  /** 支持的 Event.type，"*" 表示默认兜底插件 */
+  type: string;
+  /** 优先级，数字越大越优先，默认 0 */
+  priority?: number;
+  /** 是否支持该 event（通常直接比较 event.type === this.type） */
+  supports(event: Event): boolean;
+  /**
+   * 把 event 翻译成结构化描述。
+   * 纯函数：不操作 DOM，不返回字符串拼接的 HTML，不依赖任何渲染框架。
+   */
+  describe(event: Event): EventDetailDescription;
 }
 ```
 
-**插件选择流程图**：
-
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'noteBkgColor':'#2d2d2d', 'noteTextColor':'#e0e0e0'}}}%%
-flowchart TD
-    A[用户点击 Event] --> B[Calendar.renderEventDetailCard]
-    B --> C[获取 Event.type]
-    C --> D[pluginRegistry.getPlugins<br/>event.type]
-    D --> E{找到插件?}
-    E -->|是| F[按优先级排序]
-    E -->|否| G[获取默认插件<br/>type: '*']
-    F --> H[选择优先级最高的插件]
-    G --> I{找到默认插件?}
-    I -->|是| J[使用默认插件渲染]
-    I -->|否| K[返回空字符串]
-    H --> L[调用 plugin.render<br/>event, context]
-    J --> L
-    L --> M[返回详情卡片]
-
-    style A fill:#1e88e5,stroke:#1565c0,color:#fff
-    style B fill:#4caf50,stroke:#388e3c,color:#fff
-    style E fill:#ff9800,stroke:#f57c00,color:#fff
-    style H fill:#ff9800,stroke:#f57c00,color:#fff
-    style L fill:#ff9800,stroke:#f57c00,color:#fff
-    style M fill:#1e88e5,stroke:#1565c0,color:#fff
-```
-
-### 6. 插件生命周期
+### 2. 注册表（独立类，不属于 Calendar 实例）
 
 ```typescript
-/**
- * 插件生命周期管理
- */
-class Calendar {
-  private plugins: EventDetailCardPlugin[] = [];
+// packages/calendar/src/plugins/EventDetailPluginRegistry.ts
 
-  registerPlugin(plugin: EventDetailCardPlugin): void {
-    // 1. 检查插件是否已注册
-    if (this.plugins.find((p) => p.name === plugin.name)) {
+export class EventDetailPluginRegistry {
+  private plugins: EventDetailPlugin[] = [];
+
+  register(plugin: EventDetailPlugin): void {
+    if (this.plugins.some((p) => p.name === plugin.name)) {
       throw new Error(`Plugin ${plugin.name} is already registered`);
     }
-
-    // 2. 调用插件初始化方法
-    if (plugin.initialize) {
-      plugin.initialize(this);
-    }
-
-    // 3. 注册插件
-    this.pluginRegistry.register(plugin);
     this.plugins.push(plugin);
   }
 
-  unregisterPlugin(pluginName: string): void {
-    const plugin = this.plugins.find((p) => p.name === pluginName);
+  unregister(name: string): void {
+    this.plugins = this.plugins.filter((p) => p.name !== name);
+  }
+
+  /** 按 event.type 查找优先级最高的匹配插件，没有则退到 "*" 默认插件 */
+  describe(event: Event): EventDetailDescription {
+    const candidates = this.plugins
+      .filter((p) => p.type !== "*" && p.supports(event))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    const plugin = candidates[0] ?? this.plugins.find((p) => p.type === "*");
     if (!plugin) {
-      return;
+      return { title: event.title, fields: [] };
     }
-
-    // 1. 调用插件销毁方法
-    if (plugin.destroy) {
-      plugin.destroy();
-    }
-
-    // 2. 注销插件
-    this.pluginRegistry.unregister(pluginName);
-    this.plugins = this.plugins.filter((p) => p.name !== pluginName);
+    return plugin.describe(event);
   }
 }
 ```
 
-**插件生命周期图**：
+这个类**不是** `Calendar.wsx` 的成员，也不依赖 `Calendar` 实例——它是一个独立的、host 自己 `new` 出来、自己持有的对象。`@calenderjs/calendar` 包导出它，但 `Calendar.wsx` 组件本身不持有、不创建、不使用它。
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e88e5', 'primaryTextColor':'#fff', 'primaryBorderColor':'#1565c0', 'lineColor':'#64b5f6', 'secondaryColor':'#ff9800', 'tertiaryColor':'#4caf50', 'background':'#121212', 'mainBkgColor':'#1e1e1e', 'secondBkgColor':'#2d2d2d', 'textColor':'#e0e0e0', 'noteBkgColor':'#2d2d2d', 'noteTextColor':'#e0e0e0'}}}%%
-stateDiagram-v2
-    [*] --> 未注册: 插件定义
-    未注册 --> 注册中: registerPlugin()
-    注册中 --> 初始化: 检查是否已注册
-    初始化 --> 已注册: plugin.initialize()
-    已注册 --> 运行中: 插件可用
-    运行中 --> 渲染: plugin.render()
-    渲染 --> 运行中: 渲染完成
-    运行中 --> 注销中: unregisterPlugin()
-    注销中 --> 销毁: plugin.destroy()
-    销毁 --> [*]: 插件移除
+### 3. 三种消费方式下的使用方式（框架中立验证，AGENTS.md 4a 要求）
 
-    note right of 已注册
-        插件已注册到
-        CalendarPluginRegistry
-        可以处理 Event
-    end note
+#### 原生 WSX（`demos/wsx`，见 RFC-0047；注意不是 `apps/site`——后者是官网展示站点，不承担框架中立验证职责）
 
-    note right of 运行中
-        插件可以响应
-        Event 渲染请求
-    end note
+```tsx
+import { EventDetailPluginRegistry } from "@calenderjs/calendar";
+
+const registry = new EventDetailPluginRegistry();
+registry.register(appointmentPlugin);
+registry.register(defaultPlugin);
+
+// 监听 wsx-calendar 派发的 event-click
+element.addEventListener("event-click", (e) => {
+  const description = registry.describe(e.detail.event);
+  this.showDetailPanel(description); // host 自己的 WSX 渲染逻辑
+});
 ```
 
-## 实施计划
+#### React（`@calenderjs/react` / `demos/react`）
 
-### 阶段一：插件接口定义
+```tsx
+const registry = useMemo(() => {
+  const r = new EventDetailPluginRegistry();
+  r.register(appointmentPlugin);
+  r.register(defaultPlugin);
+  return r;
+}, []);
 
-**步骤 1.1**: 定义插件接口
+<Calendar
+  onEventClick={(event) => {
+    const description = registry.describe(event);
+    setDetailPanel(description); // host 自己的 React state/渲染
+  }}
+/>;
+```
 
-- 文件：`packages/calendar/src/plugins/EventDetailCardPlugin.ts`
-- 定义 `EventDetailCardPlugin` 接口
-- 定义 `RenderContext` 接口
-- ✅ 完成标准：接口定义完整，类型清晰
-- ✅ 测试要求：100% 覆盖率，所有测试通过
+#### Vue（`@calenderjs/vue` / `demos/vue`，RFC-0046 交付包后适用同一注册表）
 
-**步骤 1.2**: 定义插件注册表接口
+```vue
+<script setup>
+const registry = new EventDetailPluginRegistry();
+registry.register(appointmentPlugin);
+registry.register(defaultPlugin);
 
-- 文件：`packages/calendar/src/plugins/CalendarPluginRegistry.ts`
-- 定义 `CalendarPluginRegistry` 类接口
-- ✅ 完成标准：接口定义完整，方法清晰
-- ✅ 测试要求：100% 覆盖率，所有测试通过
+function onEventClick(event) {
+  detailDescription.value = registry.describe(event); // host 自己的 Vue 渲染
+}
+</script>
+```
 
-### 阶段二：插件注册系统实现
+三处使用的是**同一个** `EventDetailPluginRegistry` 类和同一批插件对象，没有任何框架专属代码——这正是 AGENTS.md 4a 要求的验证方式。
 
-**步骤 2.1**: 实现 CalendarPluginRegistry 类
+### 4. 插件生命周期
 
-- 文件：`packages/calendar/src/plugins/CalendarPluginRegistry.ts`
-- 实现插件注册、注销、查询功能
-- 实现插件优先级排序
-- ✅ 完成标准：功能完整，性能良好
-- ✅ 测试要求：100% 覆盖率，所有测试通过
+沿用初版的 `register`/`unregister` 思路，但去掉 `initialize(calendar)`/`destroy()` 生命周期钩子——因为插件现在不持有、不依赖 `Calendar` 实例，没有需要初始化/销毁的状态耦合，保持插件对象是无副作用的纯对象。
 
-**步骤 2.2**: 在 Calendar 组件中集成插件系统
+## Acceptance
 
-- 文件：`packages/calendar/src/Calendar.wsx`
-- 添加插件注册 API
-- 添加插件注册表实例
-- ✅ 完成标准：API 清晰，集成完整
-- ✅ 测试要求：100% 覆盖率，所有测试通过
-
-### 阶段三：详情卡片渲染
-
-**步骤 3.1**: 实现详情卡片渲染方法
-
-- 文件：`packages/calendar/src/Calendar.wsx`
-- 实现 `renderEventDetailCard` 方法
-- 实现插件选择逻辑
-- ✅ 完成标准：功能完整，性能良好
-- ✅ 测试要求：100% 覆盖率，所有测试通过
-
-**步骤 3.2**: 实现默认插件
-
-- 文件：`packages/calendar/src/plugins/DefaultDetailCardPlugin.ts`
-- 实现默认详情卡片插件
-- ✅ 完成标准：功能完整，样式美观
-- ✅ 测试要求：100% 覆盖率，所有测试通过
-
-### 阶段四：示例插件
-
-**步骤 4.1**: 实现 Appointment 插件示例
-
-- 文件：`packages/calendar/src/plugins/examples/AppointmentDetailCardPlugin.ts`
-- 实现 Appointment 详情卡片插件
-- ✅ 完成标准：功能完整，样式美观
-- ✅ 测试要求：100% 覆盖率，所有测试通过
-
-**步骤 4.2**: 实现 Holiday 插件示例
-
-- 文件：`packages/calendar/src/plugins/examples/HolidayDetailCardPlugin.ts`
-- 实现 Holiday 详情卡片插件
-- ✅ 完成标准：功能完整，样式美观
-- ✅ 测试要求：100% 覆盖率，所有测试通过
-
-## 变更历史
-
-- 2026-01-01: 初始创建
+- 单测覆盖 `EventDetailPluginRegistry`：注册、重复注册报错、注销、按 `type` 匹配、按 `priority` 排序、无匹配时退到默认插件、完全没有插件时返回兜底结构——100% 分支覆盖。
+- **三种消费方式各自的 E2E 验证**（按 AGENTS.md 4a 要求，不得只跑一种就算完成）：
+  - 原生 WSX demo（`demos/wsx`，依赖 RFC-0047 先交付；不是 `apps/site`）：E2E 场景覆盖"点击不同 `type` 的事件，详情面板显示对应插件翻译后的字段"。
+  - React demo（`demos/react`）：同等 E2E 场景，使用同一 `EventDetailPluginRegistry`、同一插件定义（可共享测试 fixture，不得各自定义一套假插件）。
+  - Vue demo（`demos/vue`，依赖 RFC-0046 先交付包）：同等 E2E 场景。
+  - 三处 E2E 用的插件注册逻辑必须是同一份可复用代码/fixture 的三种引用方式，而不是三份独立手写的插件定义——否则无法证明"框架中立"。
+- 真实浏览器验证（RFC-0027 金科玉律）：三个 demo 分别手动跑一遍点击交互，确认详情面板内容随 `Event.type` 切换插件渲染结果。
+- 覆盖率：`EventDetailPluginRegistry` 所在包的新增生产代码行覆盖率 ≥ 80%。

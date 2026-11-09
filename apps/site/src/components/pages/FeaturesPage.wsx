@@ -1,0 +1,89 @@
+/** @jsxImportSource @wsxjs/wsx-core */
+import { LightComponent, autoRegister } from "@wsxjs/wsx-core";
+import { i18n } from "@wsxjs/wsx-i18next";
+import "@wsxjs/wsx-base-components";
+import styles from "./FeaturesPage.css?inline";
+
+@autoRegister({ tagName: "features-page" })
+@i18n("features")
+export class FeaturesPage extends LightComponent {
+  constructor() {
+    super({ styles, styleName: "features-page" });
+  }
+
+  /** 每个能力一行，孔位图案编码其性质：calendar=三孔多视图，dsl=双孔文本规则，
+   *  views=单孔+分隔线多视图，validation=孔+校验勾线 */
+  private readonly features = [
+    { key: "calendar", code: "01" },
+    { key: "dsl", code: "02" },
+    { key: "views", code: "03" },
+    { key: "validation", code: "04" },
+  ];
+
+  private renderGlyph(key: string) {
+    switch (key) {
+      case "calendar":
+        return (
+          <svg viewBox="0 0 32 32" class="feature-glyph" aria-hidden="true">
+            <rect x="4" y="4" width="24" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <rect x="9" y="12" width="4" height="4" fill="currentColor" />
+            <rect x="19" y="12" width="4" height="4" fill="currentColor" />
+            <rect x="14" y="20" width="4" height="4" fill="currentColor" />
+          </svg>
+        );
+      case "dsl":
+        return (
+          <svg viewBox="0 0 32 32" class="feature-glyph" aria-hidden="true">
+            <rect x="4" y="4" width="24" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <line x1="9" y1="11" x2="23" y2="11" stroke="currentColor" stroke-width="1.6" />
+            <line x1="9" y1="16" x2="19" y2="16" stroke="currentColor" stroke-width="1.6" />
+            <rect x="9" y="20.5" width="4" height="4" fill="currentColor" />
+          </svg>
+        );
+      case "views":
+        return (
+          <svg viewBox="0 0 32 32" class="feature-glyph" aria-hidden="true">
+            <rect x="4" y="4" width="24" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <line x1="4" y1="14" x2="28" y2="14" stroke="currentColor" stroke-width="1.2" />
+            <line x1="4" y1="22" x2="28" y2="22" stroke="currentColor" stroke-width="1.2" />
+            <rect x="13" y="17" width="4" height="4" fill="currentColor" />
+          </svg>
+        );
+      default:
+        return (
+          <svg viewBox="0 0 32 32" class="feature-glyph" aria-hidden="true">
+            <rect x="4" y="4" width="24" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <rect x="13" y="13" width="4" height="4" fill="currentColor" />
+            <path d="M9 20.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" />
+          </svg>
+        );
+    }
+  }
+
+  render() {
+    return (
+      <div class="features-page">
+        <section class="features-hero">
+          <div class="features-hero-container">
+            <h1 class="features-hero-title">{this.t("hero.title")}</h1>
+            <p class="features-hero-description">{this.t("hero.description")}</p>
+          </div>
+        </section>
+        <section class="features-list">
+          <div class="features-list-container">
+            {this.features.map((f) => (
+              <div class="feature-row" key={f.key}>
+                <span class="feature-code">{f.code}</span>
+                <span class="feature-glyph-wrap">{this.renderGlyph(f.key)}</span>
+                <div class="feature-copy">
+                  <h2 class="feature-title">{this.t(`items.${f.key}.title`)}</h2>
+                  <p class="feature-desc">{this.t(`items.${f.key}.description`)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
+}

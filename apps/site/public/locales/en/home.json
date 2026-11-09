@@ -1,0 +1,18 @@
+{
+  "title": "CalenderJS",
+  "subtitle": "Calendar components and Event DSL with Web Components. Declarative event types, validation, and multi-view display.",
+  "stats": {
+    "license": "MIT License",
+    "webComponents": "Web Components"
+  },
+  "heroCard": {
+    "eventId": "EVT · 0001",
+    "dslValidated": "DSL VALIDATED",
+    "fieldTitle": "Title",
+    "fieldType": "Type",
+    "fieldStart": "Start",
+    "fieldEditable": "Editable",
+    "titleValue": "Team Standup",
+    "ariaLabel": "An event record card validated by the Event DSL"
+  }
+}

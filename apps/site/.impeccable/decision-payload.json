@@ -1,0 +1,86 @@
+{
+  "title": "Choose CalenderJS's visual world",
+  "question": "The roll assigned Swiss Transit Timetable. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "Swiss Transit Timetable",
+      "kicker": "THE ROLL",
+      "lineage": "SBB station clock + DIN transit wayfinding + printed departure timetables",
+      "thesis": "CalenderJS as the station clock: one red second-hand sweep, grid-precise time, zero ambiguity about what happens when.",
+      "palette": ["#0a0a0a", "#f5f4f0", "#e3000f", "#4a4a4a"],
+      "materials": ["DIN-precision grid", "enamel signage", "red sweep accent"],
+      "viewport": "A full-bleed timetable grid: the hero IS a live departures board where rows are real DSL-validated event types, the red second-hand sweeps across a header rule, one primary action (Run the demo) sits where a platform number would.",
+      "risk": "Reads as 'generic transit dashboard' if the grid loosens or the red accent spreads past one committed sweep.",
+      "raised": [
+        {
+          "from": "challenger-ikeda-datamatics",
+          "raise": "The validation/DSL section renders as a canvas-drawn black/white data field (seeded, reduced-motion safe) proving rules at work, not a static diagram."
+        }
+      ],
+      "comp": ".impeccable/mocks/decision/assigned.png"
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "label": "Punch Card Ledger",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "Hollerith punch cards + mechanical tabulator printouts",
+      "thesis": "Every event type is a punched row: holes are the DSL rules, and an invalid edit simply will not punch.",
+      "palette": ["#f2ead9", "#1a1a1a", "#b5452e"],
+      "materials": ["cream card stock", "rectangular punch cutouts", "tabulator monospace"],
+      "viewport": "The hero is one oversized punch card; each column a DSL field, cutouts showing which fields are editable/validated for the current event type.",
+      "risk": "Also the direction most 'dev tool meets retro computing' sites land on — familiar nostalgia rather than a fresh read.",
+      "comp": ".impeccable/mocks/decision/model-pick.png"
+    },
+    {
+      "id": "challenger-ikeda",
+      "kind": "challenger",
+      "catalogId": "ikeda-datamatics",
+      "label": "Data-Sublime Field",
+      "verdict": "competitive",
+      "lineage": "Ryoji Ikeda datamatics: barcode columns, sine lattices, pure black/white",
+      "thesis": "The DSL's validation rules rendered as a strobing black-and-white data field, columns snapping to valid/invalid.",
+      "palette": ["#000000", "#ffffff"],
+      "materials": ["monospace data density", "canvas-rendered bar fields", "hairline rules"],
+      "case": "Fuses cleanly onto the validation-engine story (rigor, precision, zero-grey certainty); loses narrowly on domain fit — pure data abstraction reads less like 'a calendar' than the timetable does.",
+      "risk": "Can read as generic 'data art' decoration if the bars do not actually visualize real validation states.",
+      "kept": "Donated its black/white/canvas-rendered discipline to the assigned direction's DSL demo section.",
+      "comp": ".impeccable/mocks/decision/challenger-ikeda.png"
+    },
+    {
+      "id": "challenger-cutting-bench",
+      "kind": "challenger",
+      "catalogId": "operate-a-cutting-bench-select-rail",
+      "label": "Cutting Bench Select Rail",
+      "verdict": "declined",
+      "lineage": "film editing bench: perforated select rail, pinned frames, tape flags",
+      "thesis": "Events strung on a perforated timeline rail, state shown as a mark (grease cross, tape flag, pin) rather than a colour.",
+      "palette": ["#0a0a0a", "#c9602a"],
+      "materials": ["film grain", "perforated rail", "pinned trims"],
+      "case": "Fuses on state-as-mark, but film editing is not this audience's world — loses on audience identification against developers evaluating a scheduling library.",
+      "kept": "Its state-as-mark discipline (a flag, a cross, a pin — never a colour swap) for how the assigned direction should render permission-denied vs validated rows.",
+      "comp": ".impeccable/mocks/decision/challenger-cutting-bench.png"
+    }
+  ],
+  "reroll": {
+    "registers": ["safer", "bolder"]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "The dev-tool landing page every library ships: dark hero, gradient headline, code snippet on the right, feature cards below.",
+    "palette": ["#0f172a", "#38bdf8", "#f8fafc"],
+    "materials": ["clean grid", "syntax-highlighted code block"],
+    "viewport": "Centred headline and subcopy over a dark ground, code sample floating right, three-up feature cards below the fold.",
+    "risk": "Indistinguishable from every other dev-tool homepage by design.",
+    "comp": ".impeccable/mocks/decision/canon.png"
+  },
+  "steer": true
+}

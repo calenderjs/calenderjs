@@ -1,0 +1,209 @@
+.home-page {
+  flex: 1;
+  display: flex;
+  background-color: var(--cj-card-raised);
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  padding: 2.5rem clamp(1rem, 4vw, 3rem);
+}
+
+.hero-card {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--cj-card);
+  border: 2px solid var(--cj-ink);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--cj-rule);
+  display: flex;
+  flex-direction: column;
+  animation: cj-card-settle 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cj-card-settle {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-card-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--cj-rule);
+  font-family: var(--cj-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cj-ink-soft);
+}
+
+.hero-card-id-right {
+  color: var(--cj-red);
+  font-weight: 600;
+}
+
+.hero-card-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--cj-ink);
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--cj-ink-soft);
+  margin: 0;
+  line-height: 1.65;
+  max-width: 48ch;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn::part(link) {
+  padding: 0.7rem 1.4rem;
+  border-radius: 2px;
+  font-family: var(--cj-font-mono);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 1.5px solid transparent;
+  display: inline-block;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary::part(link) {
+  background-color: var(--cj-red);
+  color: var(--cj-card);
+  border-color: var(--cj-red);
+}
+
+.btn-primary:hover::part(link) {
+  background-color: var(--cj-red-hover);
+  border-color: var(--cj-red-hover);
+}
+
+.btn-secondary::part(link) {
+  background-color: transparent;
+  color: var(--cj-ink);
+  border-color: var(--cj-ink);
+}
+
+.btn-secondary:hover::part(link) {
+  background-color: var(--cj-ink);
+  color: var(--cj-card);
+}
+
+.btn-large::part(link) {
+  padding: 0.85rem 1.75rem;
+  font-size: 0.9rem;
+}
+
+.hero-punchcard {
+  background-color: var(--cj-card-raised);
+  border: 1px solid var(--cj-rule);
+  border-radius: 2px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.punch-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.25rem;
+  border-bottom: 1px solid var(--cj-rule);
+  font-family: var(--cj-font-mono);
+  font-size: 0.8rem;
+}
+
+.punch-row:last-child {
+  border-bottom: none;
+}
+
+.punch-row-label {
+  color: var(--cj-ink-soft);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.punch-row-value {
+  color: var(--cj-ink);
+  font-weight: 500;
+  justify-self: start;
+}
+
+.punch-hole {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--cj-rule);
+  border-radius: 2px;
+  justify-self: end;
+}
+
+.punch-hole-cut {
+  background-color: var(--cj-cutout);
+  border-color: var(--cj-ink-soft);
+  box-shadow: inset 0 0 0 2px var(--cj-card-raised);
+}
+
+.hero-card-footer {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.5rem;
+  border-top: 1px solid var(--cj-rule);
+}
+
+.hero-stamp {
+  font-family: var(--cj-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cj-ink-soft);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--cj-rule);
+  border-radius: 999px;
+}
+
+@media (max-width: 860px) {
+  .hero-card-body {
+    grid-template-columns: 1fr;
+  }
+}

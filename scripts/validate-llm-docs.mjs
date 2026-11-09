@@ -67,10 +67,10 @@ function reportAndExit(errors) {
   process.exit(1);
 }
 
-/** Sync llms.txt to site/public for deployed docs */
+/** Sync llms.txt to apps/site/public for deployed docs */
 function syncLlmsTxtToSite() {
   const source = join(ROOT, "llms.txt");
-  const dest = join(ROOT, "site/public/llms.txt");
+  const dest = join(ROOT, "apps/site/public/llms.txt");
 
   mkdirSync(dirname(dest), { recursive: true });
   copyFileSync(source, dest);

@@ -52,3 +52,6 @@ yarn-error.log*
 **/generated/
 logs/
 *.tsbuildinfo
+# Added by reviewgraph
+.reviewgraph/
+.graphify/

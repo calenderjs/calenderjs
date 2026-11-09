@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  /* Punch Card Ledger: cream card stock, near-black print ink, one brick-red accent */
+  --cj-card: #f2ead9;
+  --cj-card-raised: #ece2cc;
+  --cj-ink: #1a1a1a;
+  --cj-ink-soft: #5a5247;
+  --cj-red: #b5452e;
+  --cj-red-hover: #9c3a26;
+  --cj-rule: #d8cbb0;
+  --cj-cutout: #0000000d;
+
+  --cj-font-display: "IBM Plex Mono", ui-monospace, monospace;
+  --cj-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --calenderjs-accent: var(--cj-red);
+  --calenderjs-accent-hover: var(--cj-red-hover);
+  --calenderjs-bg-primary: var(--cj-card);
+  --calenderjs-bg-secondary: var(--cj-card-raised);
+  --calenderjs-bg-tertiary: var(--cj-card-raised);
+  --calenderjs-text-primary: var(--cj-ink);
+  --calenderjs-text-secondary: var(--cj-ink-soft);
+  --calenderjs-border: var(--cj-rule);
+  --calenderjs-shadow: 0 1px 3px rgba(26, 26, 26, 0.12);
+  --wsx-press-bg-primary: var(--calenderjs-bg-primary);
+  --wsx-press-bg-secondary: var(--calenderjs-bg-secondary);
+  --wsx-press-bg-tertiary: var(--calenderjs-bg-tertiary);
+  --wsx-press-text-primary: var(--calenderjs-text-primary);
+  --wsx-press-text-secondary: var(--calenderjs-text-secondary);
+  --wsx-press-border: var(--calenderjs-border);
+  --wsx-press-link: var(--calenderjs-accent);
+  --wsx-press-accent: var(--calenderjs-accent);
+
+  /* 让内嵌 <wsx-calendar> 跟随站点主题，而不是停留在组件自带的默认浅色 */
+  --calender-bg-color: var(--cj-card);
+  --calender-text-color: var(--cj-ink);
+  --calender-text-secondary-color: var(--cj-ink-soft);
+  --calender-border-color: var(--cj-rule);
+  --calender-border-hover-color: var(--cj-red);
+  --calender-hover-bg-color: var(--cj-card-raised);
+  --calender-hover-bg-color-light: var(--cj-card-raised);
+  --calender-active-bg-color: var(--cj-card-raised);
+  --calender-primary-color: var(--cj-red);
+  --calender-primary-hover-color: var(--cj-red-hover);
+  --calender-primary-text-color: var(--cj-card);
+}
+
+[data-theme="dark"] {
+  --cj-card: #1c1a16;
+  --cj-card-raised: #262319;
+  --cj-ink: #f2ead9;
+  --cj-ink-soft: #b3a98f;
+  --cj-red: #e3614a;
+  --cj-red-hover: #ef7a64;
+  --cj-rule: #3a3528;
+  --cj-cutout: #ffffff14;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--cj-font-display);
+  background-color: var(--calenderjs-bg-primary);
+  color: var(--calenderjs-text-primary);
+  line-height: 1.6;
+  min-height: 100%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+::selection {
+  background-color: var(--cj-red);
+  color: var(--cj-card);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cj-red);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

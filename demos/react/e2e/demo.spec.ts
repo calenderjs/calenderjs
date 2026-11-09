@@ -50,60 +50,83 @@ test("E07 数据 schema 拒绝事件，修复后恢复", async ({ page }) => {
   await expect(page.locator(eventSelector)).toHaveCount(2);
 });
 
-test("P1 编辑保存经 event-update 与 host props 更新日历", async ({ page }) => {
-  await openDemo(page);
-  const event = page.locator(".month-view-event", { hasText: "团队会议" });
-  await event.dblclick();
-  const input = page.getByTestId("input-edit-title");
-  await input.fill("RFC 0044 评审");
-  await page.getByTestId("btn-save-edit").click();
+for (const [label, view] of [["月", "month"], ["周", "week"], ["日", "day"]]) {
+  test(`P1 ${label}视图编辑标题、时间和 DSL 数据后同步到日历`, async ({ page }) => {
+    await openDemo(page);
+    if (label !== "月") await page.getByRole("button", { name: label, exact: true }).click();
+    const event = page.locator(`.${view}-view-event`, { hasText: "团队会议" });
+    await event.dblclick();
+    await expect(page.getByTestId("event-edit-dialog")).toBeVisible();
+    await page.getByTestId("input-edit-title").fill(`RFC 0040 ${label}视图`);
+    await page.getByTestId("input-edit-start-time").fill("2026-09-07T10:30");
+    await page.getByTestId("input-edit-end-time").fill("2026-09-07T11:30");
+    await page.getByTestId("event-data-location").fill("新会议室");
+    await page.getByTestId("btn-save-edit").click();
 
-  await expect(page.getByTestId("demo-action-log")).toContainText("已编辑事件: RFC 0044 评审");
-  await expect(page.getByText("✓ RFC 0044 评审", { exact: true })).toBeVisible();
-  await expect(input).toBeHidden();
-});
-
-test("P0/P2 权限拒绝不改 host 或日历，并保留草稿和错误提示", async ({ page }) => {
-  await openDemo(page);
-  await replaceDSL(page, validDSL.replace("editable: true", "editable: false"));
-  const event = page.locator(".month-view-event", { hasText: "团队会议" });
-  await event.dblclick();
-  const input = page.getByTestId("input-edit-title");
-  await input.fill("不应保存");
-  await page.getByTestId("btn-save-edit").click();
-
-  await expect(page.getByTestId("edit-error")).toContainText("没有编辑此事件的权限");
-  await expect(input).toHaveValue("不应保存");
-  await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
-  await expect(page.getByText("不应保存", { exact: true })).toHaveCount(0);
-});
-
-test("P0/P2 DSL 校验拒绝不改 host 或日历，并保留草稿和错误提示", async ({ page }) => {
-  await openDemo(page);
-  const event = page.locator(".month-view-event", { hasText: "团队会议" });
-  await event.dblclick();
-  const input = page.getByTestId("input-edit-title");
-  await input.fill("非法改名草稿");
-
-  // 当前 Demo 编辑表单只修改标题；通过真实 Calendar API 提交违反 DSL 时间规则的 Event。
-  const accepted = await page.locator("wsx-calendar").evaluate((element) => {
-    const calendar = element as HTMLElement & {
-      getEvents: () => Array<Event & { startTime: Date }>;
-      proposeEventUpdate: (event: Event) => boolean;
-    };
-    const current = calendar.getEvents().find((item) => item.id === "event-1");
-    if (!current) throw new Error("找不到待更新事件");
-    const startTime = new Date(current.startTime);
-    startTime.setHours(5, 0, 0, 0);
-    return calendar.proposeEventUpdate({ ...current, startTime });
+    await expect(page.getByTestId("event-edit-dialog")).toHaveCount(0);
+    await expect(page.getByText(`✓ RFC 0040 ${label}视图`, { exact: true })).toBeVisible();
+    const updated = await page.locator("wsx-calendar").evaluate((element) => {
+      const calendar = element as HTMLElement & { getEvents: () => Array<Event & { startTime: Date; endTime: Date }> };
+      const item = calendar.getEvents().find((current) => current.id === "event-1");
+      if (!item) throw new Error("找不到已更新事件");
+      return {
+        title: item.title,
+        start: new Date(item.startTime).getHours() + ":" + String(new Date(item.startTime).getMinutes()).padStart(2, "0"),
+        end: new Date(item.endTime).getHours() + ":" + String(new Date(item.endTime).getMinutes()).padStart(2, "0"),
+        location: item.data?.location,
+      };
+    });
+    expect(updated).toEqual({ title: `RFC 0040 ${label}视图`, start: "10:30", end: "11:30", location: "新会议室" });
   });
-  expect(accepted).toBe(false);
+}
+
+test("P0 校验拒绝保留草稿且不改 host event", async ({ page }) => {
+  await openDemo(page);
+  const event = page.locator(".month-view-event", { hasText: "团队会议" });
+  await event.dblclick();
+  const title = page.getByTestId("input-edit-title");
+  const start = page.getByTestId("input-edit-start-time");
+  await title.fill("非法改名草稿");
+  await start.fill("2026-09-07T05:00");
+  await page.getByTestId("btn-save-edit").click();
 
   await expect(page.getByTestId("edit-error")).toContainText("事件校验失败");
-  await expect(input).toHaveValue("非法改名草稿");
+  await expect(title).toHaveValue("非法改名草稿");
+  await expect(start).toHaveValue("2026-09-07T05:00");
   await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
-  await expect(page.getByText("非法改名草稿", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("✓ 客户演示", { exact: true })).toBeVisible();
+  const startHour = await page.locator("wsx-calendar").evaluate((element) => {
+    const calendar = element as HTMLElement & { getEvents: () => Array<Event & { startTime: Date }> };
+    return new Date(calendar.getEvents().find((item) => item.id === "event-1")!.startTime).getHours();
+  });
+  expect(startHour).toBe(10);
+});
+
+test("P2 editable false 时整个弹窗只读且不提供保存按钮", async ({ page }) => {
+  await openDemo(page);
+  await replaceDSL(page, validDSL.replace("editable: true", "editable: false"));
+  await page.locator(".month-view-event", { hasText: "团队会议" }).dblclick();
+
+  await expect(page.getByTestId("event-edit-dialog")).toBeVisible();
+  await expect(page.getByTestId("input-edit-title")).toBeDisabled();
+  await expect(page.getByTestId("input-edit-start-time")).toBeDisabled();
+  await expect(page.getByTestId("btn-save-edit")).toHaveCount(0);
+  await expect(page.getByText("当前事件不可编辑", { exact: true })).toBeVisible();
+  await expect(page.getByText("✓ 团队会议", { exact: true })).toBeVisible();
+});
+
+test("P1 时区不匹配时开始和结束时间只读", async ({ page }) => {
+  await openDemo(page);
+  await page.locator("wsx-calendar").evaluate((element) => {
+    const calendar = element as HTMLElement & { getEvents: () => Event[] };
+    const event = calendar.getEvents().find((item) => item.id === "event-1");
+    if (!event) throw new Error("找不到测试事件");
+    event.timeZone = "Asia/Tokyo";
+    element.dispatchEvent(new CustomEvent("event-edit-request", { detail: { event }, bubbles: true }));
+  });
+
+  await expect(page.getByTestId("input-edit-start-time")).toBeDisabled();
+  await expect(page.getByTestId("input-edit-end-time")).toBeDisabled();
+  await expect(page.getByRole("note")).toContainText("时区不同");
 });
 
 test("系统主题变化生效，手动切换后保持用户选择", async ({ page }) => {
@@ -240,6 +263,7 @@ for (const [label, view] of [["月", "month"], ["周", "week"], ["日", "day"]])
     const events = page.locator(`.${view}-view-event`);
     await events.first().dblclick();
     await expect(page.getByTestId("input-edit-title")).toHaveValue("团队会议");
+    await page.getByRole("button", { name: "关闭编辑窗口" }).click();
     await events.last().dblclick();
     await expect(page.getByTestId("input-edit-title")).toHaveValue("客户演示");
   });

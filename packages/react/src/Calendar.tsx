@@ -198,6 +198,9 @@ export interface CalendarRef {
    * 提议更新事件；成功只表示组件已派发 event-update
    */
   proposeEventUpdate: (event: Event) => boolean;
+
+  /** 查询底层 Calendar 对事件动作的当前权限 */
+  canPerformAction: (action: string, event: Event) => boolean;
 }
 
 /**
@@ -301,6 +304,11 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         const element = calendarRef.current as any;
         if (typeof element?.proposeEventUpdate !== "function") return false;
         return element.proposeEventUpdate(updatedEvent);
+      },
+      canPerformAction: (action: string, event: Event) => {
+        const element = calendarRef.current as any;
+        if (typeof element?.canPerformAction !== "function") return false;
+        return element.canPerformAction(action, event);
       },
     }));
 

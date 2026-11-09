@@ -121,6 +121,21 @@ describe("RFC-0044 Calendar 更新提议转发", () => {
     expect(proposeEventUpdate).toHaveBeenCalledWith(fakeEvent);
   });
 
+  it("ref 将权限查询转发到底层 Calendar 并返回结果", () => {
+    const ref = mount();
+    const element = ref.current!.getElement() as HTMLElement & {
+      canPerformAction: (action: string, event: Event) => boolean;
+    };
+    const canPerformAction = vi.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
+    element.canPerformAction = canPerformAction;
+
+    expect(ref.current!.canPerformAction("editable", fakeEvent)).toBe(true);
+    expect(ref.current!.canPerformAction("editable", fakeEvent)).toBe(false);
+    expect(canPerformAction).toHaveBeenCalledWith("editable", fakeEvent);
+    element.canPerformAction = undefined as never;
+    expect(ref.current!.canPerformAction("editable", fakeEvent)).toBe(false);
+  });
+
   it("ref 命令转发视图、日期、事件、DSL 和创建操作", () => {
     const ref = mount();
     const element = ref.current!.getElement() as HTMLElement & {

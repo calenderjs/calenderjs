@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test && node ./e2e/check-coverage.mjs",
+    "test": "node --experimental-test-coverage --import tsx --test src/event-edit-form.test.ts",
     "build:e2e": "vite build --config vite.e2e.config.ts",
     "test:e2e:report": "playwright show-report",
     "lint": "eslint src",

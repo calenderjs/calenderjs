@@ -45,6 +45,58 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  apps/site:
+    dependencies:
+      '@calenderjs/calendar':
+        specifier: workspace:*
+        version: link:../../packages/calendar
+      '@calenderjs/event-dsl':
+        specifier: workspace:*
+        version: link:../../packages/event-dsl
+      '@calenderjs/event-model':
+        specifier: workspace:*
+        version: link:../../packages/event-model
+      '@calenderjs/event-runtime':
+        specifier: workspace:*
+        version: link:../../packages/event-runtime
+      '@wsxjs/wsx-base-components':
+        specifier: ^0.2.0
+        version: 0.2.0(i18next@23.16.8)(typescript@5.9.3)
+      '@wsxjs/wsx-core':
+        specifier: ^0.2.0
+        version: 0.2.0(typescript@5.9.3)
+      '@wsxjs/wsx-i18next':
+        specifier: ^0.2.0
+        version: 0.2.0(i18next@23.16.8)(typescript@5.9.3)
+      '@wsxjs/wsx-press':
+        specifier: ^0.2.0
+        version: 0.2.0(typedoc-plugin-markdown@4.10.0(typedoc@0.26.11(typescript@5.9.3)))(typedoc@0.26.11(typescript@5.9.3))(typescript@5.9.3)
+      '@wsxjs/wsx-router':
+        specifier: ^0.2.0
+        version: 0.2.0(typescript@5.9.3)
+      fs-extra:
+        specifier: ^11.4.0
+        version: 11.4.0
+      i18next:
+        specifier: ^23.7.0
+        version: 23.16.8
+    devDependencies:
+      '@types/node':
+        specifier: ^22.12.0
+        version: 22.19.15
+      '@wsxjs/wsx-vite-plugin':
+        specifier: ^0.2.0
+        version: 0.2.0(esbuild@0.27.2)(typescript@5.9.3)(vite@5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      unocss:
+        specifier: ^66.0.0
+        version: 66.6.6(vite@5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1))
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
+
   demos/react:
     dependencies:
       '@calenderjs/core':
@@ -421,58 +473,6 @@ importers:
       vitest:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@20.19.27)(happy-dom@20.1.0)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
-
-  site:
-    dependencies:
-      '@calenderjs/calendar':
-        specifier: workspace:*
-        version: link:../packages/calendar
-      '@calenderjs/event-dsl':
-        specifier: workspace:*
-        version: link:../packages/event-dsl
-      '@calenderjs/event-model':
-        specifier: workspace:*
-        version: link:../packages/event-model
-      '@calenderjs/event-runtime':
-        specifier: workspace:*
-        version: link:../packages/event-runtime
-      '@wsxjs/wsx-base-components':
-        specifier: ^0.2.0
-        version: 0.2.0(i18next@23.16.8)(typescript@5.9.3)
-      '@wsxjs/wsx-core':
-        specifier: ^0.2.0
-        version: 0.2.0(typescript@5.9.3)
-      '@wsxjs/wsx-i18next':
-        specifier: ^0.2.0
-        version: 0.2.0(i18next@23.16.8)(typescript@5.9.3)
-      '@wsxjs/wsx-press':
-        specifier: ^0.2.0
-        version: 0.2.0(typedoc-plugin-markdown@4.10.0(typedoc@0.26.11(typescript@5.9.3)))(typedoc@0.26.11(typescript@5.9.3))(typescript@5.9.3)
-      '@wsxjs/wsx-router':
-        specifier: ^0.2.0
-        version: 0.2.0(typescript@5.9.3)
-      fs-extra:
-        specifier: ^11.4.0
-        version: 11.4.0
-      i18next:
-        specifier: ^23.7.0
-        version: 23.16.8
-    devDependencies:
-      '@types/node':
-        specifier: ^22.12.0
-        version: 22.19.15
-      '@wsxjs/wsx-vite-plugin':
-        specifier: ^0.2.0
-        version: 0.2.0(esbuild@0.27.2)(typescript@5.9.3)(vite@5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1))
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      unocss:
-        specifier: ^66.0.0
-        version: 66.6.6(vite@5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1))
-      vite:
-        specifier: ^5.0.0
-        version: 5.4.21(@types/node@22.19.15)(less@4.5.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)
 
 packages:
 
@@ -8418,12 +8418,12 @@ snapshots:
   unplugin-utils@0.3.1:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.5
 
   unplugin@2.3.11:
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      acorn: 8.15.0
+      acorn: 8.18.0
       picomatch: 4.0.5
       webpack-virtual-modules: 0.6.2
 

@@ -121,8 +121,11 @@
 | 0037 | [DayView/WeekView 拖拽与 resize 支持 15 分钟粒度](rfc/completed/0037-quarter-hour-drag-snap.md) | Implemented |
 | 0038 | [日历事件编辑弹窗 (Umbrella)](rfc/0038-event-edit-popup-umbrella.md) | Draft |
 | 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/completed/0039-event-edit-trigger.md) | Implemented |
-| 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/0040-event-edit-form.md) | Draft |
+| 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/0040-event-edit-form.md) | Approved |
 | 0041 | [RFC 0041: RFC 验收测试门槛](rfc/completed/0041-test-quality-gates.md) | Implemented |
 | 0042 | [Monaco 编辑器首次加载暗色主题不生效](rfc/completed/0042-monaco-dark-theme-race.md) | Implemented |
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
 | 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/completed/0044-edit-save-propose-update.md) | Implemented |
+| 0045 | [官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038)](rfc/0045-site-demo-sync-event-editing.md) | Draft |
+| 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/0046-vue-wrapper-package.md) | Draft |
+| 0047 | [新增 demos/wsx 原生 Web Component 技术 demo](rfc/0047-wsx-demo-app.md) | Draft |

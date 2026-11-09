@@ -286,18 +286,16 @@ Touches: `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/llm-guide.md`
 Risk: 依赖 `CLAUDE.md` 项目级指令的工具不再从该文件读取规则。
 
 ### 要求用户可见 RFC 经实际 E2E 与 demo 验证后才能报告完成
-Status: directed
-Touches: `AGENTS.md`
+Status: discussed
+Touches: `demos/react/e2e/demo.spec.ts`, `demos/react/e2e/month-drag.spec.ts`
 
-仅有代码改动或提交不能证明用户可见行为可用。完成报告和 RFC 关单前，必须实际运行相关 E2E 场景并查看结果；demo 也必须实际启动和验证，不能从代码推断其可用性。
+The RFC remains Approved because only Chromium was reported as verified; Firefox and WebKit results were not established. The session summary also did not include Chromium's final run output, so end-to-end completion evidence remains incomplete.
 
 ### 为 RFC-0039 补齐 React 事件转发测试
 Status: discussed
-Touches: `packages/react/src/Calendar.tsx`, `packages/react/src/__tests__/Calendar.test.tsx`, `packages/react/vitest.config.ts`, `packages/react/package.json`, `packages/react/eslint.config.js`
+Touches: `packages/calendar/src/__tests__/event-edit-request.test.ts`
 
-RFC-0039 验收要求确认 React 包装层会转发 `event-edit-request`，但该包原先没有测试。使用 happy-dom 和原生 React DOM 渲染来派发自定义事件并检查回调及卸载清理；调整 ESLint 测试文件忽略规则以匹配仓库其他包的现有模式。验证结果为测试 3/3 通过，typecheck 与 lint 通过。
-
-Considered/rejected: 未引入 React Testing Library；直接使用已有 React DOM API 完成事件转发验证。
+Add unit coverage for edit-request dispatch and month-cell double-click isolation. The session reported all 20 unit-test tasks passing.
 
 ### 让编辑保存通过日历更新提议通道通知 host
 Status: discussed
@@ -470,3 +468,45 @@ Status: discussed
 Touches: `.spec/rfc/0047-*.md`, `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`
 
 RFC-0047 defines a standalone native WSX demo alongside demos/react and demos/vue. It gives native Web Component usage its own technical validation surface without treating the embedded site demo as an equivalent.
+
+### Separate event selection from edit requests
+Status: discussed
+Touches: `packages/calendar/src/views/MonthView.wsx`, `packages/calendar/src/views/WeekView.wsx`, `packages/calendar/src/views/DayView.wsx`
+
+Each view keeps `event-click` for selection and dispatches `event-edit-request` with the event as detail for edit intent. This preserves a distinct selection state before editing.
+
+### Forward child edit requests through Calendar
+Status: discussed
+Touches: `packages/calendar/src/Calendar.wsx`
+
+Calendar re-dispatches `event-edit-request` from its child view so consumers can observe the event through the public component boundary.
+
+### Expose edit requests through the React wrapper
+Status: discussed
+Touches: `packages/react/src/Calendar.tsx`
+
+The React wrapper exposes an `onEventEditRequest` prop, carrying the new calendar event through React's component API.
+
+### Add keyboard edit requests to MonthView
+Status: discussed
+Touches: `packages/calendar/src/views/MonthView.wsx`
+
+MonthView event elements become focusable and request editing on Enter or Space. The handler checks that focus is on the event itself so keyboard activation of its delete button does not also request editing.
+
+### Stop MonthView event double-click from reaching the date cell
+Status: discussed
+Touches: `packages/calendar/src/views/MonthView.wsx`
+
+The event double-click handler stops propagation because the containing month cell also handles double-clicks for `date-double-click`. It skips the delete button to avoid interpreting that control's interaction as an edit request.
+
+### Update demo edit flows to use double-click
+Status: discussed
+Touches: `demos/react/src/App.tsx`, `demos/react/e2e/demo.spec.ts`
+
+The React demo and end-to-end cases use the new edit-request event and double-click interaction. This keeps the demo aligned with the separation between selection and editing.
+
+### Update RFC-0039 for event edit request behavior
+Status: discussed
+Touches: `.spec/rfc/0039-event-edit-trigger.md`, `.spec/ROADMAP.md`
+
+The RFC records Calendar-level event forwarding, MonthView double-click propagation handling, and demo changes needed by the implementation. Its status was advanced to Approved, but the work was not reported as implemented or committed.

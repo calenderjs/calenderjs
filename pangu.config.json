@@ -8,6 +8,13 @@
       "description": "CalendarJS React 组件演示",
       "package": "@calenderjs/demos-react",
       "command": ["pnpm", "--filter", "demos-react", "dev"]
+    },
+    {
+      "name": "CalendarJS Site",
+      "value": "site",
+      "description": "CalendarJS Site",
+      "package": "@calenderjs/site",
+      "command": ["pnpm", "--filter", "demos-react", "dev"]
     }
   ]
 }
