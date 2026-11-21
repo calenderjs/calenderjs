@@ -158,9 +158,6 @@
   - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
   - [x] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
 - [ ] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
-- [ ] Implement RFC 0047: 新增 demos/wsx 原生 Web Component 技术 demo (RFC 0047)
-
-
 
 ## Done
 
@@ -199,3 +196,5 @@
 - [x] Implement RFC 0041: RFC 0041: RFC 验收测试门槛 (RFC 0041)
 - [x] Implement RFC 0043: CI 门禁与 main 分支保护 (RFC 0043)
 - [x] Implement RFC 0042: Monaco 编辑器首次加载暗色主题不生效 (RFC 0042)
+- [x] Implement RFC 0047: 新增 demos/wsx 原生 Web Component 技术 demo (RFC 0047)
+

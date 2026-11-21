@@ -1,6 +1,6 @@
 # RFC 0047: 新增 demos/wsx 原生 Web Component 技术 demo
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Summary
 
