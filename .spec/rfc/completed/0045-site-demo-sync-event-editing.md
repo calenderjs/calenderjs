@@ -1,8 +1,8 @@
 # RFC 0045: 官网 demo 同步事件编辑能力 (child of 0038)
 
-**Status:** Draft
+**Status:** Implemented
 
-**Parent:** [0038](0038-event-edit-popup-umbrella.md)
+**Parent:** [0038](../0038-event-edit-popup-umbrella.md)
 
 ## Summary
 

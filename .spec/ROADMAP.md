@@ -126,6 +126,6 @@
 | 0042 | [Monaco 编辑器首次加载暗色主题不生效](rfc/completed/0042-monaco-dark-theme-race.md) | Implemented |
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
 | 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/completed/0044-edit-save-propose-update.md) | Implemented |
-| 0045 | [官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038)](rfc/0045-site-demo-sync-event-editing.md) | Draft |
+| 0045 | [官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038)](rfc/completed/0045-site-demo-sync-event-editing.md) | Implemented |
 | 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/0046-vue-wrapper-package.md) | Draft |
 | 0047 | [新增 demos/wsx 原生 Web Component 技术 demo](rfc/0047-wsx-demo-app.md) | Draft |

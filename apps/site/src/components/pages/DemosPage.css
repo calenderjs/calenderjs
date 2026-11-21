@@ -59,3 +59,84 @@
   height: 100%;
   min-height: 480px;
 }
+
+.demos-edit-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.demos-edit-dialog {
+  width: min(420px, calc(100vw - 2rem));
+  background: var(--cj-card);
+  border: 2px solid var(--cj-ink);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--cj-rule);
+  padding: 1.5rem;
+}
+
+.demos-edit-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--cj-ink);
+}
+
+.demos-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-family: var(--cj-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cj-ink-soft);
+  margin-bottom: 1rem;
+}
+
+.demos-edit-field input {
+  font-family: var(--cj-font-display);
+  font-size: 0.95rem;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--cj-ink);
+  background: var(--cj-card-raised);
+  border: 1px solid var(--cj-rule);
+  border-radius: 2px;
+  padding: 0.5rem 0.65rem;
+}
+
+.demos-edit-error {
+  font-size: 0.8rem;
+  color: var(--cj-red);
+  margin: 0 0 1rem 0;
+}
+
+.demos-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.demos-edit-actions button {
+  font-family: var(--cj-font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  border: 1.5px solid var(--cj-ink);
+  background: transparent;
+  color: var(--cj-ink);
+  cursor: pointer;
+}
+
+.demos-edit-actions button[data-testid="demos-edit-save"] {
+  background: var(--cj-red);
+  border-color: var(--cj-red);
+  color: var(--cj-card);
+}
