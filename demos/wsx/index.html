@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CalenderJS WSX Demo</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="demo-header">
+        <h1>CalenderJS WSX Demo</h1>
+        <p>原生 Web Component，不经任何框架封装</p>
+      </header>
+      <div id="action-log" data-testid="demo-action-log"></div>
+      <div id="calendar-container">
+        <wsx-calendar id="calendar" view="month"></wsx-calendar>
+      </div>
+      <div
+        id="edit-backdrop"
+        class="demo-edit-backdrop"
+        data-testid="demos-edit-backdrop"
+        hidden
+      >
+        <div
+          class="demo-edit-dialog"
+          role="dialog"
+          aria-modal="true"
+          data-testid="demos-edit-dialog"
+        >
+          <h2>编辑事件</h2>
+          <label>
+            <span>标题</span>
+            <input type="text" id="edit-title-input" data-testid="demos-edit-input-title" />
+          </label>
+          <p
+            id="edit-error"
+            class="demo-edit-error"
+            role="alert"
+            data-testid="demos-edit-error"
+            hidden
+          ></p>
+          <div class="demo-edit-actions">
+            <button type="button" id="edit-cancel-btn">取消</button>
+            <button type="button" id="edit-save-btn" data-testid="demos-edit-save">
+              保存
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
