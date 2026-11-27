@@ -286,4 +286,61 @@ describe("Calendar EventRuntime 集成", () => {
       expect(ok).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("mode（readonly/editable）门控", () => {
+    function dispatchChildUpdateRequest(calendar: Calendar, event: Event) {
+      const source = document.createElement("div") as HTMLElement & {
+        showUpdateRejected?: (eventId: string) => void;
+      };
+      source.showUpdateRejected = vi.fn();
+      calendar.shadowRoot!.appendChild(source);
+      source.dispatchEvent(
+        new CustomEvent("event-update-request", {
+          detail: { event },
+          bubbles: true,
+        }),
+      );
+      return source;
+    }
+
+    it("mode='readonly' 时短路：不调用 proposeEventUpdate，派发 event-update-denied 并弹回", async () => {
+      const calendar = document.createElement("wsx-calendar") as Calendar;
+      container.appendChild(calendar);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      calendar.mode = "readonly";
+      const proposeSpy = vi.spyOn(calendar, "proposeEventUpdate");
+      const denied = vi.fn();
+      calendar.addEventListener("event-update-denied", denied);
+
+      const source = dispatchChildUpdateRequest(calendar, createMeetingEvent());
+
+      expect(proposeSpy).not.toHaveBeenCalled();
+      expect(denied).toHaveBeenCalledTimes(1);
+      expect(source.showUpdateRejected).toHaveBeenCalledWith("event-1");
+    });
+
+    it("mode='editable'（默认）时行为不变：仍调用 proposeEventUpdate", async () => {
+      const calendar = document.createElement("wsx-calendar") as Calendar;
+      container.appendChild(calendar);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(calendar.mode).toBe("editable");
+      const proposeSpy = vi.spyOn(calendar, "proposeEventUpdate");
+
+      dispatchChildUpdateRequest(calendar, createMeetingEvent());
+
+      expect(proposeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("mode attribute 与 property 保持一致", () => {
+      const calendar = document.createElement("wsx-calendar") as Calendar;
+      calendar.setAttribute("mode", "readonly");
+      container.appendChild(calendar);
+      expect(calendar.mode).toBe("readonly");
+
+      calendar.mode = "editable";
+      expect(calendar.mode).toBe("editable");
+    });
+  });
 });

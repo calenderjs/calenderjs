@@ -215,3 +215,23 @@ describe("RFC-0044 Calendar 更新提议转发", () => {
     expect(onEventUpdateError).not.toHaveBeenCalled();
   });
 });
+
+describe("RFC-0026 mode prop 透传", () => {
+  it("mode prop 透传到底层 wsx-calendar property", () => {
+    const ref = mount({ mode: "readonly" });
+    const element = ref.current?.getElement() as (HTMLElement & {
+      mode?: string;
+    }) | null;
+
+    expect(element?.mode).toBe("readonly");
+  });
+
+  it("未指定 mode 时不设置该 property（保持底层默认值）", () => {
+    const ref = mount({});
+    const element = ref.current?.getElement() as (HTMLElement & {
+      mode?: string;
+    }) | null;
+
+    expect(element?.mode).toBeUndefined();
+  });
+});
