@@ -1,4 +1,5 @@
 import "@calenderjs/calendar";
+import { EventDetailPluginRegistry, appointmentPlugin, defaultPlugin } from "@calenderjs/calendar";
 import type { Event as CalendarEvent } from "@calenderjs/event-model";
 
 type WsxCalendarElement = HTMLElement & {
@@ -6,6 +7,10 @@ type WsxCalendarElement = HTMLElement & {
   proposeEventUpdate: (event: CalendarEvent) => boolean;
   events: string;
 };
+
+const detailRegistry = new EventDetailPluginRegistry();
+detailRegistry.register(appointmentPlugin);
+detailRegistry.register(defaultPlugin);
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -20,7 +25,7 @@ const INITIAL_EVENTS: CalendarEvent[] = [
   },
   {
     id: "wsx-demo-2",
-    type: "meeting",
+    type: "holiday",
     title: "客户演示",
     startTime: new Date(`${today}T14:00:00.000Z`),
     endTime: new Date(`${today}T15:30:00.000Z`),
@@ -30,6 +35,7 @@ const INITIAL_EVENTS: CalendarEvent[] = [
 
 const calendar = document.getElementById("calendar") as WsxCalendarElement;
 const actionLog = document.getElementById("action-log") as HTMLDivElement;
+const detailPanel = document.getElementById("detail-panel") as HTMLDivElement;
 const backdrop = document.getElementById("edit-backdrop") as HTMLDivElement;
 const dialogTitleInput = document.getElementById(
   "edit-title-input",
@@ -71,6 +77,19 @@ function showEditError(message: string) {
 calendar.addEventListener("event-edit-request", (e: Event) => {
   const detail = (e as CustomEvent<{ event: CalendarEvent }>).detail;
   openEditDialog(detail.event);
+});
+
+calendar.addEventListener("event-click", (e: Event) => {
+  const detail = (e as CustomEvent<{ event: CalendarEvent }>).detail;
+  const description = detailRegistry.describe(detail.event);
+  detailPanel.innerHTML = `
+    <h3>${description.title}</h3>
+    <ul>
+      ${description.fields
+        .map((f) => `<li><strong>${f.label}:</strong> ${f.value}</li>`)
+        .join("")}
+    </ul>
+  `;
 });
 
 calendar.addEventListener("event-update", (e: Event) => {

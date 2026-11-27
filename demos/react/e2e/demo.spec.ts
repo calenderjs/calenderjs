@@ -358,3 +358,13 @@ for (const [label, view] of [["月", "month"], ["周", "week"], ["日", "day"]])
   });
 }
 
+test("点击事件，详情面板通过 @calenderjs/calendar 的 appointmentPlugin 展示翻译后的字段（RFC-0012）", async ({ page }) => {
+  await openDemo(page);
+  await page.locator(".month-view-event", { hasText: "团队会议" }).click();
+  const panel = page.getByTestId("demo-detail-panel");
+  await expect(panel).toContainText("参与者");
+  await expect(panel).toContainText("user1@example.com");
+  await expect(panel).toContainText("地点");
+  await expect(panel).toContainText("会议室 A");
+});
+

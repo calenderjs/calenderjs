@@ -23,7 +23,7 @@
 | 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md)                                     | **Implemented** | —      | MonthView/DayView/WeekView                                                    |
 | 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md)                   | **Implemented** | —      | 属性/状态分层、observedAttributes、getter/setter                              |
 | 0011 | [Event 数据模型与 DSL 集成](rfc/completed/0011-event-data-model-integration.md)                  | **Implemented** | **P1** | `data` 与 EventDataGenerator 均已落地，单测与 E2E 完备                        |
-| 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md)                                       | Draft           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
+| 0012 | [Calendar 插件机制](rfc/completed/0012-calendar-plugin-mechanism.md)                                       | Implemented           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
 | 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md)    | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                          |
 | 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md)                              | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁                       |
 | 0006 | [Documentation & Examples](rfc/rejected/0006-documentation-and-examples.md)                               | Rejected           | **P3** | site 已有基础框架，文档内容待补全                                             |

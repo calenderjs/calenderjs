@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { Calendar } from "@calenderjs/vue";
+import {
+  EventDetailPluginRegistry,
+  appointmentPlugin,
+  defaultPlugin,
+  type EventDetailDescription,
+} from "@calenderjs/calendar";
 import type { Event as CalendarEvent } from "@calenderjs/event-model";
 
 const today = new Date().toISOString().slice(0, 10);
@@ -16,7 +22,7 @@ const INITIAL_EVENTS: CalendarEvent[] = [
   },
   {
     id: "vue-demo-2",
-    type: "meeting",
+    type: "holiday",
     title: "客户演示",
     startTime: new Date(`${today}T14:00:00.000Z`),
     endTime: new Date(`${today}T15:30:00.000Z`),
@@ -27,6 +33,15 @@ const INITIAL_EVENTS: CalendarEvent[] = [
 const calendarRef = ref<InstanceType<typeof Calendar> | null>(null);
 const events = ref<CalendarEvent[]>(INITIAL_EVENTS);
 const actionLog = ref("");
+const detailDescription = ref<EventDetailDescription | null>(null);
+
+const detailRegistry = new EventDetailPluginRegistry();
+detailRegistry.register(appointmentPlugin);
+detailRegistry.register(defaultPlugin);
+
+function onEventClick(e: CustomEvent<{ event: CalendarEvent }>) {
+  detailDescription.value = detailRegistry.describe(e.detail.event);
+}
 
 const editState = reactive({
   open: false,
@@ -93,11 +108,26 @@ function handleSave() {
       :view="'month'"
       :date="today"
       :events="events"
+      @event-click="onEventClick"
       @event-edit-request="onEventEditRequest"
       @event-update="onEventUpdate"
       @event-update-denied="onEventUpdateDenied"
       @event-update-error="onEventUpdateError"
     />
+  </div>
+  <div
+    v-if="detailDescription"
+    data-testid="demo-detail-panel"
+  >
+    <h3>{{ detailDescription.title }}</h3>
+    <ul>
+      <li
+        v-for="field in detailDescription.fields"
+        :key="field.key"
+      >
+        <strong>{{ field.label }}:</strong> {{ field.value }}
+      </li>
+    </ul>
   </div>
   <div
     v-if="editState.open"

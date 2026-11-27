@@ -148,7 +148,6 @@
 
 ## Active
 
-- [ ] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
 - [ ] Implement RFC 0026: Calendar readonly/edit mode (RFC 0026)
 - [ ] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
 - [ ] Implement RFC 0028: Agent-friendly skills for calenderjs usage (RFC 0028)
@@ -201,6 +200,8 @@
 - [x] Implement RFC 0050: calendarify 多租户/团队共享日历与权限分级 (RFC 0050)
 - [x] Implement RFC 0051: calendarify 支持 iCloud/通用 CalDAV 日历源 (RFC 0051)
 - [x] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
+- [x] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
+
 
 
 
