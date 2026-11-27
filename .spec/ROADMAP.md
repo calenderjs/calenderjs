@@ -107,7 +107,7 @@
 | `@calenderjs/monaco-event-dsl`   | Implemented | Monaco Editor DSL 语言插件                                    |
 | `site/`                          | Implemented | WSX 官网（i18n、路由、文档）                                  |
 | `demos/react/`                   | Implemented | React Demo（DSL 编辑器 + Calendar）                           |
-| 0026 | [Calendar readonly/edit mode](rfc/0026-calendar-readonly-edit-mode.md) | Draft |
+| 0026 | [Calendar readonly/edit mode](rfc/completed/0026-calendar-readonly-edit-mode.md) | Implemented |
 | 0027 | [RFC-demo coverage golden rule](rfc/0027-rfc-demo-coverage-rule.md) | Draft |
 | 0028 | [Agent-friendly skills for calenderjs usage](rfc/0028-agent-friendly-skills.md) | Draft |
 | 0029 | [Fix WeekView hour-cell key collision breaking drag/click per column](rfc/completed/0029-week-view-hour-cell-key-collision.md) | Implemented |

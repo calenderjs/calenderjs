@@ -58,7 +58,7 @@ const VALID_VIEWS = ["month", "week", "day"] as const;
 export default class Calendar extends WebComponent {
     // ========== 观察的属性（Web Components 标准 - 对外使用） ==========
     static get observedAttributes() {
-        return ["view", "date", "events", "user"];
+        return ["view", "date", "events", "user", "mode"];
     }
 
     // ========== 内部状态（@state 装饰器） ==========
@@ -78,6 +78,7 @@ export default class Calendar extends WebComponent {
         | EventTypeAST
         | EventTypeAST[]
         | null = null;
+    @state private _mode: "readonly" | "editable" = "editable";
     private _isViewTransitioning: boolean = false;
     private _transitionTimer: any = null;
     private _eventRuntime: EventRuntime | null = null;
@@ -120,6 +121,16 @@ export default class Calendar extends WebComponent {
             this.currentDate = value;
         } catch {
             console.error("Invalid date value:", value);
+        }
+    }
+
+    /** 与 observedAttributes 的 "mode" 对应的 property（框架包装器使用） */
+    get mode(): "readonly" | "editable" {
+        return this._mode;
+    }
+    set mode(value: "readonly" | "editable") {
+        if (value === "readonly" || value === "editable") {
+            this._mode = value;
         }
     }
 
@@ -348,11 +359,23 @@ export default class Calendar extends WebComponent {
     /** 视图发起的事件更新请求（拖拽移动或改变时长） */
     private handleChildEventUpdateRequest = (e: globalThis.Event) => {
         const { event } = (e as CustomEvent<{ event: CalendarEvent }>).detail;
+        const source = e.target as HTMLElement & {
+            showUpdateRejected?: (eventId: string) => void;
+        };
+
+        if (this._mode === "readonly") {
+            this.dispatchEvent(
+                new CustomEvent("event-update-denied", {
+                    detail: { event },
+                    bubbles: true,
+                })
+            );
+            source.showUpdateRejected?.(event.id);
+            return;
+        }
+
         const allowed = this.proposeEventUpdate(event, { skipValidation: true });
         if (!allowed) {
-            const source = e.target as HTMLElement & {
-                showUpdateRejected?: (eventId: string) => void;
-            };
             source.showUpdateRejected?.(event.id);
         }
     };
@@ -410,6 +433,13 @@ export default class Calendar extends WebComponent {
                     } catch (e) {
                         console.error("Invalid user JSON:", newValue);
                     }
+                }
+                break;
+            case "mode":
+                if (newValue === "readonly" || newValue === "editable") {
+                    this._mode = newValue;
+                } else if (!newValue) {
+                    this._mode = "editable";
                 }
                 break;
         }

@@ -42,6 +42,7 @@ declare global {
         React.HTMLAttributes<HTMLElement> & {
           view?: "month" | "week" | "day";
           date?: string;
+          mode?: "readonly" | "editable";
         },
         HTMLElement
       > & {
@@ -80,6 +81,12 @@ export interface CalendarProps {
    * Event DSL 定义（文本或 AST）
    */
   eventTypeDefinitions?: string | any;
+
+  /**
+   * 编辑模式（readonly | editable，默认 editable）
+   * readonly 时短路所有拖拽/resize/keyboard 更新请求
+   */
+  mode?: "readonly" | "editable";
 
   /**
    * 日期变化时的回调
@@ -214,6 +221,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       events,
       user,
       eventTypeDefinitions,
+      mode,
       onDateChange,
       onViewChange,
       onEventClick,
@@ -338,7 +346,11 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       if (eventTypeDefinitions !== undefined) {
         element.eventTypeDefinitions = eventTypeDefinitions;
       }
-    }, [isClient, view, date, events, user, eventTypeDefinitions]);
+
+      if (mode !== undefined) {
+        element.mode = mode;
+      }
+    }, [isClient, view, date, events, user, eventTypeDefinitions, mode]);
 
     // 绑定事件监听器。同 props：客户端 wsx-calendar 出现后再挂载，避免冷启动漏绑。
     useEffect(() => {
