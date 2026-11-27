@@ -1,6 +1,6 @@
 # Why: main
 
-<!-- reasongraph:v1 generated 2026-11-09 — review before sharing; edit freely, edits are preserved -->
+<!-- reasongraph:v1 generated 2026-11-27 — review before sharing; edit freely, edits are preserved -->
 
 ## Intent
 Maintain the calendar project’s architecture map and RFC records, improve demo coverage and agent-facing usage guidance, and document a WeekView rendering defect that prevents interactions across most day columns.
@@ -25,11 +25,11 @@ Touches: `.spec/rfc/0025-ci-pull-request-workflow.md`, `.github/workflows/pull-r
 
 The drafted workflow separates unit tests from browser e2e checks into parallel pull-request jobs. It uses Node 22 within the declared engine range, pins pnpm 10.27.0, and runs the existing e2e installation and coverage-gated scripts. The transcript later records the workflow as implemented and archived in commit 97ba42a.
 
-### Synchronize RFC completion records with archived files
-Status: directed
-Touches: `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`, `.spec/rfc/0020-drag-events-to-new-time.md`, `.spec/rfc/0021-resize-event-duration.md`, `.spec/rfc/completed/0025-ci-pull-request-workflow.md`
+### Keep RFC completion records synchronized with archived files
+Status: discussed
+Touches: `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`, `.spec/rfc/0046-vue-wrapper-package.md`, `.spec/rfc/completed/0046-vue-wrapper-package.md`
 
-RFC-0020 and RFC-0021 were marked Implemented in their files but remained stale in tracking records, so their lifecycle records were advanced and archived. RFC-0025 was already archived and checked off in task tracking, so its orphaned Draft row in the roadmap was corrected directly. Sync-check then reported 0 errors and 0 warnings across 24 linked RFCs.
+The agent ran the specification sync check after archiving RFC-0046 to confirm lifecycle records matched the archived document.
 
 ### Archive RFC-0007 as rejected
 Status: directed
@@ -209,11 +209,11 @@ Touches: `.spec/rfc/0026-calendar-readonly-edit-mode.md`, `packages/calendar/src
 
 Child views already funnel update requests through Calendar, so readonly mode can be handled at that single boundary without adding mode state or duplicate checks to WeekView and DayView. The RFC was updated to align its design with the current pointer-event architecture and notes that rejected updates need visible feedback.
 
-### Archive RFC-0031 as implemented
-Status: discussed
-Touches: `.spec/rfc/completed/0031-pointer-drag-engine.md`, `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`
+### Archive RFC-0012 as implemented
+Status: directed
+Touches: `.spec/rfc/0012-calendar-plugin-mechanism.md`, `.spec/rfc/completed/*`, `README.md`
 
-The pointer-drag engine was implemented and verified, but its RFC status remained Approved. The lifecycle was advanced to Implemented and archived; sync-check reported zero errors.
+The RFC was advanced to Implemented and archived after its acceptance evidence and full checks were completed. The README RFC index was updated to point to the archived file and show its implemented status.
 
 ### Route edit validation policy through Calendar’s update funnel
 Status: discussed
@@ -429,9 +429,9 @@ The plugin registry returns structured field descriptions and leaves rendering t
 
 ### Validate framework-neutral behavior in native WSX, React, and Vue demos
 Status: discussed
-Touches: `.spec/rfc/0012-calendar-plugin-mechanism.md`, `.spec/rfc/0046-*.md`, `.spec/rfc/0047-*.md`, `AGENTS.md`
+Touches: `demos/wsx/*`, `demos/react/*`, `demos/vue/*`, `.spec/rfc/0012-calendar-plugin-mechanism.md`
 
-The same plugin behavior must be exercised through native WSX, React, and Vue consumers. This makes framework neutrality a verifiable requirement rather than an assumption based on a single wrapper.
+The same built-in plugin mechanism was manually verified in a real browser across all three demos. Meeting events rendered appointment-specific fields, while an event without a matching plugin rendered the generic default fields.
 
 ### Specify a thin Vue wrapper and demo in RFC-0046
 Status: discussed
@@ -463,11 +463,11 @@ Touches: `.spec/rfc/0045-*.md`, `.spec/rfc/0012-calendar-plugin-mechanism.md`, `
 
 The site remains a GitHub Pages showcase, while technical validation belongs to peer demos under demos/. This keeps site presentation responsibilities separate from framework validation.
 
-### Create demos/wsx as a peer native technical demo
-Status: discussed
-Touches: `.spec/rfc/0047-*.md`, `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`
+### Create demos/wsx as a native Web Component demo
+Status: directed
+Touches: `demos/wsx/*`, `.spec/rfc/completed/0047-wsx-demo-app.md`, `.spec/ROADMAP.md`, `.spec/TASK_TRACKING.md`
 
-RFC-0047 defines a standalone native WSX demo alongside demos/react and demos/vue. It gives native Web Component usage its own technical validation surface without treating the embedded site demo as an equivalent.
+The demo uses the calendar Web Component directly, without React, Vue, DSL, or Monaco dependencies. Its edit flow covers event display, edit requests, successful saves, denied updates, and validation errors, matching the RFC’s acceptance scope.
 
 ### Separate event selection from edit requests
 Status: discussed
@@ -510,3 +510,266 @@ Status: discussed
 Touches: `.spec/rfc/0039-event-edit-trigger.md`, `.spec/ROADMAP.md`
 
 The RFC records Calendar-level event forwarding, MonthView double-click propagation handling, and demo changes needed by the implementation. Its status was advanced to Approved, but the work was not reported as implemented or committed.
+
+### 为 apps/site 添加 Vitest 与 happy-dom 测试基建
+Status: directed
+Touches: `apps/site/package.json`, `apps/site/vitest.config.ts`, `pnpm-lock.yaml`
+
+apps/site 原先没有测试基建，无法满足 RFC-0045 的单测验收要求。使用 Vitest 与 happy-dom，并通过现有 WSX 插件支持组件测试。
+
+### 在 DemosPage 测试中等待 WSX 的动画帧重渲染
+Status: discussed
+Touches: `apps/site/src/components/pages/__tests__/DemosPage.test.ts`
+
+WSX 的状态更新通过 requestAnimationFrame 调度重渲染，因此状态变更后的 DOM 断言必须等待动画帧。测试在挂载和事件分发后等待一帧，避免读取过期 DOM。
+
+### 通过 PR 工作流交付 RFC-0045 实现
+Status: discussed
+Touches: `.github/workflows/pull-request.yml`
+
+必需的 E2E 检查由 pull_request 事件触发，直接推送无法产生该检查结果。实现通过分支和 PR 验证；PR 合并后回到 main 并同步最新提交。
+
+### Use ports 5204 and 4178 for the WSX demo
+Status: discussed
+Touches: `demos/wsx/vite.config.ts`, `demos/wsx/playwright.config.ts`, `../../spark/port.md`
+
+The demo reserves distinct development and Playwright ports after checking the shared port registry, preventing collisions with existing project servers.
+
+### Use the local event list as the demo source of truth
+Status: discussed
+Touches: `demos/wsx/src/main.ts`
+
+The calendar validates and emits edit proposals but does not commit accepted updates to its event list. The host therefore merges accepted updates into its local list and reapplies that list to the calendar.
+
+### Hide the edit backdrop when its hidden attribute is set
+Status: discussed
+Touches: `demos/wsx/src/style.css`
+
+The backdrop’s flex display rule overrode the browser’s default hidden styling, leaving the edit dialog visible on initial load. An explicit hidden-state rule restores the intended initial state.
+
+### Add Playwright coverage for native WSX demo edit outcomes
+Status: discussed
+Touches: `demos/wsx/*`
+
+端到端套件覆盖原生 WSX demo 的编辑结果，并在构建 demo 与相关包后运行。构建成功；测试运行结果尚未记录。
+
+Risk: 当前记录无法确认端到端测试是否通过。
+
+### 为保存成功断言限定日历事件范围 (updated)
+Status: discussed
+Touches: `demos/wsx/e2e/demo.spec.ts`
+
+保存用例通过文本定位器匹配到操作日志和日历事件，触发 Playwright strict-mode 冲突。将断言限定到日历事件，避免把测试定位器错误误判为产品故障。
+
+### 将 Firefox 双击失败作为待确认的测试波动调查
+Status: discussed
+Touches: `demos/wsx/e2e/demo.spec.ts`
+
+Firefox 双击与保存测试失败具有一致性，单测通过不足以证明只是随机波动。代理缩短断言超时时间以定位卡住的步骤，并继续检查浏览器追踪与 DOM 状态。
+
+Risk: 诊断性超时调整若保留，可能改变测试行为；最终根因和修复尚未确定。
+Reviewer attention: 确认后续调查区分了应用行为问题与 Playwright 定位器或等待问题，并移除仅用于诊断的超时调整。
+
+### Register WSX demo development and end-to-end ports
+Status: directed
+Touches: `/Volumes/ORICO/ws/prj/spark/port.md`, `demos/wsx/vite.config.ts`, `demos/wsx/playwright.config.ts`
+
+The shared port registry assigns 5204 to the Vite development server and 4178 to Playwright end-to-end tests. Recording both assignments in the registry and app configuration avoids collisions with other projects.
+
+### Merge host event state after accepted calendar updates
+Status: discussed
+Touches: `demos/wsx/src/main.ts`, `packages/calendar/src/Calendar.wsx`
+
+The calendar dispatches an accepted update but does not mutate its internal event list. The demo host therefore merges the updated event into its own list and resets the calendar’s events attribute so the displayed event reflects the save.
+
+### Override hidden-state styling for the edit backdrop
+Status: discussed
+Touches: `demos/wsx/src/style.css`
+
+The backdrop’s display rule overrides the browser’s default hidden styling. An explicit hidden-state rule keeps the edit dialog closed on initial page load and allows the hidden attribute to control visibility.
+
+### Use flat Playwright locators for the updated event assertion
+Status: discussed
+Touches: `demos/wsx/e2e/demo.spec.ts`
+
+The chained text locator hung in Firefox even when the expected DOM was present. Using a flat locator with a hasText filter preserved the assertion and passed the full three-browser suite, which completed with 15 of 15 tests passing.
+
+### Draft RFC-0048 for the Calendarify production proof app
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+The agent recorded the proposed app architecture and acceptance criteria in a Draft RFC before implementation. This keeps the integration scope reviewable before code changes.
+
+Considered/rejected: Bidirectional sync, webhooks, multi-tenant support, iCloud/CalDAV, and changes to the core calendar package were excluded from scope.
+
+### Use Next.js App Router with Auth.js for Google and Microsoft sign-in
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+The RFC proposes a Vercel-hosted Next.js App Router app with Auth.js providers for Google and Microsoft Entra ID. This supplies account authentication for accessing the two calendar APIs.
+
+Risk: Provider configuration and OAuth behavior require validation during implementation.
+
+### Store OAuth tokens in Postgres and map provider events to the shared Event model
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+The RFC proposes a Postgres or Supabase token store and provider adapters using Google APIs and Microsoft Graph. Adapters map provider data to `@calenderjs/event-model` events so the existing React calendar can render them.
+
+Risk: Provider-specific event fields and token handling may not map cleanly to the shared event model.
+
+### Route calendar edits back to the source provider API
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+The RFC proposes connecting `proposeEventUpdate` to provider PATCH requests, keeping edits within the existing calendar update flow while persisting them to Google or Microsoft.
+
+Risk: Provider update semantics and rejected edits need verification.
+
+### Require mocked CI coverage, real-account verification, and a Vercel deployment
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+The RFC sets mocked end-to-end coverage in CI, a manual verification pass with a real account, and an actual Vercel deployment as acceptance evidence. These checks exercise both isolated integration behavior and deployed app behavior.
+
+### Reserve ports 5205 and 4179 for the Vue demo
+Status: discussed
+Touches: `../../spark/port.md`, `demos/vue/vite.config.ts`, `demos/vue/playwright.config.ts`
+
+The demo uses port 5205 for Vite development and 4179 for Playwright end-to-end runs. Both assignments were added to the shared port registry.
+
+### File deferred Calendarify capabilities as Pending RFCs
+Status: discussed
+Touches: `.spec/rfc/pending/0049-calendarify-bidirectional-sync.md`, `.spec/rfc/pending/0050-calendarify-multi-tenant.md`, `.spec/rfc/pending/0051-calendarify-caldav-icloud.md`
+
+Separate RFCs preserve deferred scope for bidirectional sync, multi-tenant access, and iCloud/CalDAV support without expanding RFC-0048 implementation. Each record contains enough summary to satisfy validation while remaining pending.
+
+### Link deferred RFCs from Calendarify production proof scope
+Status: discussed
+Touches: `.spec/rfc/0048-calendarify-prod-proof.md`
+
+RFC-0048 Non-goals link to the pending RFCs so excluded capabilities retain traceable follow-up scope. This keeps the production proof RFC focused on its initial behavior.
+
+### Finish RFC-0046 before RFC-0012
+Status: directed
+Touches: `.spec/rfc/0046-vue-wrapper-package.md`, `packages/vue/*`, `demos/vue/*`, `.spec/rfc/0012*`
+
+The work order puts the Vue wrapper and demo first because RFC-0012 acceptance depends on `demos/vue` existing. RFC-0048 remains outside this implementation scope.
+
+### Mirror the React wrapper contract in the Vue package
+Status: discussed
+Touches: `packages/vue/*`
+
+The Vue wrapper follows the React wrapper contract so both framework integrations expose consistent calendar behavior.
+
+### Keep the Vue demo within the minimal acceptance scope
+Status: discussed
+Touches: `demos/vue/*`
+
+The Vue demo covers the wrapper’s required behavior with five end-to-end scenarios aligned to the React and WSX demos.
+
+### Sync initial Vue props after mount
+Status: agent-initiated
+Touches: `packages/vue/src/Calendar.vue`, `packages/vue/src/__tests__/Calendar.test.ts`
+
+An immediate watcher runs before the template ref is available, so initial props were not copied to the custom element. The wrapper now applies initial properties on mount and reserves watchers for subsequent reactive updates.
+
+### Treat wsx-calendar as a Vue custom element
+Status: agent-initiated
+Touches: `packages/vue/vite.config.ts`, `packages/vue/vitest.config.ts`
+
+Vue's compiler needs an explicit custom-element rule for `wsx-calendar`; otherwise it reports the element as an unresolved component. The rule is configured for both build and unit-test compilation.
+
+### Use Vue-specific markers to verify external runtime packaging
+Status: agent-initiated
+Touches: `packages/vue/scripts/verify-vue-externals.mjs`
+
+The React-oriented forbidden markers incorrectly flagged normal Vue SFC output. The check now looks for Vue runtime implementation signatures while confirming the bundle imports Vue as an external dependency.
+
+### Use Vite 7.3.8 across packages already on Vite 7.3.0
+Status: discussed
+Touches: `package.json`, `pnpm-lock.yaml`, `**/package.json`
+
+Packages using Vite 7.3.0 were updated to the 7.3.8 range. The transcript reports successful monorepo validation after the dependency update.
+
+### 保留 Vue flat recommended 配置的完整处理器 wiring
+Status: discussed
+Touches: `demos/vue/eslint.config.js`
+
+Vue SFC 配置需保留 flat recommended 配置对象中的 processor wiring，避免 `vue/comment-directive` 在 `</script>` 和 `</template>` 边界产生误报。调整后 lint 从错误状态变为零错误；后续格式清理后，lint 与 typecheck 均无问题。
+
+Considered/rejected: 手动合并 recommended 配置的 rules 会丢失 processor；未改动 packages/vue/eslint.config.js，因为该文件编辑被保护钩子阻止，且当前没有触发问题的 Vue 文件。
+
+### 清理 Vue demo 模板格式告警
+Status: discussed
+Touches: `demos/vue/src/App.vue`
+
+调整模板空白和标签格式，清除剩余样式告警，同时保留 demo 行为。最终 lint 与 typecheck 均无问题。
+
+### 在运行 Vue demo E2E 前构建测试产物
+Status: discussed
+Touches: `demos/vue/*`
+
+The Vue demo end-to-end suite depends on built package artifacts; building them first keeps test execution aligned with the package consumers use.
+
+### Investigate Firefox failures as possible environment instability
+Status: discussed
+Touches: `demos/vue/e2e/demo.spec.ts`, `demos/wsx/e2e/*`
+
+Firefox failures persisted with different symptoms after reinstall, while Chromium and WebKit passed all 10 end-to-end checks. The agent treated the failures as environment instability and avoided claiming Firefox coverage passed.
+
+### Reinstall the Playwright Firefox binary to investigate runtime failures
+Status: discussed
+Touches: `demos/vue/e2e/demo.spec.ts`
+
+The Firefox binary was reinstalled to check whether runtime failures came from a damaged browser installation. Failures persisted with a different symptom, so the reinstall did not resolve them.
+
+### 完成并归档 RFC-0046
+Status: discussed
+Touches: `.spec/rfc/0046*`
+
+RFC-0046 was advanced to Implemented and archived after package and demo checks completed. The transcript reports Vue package typecheck, lint, 9 unit tests, and build passing; demo typecheck and lint passing; Chromium and WebKit E2E each passing 5 tests. Firefox E2E remained unstable at the machine level and was documented rather than treated as a code defect.
+
+### Keep mixed RFC changes together when shared records cannot be safely split
+Status: discussed
+Touches: `.spec/rfc/0046*`, `.spec/rfc/0048*`, `.spec/rfc/0049*`, `.spec/rfc/0050*`, `.spec/rfc/0051*`
+
+The commit grouped the completed Vue RFC work with related RFC-0048 scope and deferred capability records because these shared specification changes were delivered together.
+
+### Exclude generated ReasonGraph notes from the commit
+Status: discussed
+Touches: `.reasongraph/why/main.md`
+
+Generated ReasonGraph index changes were left unstaged to avoid committing regenerated noise.
+
+### Preserve the Vue recommended-config processor in the Vue package
+Status: discussed
+Touches: `packages/vue/eslint.config.js`
+
+The Vue ESLint configuration was corrected so its recommended processor wiring works and the lint run completes cleanly.
+
+### Keep the Vue component name aligned with the React wrapper
+Status: discussed
+Touches: `packages/vue/src/Calendar.vue`
+
+The Vue wrapper keeps the canonical `Calendar` name shared with the React wrapper. A file-scoped exception handles the single-word component-name rule, while the custom element uses self-closing syntax to satisfy lint.
+
+### Ship built-in event detail plugins from the calendar package
+Status: discussed
+Touches: `packages/calendar/src/plugins/types.ts`, `packages/calendar/src/plugins/EventDetailPluginRegistry.ts`, `packages/calendar/src/plugins/built-in.ts`, `packages/calendar/src/index.ts`
+
+The calendar package exports a registry and built-in default and appointment plugins so hosts can resolve event details from structured data. The event model allows a free-form type and extension data, so plugins match by type and provide a fallback when no specialized plugin matches.
+
+Considered/rejected: Embedding detail rendering in individual demos would duplicate plugin behavior across frameworks.
+
+### Keep plugin objects independent of Calendar lifecycle
+Status: discussed
+Touches: `.spec/rfc/0012-calendar-plugin-mechanism.md`
+
+The RFC removes `initialize(calendar)` and `destroy()` hooks because plugins do not hold or depend on a `Calendar` instance. Plugin objects therefore remain stateless and have no lifecycle coupling.
+
+### Update RFC-0012 examples to import built-in plugins
+Status: discussed
+Touches: `.spec/rfc/completed/0012-calendar-plugin-mechanism.md`
+
+The archived RFC records built-in plugin imports and acceptance evidence for unit, cross-framework demo, and browser validation. New plugin code reached 96.29% branch coverage; calendar tests passed 153 tests across 17 files, WSX and Vue E2E each passed 12 tests across Chromium and WebKit, and React E2E passed 55 Chromium tests.
