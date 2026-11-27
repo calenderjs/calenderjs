@@ -1,6 +1,6 @@
 # RFC 0038: 日历事件编辑弹窗 (Umbrella)
 
-**Status:** Draft
+**Status:** Implemented
 
 **Type:** Umbrella
 
@@ -33,10 +33,10 @@
 
 | RFC | Concern |
 |-----|---------|
-| [0045](completed/0045-site-demo-sync-event-editing.md) | 官网 demo 同步事件编辑能力(RFC-0039/0044 |
-| [0044](completed/0044-edit-save-propose-update.md) | 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 |
-| [0039](completed/0039-event-edit-trigger.md) | 双击/快捷键触发事件编辑弹窗 |
-| [0040](completed/0040-event-edit-form.md) | 事件编辑弹窗：多字段表单 |
+| [0045](0045-site-demo-sync-event-editing.md) | 官网 demo 同步事件编辑能力(RFC-0039/0044 |
+| [0044](0044-edit-save-propose-update.md) | 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 |
+| [0039](0039-event-edit-trigger.md) | 双击/快捷键触发事件编辑弹窗 |
+| [0040](0040-event-edit-form.md) | 事件编辑弹窗：多字段表单 |
 
 ## Acceptance
 

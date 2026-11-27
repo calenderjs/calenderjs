@@ -2,7 +2,7 @@
 
 **Status:** Implemented
 
-**Parent:** [0038](../0038-event-edit-popup-umbrella.md)
+**Parent:** [0038](0038-event-edit-popup-umbrella.md)
 
 ## Summary
 

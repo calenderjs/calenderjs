@@ -151,11 +151,6 @@
 - [ ] Implement RFC 0026: Calendar readonly/edit mode (RFC 0026)
 - [ ] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
 - [ ] Implement RFC 0028: Agent-friendly skills for calenderjs usage (RFC 0028)
-- [ ] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
-  - [x] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
-  - [x] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
-  - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
-  - [x] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
 - [ ] Implement RFC 0048: 新增 apps/calendarify：Google/Outlook 日历聚合管理应用（验证 calenderjs 生产可用性） (RFC 0048)
 
 ## Done
@@ -201,6 +196,12 @@
 - [x] Implement RFC 0051: calendarify 支持 iCloud/通用 CalDAV 日历源 (RFC 0051)
 - [x] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
 - [x] Implement RFC 0012: Calendar plugin mechanism (RFC 0012)
+- [x] Implement RFC 0038: 日历事件编辑弹窗 (Umbrella) (RFC 0038)
+  - [x] Implement RFC 0039: 双击/快捷键触发事件编辑弹窗 (child of 0038) (RFC 0039)
+  - [x] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
+  - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
+  - [x] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
+
 
 
 

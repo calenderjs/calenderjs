@@ -119,7 +119,7 @@
 | 0035 | [拖拽/resize 改时间不应被 validate 规则拦截](rfc/completed/0035-drag-rejection-feedback.md) | Implemented |
 | 0036 | [MonthView 事件拖拽改日期](rfc/completed/0036-month-view-drag-move.md) | Implemented |
 | 0037 | [DayView/WeekView 拖拽与 resize 支持 15 分钟粒度](rfc/completed/0037-quarter-hour-drag-snap.md) | Implemented |
-| 0038 | [日历事件编辑弹窗 (Umbrella)](rfc/0038-event-edit-popup-umbrella.md) | Draft |
+| 0038 | [日历事件编辑弹窗 (Umbrella)](rfc/completed/0038-event-edit-popup-umbrella.md) | Implemented |
 | 0039 | [双击/快捷键触发事件编辑弹窗 (child of 0038)](rfc/completed/0039-event-edit-trigger.md) | Implemented |
 | 0040 | [事件编辑弹窗：多字段表单 (child of 0038)](rfc/completed/0040-event-edit-form.md) | Implemented |
 | 0041 | [RFC 0041: RFC 验收测试门槛](rfc/completed/0041-test-quality-gates.md) | Implemented |
