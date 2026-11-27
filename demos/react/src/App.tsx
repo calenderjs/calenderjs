@@ -3,6 +3,12 @@ import {
   ResizableSplitter,
   type CalendarRef,
 } from "@calenderjs/react";
+import {
+  EventDetailPluginRegistry,
+  appointmentPlugin,
+  defaultPlugin,
+  type EventDetailDescription,
+} from "@calenderjs/calendar";
 import { EventEditor } from "@calenderjs/react-event-editor";
 import type { Event } from "@calenderjs/event-model";
 import {
@@ -90,6 +96,15 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [canEditEvent, setCanEditEvent] = useState(false);
   const [editError, setEditError] = useState<string>("");
+  const [detailDescription, setDetailDescription] =
+    useState<EventDetailDescription | null>(null);
+
+  const detailRegistry = useMemo(() => {
+    const r = new EventDetailPluginRegistry();
+    r.register(appointmentPlugin);
+    r.register(defaultPlugin);
+    return r;
+  }, []);
 
   // 跟随系统深色/浅色模式，直到用户手动切换过一次
   useEffect(() => {
@@ -215,6 +230,7 @@ export default function App() {
   const handleEventClick = (e: CustomEvent<{ event: Event }>) => {
     // 打印 id，避免 Proxy 在控制台显示为 Proxy(Object) 导致验收无法断言。
     console.log("Event clicked:", e.detail.event.id);
+    setDetailDescription(detailRegistry.describe(e.detail.event));
   };
 
   // 双击或聚焦后按 Enter/Space 打开事件编辑弹窗。
@@ -549,6 +565,18 @@ export default function App() {
                   style={{ width: "100%", height: "100%" }}
                 />
               </div>
+              {detailDescription && (
+                <div data-testid="demo-detail-panel">
+                  <h3>{detailDescription.title}</h3>
+                  <ul>
+                    {detailDescription.fields.map((field) => (
+                      <li key={field.key}>
+                        <strong>{field.label}:</strong> {field.value}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           }
         />

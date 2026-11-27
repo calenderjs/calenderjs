@@ -253,7 +253,7 @@ const compiled = compile(ast);
 | [0013](./.spec/rfc/completed/0013-fix-today-handling.md)                     | 今天高亮修复              | Implemented                |
 | [0011](./.spec/rfc/completed/0011-event-data-model-integration.md)           | Event 数据模型与 DSL 集成 | Implemented                |
 | [0017](./.spec/rfc/completed/0017-calendar-follow-ons.md)                    | Calendar 后续 Umbrella    | Implemented                |
-| [0012](./.spec/rfc/0012-calendar-plugin-mechanism.md)                        | Calendar 插件机制         | Draft                      |
+| [0012](./.spec/rfc/completed/0012-calendar-plugin-mechanism.md)              | Calendar 插件机制         | Implemented                |
 | [0014](./.spec/rfc/completed/0014-event-runtime-timezone-field-semantics.md) | EventRuntime 时间字段时区 | Implemented                |
 | [0015](./.spec/rfc/completed/0015-react-demo-e2e.md)                         | React Demo 浏览器 E2E     | Implemented                |
 | [0016](./.spec/rfc/completed/0016-week-view-column-alignment.md)             | 周视图表头与时段列对齐    | Implemented                |

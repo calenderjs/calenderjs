@@ -23,7 +23,7 @@
 | 0013 | [修复今天高亮显示](rfc/completed/0013-fix-today-handling.md)                                     | **Implemented** | —      | MonthView/DayView/WeekView                                                    |
 | 0008 | [Calendar API 重新设计](rfc/completed/0008-calendar-component-api-redesign.md)                   | **Implemented** | —      | 属性/状态分层、observedAttributes、getter/setter                              |
 | 0011 | [Event 数据模型与 DSL 集成](rfc/completed/0011-event-data-model-integration.md)                  | **Implemented** | **P1** | `data` 与 EventDataGenerator 均已落地，单测与 E2E 完备                        |
-| 0012 | [Calendar 插件机制](rfc/0012-calendar-plugin-mechanism.md)                                       | Draft           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
+| 0012 | [Calendar 插件机制](rfc/completed/0012-calendar-plugin-mechanism.md)                                       | Implemented           | **P2** | 依赖 0005/0011；按 Event.type 注册渲染器                                      |
 | 0014 | [EventRuntime 时间字段时区语义](rfc/completed/0014-event-runtime-timezone-field-semantics.md)    | **Implemented** | **P1** | 显式 IANA 时区解析；未声明时保持 UTC                                          |
 | 0015 | [React Demo 浏览器端到端验收](rfc/completed/0015-react-demo-e2e.md)                              | **Implemented** | **P1** | 归档 `completed/0015-*`；场景 39/39 + demo src 覆盖门禁                       |
 | 0006 | [Documentation & Examples](rfc/rejected/0006-documentation-and-examples.md)                               | Rejected           | **P3** | site 已有基础框架，文档内容待补全                                             |
@@ -127,5 +127,9 @@
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
 | 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/completed/0044-edit-save-propose-update.md) | Implemented |
 | 0045 | [官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038)](rfc/completed/0045-site-demo-sync-event-editing.md) | Implemented |
-| 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/0046-vue-wrapper-package.md) | Draft |
+| 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/completed/0046-vue-wrapper-package.md) | Implemented |
 | 0047 | [新增 demos/wsx 原生 Web Component 技术 demo](rfc/completed/0047-wsx-demo-app.md) | Implemented |
+| 0048 | [新增 apps/calendarify：Google/Outlook 日历聚合管理应用（验证 calenderjs 生产可用性）](rfc/0048-calendarify-prod-proof.md) | Draft |
+| 0049 | [calendarify 双向同步（webhook 订阅 + 冲突合并）](rfc/pending/0049-calendarify-bidirectional-sync.md) | Pending |
+| 0050 | [calendarify 多租户/团队共享日历与权限分级](rfc/pending/0050-calendarify-multi-tenant.md) | Pending |
+| 0051 | [calendarify 支持 iCloud/通用 CalDAV 日历源](rfc/pending/0051-calendarify-caldav-icloud.md) | Pending |

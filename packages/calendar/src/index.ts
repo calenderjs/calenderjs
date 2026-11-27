@@ -17,5 +17,10 @@ import "./Calendar.wsx";
 // 导出类型（从单独的 types 文件）
 export type { CalendarProps } from "./types";
 
+// 导出事件详情插件机制（RFC-0012）
+export { EventDetailPluginRegistry } from "./plugins/EventDetailPluginRegistry";
+export { defaultPlugin, appointmentPlugin } from "./plugins/built-in";
+export type { EventDetailField, EventDetailDescription, EventDetailPlugin } from "./plugins/types";
+
 // 重新导出核心类型
 export * from "@calenderjs/core";
