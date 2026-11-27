@@ -507,18 +507,6 @@ export default function App() {
                     {actionLog}
                   </div>
                 )}
-                {detailDescription && (
-                  <div data-testid="demo-detail-panel">
-                    <h3>{detailDescription.title}</h3>
-                    <ul>
-                      {detailDescription.fields.map((field) => (
-                        <li key={field.key}>
-                          <strong>{field.label}:</strong> {field.value}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
                 {editingEvent && (
                   <EventEditDialog
                     key={editingEvent.id}
@@ -577,6 +565,18 @@ export default function App() {
                   style={{ width: "100%", height: "100%" }}
                 />
               </div>
+              {detailDescription && (
+                <div data-testid="demo-detail-panel">
+                  <h3>{detailDescription.title}</h3>
+                  <ul>
+                    {detailDescription.fields.map((field) => (
+                      <li key={field.key}>
+                        <strong>{field.label}:</strong> {field.value}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           }
         />
