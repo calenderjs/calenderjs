@@ -127,5 +127,9 @@
 | 0043 | [CI 门禁与 main 分支保护](rfc/completed/0043-ci-main-pr-gates.md) | Implemented |
 | 0044 | [编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038)](rfc/completed/0044-edit-save-propose-update.md) | Implemented |
 | 0045 | [官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038)](rfc/completed/0045-site-demo-sync-event-editing.md) | Implemented |
-| 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/0046-vue-wrapper-package.md) | Draft |
+| 0046 | [新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计）](rfc/completed/0046-vue-wrapper-package.md) | Implemented |
 | 0047 | [新增 demos/wsx 原生 Web Component 技术 demo](rfc/completed/0047-wsx-demo-app.md) | Implemented |
+| 0048 | [新增 apps/calendarify：Google/Outlook 日历聚合管理应用（验证 calenderjs 生产可用性）](rfc/0048-calendarify-prod-proof.md) | Draft |
+| 0049 | [calendarify 双向同步（webhook 订阅 + 冲突合并）](rfc/pending/0049-calendarify-bidirectional-sync.md) | Pending |
+| 0050 | [calendarify 多租户/团队共享日历与权限分级](rfc/pending/0050-calendarify-multi-tenant.md) | Pending |
+| 0051 | [calendarify 支持 iCloud/通用 CalDAV 日历源](rfc/pending/0051-calendarify-caldav-icloud.md) | Pending |

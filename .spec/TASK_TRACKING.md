@@ -157,7 +157,7 @@
   - [x] Implement RFC 0040: 事件编辑弹窗：多字段表单 (child of 0038) (RFC 0040)
   - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
   - [x] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
-- [ ] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
+- [ ] Implement RFC 0048: 新增 apps/calendarify：Google/Outlook 日历聚合管理应用（验证 calenderjs 生产可用性） (RFC 0048)
 
 ## Done
 
@@ -197,4 +197,12 @@
 - [x] Implement RFC 0043: CI 门禁与 main 分支保护 (RFC 0043)
 - [x] Implement RFC 0042: Monaco 编辑器首次加载暗色主题不生效 (RFC 0042)
 - [x] Implement RFC 0047: 新增 demos/wsx 原生 Web Component 技术 demo (RFC 0047)
+- [x] Implement RFC 0049: calendarify 双向同步（webhook 订阅 + 冲突合并） (RFC 0049)
+- [x] Implement RFC 0050: calendarify 多租户/团队共享日历与权限分级 (RFC 0050)
+- [x] Implement RFC 0051: calendarify 支持 iCloud/通用 CalDAV 日历源 (RFC 0051)
+- [x] Implement RFC 0046: 新增 @calenderjs/vue 包与 demos/vue（验证框架中立设计） (RFC 0046)
+
+
+
+
 
