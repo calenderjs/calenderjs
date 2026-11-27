@@ -148,9 +148,9 @@
 
 ## Active
 
-- [ ] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
 - [ ] Implement RFC 0028: Agent-friendly skills for calenderjs usage (RFC 0028)
 - [ ] Implement RFC 0048: 新增 apps/calendarify：Google/Outlook 日历聚合管理应用（验证 calenderjs 生产可用性） (RFC 0048)
+- [ ] Implement RFC 0052: Demo readonly/editable mode toggle (RFC 0052)
 
 ## Done
 
@@ -201,6 +201,8 @@
   - [x] Implement RFC 0044: 编辑保存接入 proposeEventUpdate 通知 host (child of 0038 (child of 0038) (RFC 0044)
   - [x] Implement RFC 0045: 官网 demo 同步事件编辑能力(RFC-0039/0044 (child of 0038) (RFC 0045)
 - [x] Implement RFC 0026: Calendar readonly/edit mode (RFC 0026)
+- [x] Implement RFC 0027: RFC-demo coverage golden rule (RFC 0027)
+
 
 
 
