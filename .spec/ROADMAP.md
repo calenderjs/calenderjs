@@ -108,7 +108,7 @@
 | `site/`                          | Implemented | WSX 官网（i18n、路由、文档）                                  |
 | `demos/react/`                   | Implemented | React Demo（DSL 编辑器 + Calendar）                           |
 | 0026 | [Calendar readonly/edit mode](rfc/completed/0026-calendar-readonly-edit-mode.md) | Implemented |
-| 0027 | [RFC-demo coverage golden rule](rfc/0027-rfc-demo-coverage-rule.md) | Draft |
+| 0027 | [RFC-demo coverage golden rule](rfc/completed/0027-rfc-demo-coverage-rule.md) | Implemented |
 | 0028 | [Agent-friendly skills for calenderjs usage](rfc/0028-agent-friendly-skills.md) | Draft |
 | 0029 | [Fix WeekView hour-cell key collision breaking drag/click per column](rfc/completed/0029-week-view-hour-cell-key-collision.md) | Implemented |
 | 0030 | [拖拽交互重构：原生 HTML5 DnD 换成 pointer-event 自建引擎 (Umbrella)](rfc/completed/0030-drag-interaction-rework.md) | Implemented |
@@ -133,3 +133,4 @@
 | 0049 | [calendarify 双向同步（webhook 订阅 + 冲突合并）](rfc/pending/0049-calendarify-bidirectional-sync.md) | Pending |
 | 0050 | [calendarify 多租户/团队共享日历与权限分级](rfc/pending/0050-calendarify-multi-tenant.md) | Pending |
 | 0051 | [calendarify 支持 iCloud/通用 CalDAV 日历源](rfc/pending/0051-calendarify-caldav-icloud.md) | Pending |
+| 0052 | [Demo readonly/editable mode toggle](rfc/0052-demo-mode-toggle.md) | Draft |

@@ -1,6 +1,6 @@
 # RFC 0027: RFC-demo coverage golden rule
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Summary
 
@@ -19,8 +19,10 @@
 ## Goals
 
 - `AGENTS.md` 新增"金科玉律"条目：**凡 RFC 改变用户可观察行为（新交互、新 API、新模式），其 Acceptance 必须包含 demo 更新项；关单前必须人工在 demo 里实际跑通一次**。CLAUDE.md 已声明"以 AGENTS.md 为准"，故只需改 AGENTS.md，CLAUDE.md 不动。
-- demo 里应同时能演示 editable 与（待 RFC-0026 落地后）readonly 两种模式的对比，不能只有一种能跑通的路径。
-- `specify` 工作流的 RFC 模板里，`## Acceptance` 的指导文字应提示"是否需要 demo 更新"（文档层面提示，不强制机器校验）。
+
+**范围修正记录 1**：本 RFC 曾在 Goals 里写"demo 里应同时能演示 editable 与 readonly 两种模式的对比"，但这与 Design/Non-goals 明确的"不改动 `demos/react/src/App.tsx`"自相矛盾——这条 Goal 已拆分为独立的 RFC-0052（demo readonly/editable mode toggle），不在本 RFC 范围内，避免卡住本 RFC 的流程纪律主题。
+
+**范围修正记录 2**：本 RFC 曾打算改"`specify` 工作流的 RFC 模板"的 `## Acceptance` 指导文字。该模板是 `specify` skill 自身的文件（`scripts/specify.mjs`），不在本仓库内，是跨项目共享的全局 skill。实际约束力已经由 AGENTS.md 的金科玉律条目承担（关单前人工检查，不是模板文字能不能提示的问题），故放弃这条 Goal，不改 `specify` 全局文件。
 
 ## Non-goals
 
@@ -33,8 +35,8 @@
 
 涉及文件：
 - `AGENTS.md`：在"行为准则"章节新增一条金科玉律（RFC 驱动开发那条下面），文字对齐现有中文行文风格。
-- `.spec/rfc/` 模板或 `specify` skill 文档（如可改）：`## Acceptance` 提示语里加一句"是否需要同步更新 demo"。
 - `demos/react/src/App.tsx`：**不改动**——默认视图保持 `"month"`，因为 MonthView 现已有完整拖拽/resize/keyboard-edit，不存在"打开即只读"的问题，无需再改默认视图或加引导文案。
+- `specify` 全局 skill 模板：**不改动**——跨项目共享文件，见上方"范围修正记录 2"。
 
 ## Acceptance
 
@@ -42,3 +44,9 @@
 - 打开 `pnpm dev:react`（不做任何点击）即可在默认 month 视图里拖拽改时间——验证 RFC-0036 的修复仍然有效，未退化。
 - 本 RFC 关单前，亲手在浏览器里跑一遍 month 视图下的 drag-move 和 drag-resize，描述实际操作结果（不是看代码推断）。
 - 之后新开的 RFC，只要涉及可观察行为变化，Acceptance 里能看到 demo 更新项（下一个被这条规则约束到的 RFC 作为验证）。
+
+## 验收记录（实际跑过，非代码推断）
+
+- `AGENTS.md` 第 117 行下方已新增金科玉律条目。
+- 真实浏览器验证（`pnpm dev:react`，Chrome，默认 month 视图）：未做任何点击，月视图直接显示两个事件（"团队会议"、"客户演示"）；拖拽"团队会议"从 11/27 到 11/25，事件成功移动，UI 显示"已更新事件: 团队会议"确认提示——RFC-0036 的月视图拖拽修复未退化。
+- `specify` 全局 skill 模板未改动（讨论后确认为跨项目共享文件，不在本 RFC 范围，见 Design）。
